@@ -7,16 +7,12 @@ using System.Threading.Tasks;
 namespace MouseRobot
 {
     [Serializable]
-    public class Command
+    public class Command : ICommand
     {
-        [Serializable]
-        public delegate void Action();
-
-        public Action RunMethod { set; get; }
-        public CommandCode Code { private set; get; }
-        public string Text { private set; get; }
-        public int[] Args { private set; get; }
-
+        private Action RunMethod { set; get; }
+        public CommandCode Code { set; get; }
+        public string Text { set; get; }
+        public int[] Args { set; get; }
 
         public Command(Action runMethod, string text, CommandCode code, params int[] args)
         {
@@ -29,6 +25,11 @@ namespace MouseRobot
         public void Run()
         {
             RunMethod();
+        }
+
+        public void ClearMethod()
+        {
+            RunMethod = null;
         }
     }
 }

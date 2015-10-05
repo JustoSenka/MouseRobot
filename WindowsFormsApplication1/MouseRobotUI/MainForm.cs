@@ -13,13 +13,13 @@ namespace MouseRobotUI
 {
     public partial class MainForm : Form
     {
-        IMouseRobot mr = new MouseRobotImpl();
+        Lazy<IMouseRobot> lazyMR = DependencyInjector.getLazyMouseRobot();
+
         bool keyDown = false;
         decimal timeDown = 0;
 
         public MainForm()
         {
-            
             InitializeComponent();
         }
 
@@ -76,15 +76,16 @@ namespace MouseRobotUI
             switch (e.KeyData.ToString().ToUpper())
             {
                 case "S":
-                    mr.AddCommandPress(x, y);
+                    //mr.AddCommandPress(x, y);
+                    lazyMR.Value.AddCommandPress(x, y);
                     break;
                 case "D":
-                    mr.AddCommandPress(x, y);
-                    mr.AddCommandSleep((int)timeDown);
+                    lazyMR.Value.AddCommandPress(x, y);
+                    lazyMR.Value.AddCommandSleep((int)timeDown);
                     Console.WriteLine("Sleep for..." + timeDown);
                     break;
                 case "F":
-                    mr.AddCommandSleep((int)timeDown);
+                    lazyMR.Value.AddCommandSleep((int)timeDown);
                     Console.WriteLine("Sleep for..." + timeDown);
                     break;
                 case "G":
@@ -99,16 +100,16 @@ namespace MouseRobotUI
                         Console.WriteLine(fe.ToString());
                         sleepTime = 1000;
                     }
-                    mr.AddCommandSleep(sleepTime);
+                    lazyMR.Value.AddCommandSleep(sleepTime);
                     break;
                 case "H":
-                    mr.AddCommandDown(x, y);
+                    lazyMR.Value.AddCommandDown(x, y);
                     break;
                 case "J":
-                    mr.AddCommandMove(x, y);
+                    lazyMR.Value.AddCommandMove(x, y);
                     break;
                 case "K":
-                    mr.AddCommandRelease();
+                    lazyMR.Value.AddCommandRelease();
                     break;
                 case "R":
 
@@ -122,7 +123,7 @@ namespace MouseRobotUI
                     openDialog.Title = "Select a script file to load.";
                     if (openDialog.ShowDialog() == DialogResult.OK)
                     {
-                        mr.Open(openDialog.FileName);
+                        lazyMR.Value.Open(openDialog.FileName);
                     } 
                     break;
                 case "P":
@@ -131,11 +132,11 @@ namespace MouseRobotUI
                     saveDialog.Title = "Select a script file to load.";
                     if (saveDialog.ShowDialog() == DialogResult.OK)
                     {
-                        mr.Save(saveDialog.FileName);
+                        lazyMR.Value.Save(saveDialog.FileName);
                     } 
                     break;
                 case "Q":
-                    mr.EmptyScript();
+                    lazyMR.Value.EmptyScript();
                     break;
             }
         }
@@ -149,7 +150,7 @@ namespace MouseRobotUI
             }
             catch (FormatException fe)
             {
-                Console.WriteLine("\"" + textBox1.Text + "\" is not a valid number.");
+                Console.WriteLine("\"" + textBox1.Text + "\" is not a valid number." + fe.StackTrace);
                 repeatTimes = 1;
             }
             return repeatTimes;
@@ -159,7 +160,7 @@ namespace MouseRobotUI
         {
             try
             {
-                mr.StartScript(repeatTimes);
+                lazyMR.Value.StartScript(repeatTimes);
             }
             catch (EmptyScriptException ese)
             {

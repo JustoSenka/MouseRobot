@@ -9,16 +9,7 @@ namespace MouseRobot
 {
     public partial class MouseRobotImpl
     {
-        IList<Command> list = new List<Command>();
-        
-        public delegate void EventHandler(object sender, EventArgs e);
-        public event EventHandler BreakEvent;
-
-        public virtual void OnBreakEvent(object sender, EventArgs e)
-        {
-            Console.WriteLine("Breaking script...");
-            Console.WriteLine("End script.");
-        }
+        IList<ICommand> list = new List<ICommand>();
 
         public delegate void Action<in T1, in T2>(T1 t1, T2 t2);
         public delegate void Action<in T>(T t);
@@ -35,6 +26,13 @@ namespace MouseRobot
             Thread.Sleep(WinAPI.TimeBetweenActions);
         };
 
-        public Func<bool> CheckIfPointerOffScreen = () => WinAPI.GetCursorPosition().Y < 5;
+        public bool CheckIfPointerOffScreen()
+        {
+            if (WinAPI.GetCursorPosition().Y < 5)
+            {
+                scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
+            }
+            return WinAPI.GetCursorPosition().Y < 5;
+        }
     }
 }

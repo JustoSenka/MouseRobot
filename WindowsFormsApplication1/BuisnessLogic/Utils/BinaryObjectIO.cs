@@ -19,7 +19,8 @@ namespace MouseRobot
             }
         }
 
-        public static void SaveScriptFile<T>(string fileName, T objToWrite) 
+        #warning "ASK: can it be, where T is [Serializable]"
+        public static void SaveScriptFile<T>(string fileName, T objToWrite)
         {
             using (Stream stream = File.Open(fileName, FileMode.Create))
             {

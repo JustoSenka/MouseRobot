@@ -9,6 +9,12 @@ namespace MouseRobot
 {
     public partial class MouseRobotImpl : IMouseRobot
     {
+        public IScriptThread scriptThread;
+        public MouseRobotImpl(IScriptThread scriptThread) 
+        {
+            this.scriptThread = scriptThread;
+        }
+
         public void StartScript(int repeatTimes)
         {
             if (list.Count <= 0)
@@ -16,60 +22,41 @@ namespace MouseRobot
                 throw new EmptyScriptException("Script is empty");
             }
 
-            new Thread(delegate()
-            {
-                for (int i = 1; i <= repeatTimes; i++)
-                {
-                    Console.WriteLine(i + " - Script start");
-                    foreach (var v in list)
-                    {
-                        Console.WriteLine(v.Text);
-                        v.Run();
-
-                        if (BreakEvent != null)
-                        {
-                            BreakEvent.Invoke(this, null);
-                            BreakEvent -= new EventHandler(OnBreakEvent);
-                            return;
-                        }
-                    }
-                }
-                Console.WriteLine("End script.");
-            }).Start();
+            scriptThread.Start(list, repeatTimes);
         }
 
         public void AddCommandSleep(int time)
         {
-            list.Add(new Command(() =>
+            list.Add(DependencyInjector.getCommand(() =>
             {
                 Thread.Sleep(time);
-                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+                CheckIfPointerOffScreen();
             }, "Sleep for " + time + " ms.", CommandCode.G, time));
         }
 
         public void AddCommandRelease()
         {
-            list.Add(new Command( () => 
+            list.Add(DependencyInjector.getCommand(() => 
             {
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+                CheckIfPointerOffScreen();
             }, "Release", CommandCode.K));
         }
 
         public void AddCommandPress(int x, int y)
         {
-            list.Add(new Command(delegate()
+            list.Add(DependencyInjector.getCommand(delegate()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+                CheckIfPointerOffScreen();
             }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y));
         }
 
         public void AddCommandMove(int x, int y)
         {
-            list.Add(new Command(delegate()
+            list.Add(DependencyInjector.getCommand(delegate()
             {
                 int x1, y1;
                 x1 = WinAPI.GetCursorPosition().X;
@@ -79,17 +66,17 @@ namespace MouseRobot
                 {
                     MouseMoveTo(x1 + ((x - x1) * i / 50), y1 + ((y - y1) * i / 50));
                 }
-                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+                CheckIfPointerOffScreen();
             }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y));
         }
 
         public void AddCommandDown(int x, int y)
         {
-            list.Add(new Command(delegate()
+            list.Add(DependencyInjector.getCommand(delegate()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
-                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+                CheckIfPointerOffScreen();
             }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y));
         }
 
@@ -100,7 +87,7 @@ namespace MouseRobot
 
         public void Open(string fileName)
         {
-            IList<Command> tempList = BinaryObjectIO.LoadScriptFile<IList<Command>>(fileName);
+            IList<ICommand> tempList = BinaryObjectIO.LoadScriptFile<IList<ICommand>>(fileName);
             list.Clear();
 
             Console.WriteLine();
@@ -135,9 +122,9 @@ namespace MouseRobot
         {
             foreach (var v in list)
             {
-                v.RunMethod = null;
+                v.ClearMethod();
             }
-            BinaryObjectIO.SaveScriptFile<IList<Command>>(fileName, list);
+            BinaryObjectIO.SaveScriptFile<IList<ICommand>>(fileName, list);
 
             Open(fileName);
             Console.WriteLine("File saved.");
