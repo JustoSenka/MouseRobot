@@ -15,5 +15,8 @@ namespace MouseRobot
         void AddCommandMove(int x, int y);
         void AddCommandDown(int x, int y);
         void EmptyScript();
+
+        void Open(string fileName);
+        void Save(string fileName);
     }
 }

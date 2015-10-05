@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MouseRobotUI</RootNamespace>
-    <AssemblyName>WindowsFormsApplication1</AssemblyName>
+    <AssemblyName>MouseRobot</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -54,10 +54,13 @@
     <Compile Include="MouseRobotUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MouseRobot\CommandCode.cs" />
     <Compile Include="MouseRobot\EmptyScriptException.cs" />
     <Compile Include="MouseRobot\IMouseRobot.cs" />
+    <Compile Include="MouseRobot\MouseRobotImplDefs.cs" />
     <Compile Include="MouseRobot\MouseRobotImpl.cs" />
-    <Compile Include="MouseRobot\ScriptThread.cs" />
+    <Compile Include="MouseRobot\BinaryObjectIO.cs" />
+    <Compile Include="MouseRobot\test.cs" />
     <Compile Include="MouseRobot\WinAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

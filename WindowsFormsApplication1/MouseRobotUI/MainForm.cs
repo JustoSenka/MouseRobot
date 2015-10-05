@@ -117,10 +117,22 @@ namespace MouseRobotUI
 
                     break;
                 case "O":
-
+                    OpenFileDialog openDialog = new OpenFileDialog();
+                    openDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
+                    openDialog.Title = "Select a script file to load.";
+                    if (openDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        mr.Open(openDialog.FileName);
+                    } 
                     break;
                 case "P":
-
+                    SaveFileDialog saveDialog = new SaveFileDialog();
+                    saveDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
+                    saveDialog.Title = "Select a script file to load.";
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        mr.Save(saveDialog.FileName);
+                    } 
                     break;
                 case "Q":
                     mr.EmptyScript();

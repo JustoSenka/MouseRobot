@@ -7,54 +7,35 @@ using System.Threading;
 
 namespace MouseRobot
 {
-    public class MouseRobotImpl : IMouseRobot
+    public partial class MouseRobotImpl : IMouseRobot
     {
-        IList<Command> list = new List<Command>();
-        public event Action scriptEvent;
-
-        // public delegate void Action<in T1, in T2>(T1 t1, T2 t2);
-        // public delegate void Action(int t1, int t2);
-
-        // Func<string, int> sth = delegate(string str) { return Int32.Parse(str); };
-        // Func<string, int> sth = (string str) => Int32.Parse(str);
-
-        Action<int, int> MouseMoveTo = (int x, int y) =>
-        {
-            WinAPI.SetCursorPosition(x, y);
-            Thread.Sleep(WinAPI.TimeBetweenActions);
-        };
-
-        Action<WinAPI.MouseEventFlags> MouseAction = (WinAPI.MouseEventFlags flags) =>
-        {
-            WinAPI.MouseEvent(flags);
-            Thread.Sleep(WinAPI.TimeBetweenActions);
-        };
-
         public void StartScript(int repeatTimes)
         {
             if (list.Count <= 0)
             {
-                throw new EmptyScriptException("List is empty");
+                throw new EmptyScriptException("Script is empty");
             }
 
-            ScriptThread.Start(delegate() 
+            new Thread(delegate()
             {
                 for (int i = 1; i <= repeatTimes; i++)
                 {
-                    Console.WriteLine(i + " - Script start.");
+                    Console.WriteLine(i + " - Script start");
                     foreach (var v in list)
                     {
                         Console.WriteLine(v.Text);
                         v.Run();
-                        if (WinAPI.GetCursorPosition().Y < 5)
+
+                        if (BreakEvent != null)
                         {
-                            Console.WriteLine("End script.");
+                            BreakEvent.Invoke(this, null);
+                            BreakEvent -= new EventHandler(OnBreakEvent);
                             return;
                         }
                     }
                 }
                 Console.WriteLine("End script.");
-            });
+            }).Start();
         }
 
         public void AddCommandSleep(int time)
@@ -62,9 +43,8 @@ namespace MouseRobot
             list.Add(new Command(() =>
             {
                 Thread.Sleep(time);
-            }, "Sleep for " + time + " ms."));
-
-            //scriptEvent += new Action(() => Console.);
+                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+            }, "Sleep for " + time + " ms.", CommandCode.G, time));
         }
 
         public void AddCommandRelease()
@@ -72,7 +52,8 @@ namespace MouseRobot
             list.Add(new Command( () => 
             {
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
-            }, "Release"));
+                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+            }, "Release", CommandCode.K));
         }
 
         public void AddCommandPress(int x, int y)
@@ -82,7 +63,8 @@ namespace MouseRobot
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
-            }, "Press on: (" + x + ", " + y + ")"));
+                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+            }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y));
         }
 
         public void AddCommandMove(int x, int y)
@@ -97,7 +79,8 @@ namespace MouseRobot
                 {
                     MouseMoveTo(x1 + ((x - x1) * i / 50), y1 + ((y - y1) * i / 50));
                 }
-            }, "Move to: (" + x + ", " + y + ")"));
+                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+            }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y));
         }
 
         public void AddCommandDown(int x, int y)
@@ -106,13 +89,58 @@ namespace MouseRobot
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
-            }, "Down on: (" + x + ", " + y + ")"));
+                if (CheckIfPointerOffScreen()) BreakEvent += new EventHandler(OnBreakEvent);
+            }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y));
         }
-
 
         public void EmptyScript()
         {
             list.Clear();
+        }
+
+        public void Open(string fileName)
+        {
+            IList<Command> tempList = BinaryObjectIO.LoadScriptFile<IList<Command>>(fileName);
+            list.Clear();
+
+            Console.WriteLine();
+            Console.WriteLine("Reading file:");
+
+            foreach (var v in tempList)
+            {
+                switch (v.Code) 
+                {
+                    case CommandCode.G:
+                        AddCommandSleep(v.Args.ElementAt<int>(0));
+                        break;
+                    case CommandCode.S:
+                        AddCommandPress(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
+                        break;
+                    case CommandCode.H:
+                        AddCommandDown(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
+                        break;
+                    case CommandCode.J:
+                        AddCommandMove(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
+                        break;
+                    case CommandCode.K:
+                        AddCommandRelease();
+                        break;
+                }
+
+                Console.WriteLine(v.Text);
+            }
+        }
+
+        public void Save(string fileName)
+        {
+            foreach (var v in list)
+            {
+                v.RunMethod = null;
+            }
+            BinaryObjectIO.SaveScriptFile<IList<Command>>(fileName, list);
+
+            Open(fileName);
+            Console.WriteLine("File saved.");
         }
     }
 }
