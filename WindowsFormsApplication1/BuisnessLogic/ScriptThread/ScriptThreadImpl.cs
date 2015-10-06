@@ -9,9 +9,7 @@ namespace MouseRobot
 {
     public class ScriptThreadImpl : IScriptThread
     {
-        //public delegate void EventHandler(object sender, EventArgs e);
         public event EventHandler BreakEvent;
-
         public void OnBreakEvent(object sender, EventArgs e)
         {
             Console.WriteLine("Breaking script...");

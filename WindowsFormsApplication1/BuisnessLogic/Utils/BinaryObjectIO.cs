@@ -5,27 +5,26 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MouseRobot
 {
     public static class BinaryObjectIO
     {
-        public static T LoadScriptFile<T>(string fileName)
+        public static T LoadObject<T>(string fileName)
         {
             using (Stream stream = File.Open(fileName, FileMode.Open))
             {
-                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                return (T) binaryFormatter.Deserialize(stream);
+                return (T) new BinaryFormatter().Deserialize(stream);
             }
         }
 
         #warning "ASK: can it be, where T is [Serializable]"
-        public static void SaveScriptFile<T>(string fileName, T objToWrite)
+        public static void SaveObject<T>(string fileName, T objToWrite)
         {
             using (Stream stream = File.Open(fileName, FileMode.Create))
             {
-                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                binaryFormatter.Serialize(stream, objToWrite);
+                new BinaryFormatter().Serialize(stream, objToWrite);
             }
         }
     }

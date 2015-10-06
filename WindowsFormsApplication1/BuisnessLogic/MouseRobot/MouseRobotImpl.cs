@@ -21,8 +21,12 @@ namespace MouseRobot
             {
                 throw new EmptyScriptException("Script is empty");
             }
-
             scriptThread.Start(list, repeatTimes);
+        }
+
+        public void StopScript()
+        {
+            scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
         }
 
         public void AddCommandSleep(int time)
@@ -87,7 +91,7 @@ namespace MouseRobot
 
         public void Open(string fileName)
         {
-            IList<ICommand> tempList = BinaryObjectIO.LoadScriptFile<IList<ICommand>>(fileName);
+            IList<ICommand> tempList = BinaryObjectIO.LoadObject<IList<ICommand>>(fileName);
             list.Clear();
 
             Console.WriteLine();
@@ -124,7 +128,7 @@ namespace MouseRobot
             {
                 v.ClearMethod();
             }
-            BinaryObjectIO.SaveScriptFile<IList<ICommand>>(fileName, list);
+            BinaryObjectIO.SaveObject<IList<ICommand>>(fileName, list);
 
             Open(fileName);
             Console.WriteLine("File saved.");

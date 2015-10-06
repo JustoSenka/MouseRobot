@@ -9,6 +9,8 @@ namespace MouseRobot
     public interface IMouseRobot
     {
         void StartScript(int reapeatTimes);
+        void StopScript();
+
         void AddCommandSleep(int time);
         void AddCommandRelease();
         void AddCommandPress(int x, int y);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MouseRobot
 {
-    class EmptyScriptException : Exception
+    public class EmptyScriptException : Exception
     {
         public EmptyScriptException() : base() { }
 

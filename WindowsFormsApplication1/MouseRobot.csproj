@@ -60,6 +60,7 @@
       <HintPath>..\packages\Unity.4.0.0\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -73,6 +74,7 @@
   <ItemGroup>
     <Compile Include="BuisnessLogic\Command\Command.cs" />
     <Compile Include="BuisnessLogic\ScriptThread\ScriptThreadSecondImpl.cs" />
+    <Compile Include="BuisnessLogic\Exceptions\CorruptedConfigsException.cs" />
     <Compile Include="MouseRobotUI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,7 +83,7 @@
     </Compile>
     <Compile Include="BuisnessLogic\Command\CommandCode.cs" />
     <Compile Include="BuisnessLogic\Command\ICommand.cs" />
-    <Compile Include="BuisnessLogic\ScriptThread\EmptyScriptException.cs" />
+    <Compile Include="BuisnessLogic\Exceptions\EmptyScriptException.cs" />
     <Compile Include="BuisnessLogic\MouseRobot\IMouseRobot.cs" />
     <Compile Include="BuisnessLogic\MouseRobot\MouseRobotImplDefs.cs" />
     <Compile Include="BuisnessLogic\MouseRobot\MouseRobotImpl.cs" />
@@ -120,7 +122,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>

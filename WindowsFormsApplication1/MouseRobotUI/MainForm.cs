@@ -141,6 +141,11 @@ namespace MouseRobotUI
             }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            lazyMR.Value.StopScript();
+        }
+
         private int TryReadRepeatTimes()
         {
             int repeatTimes;
