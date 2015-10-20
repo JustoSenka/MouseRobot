@@ -62,5 +62,28 @@ namespace MouseRobot
             Point position = GetCursorPosition();
             mouse_event((int)value, position.X, position.Y, 0, 0);
         }
+
+
+
+        // Console show / hide
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        public static readonly int SW_HIDE = 0;
+        public static readonly int SW_SHOW = 5;
+
+        internal static IntPtr GetConsole()
+        {
+            return GetConsoleWindow();
+        }
+
+        internal static bool Show(IntPtr hWnd, int nCmdShow)
+        {
+            return ShowWindow(hWnd, nCmdShow);
+        }
     }
 }

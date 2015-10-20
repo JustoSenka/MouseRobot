@@ -13,7 +13,7 @@ namespace MouseRobotUI
 {
     public partial class MainForm : Form
     {
-        Lazy<IMouseRobot> lazyMR = DependencyInjector.getLazyMouseRobot();
+        Lazy<IMouseRobot> lazyMR = DependencyInjector.GetLazyMouseRobot();
 
         bool keyDown = false;
         decimal timeDown = 0;

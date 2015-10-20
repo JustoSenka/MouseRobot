@@ -4,24 +4,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Windows.Forms;
+using MouseRobotUI;
 
 namespace MouseRobot
 {
     public class DependencyInjector
     {
 
+        internal static Form GetMainForm()
+        {
+            if (CheckMainForm("MainForm"))
+            {
+                return new MainForm();
+            }
+            else if (CheckMainForm("MainForm2"))
+            {
+                return new MainForm2();
+            }
+            else
+            {
+                throw new CorruptedConfigsException
+                    ("Key \"MainForm\" is corrupted in App.config");
+            }
+        }
+
         [Obsolete("Better use lazy MouseRobot")]
-        public static IMouseRobot getMouseRobot()
+        public static IMouseRobot GetMouseRobot()
         {
-            return new MouseRobotImpl(getScriptThread());
+            return new MouseRobotImpl(GetScriptThread());
         }
 
-        public static Lazy<IMouseRobot> getLazyMouseRobot()
+        public static Lazy<IMouseRobot> GetLazyMouseRobot()
         {
-            return new Lazy<IMouseRobot>(() => new MouseRobotImpl(getScriptThread()));
+            return new Lazy<IMouseRobot>(() => new MouseRobotImpl(GetScriptThread()));
         }
 
-        public static IScriptThread getScriptThread()
+        public static IScriptThread GetScriptThread()
         {
             if (CheckScriptThread("ScriptThreadImpl"))
             {
@@ -38,12 +57,22 @@ namespace MouseRobot
             }
         }
 
-        public static ICommand getCommand(Action run, string text, CommandCode code, params int[] args)
+        public static ICommand GetCommand(Action run, string text, CommandCode code, params int[] args)
         {
             return new Command(run, text, code, args);
         }
 
 
+
+        private static bool CheckMainForm(string str)
+        {
+            if (!ConfigurationManager.AppSettings.AllKeys.Contains("MainForm"))
+            {
+                throw new CorruptedConfigsException
+                    ("Key \"MainForm\" does not exist in App.config");
+            }
+            return ConfigurationManager.AppSettings["MainForm"].Equals(str);
+        }
 
         private static bool CheckScriptThread(string str)
         {

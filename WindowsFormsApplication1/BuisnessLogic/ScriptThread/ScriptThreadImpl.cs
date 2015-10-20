@@ -16,13 +16,9 @@ namespace MouseRobot
             Console.WriteLine("End script.");
         }
 
-        private Thread t;
-        private IEnumerable<ICommand> list;
-        private int repeatTimes;
-
-        public ScriptThreadImpl()
+        public void Start(IEnumerable<ICommand> list, int repeatTimes)
         {
-            t = new Thread(delegate()
+            new Thread(delegate()
             {
                 for (int i = 1; i <= repeatTimes; i++)
                 {
@@ -41,14 +37,7 @@ namespace MouseRobot
                     }
                 }
                 Console.WriteLine("End script.");
-            });
-        }
-
-        public void Start(IEnumerable<ICommand> list, int repeatTimes)
-        {
-            this.list = list;
-            this.repeatTimes = repeatTimes;
-            t.Start();
+            }).Start();
         }
     }
 }

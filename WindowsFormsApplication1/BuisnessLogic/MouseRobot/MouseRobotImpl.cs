@@ -26,12 +26,15 @@ namespace MouseRobot
 
         public void StopScript()
         {
-            scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
+            if (list.Count != 0)
+            {
+                scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
+            }
         }
 
         public void AddCommandSleep(int time)
         {
-            list.Add(DependencyInjector.getCommand(() =>
+            list.Add(DependencyInjector.GetCommand(() =>
             {
                 Thread.Sleep(time);
                 CheckIfPointerOffScreen();
@@ -40,7 +43,7 @@ namespace MouseRobot
 
         public void AddCommandRelease()
         {
-            list.Add(DependencyInjector.getCommand(() => 
+            list.Add(DependencyInjector.GetCommand(() => 
             {
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
                 CheckIfPointerOffScreen();
@@ -49,7 +52,7 @@ namespace MouseRobot
 
         public void AddCommandPress(int x, int y)
         {
-            list.Add(DependencyInjector.getCommand(delegate()
+            list.Add(DependencyInjector.GetCommand(delegate()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
@@ -60,7 +63,7 @@ namespace MouseRobot
 
         public void AddCommandMove(int x, int y)
         {
-            list.Add(DependencyInjector.getCommand(delegate()
+            list.Add(DependencyInjector.GetCommand(delegate()
             {
                 int x1, y1;
                 x1 = WinAPI.GetCursorPosition().X;
@@ -76,7 +79,7 @@ namespace MouseRobot
 
         public void AddCommandDown(int x, int y)
         {
-            list.Add(DependencyInjector.getCommand(delegate()
+            list.Add(DependencyInjector.GetCommand(delegate()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
