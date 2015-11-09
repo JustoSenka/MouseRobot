@@ -12,15 +12,15 @@ namespace MouseRobot
     public class DependencyInjector
     {
 
-        internal static Form GetMainForm()
+        public static Form GetMainForm()
         {
             if (CheckMainForm("MainForm"))
             {
                 return new MainForm();
             }
-            else if (CheckMainForm("MainForm2"))
+            else if (CheckMainForm("RecordingForm"))
             {
-                return new MainForm2();
+                return new RecordingForm();
             }
             else
             {
@@ -48,7 +48,7 @@ namespace MouseRobot
             }
             else if (CheckScriptThread("ScriptSecondThreadImpl"))
             {
-                return new ScriptThreadSecondImpl();
+                return null; // new ScriptThreadSecondImpl();
             }
             else
             {

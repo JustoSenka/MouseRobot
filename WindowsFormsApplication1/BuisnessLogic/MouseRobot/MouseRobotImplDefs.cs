@@ -30,7 +30,7 @@ namespace MouseRobot
         {
             if (WinAPI.GetCursorPosition().Y < 5)
             {
-                scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
+                scriptThread.BreakEvent += scriptThread.OnBreakEvent;
             }
             return WinAPI.GetCursorPosition().Y < 5;
         }

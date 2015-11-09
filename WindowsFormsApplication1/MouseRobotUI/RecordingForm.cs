@@ -9,25 +9,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MouseRobot;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace MouseRobotUI
 {
-    public partial class MainForm2 : Form
+    public partial class RecordingForm : Form
     {
         Lazy<IMouseRobot> lazyMR = DependencyInjector.GetLazyMouseRobot();
+        
+        bool runRecording;
+        int x;
+        int y;
 
         bool scriptIsRunning;
-        volatile bool runRecording;
-        bool keyDown = false;
-        decimal timeDown = 0;
 
-        volatile int x;
         int oldX;
-        volatile int y; 
         int oldY;
+
         MouseButtons oldMB = MouseButtons.None;
 
-        public MainForm2()
+        public RecordingForm()
         {
             InitializeComponent();
 
@@ -80,7 +81,7 @@ namespace MouseRobotUI
                     x = WinAPI.GetCursorPosition().X;
                     y = WinAPI.GetCursorPosition().Y;
 
-                    // Left down
+                    // Left mouse button down
                     if (!oldMB.HasFlag(MouseButtons.Left) && MouseButtons.HasFlag(MouseButtons.Left))
                     {
                         if (!x.IsNear(oldX) || !y.IsNear(oldY))
@@ -94,7 +95,7 @@ namespace MouseRobotUI
                         oldY = y;
                     }
 
-                    // Left up
+                    // Left mouse button up
                     else if (oldMB.HasFlag(MouseButtons.Left) && !MouseButtons.HasFlag(MouseButtons.Left))
                     {
                         if (!x.IsNear(oldX) || !y.IsNear(oldY))
@@ -120,27 +121,7 @@ namespace MouseRobotUI
             }).Start();
         }
 
-        private void button1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (keyDown)
-            {
-                return;
-            }
-            keyDown = true;
-            timeDown = (decimal)DateTime.Now.Ticks / (decimal) TimeSpan.TicksPerMillisecond;
-
-            int x = WinAPI.GetCursorPosition().X, y = WinAPI.GetCursorPosition().Y;
-        }
-
-        private void button1_KeyUp(object sender, KeyEventArgs e)
-        {
-            keyDown = false;
-
-            int x = WinAPI.GetCursorPosition().X, y = WinAPI.GetCursorPosition().Y;
-            timeDown = (decimal)DateTime.Now.Ticks / (decimal)TimeSpan.TicksPerMillisecond - timeDown;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void stopButton_Click(object sender, EventArgs e)
         {
             scriptIsRunning = false;
             lazyMR.Value.StopScript();
@@ -151,11 +132,11 @@ namespace MouseRobotUI
             int repeatTimes;
             try
             {
-                repeatTimes = Int32.Parse(textBox1.Text);
+                repeatTimes = Int32.Parse(countTextBox.Text);
             }
             catch (FormatException fe)
             {
-                Console.WriteLine("\"" + textBox1.Text + "\" is not a valid number.");
+                Console.WriteLine("\"" + countTextBox.Text + "\" is not a valid number.");
                 repeatTimes = 1;
             }
             return repeatTimes;
@@ -176,7 +157,7 @@ namespace MouseRobotUI
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void loadButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
@@ -187,7 +168,7 @@ namespace MouseRobotUI
             } 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
@@ -198,21 +179,21 @@ namespace MouseRobotUI
             } 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void startButton_Click(object sender, EventArgs e)
         {
             runRecording = false;
             int repeatTimes = TryReadRepeatTimes();
             TryStartScript(repeatTimes);
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void emptyButton_Click(object sender, EventArgs e)
         {
             scriptIsRunning = false;
             lazyMR.Value.EmptyScript();
         }
     }
 
-    public static class ExtentionMethods
+    public static class ExtensionMethods
     {
         public static bool IsNear(this int t, int o)
         {

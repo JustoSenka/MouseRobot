@@ -14,9 +14,5 @@ namespace MouseRobot
 
         public CorruptedConfigsException(string format, params object[] args) : base(string.Format(format, args)) { }
 
-        public CorruptedConfigsException(string message, Exception innerException) : base(message, innerException) { }
-
-        public CorruptedConfigsException(string format, Exception innerException, params object[] args)
-            : base(string.Format(format, args), innerException) { }
     }
 }

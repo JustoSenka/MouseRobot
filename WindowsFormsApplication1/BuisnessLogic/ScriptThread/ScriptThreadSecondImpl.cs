@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MouseRobotUI.BuisnessLogic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,24 +9,20 @@ using System.Threading.Tasks;
 namespace MouseRobot
 {
     [Obsolete("Used for presentational purposes, to show DI, do not use in development.")]
-    public class ScriptThreadSecondImpl : IScriptThread
+    public class ScriptThreadSecondImpl// : IScriptThread
     {
-        //public delegate void EventHandler(object sender, EventArgs e);
+        /*
+        public delegate void EventHandler(object sender, CustomEventArgs e);
         public event EventHandler BreakEvent;
 
-        public void OnBreakEvent(object sender, EventArgs e)
+        void OnBreakEvent(object sender, CustomEventArgs e)
         {
-            Console.WriteLine("Breaking script...");
-            Console.WriteLine("It should break, but my poor programmer made lots of mistakes");
+            e.message = "Breaking script...\nEnd script.";
         }
 
-        private Thread t;
-        private IEnumerable<ICommand> list;
-        private int repeatTimes;
-
-        public ScriptThreadSecondImpl()
+        public void Start(IEnumerable<ICommand> list, int repeatTimes)
         {
-            t = new Thread(delegate()
+            new Thread(delegate ()
             {
                 for (int i = 1; i <= repeatTimes; i++)
                 {
@@ -39,19 +36,21 @@ namespace MouseRobot
                         {
                             BreakEvent.Invoke(this, null);
                             BreakEvent -= new EventHandler(OnBreakEvent);
-                            //return;
+                            return;
                         }
                     }
                 }
                 Console.WriteLine("End script.");
-            });
+            }).Start();
         }
 
-        public void Start(IEnumerable<ICommand> list, int repeatTimes)
+        event System.EventHandler IScriptThread.BreakEvent { add { } remove { } }
+
+        void IScriptThread.OnBreakEvent(object sender, CustomEventArgs e)
         {
-            this.list = list;
-            this.repeatTimes = repeatTimes;
-            t.Start();
+            throw new NotImplementedException();
         }
+        */
     }
+
 }

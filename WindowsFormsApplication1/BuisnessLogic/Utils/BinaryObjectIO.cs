@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace MouseRobot
 {
@@ -15,7 +16,15 @@ namespace MouseRobot
         {
             using (Stream stream = File.Open(fileName, FileMode.Open))
             {
-                return (T) new BinaryFormatter().Deserialize(stream);
+                try
+                {
+                    return (T)new BinaryFormatter().Deserialize(stream);
+                }
+                catch (SerializationException se)
+                {
+                    Console.WriteLine("Failed to read from file.");
+                    return default(T);
+                }
             }
         }
 
@@ -24,7 +33,14 @@ namespace MouseRobot
         {
             using (Stream stream = File.Open(fileName, FileMode.Create))
             {
-                new BinaryFormatter().Serialize(stream, objToWrite);
+                try
+                {
+                    new BinaryFormatter().Serialize(stream, objToWrite);
+                }   
+                catch(SerializationException se)
+                {
+                    Console.WriteLine("Failed to write to file.");
+                }
             }
         }
     }

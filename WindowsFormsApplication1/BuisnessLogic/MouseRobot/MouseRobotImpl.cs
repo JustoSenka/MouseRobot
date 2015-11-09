@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using MouseRobotUI.BuisnessLogic;
 
 namespace MouseRobot
 {
     public partial class MouseRobotImpl : IMouseRobot
     {
+        public delegate void MyEventHandler(object sender, CustomEventArgs e);
+
         public IScriptThread scriptThread;
         public MouseRobotImpl(IScriptThread scriptThread) 
         {
@@ -28,7 +31,7 @@ namespace MouseRobot
         {
             if (list.Count != 0)
             {
-                scriptThread.BreakEvent += new EventHandler(scriptThread.OnBreakEvent);
+                scriptThread.BreakEvent += scriptThread.OnBreakEvent;
             }
         }
 
@@ -90,6 +93,7 @@ namespace MouseRobot
         public void EmptyScript()
         {
             list.Clear();
+            Console.WriteLine("List is empty.");
         }
 
         public void Open(string fileName)

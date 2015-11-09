@@ -14,9 +14,5 @@ namespace MouseRobot
 
         public EmptyScriptException(string format, params object[] args) : base(string.Format(format, args)) { }
 
-        public EmptyScriptException(string message, Exception innerException) : base(message, innerException) { }
-
-        public EmptyScriptException(string format, Exception innerException, params object[] args)
-            : base(string.Format(format, args), innerException) { }
     }
 }
