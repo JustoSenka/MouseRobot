@@ -18,7 +18,10 @@ namespace MouseRobot
         void AddCommandDown(int x, int y);
         void EmptyScript();
 
-        void Open(string fileName);
-        void Save(string fileName);
+        void NewScript();
+        void OpenScript(string fileName);
+        void SaveScript(string fileName);
+
+        TreeNode<string> GetScriptTreeStructure(); 
     }
 }

@@ -28,7 +28,6 @@ namespace MouseRobot
             }
         }
 
-        #warning "ASK: can it be, where T is [Serializable]"
         public static void SaveObject<T>(string fileName, T objToWrite)
         {
             using (Stream stream = File.Open(fileName, FileMode.Create))
@@ -37,7 +36,7 @@ namespace MouseRobot
                 {
                     new BinaryFormatter().Serialize(stream, objToWrite);
                 }   
-                catch(SerializationException se)
+                catch(SerializationException)
                 {
                     Console.WriteLine("Failed to write to file.");
                 }

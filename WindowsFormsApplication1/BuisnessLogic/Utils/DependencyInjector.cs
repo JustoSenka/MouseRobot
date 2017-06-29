@@ -11,7 +11,6 @@ namespace MouseRobot
 {
     public class DependencyInjector
     {
-
         public static Form GetMainForm()
         {
             if (CheckMainForm("MainForm"))
@@ -21,6 +20,10 @@ namespace MouseRobot
             else if (CheckMainForm("RecordingForm"))
             {
                 return new RecordingForm();
+            }
+            else if (CheckMainForm("TreeViewForm"))
+            {
+                return new TreeViewForm();
             }
             else
             {
@@ -32,12 +35,12 @@ namespace MouseRobot
         [Obsolete("Better use lazy MouseRobot")]
         public static IMouseRobot GetMouseRobot()
         {
-            return new MouseRobotImpl(GetScriptThread());
+            return new MouseRobotImpl(GetScriptThread(), GetScriptManager());
         }
 
         public static Lazy<IMouseRobot> GetLazyMouseRobot()
         {
-            return new Lazy<IMouseRobot>(() => new MouseRobotImpl(GetScriptThread()));
+            return new Lazy<IMouseRobot>(() => new MouseRobotImpl(GetScriptThread(), GetScriptManager()));
         }
 
         public static IScriptThread GetScriptThread()
@@ -45,10 +48,6 @@ namespace MouseRobot
             if (CheckScriptThread("ScriptThreadImpl"))
             {
                 return new ScriptThreadImpl();
-            }
-            else if (CheckScriptThread("ScriptSecondThreadImpl"))
-            {
-                return null; // new ScriptThreadSecondImpl();
             }
             else
             {
@@ -62,7 +61,10 @@ namespace MouseRobot
             return new Command(run, text, code, args);
         }
 
-
+        public static IScriptManager GetScriptManager()
+        {
+            return new ScriptManager();
+        }
 
         private static bool CheckMainForm(string str)
         {

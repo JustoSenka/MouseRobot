@@ -164,7 +164,7 @@ namespace MouseRobotUI
             openDialog.Title = "Select a script file to load.";
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
-                lazyMR.Value.Open(openDialog.FileName);
+                lazyMR.Value.OpenScript(openDialog.FileName);
             } 
         }
 
@@ -175,7 +175,7 @@ namespace MouseRobotUI
             saveDialog.Title = "Select a script file to load.";
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                lazyMR.Value.Save(saveDialog.FileName);
+                lazyMR.Value.SaveScript(saveDialog.FileName);
             } 
         }
 

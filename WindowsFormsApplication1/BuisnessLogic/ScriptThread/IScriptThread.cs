@@ -12,7 +12,7 @@ namespace MouseRobot
     public interface IScriptThread
     {
         event MyEventHandler BreakEvent;
-        void Start(IEnumerable<ICommand> list, int repeatTimes);
+        void Start(Script script, int repeatTimes);
         void OnBreakEvent(object sender, CustomEventArgs e);
     }
 }

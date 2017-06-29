@@ -10,26 +10,31 @@ namespace MouseRobot
 {
     public partial class MouseRobotImpl : IMouseRobot
     {
-        public delegate void MyEventHandler(object sender, CustomEventArgs e);
+        // public delegate void MyEventHandler(object sender, CustomEventArgs e);
 
         public IScriptThread scriptThread;
-        public MouseRobotImpl(IScriptThread scriptThread) 
+        public IScriptManager scriptManager;
+
+        public MouseRobotImpl(IScriptThread scriptThread, IScriptManager scriptManager)
         {
             this.scriptThread = scriptThread;
+            this.scriptManager = scriptManager;
         }
 
         public void StartScript(int repeatTimes)
         {
-            if (list.Count <= 0)
-            {
-                throw new EmptyScriptException("Script is empty");
-            }
-            scriptThread.Start(list, repeatTimes);
+            if (scriptManager.activeScript != null)
+
+                if (scriptManager.activeScript.commands.Count <= 0)
+                {
+                    throw new EmptyScriptException("Script is empty");
+                }
+            scriptThread.Start(scriptManager.activeScript, repeatTimes);
         }
 
         public void StopScript()
         {
-            if (list.Count != 0)
+            if (scriptManager.activeScript.commands.Count != 0)
             {
                 scriptThread.BreakEvent += scriptThread.OnBreakEvent;
             }
@@ -37,108 +42,67 @@ namespace MouseRobot
 
         public void AddCommandSleep(int time)
         {
-            list.Add(DependencyInjector.GetCommand(() =>
-            {
-                Thread.Sleep(time);
-                CheckIfPointerOffScreen();
-            }, "Sleep for " + time + " ms.", CommandCode.G, time));
+            scriptManager.activeScript.AddCommandSleep(time);
         }
 
         public void AddCommandRelease()
         {
-            list.Add(DependencyInjector.GetCommand(() => 
-            {
-                MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                CheckIfPointerOffScreen();
-            }, "Release", CommandCode.K));
+            scriptManager.activeScript.AddCommandRelease();
         }
 
         public void AddCommandPress(int x, int y)
         {
-            list.Add(DependencyInjector.GetCommand(delegate()
-            {
-                MouseMoveTo(x, y);
-                MouseAction(WinAPI.MouseEventFlags.LeftDown);
-                MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                CheckIfPointerOffScreen();
-            }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y));
+            scriptManager.activeScript.AddCommandPress(x, y);
         }
 
         public void AddCommandMove(int x, int y)
         {
-            list.Add(DependencyInjector.GetCommand(delegate()
-            {
-                int x1, y1;
-                x1 = WinAPI.GetCursorPosition().X;
-                y1 = WinAPI.GetCursorPosition().Y;
-
-                for (int i = 1; i <= 50; i++)
-                {
-                    MouseMoveTo(x1 + ((x - x1) * i / 50), y1 + ((y - y1) * i / 50));
-                }
-                CheckIfPointerOffScreen();
-            }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y));
+            scriptManager.activeScript.AddCommandMove(x, y);
         }
 
         public void AddCommandDown(int x, int y)
         {
-            list.Add(DependencyInjector.GetCommand(delegate()
-            {
-                MouseMoveTo(x, y);
-                MouseAction(WinAPI.MouseEventFlags.LeftDown);
-                CheckIfPointerOffScreen();
-            }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y));
+            scriptManager.activeScript.AddCommandDown(x, y);
         }
 
         public void EmptyScript()
         {
-            list.Clear();
-            Console.WriteLine("List is empty.");
+            scriptManager.activeScript.EmptyScript();
         }
 
-        public void Open(string fileName)
+        public void NewScript()
         {
-            IList<ICommand> tempList = BinaryObjectIO.LoadObject<IList<ICommand>>(fileName);
-            list.Clear();
+            scriptManager.NewScript();
+        }
 
-            Console.WriteLine();
-            Console.WriteLine("Reading file:");
+        public void OpenScript(string path)
+        {
+            scriptManager.LoadScript(path);
+        }
 
-            foreach (var v in tempList)
+        public void SaveScript(string path)
+        {
+            scriptManager.SaveScript(scriptManager.activeScript, path);
+        }
+
+        /*public IEnumerable<IEnumerable<string>> GetScriptTreeStructure()
+        {
+            foreach (var s in scriptManager.loadedScripts)
+                yield return s.CommandText;
+        }*/
+
+        public TreeNode<string> GetScriptTreeStructure()
+        {
+            var tree = new TreeNode<string>("");
+            foreach (var s in scriptManager.loadedScripts)
             {
-                switch (v.Code) 
+                var child = tree.AddChild(s.Name);
+                foreach (var c in s.commands)
                 {
-                    case CommandCode.G:
-                        AddCommandSleep(v.Args.ElementAt<int>(0));
-                        break;
-                    case CommandCode.S:
-                        AddCommandPress(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
-                        break;
-                    case CommandCode.H:
-                        AddCommandDown(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
-                        break;
-                    case CommandCode.J:
-                        AddCommandMove(v.Args.ElementAt<int>(0), v.Args.ElementAt<int>(1));
-                        break;
-                    case CommandCode.K:
-                        AddCommandRelease();
-                        break;
+                    child.AddChild(c.Text);
                 }
-
-                Console.WriteLine(v.Text);
             }
-        }
-
-        public void Save(string fileName)
-        {
-            foreach (var v in list)
-            {
-                v.ClearMethod();
-            }
-            BinaryObjectIO.SaveObject<IList<ICommand>>(fileName, list);
-
-            Open(fileName);
-            Console.WriteLine("File saved.");
+            return tree;
         }
     }
 }

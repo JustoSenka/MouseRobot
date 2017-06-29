@@ -31,5 +31,10 @@ namespace MouseRobot
         {
             RunMethod = null;
         }
+
+        public override string ToString()
+        {
+            return Text;
+        }
     }
 }

@@ -18,14 +18,14 @@ namespace MouseRobot
             e.message = "Breaking script...\nEnd script.";
         }
 
-        public void Start(IEnumerable<ICommand> list, int repeatTimes)
+        public void Start(Script script, int repeatTimes)
         {
             new Thread(delegate()
             {
                 for (int i = 1; i <= repeatTimes; i++)
                 {
                     Console.WriteLine(i + " - Script start");
-                    foreach (var v in list)
+                    foreach (var v in script.commands)
                     {
                         Console.WriteLine(v.Text);
                         v.Run();
