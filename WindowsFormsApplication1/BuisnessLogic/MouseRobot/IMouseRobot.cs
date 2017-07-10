@@ -21,7 +21,8 @@ namespace MouseRobot
         void NewScript();
         void OpenScript(string fileName);
         void SaveScript(string fileName);
-
+        void RemoveScript(int index);
+        
         TreeNode<string> GetScriptTreeStructure(); 
     }
 }

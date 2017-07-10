@@ -19,6 +19,7 @@ namespace MouseRobot
         {
             this.scriptThread = scriptThread;
             this.scriptManager = scriptManager;
+            scriptManager.NewScript();
         }
 
         public void StartScript(int repeatTimes)
