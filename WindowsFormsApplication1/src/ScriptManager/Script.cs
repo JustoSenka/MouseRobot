@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MouseRobot
+namespace Robot
 {
     [Serializable]
     public class Script : ICloneable
     {
-        public IList<ICommand> commands;
+        public IList<Command> commands;
         public string path;
 
         public IEnumerable<string> CommandText
@@ -39,7 +39,7 @@ namespace MouseRobot
 
         public Script()
         {
-            commands = new List<ICommand>();
+            commands = new List<Command>();
             path = "";
         }
 
@@ -50,7 +50,7 @@ namespace MouseRobot
 
         public void AddCommandSleep(int time)
         {
-            commands.Add(DependencyInjector.GetCommand(() =>
+            commands.Add(new Command(() =>
             {
                 Thread.Sleep(time);
                 CheckIfPointerOffScreen();
@@ -59,7 +59,7 @@ namespace MouseRobot
 
         public void AddCommandRelease()
         {
-            commands.Add(DependencyInjector.GetCommand(() =>
+            commands.Add(new Command(() =>
             {
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
                 CheckIfPointerOffScreen();
@@ -68,7 +68,7 @@ namespace MouseRobot
 
         public void AddCommandPress(int x, int y)
         {
-            commands.Add(DependencyInjector.GetCommand(delegate ()
+            commands.Add(new Command(delegate ()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
@@ -79,7 +79,7 @@ namespace MouseRobot
 
         public void AddCommandMove(int x, int y)
         {
-            commands.Add(DependencyInjector.GetCommand(delegate ()
+            commands.Add(new Command(delegate ()
             {
                 int x1, y1;
                 x1 = WinAPI.GetCursorPosition().X;
@@ -95,7 +95,7 @@ namespace MouseRobot
 
         public void AddCommandDown(int x, int y)
         {
-            commands.Add(DependencyInjector.GetCommand(delegate ()
+            commands.Add(new Command(delegate ()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
@@ -125,7 +125,6 @@ namespace MouseRobot
         {
             if (WinAPI.GetCursorPosition().Y < 5)
             {
-                // scriptThread.BreakEvent += scriptThread.OnBreakEvent;
                 // Stop the script here
             }
             return WinAPI.GetCursorPosition().Y < 5;

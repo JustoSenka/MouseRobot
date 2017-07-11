@@ -1,4 +1,4 @@
-﻿using MouseRobot;
+﻿using Robot;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
-namespace MouseRobot
+namespace Robot
 {
     public static class BinaryObjectIO
     {
@@ -20,7 +20,7 @@ namespace MouseRobot
                 {
                     return (T)new BinaryFormatter().Deserialize(stream);
                 }
-                catch (SerializationException se)
+                catch (SerializationException)
                 {
                     Console.WriteLine("Failed to read from file.");
                     return default(T);

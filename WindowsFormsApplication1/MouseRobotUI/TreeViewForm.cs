@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using MouseRobot;
+using Robot;
 
-namespace MouseRobotUI
+namespace RobotUI
 {
     public partial class TreeViewForm : Form
     {
-        Lazy<IMouseRobot> lazyMR = DependencyInjector.GetLazyMouseRobot();
-
         bool keyDown = false;
         decimal timeDown = 0;
 
@@ -79,15 +71,15 @@ namespace MouseRobotUI
             {
                 case "S":
                     //mr.AddCommandPress(x, y);
-                    lazyMR.Value.AddCommandPress(x, y);
+                    MouseRobot.Instance.AddCommandPress(x, y);
                     break;
                 case "D":
-                    lazyMR.Value.AddCommandPress(x, y);
-                    lazyMR.Value.AddCommandSleep((int)timeDown);
+                    MouseRobot.Instance.AddCommandPress(x, y);
+                    MouseRobot.Instance.AddCommandSleep((int)timeDown);
                     Console.WriteLine("Sleep for..." + timeDown);
                     break;
                 case "F":
-                    lazyMR.Value.AddCommandSleep((int)timeDown);
+                    MouseRobot.Instance.AddCommandSleep((int)timeDown);
                     Console.WriteLine("Sleep for..." + timeDown);
                     break;
                 case "G":
@@ -102,16 +94,16 @@ namespace MouseRobotUI
                         Console.WriteLine(fe.ToString());
                         sleepTime = 1000;
                     }
-                    lazyMR.Value.AddCommandSleep(sleepTime);
+                    MouseRobot.Instance.AddCommandSleep(sleepTime);
                     break;
                 case "H":
-                    lazyMR.Value.AddCommandDown(x, y);
+                    MouseRobot.Instance.AddCommandDown(x, y);
                     break;
                 case "J":
-                    lazyMR.Value.AddCommandMove(x, y);
+                    MouseRobot.Instance.AddCommandMove(x, y);
                     break;
                 case "K":
-                    lazyMR.Value.AddCommandRelease();
+                    MouseRobot.Instance.AddCommandRelease();
                     break;
                 case "R":
 
@@ -126,7 +118,7 @@ namespace MouseRobotUI
 
                     break;
                 case "Q":
-                    lazyMR.Value.EmptyScript();
+                    MouseRobot.Instance.EmptyScript();
                     break;
             }
 
@@ -136,7 +128,7 @@ namespace MouseRobotUI
 
         private void button2_Click(object sender, EventArgs e)
         {
-            lazyMR.Value.StopScript();
+            MouseRobot.Instance.StopScript();
         }
 
         private int TryReadRepeatTimes()
@@ -158,7 +150,7 @@ namespace MouseRobotUI
         {
             try
             {
-                lazyMR.Value.StartScript(repeatTimes);
+                MouseRobot.Instance.StartScript(repeatTimes);
             }
             catch (EmptyScriptException ese)
             {
@@ -168,7 +160,7 @@ namespace MouseRobotUI
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lazyMR.Value.NewScript();
+            MouseRobot.Instance.NewScript();
             UpdateTreeView();
         }
 
@@ -179,7 +171,7 @@ namespace MouseRobotUI
             openDialog.Title = "Select a script file to load.";
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
-                lazyMR.Value.OpenScript(openDialog.FileName);
+                MouseRobot.Instance.OpenScript(openDialog.FileName);
             }
             UpdateTreeView();
         }
@@ -191,7 +183,7 @@ namespace MouseRobotUI
             saveDialog.Title = "Select a script file to load.";
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                lazyMR.Value.SaveScript(saveDialog.FileName);
+                MouseRobot.Instance.SaveScript(saveDialog.FileName);
             }
             UpdateTreeView();
         }
@@ -199,7 +191,6 @@ namespace MouseRobotUI
         private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             this.Dispose();
-            lazyMR = null;
             GC.Collect();
             Application.Exit();
         }
@@ -209,7 +200,7 @@ namespace MouseRobotUI
             Console.WriteLine("Clear & Update tree view");
             treeView.Nodes.Clear();
 
-            var tree = lazyMR.Value.GetScriptTreeStructure();
+            var tree = MouseRobot.Instance.GetScriptTreeStructure();
             foreach (var script in tree)
             {
                 TreeNode scriptNode = new TreeNode(script.value);

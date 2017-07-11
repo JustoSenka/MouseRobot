@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MouseRobotUI.Properties {
+namespace RobotUI.Properties {
     using System;
     
     

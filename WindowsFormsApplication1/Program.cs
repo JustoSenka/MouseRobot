@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MouseRobot;
+using Robot;
 
-namespace MouseRobotUI
+namespace RobotUI
 {
     static class Program
     {
@@ -17,7 +17,7 @@ namespace MouseRobotUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(DependencyInjector.GetMainForm());
+            Application.Run(new TreeViewForm());
         }
     }
 }

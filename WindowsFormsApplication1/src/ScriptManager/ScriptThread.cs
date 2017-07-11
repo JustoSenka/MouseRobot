@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MouseRobot
+namespace Robot
 {
-    public class ScriptThreadImpl : IScriptThread
+    public class ScriptThread
     {
+        static private ScriptThread m_Instance = new ScriptThread();
+        static public ScriptThread Instance { get { return m_Instance; } }
+        private ScriptThread() { }
+
         public void Start(Script script, int repeatTimes)
         {
             new Thread(delegate()

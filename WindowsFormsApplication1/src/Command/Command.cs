@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MouseRobot
+namespace Robot
 {
     [Serializable]
-    public class Command : ICommand
+    public class Command
     {
         private Action RunMethod { set; get; }
         public CommandCode Code { set; get; }

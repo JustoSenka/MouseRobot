@@ -1,4 +1,4 @@
-﻿namespace MouseRobotUI
+﻿namespace RobotUI
 {
     partial class TreeViewForm
     {

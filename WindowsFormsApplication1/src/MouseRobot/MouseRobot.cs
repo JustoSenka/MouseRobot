@@ -5,31 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace MouseRobot
+namespace Robot
 {
-    public partial class MouseRobotImpl : IMouseRobot
+    public class MouseRobot
     {
-        // public delegate void MyEventHandler(object sender, CustomEventArgs e);
+        static private MouseRobot m_Instance = new MouseRobot();
+        static public MouseRobot Instance { get { return m_Instance; } }
 
-        public IScriptThread scriptThread;
-        public IScriptManager scriptManager;
-
-        public MouseRobotImpl(IScriptThread scriptThread, IScriptManager scriptManager)
+        private MouseRobot()
         {
-            this.scriptThread = scriptThread;
-            this.scriptManager = scriptManager;
-            scriptManager.NewScript();
+            ScriptManager.Instance.NewScript();
         }
 
         public void StartScript(int repeatTimes)
         {
-            if (scriptManager.activeScript != null)
+            if (ScriptManager.Instance.activeScript != null)
 
-                if (scriptManager.activeScript.commands.Count <= 0)
+                if (ScriptManager.Instance.activeScript.commands.Count <= 0)
                 {
                     throw new EmptyScriptException("Script is empty");
                 }
-            scriptThread.Start(scriptManager.activeScript, repeatTimes);
+            ScriptThread.Instance.Start(ScriptManager.Instance.activeScript, repeatTimes);
         }
 
         public void StopScript()
@@ -39,59 +35,59 @@ namespace MouseRobot
 
         public void AddCommandSleep(int time)
         {
-            scriptManager.activeScript.AddCommandSleep(time);
+            ScriptManager.Instance.activeScript.AddCommandSleep(time);
         }
 
         public void AddCommandRelease()
         {
-            scriptManager.activeScript.AddCommandRelease();
+            ScriptManager.Instance.activeScript.AddCommandRelease();
         }
 
         public void AddCommandPress(int x, int y)
         {
-            scriptManager.activeScript.AddCommandPress(x, y);
+            ScriptManager.Instance.activeScript.AddCommandPress(x, y);
         }
 
         public void AddCommandMove(int x, int y)
         {
-            scriptManager.activeScript.AddCommandMove(x, y);
+            ScriptManager.Instance.activeScript.AddCommandMove(x, y);
         }
 
         public void AddCommandDown(int x, int y)
         {
-            scriptManager.activeScript.AddCommandDown(x, y);
+            ScriptManager.Instance.activeScript.AddCommandDown(x, y);
         }
 
         public void EmptyScript()
         {
-            scriptManager.activeScript.EmptyScript();
+            ScriptManager.Instance.activeScript.EmptyScript();
         }
 
         public void NewScript()
         {
-            scriptManager.NewScript();
+            ScriptManager.Instance.NewScript();
         }
 
         public void OpenScript(string path)
         {
-            scriptManager.LoadScript(path);
+            ScriptManager.Instance.LoadScript(path);
         }
 
         public void SaveScript(string path)
         {
-            scriptManager.SaveScript(scriptManager.activeScript, path);
+            ScriptManager.Instance.SaveScript(ScriptManager.Instance.activeScript, path);
         }
 
         /*public IEnumerable<IEnumerable<string>> GetScriptTreeStructure()
         {
-            foreach (var s in scriptManager.loadedScripts)
+            foreach (var s in ScriptManager.Instance.loadedScripts)
                 yield return s.CommandText;
         }*/
 
         public TreeNode<string> GetScriptTreeStructure()
         {
             var tree = new TreeNode<string>("");
-            foreach (var s in scriptManager.loadedScripts)
+            foreach (var s in ScriptManager.Instance.loadedScripts)
             {
                 var child = tree.AddChild(s.Name);
                 foreach (var c in s.commands)

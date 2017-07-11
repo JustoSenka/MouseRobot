@@ -4,14 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MouseRobot
+namespace Robot
 {
-    public class ScriptManager : IScriptManager
+    public class ScriptManager 
     {
+        static private ScriptManager m_Instance = new ScriptManager();
+        static public ScriptManager Instance { get { return m_Instance; } }
+
         public IList<Script> loadedScripts { get; }
         public Script activeScript { get; set; }
 
-        public ScriptManager()
+        private ScriptManager()
         {
             loadedScripts = new List<Script>();
         }

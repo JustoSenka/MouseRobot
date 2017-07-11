@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Threading;
 
-namespace MouseRobot
+namespace Robot
 {
     public static class WinAPI
     {

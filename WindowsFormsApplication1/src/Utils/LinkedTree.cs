@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MouseRobot
+namespace Robot
 {
     public delegate void TreeVisitor<T>(T nodeData);
 
