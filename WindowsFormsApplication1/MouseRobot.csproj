@@ -73,14 +73,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuisnessLogic\Command\Command.cs" />
-    <Compile Include="BuisnessLogic\CustomEventArgs.cs" />
-    <Compile Include="BuisnessLogic\ScriptManager\IScriptManager.cs" />
-    <Compile Include="BuisnessLogic\ScriptManager\Script.cs" />
-    <Compile Include="BuisnessLogic\ScriptManager\ScriptManager.cs" />
-    <Compile Include="BuisnessLogic\Exceptions\CorruptedConfigsException.cs" />
-    <Compile Include="BuisnessLogic\Utils\ExtensionMethods.cs" />
-    <Compile Include="BuisnessLogic\Utils\LinkedTree.cs" />
+    <Compile Include="src\Command\Command.cs" />
+    <Compile Include="src\ScriptManager\IScriptManager.cs" />
+    <Compile Include="src\ScriptManager\Script.cs" />
+    <Compile Include="src\ScriptManager\ScriptManager.cs" />
+    <Compile Include="src\Exceptions\CorruptedConfigsException.cs" />
+    <Compile Include="src\Utils\ExtensionMethods.cs" />
+    <Compile Include="src\Utils\LinkedTree.cs" />
     <Compile Include="MouseRobotUI\TreeViewForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,17 +98,16 @@
     <Compile Include="MouseRobotUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="BuisnessLogic\Command\CommandCode.cs" />
-    <Compile Include="BuisnessLogic\Command\ICommand.cs" />
-    <Compile Include="BuisnessLogic\Exceptions\EmptyScriptException.cs" />
-    <Compile Include="BuisnessLogic\MouseRobot\IMouseRobot.cs" />
-    <Compile Include="BuisnessLogic\MouseRobot\MouseRobotImplDefs.cs" />
-    <Compile Include="BuisnessLogic\MouseRobot\MouseRobotImpl.cs" />
-    <Compile Include="BuisnessLogic\ScriptThread\IScriptThread.cs" />
-    <Compile Include="BuisnessLogic\Utils\BinaryObjectIO.cs" />
-    <Compile Include="BuisnessLogic\ScriptThread\ScriptThreadImpl.cs" />
-    <Compile Include="BuisnessLogic\Utils\DependencyInjector.cs" />
-    <Compile Include="BuisnessLogic\Utils\WinAPI.cs" />
+    <Compile Include="src\Command\CommandCode.cs" />
+    <Compile Include="src\Command\ICommand.cs" />
+    <Compile Include="src\Exceptions\EmptyScriptException.cs" />
+    <Compile Include="src\MouseRobot\IMouseRobot.cs" />
+    <Compile Include="src\MouseRobot\MouseRobotImpl.cs" />
+    <Compile Include="src\ScriptThread\IScriptThread.cs" />
+    <Compile Include="src\Utils\BinaryObjectIO.cs" />
+    <Compile Include="src\ScriptThread\ScriptThreadImpl.cs" />
+    <Compile Include="src\Utils\DependencyInjector.cs" />
+    <Compile Include="src\Utils\WinAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using MouseRobotUI.BuisnessLogic;
 
 namespace MouseRobot
 {
@@ -35,10 +34,7 @@ namespace MouseRobot
 
         public void StopScript()
         {
-            if (scriptManager.activeScript.commands.Count != 0)
-            {
-                scriptThread.BreakEvent += scriptThread.OnBreakEvent;
-            }
+            // TO BE IMPLEMENTED
         }
 
         public void AddCommandSleep(int time)
@@ -104,6 +100,11 @@ namespace MouseRobot
                 }
             }
             return tree;
+        }
+
+        public void RemoveScript(int index)
+        {
+            throw new NotImplementedException();
         }
     }
 }

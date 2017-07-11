@@ -1,5 +1,4 @@
-﻿using MouseRobotUI.BuisnessLogic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +9,6 @@ namespace MouseRobot
 {
     public class ScriptThreadImpl : IScriptThread
     {
-        public delegate void MyEventHandler(object sender, CustomEventArgs e);
-        public event MyEventHandler BreakEvent;
-
-        void OnBreakEvent(object sender, CustomEventArgs e)
-        {
-            e.message = "Breaking script...\nEnd script.";
-        }
-
         public void Start(Script script, int repeatTimes)
         {
             new Thread(delegate()
@@ -29,28 +20,11 @@ namespace MouseRobot
                     {
                         Console.WriteLine(v.Text);
                         v.Run();
-
-                        if (BreakEvent != null)
-                        {
-                            BreakEvent.Invoke(this, null);
-                            BreakEvent -= new MyEventHandler(OnBreakEvent);
-                            return;
-                        }
+                        // BREAK THE THREAD HERE SOMEWHERE
                     }
                 }
                 Console.WriteLine("End script.");
             }).Start();
-        }
-
-        event MouseRobot.MyEventHandler IScriptThread.BreakEvent
-        {
-            add { }
-            remove { }
-        }
-
-        void IScriptThread.OnBreakEvent(object sender, CustomEventArgs e)
-        {
-            throw new NotImplementedException();
         }
     }
 }
