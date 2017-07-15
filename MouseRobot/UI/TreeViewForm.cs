@@ -328,5 +328,15 @@ namespace RobotUI
             
             return (targetNode == null && draggedNode.NextNode != null) || (targetNode != null && targetNode != draggedNode && targetNode.Parent != draggedNode);
         }
+        
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView.SelectedNode.Level == 0)
+                ScriptManager.Instance.RemoveScript(treeView.SelectedNode.Index);
+            else
+                ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].RemoveCommand(treeView.SelectedNode.Index);
+
+            treeView.SelectedNode.Remove();
+        }
     }
 }

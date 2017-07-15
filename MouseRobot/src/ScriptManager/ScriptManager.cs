@@ -37,7 +37,8 @@ namespace Robot
 
         public void RemoveScript(int position)
         {
-            RemoveScript(m_LoadedScripts[position]);
+            m_LoadedScripts.RemoveAt(position);
+            MakeSureActiveScriptExist();
         }
 
         public Script LoadScript(string path)
