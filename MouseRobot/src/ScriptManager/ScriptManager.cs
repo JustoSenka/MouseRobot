@@ -20,10 +20,17 @@ namespace Robot
             m_LoadedScripts = new List<Script>();
         }
 
-        public Script NewScript()
+        public Script NewScript(Script clone = null)
         {
-            var script = new Script();
+            Script script;
+
+            if (clone == null)
+                script = new Script();
+            else
+                script = (Script) clone.Clone();
+
             m_LoadedScripts.Add(script);
+            script.IsDirty = true; 
 
             MakeSureActiveScriptExist();
             return script;

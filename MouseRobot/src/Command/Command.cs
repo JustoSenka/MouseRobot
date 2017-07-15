@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Robot
 {
     [Serializable]
-    public class Command // struct maybe?
+    public class Command : ICloneable
     {
         public CommandCode Code { set; get; }
         public string Text { set; get; }
@@ -37,6 +37,11 @@ namespace Robot
         public override string ToString()
         {
             return Text;
+        }
+
+        public object Clone()
+        {
+            return new Command(this.m_RunMethod, this.Text, this.Code, this.Args);
         }
     }
 }

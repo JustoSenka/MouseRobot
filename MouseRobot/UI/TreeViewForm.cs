@@ -338,5 +338,30 @@ namespace RobotUI
 
             treeView.SelectedNode.Remove();
         }
+
+        private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode clone;
+            if (treeView.SelectedNode.Level == 0)
+            {
+                var s = ScriptManager.Instance.NewScript(ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Index]);
+                ScriptManager.Instance.MoveScriptAfter(ScriptManager.Instance.LoadedScripts.Count - 1, treeView.SelectedNode.Index);
+
+                clone = (TreeNode) treeView.SelectedNode.Clone();
+                clone.Text = s.Name;
+                treeView.Nodes.Insert(treeView.SelectedNode.Index + 1, clone);
+            }
+            else
+            {
+                var c = (Command) ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].Commands[treeView.SelectedNode.Index].Clone();
+                ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].InsertCommand(treeView.SelectedNode.Index + 1, c);
+
+                clone = (TreeNode)treeView.SelectedNode.Clone();
+                treeView.SelectedNode.Parent.Nodes.Insert(treeView.SelectedNode.Index + 1, clone);
+            }
+
+            treeView.SelectedNode = clone;
+            treeView.Focus();
+        }
     }
 }
