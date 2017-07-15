@@ -21,7 +21,7 @@ namespace Robot
         {
             if (ScriptManager.Instance.activeScript != null)
 
-                if (ScriptManager.Instance.activeScript.commands.Count <= 0)
+                if (ScriptManager.Instance.activeScript.Commands.Count <= 0)
                 {
                     throw new EmptyScriptException("Script is empty");
                 }
@@ -84,19 +84,7 @@ namespace Robot
                 yield return s.CommandText;
         }*/
 
-        public TreeNode<string> GetScriptTreeStructure()
-        {
-            var tree = new TreeNode<string>("");
-            foreach (var s in ScriptManager.Instance.loadedScripts)
-            {
-                var child = tree.AddChild(s.Name);
-                foreach (var c in s.commands)
-                {
-                    child.AddChild(c.Text);
-                }
-            }
-            return tree;
-        }
+        
 
         public void RemoveScript(int index)
         {

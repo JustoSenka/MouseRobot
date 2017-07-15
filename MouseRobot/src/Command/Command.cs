@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 namespace Robot
 {
     [Serializable]
-    public class Command
+    public class Command // struct maybe?
     {
-        private Action RunMethod { set; get; }
         public CommandCode Code { set; get; }
         public string Text { set; get; }
         public int[] Args { set; get; }
 
+        [NonSerialized]
+        private Action m_RunMethod;
+
         public Command(Action runMethod, string text, CommandCode code, params int[] args)
         {
-            RunMethod = runMethod;
+            m_RunMethod = runMethod;
             Text = text;
             Code = code;
             Args = args;
@@ -24,12 +26,12 @@ namespace Robot
 
         public void Run()
         {
-            RunMethod();
+            m_RunMethod();
         }
 
         public void ClearMethod()
         {
-            RunMethod = null;
+            m_RunMethod = null;
         }
 
         public override string ToString()

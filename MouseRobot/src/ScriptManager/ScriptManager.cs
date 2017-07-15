@@ -1,28 +1,29 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Robot
 {
-    public class ScriptManager 
+    public class ScriptManager : IEnumerable<Script>
     {
         static private ScriptManager m_Instance = new ScriptManager();
         static public ScriptManager Instance { get { return m_Instance; } }
 
-        public IList<Script> loadedScripts { get; }
+        private readonly IList<Script> m_LoadedScripts;
+        public IReadOnlyList<Script> LoadedScripts { get { return m_LoadedScripts.ToList().AsReadOnly(); } }
+
         public Script activeScript { get; set; }
 
         private ScriptManager()
         {
-            loadedScripts = new List<Script>();
+            m_LoadedScripts = new List<Script>();
         }
 
         public Script NewScript()
         {
             var script = new Script();
-            loadedScripts.Add(script);
+            m_LoadedScripts.Add(script);
 
             MakeSureActiveScriptExist();
             return script;
@@ -30,20 +31,20 @@ namespace Robot
 
         public void RemoveScript(Script script)
         {
-            loadedScripts.Remove(script);
+            m_LoadedScripts.Remove(script);
             MakeSureActiveScriptExist();
         }
 
         public void RemoveScript(int position)
         {
-            RemoveScript(loadedScripts[position]);
+            RemoveScript(m_LoadedScripts[position]);
         }
 
         public Script LoadScript(string path)
         {
-            foreach (var s in loadedScripts)
+            foreach (var s in m_LoadedScripts)
             {
-                if (s.path.Equals(path))
+                if (s.Path.Equals(path))
                 {
                     Console.WriteLine("ERROR: Script is already loaded: " + path);
                     return null;
@@ -51,10 +52,10 @@ namespace Robot
             }
 
             var script = (Script)BinaryObjectIO.LoadObject<Script>(path).Clone();
-            script.path = path;
+            script.Path = path;
 
             Console.WriteLine("File loaded.");
-            loadedScripts.Add(script);
+            m_LoadedScripts.Add(script);
 
             MakeSureActiveScriptExist();
             return script;
@@ -63,25 +64,62 @@ namespace Robot
         public void SaveScript(Script script, string path)
         {
             var scriptToSave = (Script)script.Clone();
-            foreach (var v in scriptToSave.commands)
-            {
-                v.ClearMethod(); // Don't save actions/delegates, they're not serializable
-            }
-            BinaryObjectIO.SaveObject(path, scriptToSave);
 
-            Console.WriteLine("File saved.");
+            BinaryObjectIO.SaveObject(path, scriptToSave);
+            script.Path = path;
+
+            Console.WriteLine("File saved: " + path);
         }
+
+        public void MoveCommandAfter(int commandIndex, int positionAfter, int scriptIndex, int destinationScriptIndex = -1)
+        {
+            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
+            {
+                m_LoadedScripts[scriptIndex].MoveCommandAfter(commandIndex, positionAfter);
+            }
+            else // Move between two different scripts
+            {
+                var command = m_LoadedScripts[scriptIndex].Commands[commandIndex];
+                m_LoadedScripts[scriptIndex].RemoveCommand(commandIndex);
+                m_LoadedScripts[destinationScriptIndex].InsertCommand(positionAfter + 1, command);
+
+                m_LoadedScripts[destinationScriptIndex].IsDirty = true;
+            }
+
+            m_LoadedScripts[scriptIndex].IsDirty = true;
+        }
+
+        public void MoveScriptAfter(int index, int after)
+        {
+            m_LoadedScripts.MoveAfter(index, after);
+        }
+
+        public void MoveScriptBefore(int index, int before)
+        {
+            m_LoadedScripts.MoveBefore(index, before);
+        }
+
 
         private void MakeSureActiveScriptExist()
         {
-            if (!loadedScripts.Contains(activeScript) || loadedScripts.Count == 0)
+            if (!m_LoadedScripts.Contains(activeScript) || m_LoadedScripts.Count == 0)
                 activeScript = null;
-            
-            if (loadedScripts.Count == 1)
-                activeScript = loadedScripts[0];
 
-            if (activeScript == null && loadedScripts.Count > 0)
-                activeScript = loadedScripts[0];
+            if (m_LoadedScripts.Count == 1)
+                activeScript = m_LoadedScripts[0];
+
+            if (activeScript == null && m_LoadedScripts.Count > 0)
+                activeScript = m_LoadedScripts[0];
+        }
+
+        public IEnumerator<Script> GetEnumerator()
+        {
+            return m_LoadedScripts.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return m_LoadedScripts.GetEnumerator();
         }
     }
 }

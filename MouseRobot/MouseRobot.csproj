@@ -78,6 +78,7 @@
     <Compile Include="src\ScriptManager\ScriptManager.cs" />
     <Compile Include="src\Exceptions\CorruptedConfigsException.cs" />
     <Compile Include="src\ScriptManager\ScriptThread.cs" />
+    <Compile Include="src\Utils\Common.cs" />
     <Compile Include="src\Utils\ExtensionMethods.cs" />
     <Compile Include="src\Utils\LinkedTree.cs" />
     <Compile Include="UI\TreeViewForm.cs">
@@ -107,7 +108,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -141,7 +141,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="src\BaseClasses\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Icons\gear_ICO_512.png" />
     <Content Include="Resources\Icons\script_ICO_256.png" />

@@ -1,7 +1,10 @@
-﻿using System;
+﻿#define ENABLE_UI_TESTING
+
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Robot;
+using System.Diagnostics;
 
 namespace RobotUI
 {
@@ -167,7 +170,7 @@ namespace RobotUI
         private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
+            openDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtension.Script);
             openDialog.Title = "Select a script file to load.";
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
@@ -179,7 +182,7 @@ namespace RobotUI
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Filter = "Mouse Robot File (*.mrb)|*.mrb";
+            saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtension.Script);
             saveDialog.Title = "Select a script file to load.";
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
@@ -200,16 +203,16 @@ namespace RobotUI
             Console.WriteLine("Clear & Update tree view");
             treeView.Nodes.Clear();
 
-            var tree = MouseRobot.Instance.GetScriptTreeStructure();
-            foreach (var script in tree)
+            foreach (var script in ScriptManager.Instance)
             {
-                TreeNode scriptNode = new TreeNode(script.value);
+                var addDirtyToName = (script.IsDirty) ? "*" : "";
+                TreeNode scriptNode = new TreeNode(script.Name + addDirtyToName);
                 scriptNode.ImageIndex = 0;
                 scriptNode.SelectedImageIndex = 0;
                 treeView.Nodes.Add(scriptNode);
                 foreach (var c in script)
                 {
-                    var commandNode = scriptNode.Nodes.Add(c.value);
+                    var commandNode = scriptNode.Nodes.Add(c.ToString());
                     commandNode.ImageIndex = 1;
                     commandNode.SelectedImageIndex = 1;
                 }
@@ -262,26 +265,55 @@ namespace RobotUI
             if (node.Level == 0)
             {
                 nodeAfter = (nodeAfter.Level == 0) ? nodeAfter : nodeAfter.Parent;
+                ScriptManager.Instance.MoveScriptAfter(node.Index, nodeAfter.Index);
+
                 node.Remove();
                 treeView.Nodes.Insert(nodeAfter.Index + 1, node);
             }
             else if (node.Level == 1 && nodeAfter.Level == 0)
             {
+                ScriptManager.Instance.MoveCommandAfter(node.Index, -1, node.Parent.Index, nodeAfter.Index);
+
                 node.Remove();
                 nodeAfter.Nodes.Insert(0, node);
             }
             else if (node.Level == 1 && nodeAfter.Level == 1 && node.Parent == nodeAfter.Parent)
             {
+                ScriptManager.Instance.MoveCommandAfter(node.Index, nodeAfter.Index, nodeAfter.Parent.Index);
+
                 node.Remove();
                 nodeAfter.Parent.Nodes.Insert(nodeAfter.Index + 1, node);
             }
             else // nodes have different parents
             {
-                //var parent = nodeAfter.Parent;
+                ScriptManager.Instance.MoveCommandAfter(node.Index, nodeAfter.Index, node.Parent.Index, nodeAfter.Parent.Index);
                 node.Remove();
                 nodeAfter.Parent.Nodes.Insert(nodeAfter.Index + 1, node);
             }
+
+#if ENABLE_UI_TESTING
+            TestIfTreeIsTheSameAsInScriptManager();
+#endif
         }
+
+
+#if ENABLE_UI_TESTING
+        void TestIfTreeIsTheSameAsInScriptManager()
+        {
+            for (int i = 0; i < treeView.Nodes.Count; i++)
+            {
+                Debug.Assert(treeView.Nodes[i].Text.Contains(ScriptManager.Instance.LoadedScripts[i].Name), 
+                    string.Format("Hierarchy script missmatch: i:{0}", i));
+
+                for (int j = 0; j < treeView.Nodes[i].Nodes.Count; j++)
+                {
+                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands[j].Text),
+                        string.Format("Hierarchy missmatch: i:{0} j:{1}", i, j));
+                }
+            }
+        }
+#endif
+
 
         /// <summary>
         /// Can only release drag and drop if items to others, not self. They only change positions, not level. 

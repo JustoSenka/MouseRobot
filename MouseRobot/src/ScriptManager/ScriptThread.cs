@@ -20,7 +20,7 @@ namespace Robot
                 for (int i = 1; i <= repeatTimes; i++)
                 {
                     Console.WriteLine(i + " - Script start");
-                    foreach (var v in script.commands)
+                    foreach (var v in script.Commands)
                     {
                         Console.WriteLine(v.Text);
                         v.Run();
