@@ -19,11 +19,21 @@ namespace Robot
         [NonSerialized]
         private string m_Path;
 
+        public event Action<Script> DirtyChanged;
+
         public string Name
         {
             get
             {
-                return (Path == "") ? "New Script" : Regex.Match(Path, RegexExpression.GetScriptNameFromPath).Value.Trim('/', '\\').Replace(FileExtension.ScriptD, "");
+                return (Path == "") ? "New Script" : Regex.Match(Path, RegexExpression.GetScriptNameFromPath).Value.Trim('/', '\\').Replace(FileExtensions.ScriptD, "");
+            }
+        }
+
+        public int Index
+        {
+            get
+            {
+                return ScriptManager.Instance.LoadedScripts.IndexOf(this);
             }
         }
 
@@ -148,7 +158,6 @@ namespace Robot
         public object Clone()
         {
             var script = new Script();
-            script.m_IsDirty = true;
 
             foreach (var v in m_Commands)
             {
@@ -172,6 +181,7 @@ namespace Robot
                 }
             }
 
+            script.m_IsDirty = true;
             return script;
         }
 
@@ -199,6 +209,10 @@ namespace Robot
             {
                 Debug.Assert(ScriptManager.Instance.IsTheCaller(),
                     "Only ScriptManager can change script dirty value. It should not be accessed from somewhere else");
+
+                if (m_IsDirty != value)
+                    DirtyChanged?.Invoke(this);
+
                 m_IsDirty = value;
             }
             get { return m_IsDirty; }

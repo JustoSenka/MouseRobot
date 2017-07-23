@@ -19,13 +19,13 @@ namespace Robot
 
         public void StartScript(int repeatTimes)
         {
-            if (ScriptManager.Instance.activeScript != null)
+            if (ScriptManager.Instance.ActiveScript != null)
 
-                if (ScriptManager.Instance.activeScript.Commands.Count <= 0)
+                if (ScriptManager.Instance.ActiveScript.Commands.Count <= 0)
                 {
                     throw new EmptyScriptException("Script is empty");
                 }
-            ScriptThread.Instance.Start(ScriptManager.Instance.activeScript, repeatTimes);
+            ScriptThread.Instance.Start(ScriptManager.Instance.ActiveScript, repeatTimes);
         }
 
         public void StopScript()
@@ -35,60 +35,27 @@ namespace Robot
 
         public void AddCommandSleep(int time)
         {
-            ScriptManager.Instance.activeScript.AddCommandSleep(time);
+            ScriptManager.Instance.ActiveScript.AddCommandSleep(time);
         }
 
         public void AddCommandRelease()
         {
-            ScriptManager.Instance.activeScript.AddCommandRelease();
+            ScriptManager.Instance.ActiveScript.AddCommandRelease();
         }
 
         public void AddCommandPress(int x, int y)
         {
-            ScriptManager.Instance.activeScript.AddCommandPress(x, y);
+            ScriptManager.Instance.ActiveScript.AddCommandPress(x, y);
         }
 
         public void AddCommandMove(int x, int y)
         {
-            ScriptManager.Instance.activeScript.AddCommandMove(x, y);
+            ScriptManager.Instance.ActiveScript.AddCommandMove(x, y);
         }
 
         public void AddCommandDown(int x, int y)
         {
-            ScriptManager.Instance.activeScript.AddCommandDown(x, y);
-        }
-
-        public void EmptyScript()
-        {
-            ScriptManager.Instance.activeScript.EmptyScript();
-        }
-
-        public void NewScript()
-        {
-            ScriptManager.Instance.NewScript();
-        }
-
-        public void OpenScript(string path)
-        {
-            ScriptManager.Instance.LoadScript(path);
-        }
-
-        public void SaveScript(string path)
-        {
-            ScriptManager.Instance.SaveScript(ScriptManager.Instance.activeScript, path);
-        }
-
-        /*public IEnumerable<IEnumerable<string>> GetScriptTreeStructure()
-        {
-            foreach (var s in ScriptManager.Instance.loadedScripts)
-                yield return s.CommandText;
-        }*/
-
-        
-
-        public void RemoveScript(int index)
-        {
-            throw new NotImplementedException();
+            ScriptManager.Instance.ActiveScript.AddCommandDown(x, y);
         }
     }
 }

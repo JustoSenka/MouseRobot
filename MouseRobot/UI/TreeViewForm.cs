@@ -1,10 +1,9 @@
-﻿#define ENABLE_UI_TESTING
-
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Robot;
 using System.Diagnostics;
+using RobotUI.Utils;
 
 namespace RobotUI
 {
@@ -16,9 +15,23 @@ namespace RobotUI
         public TreeViewForm()
         {
             InitializeComponent();
-            UpdateTreeView();
+
+            this.Font = Fonts.Default;
+            treeView.Font = Fonts.Default;
+            //this.Controls.ForEach((Control c) => c.Font = Fonts.Default);
+
+            ScriptTreeViewUtils.UpdateTreeView(treeView);
+            ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
+        private void ExitApplication(object sender, EventArgs e)
+        {
+            this.Dispose();
+            GC.Collect();
+            Application.Exit();
+        }
+
+        #region Command registering functionality
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
             if (keyDown)
@@ -61,7 +74,7 @@ namespace RobotUI
                     break;
             }
 
-            UpdateTreeView();
+            ScriptTreeViewUtils.UpdateTreeView(treeView);
         }
 
         private void button1_KeyUp(object sender, KeyEventArgs e)
@@ -73,7 +86,6 @@ namespace RobotUI
             switch (e.KeyData.ToString().ToUpper())
             {
                 case "S":
-                    //mr.AddCommandPress(x, y);
                     MouseRobot.Instance.AddCommandPress(x, y);
                     break;
                 case "D":
@@ -114,25 +126,19 @@ namespace RobotUI
                     TryStartScript(repeatTimes);
 
                     break;
-                case "O":
-
-                    break;
-                case "P":
-
-                    break;
-                case "Q":
-                    MouseRobot.Instance.EmptyScript();
-                    break;
             }
 
             keyDown = false;
-            UpdateTreeView();
+            ScriptTreeViewUtils.UpdateTreeView(treeView);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             MouseRobot.Instance.StopScript();
         }
+        #endregion
+
+        #region DEPRECATED Try read/try start script
 
         private int TryReadRepeatTimes()
         {
@@ -161,66 +167,12 @@ namespace RobotUI
             }
         }
 
-        private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MouseRobot.Instance.NewScript();
-            UpdateTreeView();
-        }
+        #endregion
 
-        private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtension.Script);
-            openDialog.Title = "Select a script file to load.";
-            if (openDialog.ShowDialog() == DialogResult.OK)
-            {
-                MouseRobot.Instance.OpenScript(openDialog.FileName);
-            }
-            UpdateTreeView();
-        }
 
-        private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtension.Script);
-            saveDialog.Title = "Select a script file to load.";
-            if (saveDialog.ShowDialog() == DialogResult.OK)
-            {
-                MouseRobot.Instance.SaveScript(saveDialog.FileName);
-            }
-            UpdateTreeView();
-        }
 
-        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            this.Dispose();
-            GC.Collect();
-            Application.Exit();
-        }
 
-        private void UpdateTreeView()
-        {
-            Console.WriteLine("Clear & Update tree view");
-            treeView.Nodes.Clear();
-
-            foreach (var script in ScriptManager.Instance)
-            {
-                var addDirtyToName = (script.IsDirty) ? "*" : "";
-                TreeNode scriptNode = new TreeNode(script.Name + addDirtyToName);
-                scriptNode.ImageIndex = 0;
-                scriptNode.SelectedImageIndex = 0;
-                treeView.Nodes.Add(scriptNode);
-                foreach (var c in script)
-                {
-                    var commandNode = scriptNode.Nodes.Add(c.ToString());
-                    commandNode.ImageIndex = 1;
-                    commandNode.SelectedImageIndex = 1;
-                }
-            }
-
-            treeView.ExpandAll();
-        }
-
+        #region TreeView Drag and Drop
         private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
             DoDragDrop(e.Item, DragDropEffects.All);
@@ -228,140 +180,66 @@ namespace RobotUI
 
         private void treeView_DragDrop(object sender, DragEventArgs e)
         {
-            Point targetPoint = treeView.PointToClient(new Point(e.X, e.Y));
-
-            TreeNode targetNode = treeView.GetNodeAt(targetPoint);
-            TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
-
-            if (targetNode == null)
-            {
-                if (draggedNode.Level == 0)
-                    InsertNodeAfter(draggedNode, treeView.Nodes[treeView.Nodes.Count - 1]);
-                if (draggedNode.Level == 1)
-                    InsertNodeAfter(draggedNode, draggedNode.Parent.Nodes[draggedNode.Parent.Nodes.Count - 1]);
-            }
-            else
-            {
-                InsertNodeAfter(draggedNode, targetNode);
-            }
+            ScriptTreeViewUtils.TreeView_DragDrop(treeView, e);
         }
 
         private void treeView_DragOver(object sender, DragEventArgs e)
         {
-            var canRelease = CanReleaseDragAndDrop(e);
-
-            if (e.KeyState == 9 && canRelease) // 9 = CTRL is held down
-                e.Effect = DragDropEffects.Copy;
-            else if (canRelease)
-                e.Effect = DragDropEffects.Move;
-            else
-                e.Effect = DragDropEffects.None;
+            ScriptTreeViewUtils.TreeView_DragOver(treeView, e);
         }
+        #endregion
 
-        private void InsertNodeAfter(TreeNode node, TreeNode nodeAfter)
+
+        #region Menu Items (ScriptManager)
+        private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var roots = treeView.Nodes.Count;
-
-            if (node.Level == 0)
-            {
-                nodeAfter = (nodeAfter.Level == 0) ? nodeAfter : nodeAfter.Parent;
-                ScriptManager.Instance.MoveScriptAfter(node.Index, nodeAfter.Index);
-
-                node.Remove();
-                treeView.Nodes.Insert(nodeAfter.Index + 1, node);
-            }
-            else if (node.Level == 1 && nodeAfter.Level == 0)
-            {
-                ScriptManager.Instance.MoveCommandAfter(node.Index, -1, node.Parent.Index, nodeAfter.Index);
-
-                node.Remove();
-                nodeAfter.Nodes.Insert(0, node);
-            }
-            else if (node.Level == 1 && nodeAfter.Level == 1 && node.Parent == nodeAfter.Parent)
-            {
-                ScriptManager.Instance.MoveCommandAfter(node.Index, nodeAfter.Index, nodeAfter.Parent.Index);
-
-                node.Remove();
-                nodeAfter.Parent.Nodes.Insert(nodeAfter.Index + 1, node);
-            }
-            else // nodes have different parents
-            {
-                ScriptManager.Instance.MoveCommandAfter(node.Index, nodeAfter.Index, node.Parent.Index, nodeAfter.Parent.Index);
-                node.Remove();
-                nodeAfter.Parent.Nodes.Insert(nodeAfter.Index + 1, node);
-            }
-
-#if ENABLE_UI_TESTING
-            TestIfTreeIsTheSameAsInScriptManager();
-#endif
+            ScriptTreeViewUtils.OpenScript(treeView);
         }
 
-
-#if ENABLE_UI_TESTING
-        void TestIfTreeIsTheSameAsInScriptManager()
+        private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < treeView.Nodes.Count; i++)
-            {
-                Debug.Assert(treeView.Nodes[i].Text.Contains(ScriptManager.Instance.LoadedScripts[i].Name), 
-                    string.Format("Hierarchy script missmatch: i:{0}", i));
-
-                for (int j = 0; j < treeView.Nodes[i].Nodes.Count; j++)
-                {
-                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands[j].Text),
-                        string.Format("Hierarchy missmatch: i:{0} j:{1}", i, j));
-                }
-            }
+            ScriptTreeViewUtils.SaveAllScripts(treeView);
         }
-#endif
 
-
-        /// <summary>
-        /// Can only release drag and drop if items to others, not self. They only change positions, not level. 
-        /// Also, it is possible to drag to blank space (null), to move that object there
-        /// </summary>
-        private bool CanReleaseDragAndDrop(DragEventArgs e)
+        private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Point targetPoint = treeView.PointToClient(new Point(e.X, e.Y));
-
-            TreeNode targetNode = treeView.GetNodeAt(targetPoint);
-            TreeNode draggedNode = (TreeNode)e.Data.GetData(typeof(TreeNode));
-            
-            return (targetNode == null && draggedNode.NextNode != null) || (targetNode != null && targetNode != draggedNode && targetNode.Parent != draggedNode);
+            ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, treeView, true);
         }
-        
+
+        private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.SetSelectedScriptActive(treeView);
+        }
+
+        private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.NewScript(treeView);
+        }
+
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView.SelectedNode.Level == 0)
-                ScriptManager.Instance.RemoveScript(treeView.SelectedNode.Index);
-            else
-                ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].RemoveCommand(treeView.SelectedNode.Index);
-
-            treeView.SelectedNode.Remove();
+            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(treeView);
         }
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TreeNode clone;
-            if (treeView.SelectedNode.Level == 0)
-            {
-                var s = ScriptManager.Instance.NewScript(ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Index]);
-                ScriptManager.Instance.MoveScriptAfter(ScriptManager.Instance.LoadedScripts.Count - 1, treeView.SelectedNode.Index);
-
-                clone = (TreeNode) treeView.SelectedNode.Clone();
-                clone.Text = s.Name;
-                treeView.Nodes.Insert(treeView.SelectedNode.Index + 1, clone);
-            }
-            else
-            {
-                var c = (Command) ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].Commands[treeView.SelectedNode.Index].Clone();
-                ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].InsertCommand(treeView.SelectedNode.Index + 1, c);
-
-                clone = (TreeNode)treeView.SelectedNode.Clone();
-                treeView.SelectedNode.Parent.Nodes.Insert(treeView.SelectedNode.Index + 1, clone);
-            }
-
-            treeView.SelectedNode = clone;
-            treeView.Focus();
+            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(treeView);
         }
+
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(treeView);
+        }
+
+        private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(treeView);
+        }
+
+        private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(treeView);
+        }
+        #endregion
     }
 }

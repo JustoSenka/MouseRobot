@@ -22,7 +22,7 @@ namespace Robot
                 }
                 catch (SerializationException)
                 {
-                    Console.WriteLine("Failed to read from file.");
+                    Console.WriteLine("Failed to read from file: " + fileName);
                     return default(T);
                 }
             }
@@ -38,7 +38,7 @@ namespace Robot
                 }   
                 catch(SerializationException)
                 {
-                    Console.WriteLine("Failed to write to file.");
+                    Console.WriteLine("Failed to write to file: " + fileName);
                 }
             }
         }
