@@ -26,6 +26,7 @@ namespace RobotUI
 
         private void ExitApplication(object sender, EventArgs e)
         {
+            //this.Close();
             this.Dispose();
             GC.Collect();
             Application.Exit();
@@ -241,5 +242,11 @@ namespace RobotUI
             ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(treeView);
         }
         #endregion
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            var window = new TreeViewWindow();
+
+        }
     }
 }
