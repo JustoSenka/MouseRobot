@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Robot;
 using System.Diagnostics;
 using RobotUI.Utils;
+using Robot.Utils.Win32;
 
 namespace RobotUI
 {

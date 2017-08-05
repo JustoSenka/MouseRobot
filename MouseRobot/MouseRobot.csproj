@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{869A7F35-74EE-4D83-90C0-5DA908B2329F}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Robot</RootNamespace>
     <AssemblyName>MouseRobot</AssemblyName>
@@ -50,9 +50,11 @@
     <StartupObject>RobotUI.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ColourfulGear_ICO_32.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.2, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Practices.Unity">
       <HintPath>..\packages\Unity.4.0.0\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
@@ -91,12 +93,20 @@
     <Compile Include="src\ScriptManager\ScriptThread.cs" />
     <Compile Include="src\Utils\Common.cs" />
     <Compile Include="src\Utils\ExtensionMethods.cs" />
+    <Compile Include="src\Utils\Win32\InputCallbacks.cs" />
     <Compile Include="src\Utils\LinkedTree.cs" />
+    <Compile Include="src\Utils\Win32\KeyEvent.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\CommandManagerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\CommandManagerWindow.Designer.cs">
+      <DependentUpon>CommandManagerWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
@@ -120,7 +130,7 @@
     <Compile Include="src\Exceptions\EmptyScriptException.cs" />
     <Compile Include="src\MouseRobot\MouseRobot.cs" />
     <Compile Include="src\Utils\BinaryObjectIO.cs" />
-    <Compile Include="src\Utils\WinAPI.cs" />
+    <Compile Include="src\Utils\Win32\WinAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -133,6 +143,9 @@
     <Compile Include="UI\Utils\ScriptTreeViewUtils.cs" />
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\CommandManagerWindow.resx">
+      <DependentUpon>CommandManagerWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -194,7 +207,6 @@
     <Folder Include="src\BaseClasses\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ColourfulGear_ICO_32.ico" />
     <Content Include="Resources\Icons\ColourfulGear_ICO_32.ico" />
     <Content Include="Resources\Icons\gear_ICO_512.png" />
     <Content Include="Resources\Icons\script_ICO_256.png" />

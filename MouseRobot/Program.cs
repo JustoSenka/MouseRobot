@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Robot.Utils.Win32;
+using System;
 using System.Windows.Forms;
-using Robot;
 
 namespace RobotUI
 {
@@ -18,6 +15,7 @@ namespace RobotUI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new TreeViewForm());
+
             Application.Run(new MainForm());
         }
     }

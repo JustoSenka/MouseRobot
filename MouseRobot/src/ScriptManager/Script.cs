@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections;
+using Robot.Utils.Win32;
 
 namespace Robot
 {
