@@ -47,39 +47,48 @@ namespace Robot
         public void AddCommandSleep(int time)
         {
             m_IsDirty = true;
-            m_Commands.Add(new Command(() =>
+            var command = new Command(() =>
             {
                 Thread.Sleep(time);
                 CheckIfPointerOffScreen();
-            }, "Sleep for " + time + " ms.", CommandCode.G, time));
+            }, "Sleep for " + time + " ms.", CommandCode.G, time);
+
+            m_Commands.Add(command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandRelease()
         {
             m_IsDirty = true;
-            m_Commands.Add(new Command(() =>
+            var command = new Command(() =>
             {
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
                 CheckIfPointerOffScreen();
-            }, "Release", CommandCode.K));
+            }, "Release", CommandCode.K);
+
+            m_Commands.Add(command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandPress(int x, int y)
         {
             m_IsDirty = true;
-            m_Commands.Add(new Command(delegate ()
+            var command = new Command(delegate ()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
                 MouseAction(WinAPI.MouseEventFlags.LeftUp);
                 CheckIfPointerOffScreen();
-            }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y));
+            }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y);
+
+            m_Commands.Add(command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandMove(int x, int y)
         {
             m_IsDirty = true;
-            m_Commands.Add(new Command(delegate ()
+            var command = new Command(delegate ()
             {
                 int x1, y1;
                 x1 = WinAPI.GetCursorPosition().X;
@@ -90,18 +99,24 @@ namespace Robot
                     MouseMoveTo(x1 + ((x - x1) * i / 50), y1 + ((y - y1) * i / 50));
                 }
                 CheckIfPointerOffScreen();
-            }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y));
+            }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y);
+
+            m_Commands.Add(command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandDown(int x, int y)
         {
             m_IsDirty = true;
-            m_Commands.Add(new Command(delegate ()
+            var command = new Command(delegate ()
             {
                 MouseMoveTo(x, y);
                 MouseAction(WinAPI.MouseEventFlags.LeftDown);
                 CheckIfPointerOffScreen();
-            }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y));
+            }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y);
+
+            m_Commands.Add(command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void InsertCommand(int position, Command command)

@@ -1,7 +1,18 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Robot.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="S_Play" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Play</Value>
+    </Setting>
+    <Setting Name="S_Stop" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Stop</Value>
+    </Setting>
+    <Setting Name="S_StartRecording" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Start Recording</Value>
+    </Setting>
+    <Setting Name="S_StopRecording" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Stop Recording</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

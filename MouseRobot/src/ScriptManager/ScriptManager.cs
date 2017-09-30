@@ -28,16 +28,22 @@ namespace Robot
         public event Action<Script, Script> activeScriptChanged;
         public event Action<Script> scriptLoaded;
         public event Action<int> scriptRemoved;
+        public event Action<Script, Command> scriptsModified;
 
         private ScriptManager()
         {
             m_LoadedScripts = new List<Script>();
         }
 
+        public void ScriptModified(Script script, Command command)
+        {
+            scriptsModified?.Invoke(script, command);
+        }
+
         public Script NewScript(Script clone = null)
         {
             Script script;
-
+            
             if (clone == null)
                 script = new Script();
             else
@@ -53,7 +59,9 @@ namespace Robot
         public void RemoveScript(Script script)
         {
             var position = m_LoadedScripts.IndexOf(script);
+
             m_LoadedScripts.Remove(script);
+
             scriptRemoved?.Invoke(position);
 
             MakeSureActiveScriptExist();
@@ -79,6 +87,7 @@ namespace Robot
             script.Path = path;
 
             Console.WriteLine("Script loaded: " + path);
+
             m_LoadedScripts.Add(script);
             scriptLoaded?.Invoke(script);
 

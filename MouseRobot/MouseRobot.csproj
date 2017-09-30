@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{869A7F35-74EE-4D83-90C0-5DA908B2329F}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Robot</RootNamespace>
     <AssemblyName>MouseRobot</AssemblyName>
@@ -140,6 +140,9 @@
     <Compile Include="UI\TreeViewWindow.Designer.cs">
       <DependentUpon>TreeViewWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\Command\CommandManagerProperties.cs" />
+    <Compile Include="src\Utils\SortedCategoryAttribute.cs" />
+    <Compile Include="UI\Utils\DynamicTypeDescriptor.cs" />
     <Compile Include="UI\Utils\ScriptTreeViewUtils.cs" />
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
@@ -210,6 +213,10 @@
     <Content Include="Resources\Icons\ColourfulGear_ICO_32.ico" />
     <Content Include="Resources\Icons\gear_ICO_512.png" />
     <Content Include="Resources\Icons\script_ICO_256.png" />
+    <None Include="Resources\Icons\ToolButton_Record_32.png" />
+    <None Include="Resources\Icons\ToolButton_RecordStop_32.png" />
+    <None Include="Resources\Icons\ToolButton_Play_32.png" />
+    <None Include="Resources\Icons\ToolButton_Stop_32.png" />
     <Content Include="Resources\Images\LogoWhite.png" />
     <Content Include="Resources\Images\SplashLogo.jpg" />
     <Content Include="Resources\Images\WhiteGears.png" />

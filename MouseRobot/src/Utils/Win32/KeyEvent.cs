@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Robot.Utils.Win32
@@ -12,8 +7,19 @@ namespace Robot.Utils.Win32
 
     public struct KeyEvent
     {
+        /// <summary>
+        /// Keyboard or mouse button code (standard .NET Keys struct)
+        /// </summary>
         public Keys keyCode;
+
+        /// <summary>
+        /// Is key down or key up
+        /// </summary>
         public KeyAction keyAction;
+
+        /// <summary>
+        /// Screen point for mouse click
+        /// </summary>
         private Point m_Point;
 
         public KeyEvent(Keys keyCode, KeyAction keyAction, Point point)

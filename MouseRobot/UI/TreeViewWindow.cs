@@ -7,7 +7,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -22,6 +21,15 @@ namespace RobotUI
 
             treeView.Font = Fonts.Default;
             ScriptTreeViewUtils.UpdateTreeView(treeView);
+            ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
+
+            ScriptManager.Instance.scriptsModified += OnScriptsModified;
+        }
+
+        private void OnScriptsModified(Script script, Command command)
+        {
+            // Add Command to tree view that was probably added to manager while recording
+            treeView.Nodes[script.Index].Nodes.Add(command.ToString());
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
@@ -39,6 +47,33 @@ namespace RobotUI
         private void treeView_DragOver(object sender, DragEventArgs e)
         {
             ScriptTreeViewUtils.TreeView_DragOver(treeView, e);
+        }
+        #endregion
+
+        #region Context Menu Items
+        private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.SetSelectedScriptActive(treeView);
+        }
+
+        private void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.NewScript(treeView);
+        }
+
+        private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(treeView);
+        }
+
+        private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(treeView);
+        }
+
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(treeView);
         }
         #endregion
     }

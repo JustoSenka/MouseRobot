@@ -48,6 +48,7 @@
             // 
             this.treeView.AllowDrop = true;
             this.treeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.treeView.ContextMenuStrip = this.contextMenuStrip1;
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.FullRowSelect = true;
             this.treeView.HideSelection = false;
@@ -73,13 +74,14 @@
             this.duplicateToolStripMenuItem1,
             this.deleteToolStripMenuItem1});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 148);
             // 
             // setActiveToolStripMenuItem
             // 
             this.setActiveToolStripMenuItem.Name = "setActiveToolStripMenuItem";
             this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.setActiveToolStripMenuItem.Text = "Set Active";
+            this.setActiveToolStripMenuItem.Click += new System.EventHandler(this.setActiveToolStripMenuItem_Click);
             // 
             // newScriptToolStripMenuItem1
             // 
@@ -87,6 +89,7 @@
             this.newScriptToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newScriptToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.newScriptToolStripMenuItem1.Text = "New Script";
+            this.newScriptToolStripMenuItem1.Click += new System.EventHandler(this.newScriptToolStripMenuItem1_Click);
             // 
             // toolStripSeparator1
             // 
@@ -98,6 +101,7 @@
             this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
             this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
             this.showInExplorerToolStripMenuItem.Text = "Show in explorer";
+            this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -110,6 +114,7 @@
             this.duplicateToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.duplicateToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.duplicateToolStripMenuItem1.Text = "Duplicate";
+            this.duplicateToolStripMenuItem1.Click += new System.EventHandler(this.duplicateToolStripMenuItem1_Click);
             // 
             // deleteToolStripMenuItem1
             // 
@@ -117,6 +122,7 @@
             this.deleteToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
+            this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
             // 
             // imageList1
             // 

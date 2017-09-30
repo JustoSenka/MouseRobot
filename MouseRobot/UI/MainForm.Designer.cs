@@ -37,6 +37,9 @@
             this.vS2015BlueTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2015BlueTheme();
             this.vS2015LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.playButton = new System.Windows.Forms.ToolStripButton();
+            this.recordButton = new System.Windows.Forms.ToolStripButton();
+            this.actionOnRec = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,8 +57,11 @@
             this.whiteThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,11 +92,47 @@
             // 
             // toolStrip
             // 
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playButton,
+            this.recordButton,
+            this.actionOnPlay,
+            this.actionOnRec});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(763, 25);
             this.toolStrip.TabIndex = 7;
             this.toolStrip.Text = "toolStrip1";
+            // 
+            // playButton
+            // 
+            this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.playButton.Image = global::Robot.Properties.Resources.ToolButton_Play_32;
+            this.playButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(23, 22);
+            this.playButton.Text = "Play";
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            // 
+            // recordButton
+            // 
+            this.recordButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.recordButton.Image = global::Robot.Properties.Resources.ToolButton_Record_32;
+            this.recordButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.recordButton.Name = "recordButton";
+            this.recordButton.Size = new System.Drawing.Size(23, 22);
+            this.recordButton.Text = "Record";
+            this.recordButton.Click += new System.EventHandler(this.recordButton_Click);
+            // 
+            // actionOnRec
+            // 
+            this.actionOnRec.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.actionOnRec.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+            this.actionOnRec.Items.AddRange(new object[] {
+            "Minimize On Rec",
+            "Transparent On Rec",
+            "Do Nothing On Rec"});
+            this.actionOnRec.Name = "actionOnRec";
+            this.actionOnRec.Size = new System.Drawing.Size(140, 25);
             // 
             // menuStrip
             // 
@@ -205,28 +247,29 @@
             // darkThemeToolStripMenuItem
             // 
             this.darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.darkThemeToolStripMenuItem.Text = "Dark Theme";
             this.darkThemeToolStripMenuItem.Click += new System.EventHandler(this.darkThemeToolStripMenuItem_Click);
             // 
             // blueThemeToolStripMenuItem
             // 
             this.blueThemeToolStripMenuItem.Name = "blueThemeToolStripMenuItem";
-            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.blueThemeToolStripMenuItem.Text = "Blue Theme";
             this.blueThemeToolStripMenuItem.Click += new System.EventHandler(this.blueThemeToolStripMenuItem_Click);
             // 
             // whiteThemeToolStripMenuItem
             // 
             this.whiteThemeToolStripMenuItem.Name = "whiteThemeToolStripMenuItem";
-            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.whiteThemeToolStripMenuItem.Text = "Light Theme";
             this.whiteThemeToolStripMenuItem.Click += new System.EventHandler(this.lightThemeToolStripMenuItem_Click);
             // 
             // windowToolStripMenuItem
             // 
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hierarchyToolStripMenuItem});
+            this.hierarchyToolStripMenuItem,
+            this.commandsToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -234,9 +277,16 @@
             // hierarchyToolStripMenuItem
             // 
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
-            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
             this.hierarchyToolStripMenuItem.Click += new System.EventHandler(this.hierarchyToolStripMenuItem_Click);
+            // 
+            // commandsToolStripMenuItem
+            // 
+            this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
+            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.commandsToolStripMenuItem.Text = "Commands";
+            this.commandsToolStripMenuItem.Click += new System.EventHandler(this.commandsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -249,9 +299,20 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // actionOnPlay
+            // 
+            this.actionOnPlay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.actionOnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+            this.actionOnPlay.Items.AddRange(new object[] {
+            "Minimize On Play",
+            "Transparent On Play",
+            "Do Nothing On Play"});
+            this.actionOnPlay.Name = "actionOnPlay";
+            this.actionOnPlay.Size = new System.Drawing.Size(140, 25);
             // 
             // MainForm
             // 
@@ -266,6 +327,8 @@
             this.IsMdiContainer = true;
             this.Name = "MainForm";
             this.Text = "Main Form";
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -300,5 +363,10 @@
         private System.Windows.Forms.ToolStripMenuItem darkThemeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem blueThemeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem whiteThemeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem commandsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton playButton;
+        private System.Windows.Forms.ToolStripComboBox actionOnRec;
+        private System.Windows.Forms.ToolStripButton recordButton;
+        private System.Windows.Forms.ToolStripComboBox actionOnPlay;
     }
 }
