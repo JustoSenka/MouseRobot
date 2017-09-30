@@ -8,10 +8,11 @@ namespace Robot
     [Serializable]
     public class CommandManagerProperties
     {
-        private const int NumOfCategories = 3;
+        private const int NumOfCategories = 4;
         private const int SleepOptionsCategoryPosition = 1;
         private const int MouseMoveOptionsCategoryPosition = 2;
         private const int MouseOptionsCategoryPosition = 3;
+        private const int AdditionalOptionsCategoryPosition = 4;
 
         private Keys m_SleepKey = Keys.S;
         private Keys m_DefaultSleepKey = Keys.D;
@@ -20,9 +21,12 @@ namespace Robot
         private Keys m_SmoothMouseMoveKey = Keys.F;
         private int m_SmoothMoveLengthInTime = 100;
 
-        private bool m_AutomaticSmoothMoveBetweenClicks = false;
+        private Keys m_MouseDownButton = Keys.LButton;
         private bool m_TreatMouseDownAsMouseClick = false;
-        private int m_ThresholdBetweenMouseDownAndMouseUp = 100;
+        private int m_ThresholdBetweenMouseDownAndMouseUp = 20;
+
+        private bool m_AutomaticSmoothMoveBeforeMouseDown = false;
+        private bool m_AutomaticSmoothMoveBeforeMouseUp = true;
 
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.S)]
@@ -70,12 +74,12 @@ namespace Robot
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
-        [DefaultValue(false)]
-        [DisplayName("Automatic Smooth Move between Clicks")]
-        public bool AutomaticSmoothMoveBetweenClicks
+        [DefaultValue(Keys.LButton)]
+        [DisplayName("Mouse Down Key")]
+        public Keys MouseDownButton
         {
-            get { return m_AutomaticSmoothMoveBetweenClicks; }
-            set { m_AutomaticSmoothMoveBetweenClicks = value; }
+            get { return m_MouseDownButton; }
+            set { m_MouseDownButton = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
@@ -88,12 +92,31 @@ namespace Robot
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
-        [DefaultValue(100)]
+        [DefaultValue(20)]
         [DisplayName("Threshold Between Mouse Down and Mouse Up")]
         public int ThresholdBetweenMouseDownAndMouseUp
         {
             get { return m_ThresholdBetweenMouseDownAndMouseUp; }
             set { m_ThresholdBetweenMouseDownAndMouseUp = value; }
         }
+
+        [SortedCategory("Additional Options", AdditionalOptionsCategoryPosition, NumOfCategories)]
+        [DefaultValue(false)]
+        [DisplayName("Automatic Smooth Move Before Mouse Down")]
+        public bool AutomaticSmoothMoveBeforeMouseDown
+        {
+            get { return m_AutomaticSmoothMoveBeforeMouseDown; }
+            set { m_AutomaticSmoothMoveBeforeMouseDown = value; }
+        }
+
+        [SortedCategory("Additional Options", AdditionalOptionsCategoryPosition, NumOfCategories)]
+        [DefaultValue(true)]
+        [DisplayName("Automatic Smooth Move Before Mouse Up")]
+        public bool AutomaticSmoothMoveBeforeMouseUp
+        {
+            get { return m_AutomaticSmoothMoveBeforeMouseUp; }
+            set { m_AutomaticSmoothMoveBeforeMouseUp = value; }
+        }
+
     }
 }

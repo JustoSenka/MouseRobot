@@ -20,6 +20,9 @@ namespace Robot
         [NonSerialized]
         private string m_Path;
 
+        [NonSerialized]
+        public bool dontSendMessagesToManager;
+
         public event Action<Script> DirtyChanged;
 
         public string Name
@@ -54,7 +57,9 @@ namespace Robot
             }, "Sleep for " + time + " ms.", CommandCode.G, time);
 
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+
+            if (!dontSendMessagesToManager)
+                ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandRelease()
@@ -67,7 +72,9 @@ namespace Robot
             }, "Release", CommandCode.K);
 
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+
+            if (!dontSendMessagesToManager)
+                ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandPress(int x, int y)
@@ -82,7 +89,9 @@ namespace Robot
             }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y);
 
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+
+            if (!dontSendMessagesToManager)
+                ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandMove(int x, int y)
@@ -102,7 +111,9 @@ namespace Robot
             }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y);
 
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+
+            if (!dontSendMessagesToManager)
+                ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandDown(int x, int y)
@@ -116,7 +127,9 @@ namespace Robot
             }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y);
 
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+
+            if (!dontSendMessagesToManager)
+                ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void InsertCommand(int position, Command command)
@@ -174,6 +187,7 @@ namespace Robot
         public object Clone()
         {
             var script = new Script();
+            script.dontSendMessagesToManager = true;
 
             foreach (var v in m_Commands)
             {
@@ -197,6 +211,7 @@ namespace Robot
                 }
             }
 
+            script.dontSendMessagesToManager = false;
             script.m_IsDirty = true;
             return script;
         }

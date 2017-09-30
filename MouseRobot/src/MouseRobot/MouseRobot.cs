@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 using Robot.Utils.Win32;
-using System.Windows.Forms;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace Robot
 {
@@ -20,6 +17,9 @@ namespace Robot
         private bool m_IsRecording;
         private bool m_IsPlaying;
 
+        private Stopwatch m_SleepTimer = new Stopwatch();
+        private Point m_LastClickPos = new Point(0, 0);
+
         public CommandManagerProperties commandManagerProperties;
 
         private MouseRobot()
@@ -30,7 +30,7 @@ namespace Robot
 
         public void ForceInit() { } // This is to make sure that mouse robot singleton is created
 
-        private void OnInputEvent(KeyEvent obj)
+        private void OnInputEvent(KeyEvent e)
         {
             if (!m_IsRecording)
                 return;
@@ -38,16 +38,57 @@ namespace Robot
             if (ScriptManager.Instance.LoadedScripts.Count == 0)
                 return;
 
-            if (obj.IsKeyDown())
-            {
-                if (obj.keyCode == commandManagerProperties.SleepKey)
-                    ScriptManager.Instance.ActiveScript.AddCommandSleep(commandManagerProperties.DefaultSleepTime);
+            var activeScript = ScriptManager.Instance.ActiveScript;
 
-            } // IsKeyDown = true
-            else if (obj.IsKeyUp())
+            if (e.IsKeyDown())
             {
+                if (e.keyCode == commandManagerProperties.DefaultSleepKey)
+                    activeScript.AddCommandSleep(commandManagerProperties.DefaultSleepTime);
 
-            } // IsKeyUp = true
+                if (e.keyCode == commandManagerProperties.SleepKey)
+                {
+                    m_SleepTimer.Reset();
+                    m_SleepTimer.Start();
+                }
+
+                if (e.keyCode == commandManagerProperties.SmoothMouseMoveKey)
+                {
+                    activeScript.AddCommandMove(e.X, e.Y);
+                    m_LastClickPos = e.Point;
+                    // TODO: TIME ?
+                }
+
+                if (e.keyCode == commandManagerProperties.MouseDownButton)
+                {
+                    if (commandManagerProperties.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
+                        activeScript.AddCommandMove(e.X, e.Y); // TODO: TIME ?
+
+                    if (commandManagerProperties.TreatMouseDownAsMouseClick)
+                        activeScript.AddCommandPress(e.X, e.Y);
+                    else
+                        activeScript.AddCommandDown(e.X, e.Y);
+                    m_LastClickPos = e.Point;
+                }
+            }
+            else if (e.IsKeyUp())
+            {
+                if (e.keyCode == commandManagerProperties.SleepKey)
+                {
+                    m_SleepTimer.Stop();
+                    activeScript.AddCommandSleep((int) m_SleepTimer.ElapsedMilliseconds);
+                }
+
+                if (e.keyCode == commandManagerProperties.MouseDownButton && !commandManagerProperties.TreatMouseDownAsMouseClick) 
+                {
+                    if (commandManagerProperties.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
+                        activeScript.AddCommandMove(e.X, e.Y); // TODO: TIME ?
+                    else
+                        activeScript.AddCommandSleep(commandManagerProperties.ThresholdBetweenMouseDownAndMouseUp);
+
+                    activeScript.AddCommandRelease();
+                    m_LastClickPos = e.Point;
+                }
+            }
             else
             {
                 throw new Exception("Key event was fired but neither KeyUp or KeyDown was true");
@@ -127,6 +168,11 @@ namespace Robot
 
                 m_IsPlaying = value;
             }
+        }
+
+        private float Distance(Point a, Point b)
+        {
+            return (float) Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
     }
 }

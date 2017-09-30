@@ -20,19 +20,19 @@ namespace Robot.Utils.Win32
         /// <summary>
         /// Screen point for mouse click
         /// </summary>
-        private Point m_Point;
+        public Point Point;
 
         public KeyEvent(Keys keyCode, KeyAction keyAction, Point point)
         {
             this.keyCode = keyCode;
             this.keyAction = keyAction;
-            this.m_Point = point;
+            this.Point = point;
         }
         public KeyEvent(Keys keyCode, KeyAction keyAction)
         {
             this.keyCode = keyCode;
             this.keyAction = keyAction;
-            this.m_Point = default(Point);
+            this.Point = default(Point);
         }
 
         public bool IsKeyDown()
@@ -45,7 +45,7 @@ namespace Robot.Utils.Win32
             return KeyAction.KeyUp == keyAction;
         }
 
-        public int X { get { return m_Point.X; } }
-        public int Y { get { return m_Point.Y; } }
+        public int X { get { return Point.X; } }
+        public int Y { get { return Point.Y; } }
     }
 }

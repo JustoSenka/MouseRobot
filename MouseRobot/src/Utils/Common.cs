@@ -19,8 +19,8 @@ namespace Robot
 
     public static class RegexExpression
     {
-        public const string GetScriptNameFromPath = @"[/\\]{1}[\w\d]+\." + FileExtensions.Script; 
-        public const string GetTimelineNameFromPath = @"[/\\]{1}[\w\d]+\." + FileExtensions.Timeline;
+        public const string GetScriptNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Script; 
+        public const string GetTimelineNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Timeline;
     }
 
     public static class Fonts
