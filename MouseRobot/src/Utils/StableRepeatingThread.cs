@@ -4,22 +4,31 @@ using System.Threading;
 
 namespace Robot.Utils
 {
-    public class StableRepeatingThread
+    public abstract class StableRepeatingThread
     {
         private Thread m_Thread;
         private Action m_Action;
         private bool m_Run;
+        private bool m_Init;
 
-        public StableRepeatingThread(Action action, int FPS = 60)
+        protected StableRepeatingThread()
         {
-            this.FPS = FPS;
             m_Thread = new Thread(new ThreadStart(ThreadRun));
-            m_Action = action;
             m_Stopwatch = new Stopwatch();
         }
 
         // Thread methods / properties
-        public void Start() { m_Run = true; m_Thread.Start(); }
+        public virtual void Init() { m_Init = true; }
+        public void Start(int FPS = 60)
+        {
+            if (!m_Init)
+                Init();
+
+            this.FPS = FPS;
+            m_Run = true;
+            m_Thread.Start();
+        }
+
         public void Join() { m_Thread.Join(); }
         public bool IsAlive { get { return m_Thread.IsAlive; } }
         public void Stop() { m_Run = false; }
@@ -60,7 +69,7 @@ namespace Robot.Utils
             while (m_Run)
             {
                 m_Stopwatch.Start();
-                m_Action.Invoke();
+                ThreadAction();
                 m_Stopwatch.Stop();
 
                 var elapsed = (int)m_Stopwatch.ElapsedMilliseconds;
@@ -71,5 +80,7 @@ namespace Robot.Utils
                 Debug.WriteLine(string.Format("Frame took {0} millis to complete", elapsed));
             }
         }
+
+        protected abstract void ThreadAction();
     }
 }

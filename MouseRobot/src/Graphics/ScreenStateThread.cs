@@ -13,9 +13,9 @@ using MapFlags = SharpDX.Direct3D11.MapFlags;
 
 namespace Robot.Graphics
 {
-    public class ScreenStateThread
+    public class ScreenStateThread : StableRepeatingThread
     {
-        private bool m_Run, m_Init;
+        private StableRepeatingThread m_Thread;
 
         public object ScreenBmpLock = new object();
         /// <summary>
@@ -42,14 +42,13 @@ namespace Robot.Graphics
         private int m_Width;
         private int m_Height;
 
-
         public static ScreenStateThread Instace { get { return m_Instance; } }
         private static ScreenStateThread m_Instance = new ScreenStateThread();
         private ScreenStateThread() { }
 
-        public void Init()
+        public override void Init()
         {
-            m_Init = true;
+            base.Init();
 
             var adapter = new Factory1().GetAdapter1(0);
             m_Device = new SharpDX.Direct3D11.Device(adapter);
@@ -81,27 +80,18 @@ namespace Robot.Graphics
             m_TempBitmap = new Bitmap(m_Width, m_Height, PixelFormat.Format32bppArgb);
         }
 
-        public void Start()
+        protected override void ThreadAction()
         {
-            if (!m_Init)
-                Init();
+            TakeScreenshot(m_TempBitmap);
 
-            new StableRepeatingThread(() =>
+            lock (ScreenBmpLock)
             {
-                TakeScreenshot(m_TempBitmap);
-
-                lock (ScreenBmpLock)
-                {
-                    BitmapUtility.Clone32BPPBitmap(m_TempBitmap, ScreenBmp);
-                }
-            }, 10).Start();
+                BitmapUtility.Clone32BPPBitmap(m_TempBitmap, ScreenBmp);
+            }
         }
 
         public void TakeScreenshot(Bitmap tempBitmap)
         {
-            if (!m_Init)
-                Init();
-
             try
             {
                 SharpDX.DXGI.Resource screenResource;
@@ -150,11 +140,6 @@ namespace Robot.Graphics
                     Trace.TraceError(e.StackTrace);
                 }
             }
-        }
-
-        public void Stop()
-        {
-            m_Run = false;
         }
     }
 }

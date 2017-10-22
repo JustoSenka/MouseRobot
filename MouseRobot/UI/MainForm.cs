@@ -1,4 +1,5 @@
 ﻿using Robot;
+using Robot.Graphics;
 using Robot.Utils.Win32;
 using RobotUI.Utils;
 using System;
@@ -285,6 +286,12 @@ namespace RobotUI
 
             recordButton.ToolTipText = (MouseRobot.Instance.IsRecording) ?
                 Robot.Properties.Settings.Default.S_StopRecording : Robot.Properties.Settings.Default.S_StartRecording;
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            ScreenStateThread.Instace.Stop();
+            Application.Exit();
         }
     }
 }

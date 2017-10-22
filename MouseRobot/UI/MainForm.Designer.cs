@@ -39,6 +39,7 @@
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.playButton = new System.Windows.Forms.ToolStripButton();
             this.recordButton = new System.Windows.Forms.ToolStripButton();
+            this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
             this.actionOnRec = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,7 +61,6 @@
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -122,6 +122,17 @@
             this.recordButton.Size = new System.Drawing.Size(23, 22);
             this.recordButton.Text = "Record";
             this.recordButton.Click += new System.EventHandler(this.recordButton_Click);
+            // 
+            // actionOnPlay
+            // 
+            this.actionOnPlay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.actionOnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+            this.actionOnPlay.Items.AddRange(new object[] {
+            "Minimize On Play",
+            "Transparent On Play",
+            "Do Nothing On Play"});
+            this.actionOnPlay.Name = "actionOnPlay";
+            this.actionOnPlay.Size = new System.Drawing.Size(140, 25);
             // 
             // actionOnRec
             // 
@@ -303,17 +314,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // actionOnPlay
-            // 
-            this.actionOnPlay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.actionOnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
-            this.actionOnPlay.Items.AddRange(new object[] {
-            "Minimize On Play",
-            "Transparent On Play",
-            "Do Nothing On Play"});
-            this.actionOnPlay.Name = "actionOnPlay";
-            this.actionOnPlay.Size = new System.Drawing.Size(140, 25);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -327,6 +327,7 @@
             this.IsMdiContainer = true;
             this.Name = "MainForm";
             this.Text = "Main Form";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
