@@ -136,12 +136,6 @@
     <Compile Include="UI\SplashScreen.Designer.cs">
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\TreeViewForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\TreeViewForm.Designer.cs">
-      <DependentUpon>TreeViewForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="src\Command\CommandCode.cs" />
     <Compile Include="src\Exceptions\EmptyScriptException.cs" />
     <Compile Include="src\MouseRobot\MouseRobot.cs" />
@@ -171,9 +165,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\TreeViewForm.resx">
-      <DependentUpon>TreeViewForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
