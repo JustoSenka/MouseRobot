@@ -33,9 +33,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -64,6 +65,18 @@
     <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention">
       <HintPath>..\packages\Unity.4.0.0\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -87,12 +100,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Command\Command.cs" />
+    <Compile Include="src\Graphics\ScreenStateThread.cs" />
     <Compile Include="src\ScriptManager\Script.cs" />
     <Compile Include="src\ScriptManager\ScriptManager.cs" />
     <Compile Include="src\Exceptions\CorruptedConfigsException.cs" />
     <Compile Include="src\ScriptManager\ScriptThread.cs" />
+    <Compile Include="src\Utils\BitmapUtility.cs" />
     <Compile Include="src\Utils\Common.cs" />
     <Compile Include="src\Utils\ExtensionMethods.cs" />
+    <Compile Include="src\Utils\StableRepeatingThread.cs" />
     <Compile Include="src\Utils\Win32\InputCallbacks.cs" />
     <Compile Include="src\Utils\LinkedTree.cs" />
     <Compile Include="src\Utils\Win32\KeyEvent.cs" />
