@@ -17,25 +17,8 @@ namespace RobotUI.CustomControls
         private PointF m_ImagePos;
         private PointF m_OldImagePos;
 
-        private float m_ControlRatio;
-        private float m_ImageRatio;
-
         public PictureDrawBox() : base()
         {
-        }
-
-        private void CalculateImageRatio(Image image)
-        {
-            if (image.Width > image.Height)
-            {
-                m_ControlRatio = (float)Width / (float)/*image.*/Width;
-                m_ImageRatio = (float)image.Width / (float)Width;
-            }
-            else
-            {
-                m_ControlRatio = (float)Height / (float)image.Height;
-                m_ImageRatio = (float)image.Height / (float)Height;
-            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -45,7 +28,7 @@ namespace RobotUI.CustomControls
 
             Graphics g = e.Graphics;
 
-            g.ScaleTransform(m_ControlRatio * m_Zoom, m_ControlRatio * m_Zoom);
+            g.ScaleTransform(m_Zoom, m_Zoom);
 
             //g.TranslateTransform(, m_ImagePos.Y);// Used to give the same result, not sure which is more correct way of doing things
 
@@ -145,7 +128,6 @@ namespace RobotUI.CustomControls
             };
         }
 
-        public event EventHandler ImageChanged;
         public new Image Image
         {
             get
@@ -157,10 +139,7 @@ namespace RobotUI.CustomControls
                 if (value == null)
                     return;
 
-                CalculateImageRatio(value);
                 base.Image = value;
-                //m_ImagePos = new PointF(Width / 2 - Image.Width / 2, Height / 2 - Image.Height / 2);
-                ImageChanged?.Invoke(this, new EventArgs());
             }
         }
 
