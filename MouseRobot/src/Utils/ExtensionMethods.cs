@@ -71,6 +71,5 @@ namespace Robot
                 c.ClearMethod();
             return commands;
         }
-
     }
 }

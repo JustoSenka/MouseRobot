@@ -15,8 +15,6 @@ namespace Robot.Graphics
 {
     public class ScreenStateThread : StableRepeatingThread
     {
-        private StableRepeatingThread m_Thread;
-
         public object ScreenBmpLock = new object();
         /// <summary>
         /// Lock before using it, since data is constantly being written to this bitmap
@@ -39,8 +37,9 @@ namespace Robot.Graphics
         private Output1 m_Output1;
         private Texture2D m_ScreenTexture;
         private OutputDuplication m_DuplicatedOutput;
-        private int m_Width;
-        private int m_Height;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         public static ScreenStateThread Instace { get { return m_Instance; } }
         private static ScreenStateThread m_Instance = new ScreenStateThread();
@@ -56,8 +55,8 @@ namespace Robot.Graphics
             var output = adapter.GetOutput(0);
 
             m_Output1 = output.QueryInterface<Output1>();
-            m_Width = output.Description.DesktopBounds.Right;
-            m_Height = output.Description.DesktopBounds.Bottom;
+            Width = output.Description.DesktopBounds.Right;
+            Height = output.Description.DesktopBounds.Bottom;
 
             m_DuplicatedOutput = m_Output1.DuplicateOutput(m_Device);
 
@@ -66,8 +65,8 @@ namespace Robot.Graphics
                 CpuAccessFlags = CpuAccessFlags.Read,
                 BindFlags = BindFlags.None,
                 Format = Format.B8G8R8A8_UNorm,
-                Width = m_Width,
-                Height = m_Height,
+                Width = Width,
+                Height = Height,
                 OptionFlags = ResourceOptionFlags.None,
                 MipLevels = 1,
                 ArraySize = 1,
@@ -76,8 +75,8 @@ namespace Robot.Graphics
             };
             m_ScreenTexture = new Texture2D(m_Device, textureDesc);
 
-            m_ScreenBmp = new Bitmap(m_Width, m_Height, PixelFormat.Format32bppArgb);
-            m_TempBitmap = new Bitmap(m_Width, m_Height, PixelFormat.Format32bppArgb);
+            m_ScreenBmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
+            m_TempBitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
         }
 
         protected override void ThreadAction()
@@ -108,16 +107,16 @@ namespace Robot.Graphics
                 var mapSource = m_Device.ImmediateContext.MapSubresource(m_ScreenTexture, 0, MapMode.Read, MapFlags.None);
 
                 // using bitmap was here
-                var boundsRect = new Rectangle(0, 0, m_Width, m_Height);
+                var boundsRect = new Rectangle(0, 0, Width, Height);
 
                 // Copy pixels from screen capture Texture to GDI bitmap
                 var mapDest = tempBitmap.LockBits(boundsRect, ImageLockMode.WriteOnly, tempBitmap.PixelFormat);
                 var sourcePtr = mapSource.DataPointer;
                 var destPtr = mapDest.Scan0;
-                for (int y = 0; y < m_Height; y++)
+                for (int y = 0; y < Height; y++)
                 {
                     // Copy a single line 
-                    Utilities.CopyMemory(destPtr, sourcePtr, m_Width * 4);
+                    Utilities.CopyMemory(destPtr, sourcePtr, Width * 4);
 
                     // Advance pointers
                     sourcePtr = IntPtr.Add(sourcePtr, mapSource.RowPitch);

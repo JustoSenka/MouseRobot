@@ -14,6 +14,7 @@ namespace RobotUI
     {
         private TreeViewWindow m_TreeViewWindow;
         private CommandManagerWindow m_CommandManagerWindow;
+        private ScreenPreviewWindow m_ScreenPreviewWindow;
 
         private ThemeBase m_CurrentTheme;
         private DeserializeDockContent m_DeserializeDockContent;
@@ -56,6 +57,8 @@ namespace RobotUI
                     return m_TreeViewWindow;
                 if (persistString.Equals(typeof(CommandManagerWindow).ToString()))
                     return m_CommandManagerWindow;
+                if (persistString.Equals(typeof(ScreenPreviewWindow).ToString()))
+                    return m_ScreenPreviewWindow;
 
                 return null;
             });
@@ -65,6 +68,7 @@ namespace RobotUI
         {
             m_TreeViewWindow = new TreeViewWindow();
             m_CommandManagerWindow = new CommandManagerWindow();
+            m_ScreenPreviewWindow = new ScreenPreviewWindow();
         }
 
         private void SetWindowTheme(ThemeBase theme)
@@ -99,6 +103,7 @@ namespace RobotUI
         {
             m_TreeViewWindow.DockPanel = null;
             m_CommandManagerWindow.DockPanel = null;
+            m_ScreenPreviewWindow.DockPanel = null;
 
             CloseAllDocuments();
 
@@ -226,6 +231,11 @@ namespace RobotUI
         private void commandsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_CommandManagerWindow.Show(m_DockPanel);
+        }
+
+        private void imagePreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_ScreenPreviewWindow.Show(m_DockPanel);
         }
         #endregion
 

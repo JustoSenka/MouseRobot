@@ -6,6 +6,8 @@ namespace Robot.Utils
 {
     public abstract class StableRepeatingThread
     {
+        public event Action Update;
+
         private Thread m_Thread;
         private Action m_Action;
         private bool m_Run;
@@ -77,7 +79,8 @@ namespace Robot.Utils
                     Thread.Sleep(FrameTimeMax - elapsed);
 
                 m_Stopwatch.Reset();
-                Debug.WriteLine(string.Format("Frame took {0} millis to complete", elapsed));
+
+                Update?.Invoke();
             }
         }
 

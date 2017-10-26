@@ -3,6 +3,8 @@ using System.Linq;
 using Robot.Utils.Win32;
 using System.Diagnostics;
 using System.Drawing;
+using Robot.Graphics;
+using System.IO;
 
 namespace Robot
 {
@@ -26,6 +28,8 @@ namespace Robot
         {
             ScriptManager.Instance.NewScript();
             InputCallbacks.inputEvent += OnInputEvent;
+
+            ScreenStateThread.Instace.Start(10);
         }
 
         public void ForceInit() { } // This is to make sure that mouse robot singleton is created
@@ -75,10 +79,10 @@ namespace Robot
                 if (e.keyCode == commandManagerProperties.SleepKey)
                 {
                     m_SleepTimer.Stop();
-                    activeScript.AddCommandSleep((int) m_SleepTimer.ElapsedMilliseconds);
+                    activeScript.AddCommandSleep((int)m_SleepTimer.ElapsedMilliseconds);
                 }
 
-                if (e.keyCode == commandManagerProperties.MouseDownButton && !commandManagerProperties.TreatMouseDownAsMouseClick) 
+                if (e.keyCode == commandManagerProperties.MouseDownButton && !commandManagerProperties.TreatMouseDownAsMouseClick)
                 {
                     if (commandManagerProperties.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
                         activeScript.AddCommandMove(e.X, e.Y); // TODO: TIME ?
@@ -172,7 +176,7 @@ namespace Robot
 
         private float Distance(Point a, Point b)
         {
-            return (float) Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+            return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
     }
 }

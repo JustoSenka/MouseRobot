@@ -61,8 +61,11 @@
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // m_DockPanel
@@ -280,7 +283,8 @@
             // 
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hierarchyToolStripMenuItem,
-            this.commandsToolStripMenuItem});
+            this.commandsToolStripMenuItem,
+            this.imagePreviewToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -288,14 +292,14 @@
             // hierarchyToolStripMenuItem
             // 
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
-            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
             this.hierarchyToolStripMenuItem.Click += new System.EventHandler(this.hierarchyToolStripMenuItem_Click);
             // 
             // commandsToolStripMenuItem
             // 
             this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
-            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.commandsToolStripMenuItem.Text = "Commands";
             this.commandsToolStripMenuItem.Click += new System.EventHandler(this.commandsToolStripMenuItem_Click);
             // 
@@ -313,6 +317,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // imagePreviewToolStripMenuItem
+            // 
+            this.imagePreviewToolStripMenuItem.Name = "imagePreviewToolStripMenuItem";
+            this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.imagePreviewToolStripMenuItem.Text = "Image Preview";
+            this.imagePreviewToolStripMenuItem.Click += new System.EventHandler(this.imagePreviewToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -332,6 +343,7 @@
             this.toolStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -369,5 +381,7 @@
         private System.Windows.Forms.ToolStripComboBox actionOnRec;
         private System.Windows.Forms.ToolStripButton recordButton;
         private System.Windows.Forms.ToolStripComboBox actionOnPlay;
+        private System.Windows.Forms.ToolStripMenuItem imagePreviewToolStripMenuItem;
+        private System.Windows.Forms.BindingSource bindingSource1;
     }
 }

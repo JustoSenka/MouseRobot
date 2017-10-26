@@ -14,9 +14,9 @@ namespace RobotUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new TreeViewForm());
 
             Robot.MouseRobot.Instance.ForceInit();
+            //Application.Run(new Form1());
             Application.Run(new MainForm());
         }
     }
