@@ -38,10 +38,13 @@ namespace RobotUI.CustomControls
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            m_IsBeingDragged = true;
+            if (e.Button == MouseButtons.Left)
+            {
+                m_IsBeingDragged = true;
 
-            m_OldImagePos = m_ImagePos;
-            m_MouseDownPos = e.Location;
+                m_OldImagePos = m_ImagePos;
+                m_MouseDownPos = e.Location;
+            }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
@@ -126,6 +129,12 @@ namespace RobotUI.CustomControls
                 X = defaultMoveDueToScalingWithTopLeftPivotX,
                 Y = defaultMoveDueToScalingWithTopLeftPivotY
             };
+        }
+
+        public void CenterPosition()
+        {
+            m_ImagePos.X = Width / 2 - Image.Width / 2;
+            m_ImagePos.Y = Height / 2 - Image.Height / 2;
         }
 
         public new Image Image

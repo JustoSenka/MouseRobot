@@ -59,10 +59,10 @@
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -292,16 +292,23 @@
             // hierarchyToolStripMenuItem
             // 
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
-            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
             this.hierarchyToolStripMenuItem.Click += new System.EventHandler(this.hierarchyToolStripMenuItem_Click);
             // 
             // commandsToolStripMenuItem
             // 
             this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
-            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.commandsToolStripMenuItem.Text = "Commands";
             this.commandsToolStripMenuItem.Click += new System.EventHandler(this.commandsToolStripMenuItem_Click);
+            // 
+            // imagePreviewToolStripMenuItem
+            // 
+            this.imagePreviewToolStripMenuItem.Name = "imagePreviewToolStripMenuItem";
+            this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.imagePreviewToolStripMenuItem.Text = "Image Preview";
+            this.imagePreviewToolStripMenuItem.Click += new System.EventHandler(this.imagePreviewToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -318,13 +325,6 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // imagePreviewToolStripMenuItem
-            // 
-            this.imagePreviewToolStripMenuItem.Name = "imagePreviewToolStripMenuItem";
-            this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.imagePreviewToolStripMenuItem.Text = "Image Preview";
-            this.imagePreviewToolStripMenuItem.Click += new System.EventHandler(this.imagePreviewToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -338,6 +338,7 @@
             this.IsMdiContainer = true;
             this.Name = "MainForm";
             this.Text = "Main Form";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();

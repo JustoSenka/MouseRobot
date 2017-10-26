@@ -128,6 +128,7 @@
     <Compile Include="UI\CustomControls\PictureDrawBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\Editor\DockLayout.cs" />
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

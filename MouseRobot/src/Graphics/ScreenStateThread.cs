@@ -6,8 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Threading;
+using System.Windows.Forms;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
@@ -37,6 +36,8 @@ namespace Robot.Graphics
         private Output1 m_Output1;
         private Texture2D m_ScreenTexture;
         private OutputDuplication m_DuplicatedOutput;
+
+        private System.Drawing.Graphics m_GfxScreenshot;
 
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -77,11 +78,24 @@ namespace Robot.Graphics
 
             m_ScreenBmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
             m_TempBitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
+
+            //AlternativeInit(); // Should be removed after DX screenshoting issue is fixed
+        }
+
+        private void AlternativeInit()
+        {
+            m_GfxScreenshot = System.Drawing.Graphics.FromImage(m_TempBitmap);
+        }
+
+        private void AlternativeScreenshot()
+        {
+            m_GfxScreenshot.CopyFromScreen(Width, Height, 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
         }
 
         protected override void ThreadAction()
         {
             TakeScreenshot(m_TempBitmap);
+            //AlternativeScreenshot(); no work, why?
 
             lock (ScreenBmpLock)
             {
@@ -97,7 +111,7 @@ namespace Robot.Graphics
                 OutputDuplicateFrameInformation duplicateFrameInformation;
 
                 // Try to get duplicated frame within given time is ms
-                m_DuplicatedOutput.AcquireNextFrame(20, out duplicateFrameInformation, out screenResource);
+                m_DuplicatedOutput.AcquireNextFrame(-1, out duplicateFrameInformation, out screenResource);
 
                 // copy resource into memory that can be accessed by the CPU
                 using (var screenTexture2D = screenResource.QueryInterface<Texture2D>())

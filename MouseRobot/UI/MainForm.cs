@@ -1,10 +1,9 @@
 ﻿using Robot;
 using Robot.Graphics;
 using Robot.Utils.Win32;
+using RobotUI.Editor;
 using RobotUI.Utils;
 using System;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -12,12 +11,12 @@ namespace RobotUI
 {
     public partial class MainForm : Form
     {
+        private DockContent[] m_Windows;
         private TreeViewWindow m_TreeViewWindow;
         private CommandManagerWindow m_CommandManagerWindow;
         private ScreenPreviewWindow m_ScreenPreviewWindow;
 
         private ThemeBase m_CurrentTheme;
-        private DeserializeDockContent m_DeserializeDockContent;
 
         private FormWindowState m_DefaultWindowState;
 
@@ -28,14 +27,15 @@ namespace RobotUI
 
             //ShowSplashScreen(2000);
 
+            SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
+
             CreateWindows();
-            CreateWindowDeserializer();
+            DockLayout.Restore(m_DockPanel);
 
             visualStudioToolStripExtender.DefaultRenderer = new ToolStripProfessionalRenderer();
-            SetWindowTheme(this.vS2015DarkTheme1);
 
-            actionOnRec.SelectedIndex = 0;
-            actionOnPlay.SelectedIndex = 0;
+            actionOnRec.SelectedIndex = 2;
+            actionOnPlay.SelectedIndex = 2;
 
             InputCallbacks.inputEvent += OnInputEvent;
         }
@@ -49,47 +49,40 @@ namespace RobotUI
                 recordButton_Click(null, null);
         }
 
-        private void CreateWindowDeserializer()
-        {
-            m_DeserializeDockContent = new DeserializeDockContent((string persistString) =>
-            {
-                if (persistString.Equals(typeof(TreeViewWindow).ToString()))
-                    return m_TreeViewWindow;
-                if (persistString.Equals(typeof(CommandManagerWindow).ToString()))
-                    return m_CommandManagerWindow;
-                if (persistString.Equals(typeof(ScreenPreviewWindow).ToString()))
-                    return m_ScreenPreviewWindow;
-
-                return null;
-            });
-        }
-
         private void CreateWindows()
         {
             m_TreeViewWindow = new TreeViewWindow();
             m_CommandManagerWindow = new CommandManagerWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
+
+            m_Windows = new DockContent[]
+            {
+                m_TreeViewWindow,
+                m_CommandManagerWindow,
+                m_ScreenPreviewWindow
+            };
+
+            DockLayout.Windows = m_Windows;
         }
 
-        private void SetWindowTheme(ThemeBase theme)
+        private void SetWindowTheme(ThemeBase theme, bool emptyLayout = false)
         {
-            string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "DockPanel.temp.config");
-            m_DockPanel.SaveAsXml(configFile);
-
-            CloseAllContents();
+            if (!emptyLayout)
+            {
+                DockLayout.Save(m_DockPanel);
+                DockLayout.CloseAllContents(m_DockPanel);
+            }
 
             m_CurrentTheme = theme;
             m_DockPanel.Theme = theme;
 
-            visualStudioToolStripExtender.SetStyle(menuStrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
-            visualStudioToolStripExtender.SetStyle(toolStrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
-            visualStudioToolStripExtender.SetStyle(statusStrip, VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            EnableVSRenderer(VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
 
             if (m_DockPanel.Theme.ColorPalette != null)
                 statusStrip.BackColor = m_DockPanel.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
 
-            if (File.Exists(configFile))
-                m_DockPanel.LoadFromXml(configFile, m_DeserializeDockContent);
+            if (!emptyLayout)
+                DockLayout.Restore(m_DockPanel);
         }
 
         private void EnableVSRenderer(VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
@@ -97,31 +90,6 @@ namespace RobotUI
             visualStudioToolStripExtender.SetStyle(menuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
-        }
-
-        private void CloseAllContents()
-        {
-            m_TreeViewWindow.DockPanel = null;
-            m_CommandManagerWindow.DockPanel = null;
-            m_ScreenPreviewWindow.DockPanel = null;
-
-            CloseAllDocuments();
-
-            foreach (var window in m_DockPanel.FloatWindows.ToList())
-                window.Dispose();
-
-            System.Diagnostics.Debug.Assert(m_DockPanel.Panes.Count == 0);
-            System.Diagnostics.Debug.Assert(m_DockPanel.Contents.Count == 0);
-            System.Diagnostics.Debug.Assert(m_DockPanel.FloatWindows.Count == 0);
-        }
-
-        private void CloseAllDocuments()
-        {
-            foreach (IDockContent document in m_DockPanel.DocumentsToArray())
-            {
-                document.DockHandler.DockPanel = null;
-                document.DockHandler.Close();
-            }
         }
 
         private void ShowSplashScreen(int millis)
@@ -302,6 +270,11 @@ namespace RobotUI
         {
             ScreenStateThread.Instace.Stop();
             Application.Exit();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DockLayout.Save(m_DockPanel);
         }
     }
 }
