@@ -4,14 +4,34 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Robot
 {
+    public static class Commons
+    {
+        public static string GetName(string path)
+        {
+            var name = Regex.Match(path, @"[/\\]{1}[\w\d ]+\.").Value.
+                TrimStart('/', '\\').
+                TrimEnd(FileExtensions.Script.ToCharArray()).
+                TrimEnd(FileExtensions.Timeline.ToCharArray()).
+                TrimEnd(FileExtensions.Image.ToCharArray()).
+                TrimEnd('.');
+
+            return name;
+        }
+    }
+
     public static class FileExtensions
     {
         public const string Script = "mrb";
         public const string ScriptD = ".mrb";
+
+        // TODO: Obiously need to improve on this side
+        public const string Image = "png";
+        public const string ImageD = ".png";
 
         public const string Timeline = "mrt";
         public const string TimelineD = ".mrt";
@@ -19,7 +39,8 @@ namespace Robot
 
     public static class RegexExpression
     {
-        public const string GetScriptNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Script; 
+        public const string GetScriptNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Script;
+        public const string GetImageNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Image;
         public const string GetTimelineNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Timeline;
     }
 

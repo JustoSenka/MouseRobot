@@ -36,9 +36,9 @@ namespace RobotUI
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
                 {
                     BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_Bitmap);
+                }
                     pictureDrawBox.Image = m_Bitmap;
                     pictureDrawBox.Update();
-                }
             }));
         }
     }

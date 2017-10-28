@@ -74,6 +74,8 @@ namespace RobotUI.Editor
                     return Windows[1];
                 if (persistString.Equals(typeof(ScreenPreviewWindow).ToString()))
                     return Windows[2];
+                if (persistString.Equals(typeof(AssetsWindow).ToString()))
+                    return Windows[3];
 
                 return null;
             });

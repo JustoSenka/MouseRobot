@@ -12,9 +12,12 @@ namespace RobotUI
     public partial class MainForm : Form
     {
         private DockContent[] m_Windows;
+
+        // Solve this problem somehow
         private TreeViewWindow m_TreeViewWindow;
         private CommandManagerWindow m_CommandManagerWindow;
         private ScreenPreviewWindow m_ScreenPreviewWindow;
+        private AssetsWindow m_AssetsWindow;
 
         private ThemeBase m_CurrentTheme;
 
@@ -54,12 +57,14 @@ namespace RobotUI
             m_TreeViewWindow = new TreeViewWindow();
             m_CommandManagerWindow = new CommandManagerWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
+            m_AssetsWindow = new AssetsWindow();
 
             m_Windows = new DockContent[]
             {
                 m_TreeViewWindow,
                 m_CommandManagerWindow,
-                m_ScreenPreviewWindow
+                m_ScreenPreviewWindow,
+                m_AssetsWindow,
             };
 
             DockLayout.Windows = m_Windows;
@@ -204,6 +209,11 @@ namespace RobotUI
         private void imagePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_ScreenPreviewWindow.Show(m_DockPanel);
+        }
+
+        private void assetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_AssetsWindow.Show(m_DockPanel);
         }
         #endregion
 

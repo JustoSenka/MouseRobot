@@ -60,6 +60,7 @@
             this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
@@ -284,7 +285,8 @@
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hierarchyToolStripMenuItem,
             this.commandsToolStripMenuItem,
-            this.imagePreviewToolStripMenuItem});
+            this.imagePreviewToolStripMenuItem,
+            this.assetsToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -309,6 +311,13 @@
             this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.imagePreviewToolStripMenuItem.Text = "Image Preview";
             this.imagePreviewToolStripMenuItem.Click += new System.EventHandler(this.imagePreviewToolStripMenuItem_Click);
+            // 
+            // assetsToolStripMenuItem
+            // 
+            this.assetsToolStripMenuItem.Name = "assetsToolStripMenuItem";
+            this.assetsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.assetsToolStripMenuItem.Text = "Assets";
+            this.assetsToolStripMenuItem.Click += new System.EventHandler(this.assetsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -337,7 +346,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.Name = "MainForm";
-            this.Text = "Main Form";
+            this.Text = "Mouse Robot";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.toolStrip.ResumeLayout(false);
@@ -384,5 +393,6 @@
         private System.Windows.Forms.ToolStripComboBox actionOnPlay;
         private System.Windows.Forms.ToolStripMenuItem imagePreviewToolStripMenuItem;
         private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.ToolStripMenuItem assetsToolStripMenuItem;
     }
 }
