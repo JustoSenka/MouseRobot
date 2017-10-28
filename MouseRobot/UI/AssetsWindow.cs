@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -88,5 +89,16 @@ namespace RobotUI
             System.Diagnostics.Process.Start("explorer.exe", "/select, " + path);
         }
         #endregion
+
+        private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
+                return;
+
+            var asset = AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            if (!ScriptManager.Instance.LoadedScripts.Any(s => s.Name == asset.Name))
+                ScriptManager.Instance.LoadScript(asset.Path);
+
+        }
     }
 }

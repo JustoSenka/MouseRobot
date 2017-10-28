@@ -97,6 +97,10 @@
       <HintPath>..\packages\DockPanelSuite.ThemeVS2015.2.16.0\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="YamlDotNet, Version=4.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\AssetManager\Asset.cs" />
@@ -112,6 +116,8 @@
     <Compile Include="src\Utils\BitmapUtility.cs" />
     <Compile Include="src\Utils\Common.cs" />
     <Compile Include="src\Utils\ExtensionMethods.cs" />
+    <Compile Include="src\Utils\IO\ObjectIO.cs" />
+    <Compile Include="src\Utils\IO\YamlObjectIO.cs" />
     <Compile Include="src\Utils\StableRepeatingThread.cs" />
     <Compile Include="src\Utils\Win32\InputCallbacks.cs" />
     <Compile Include="src\Utils\LinkedTree.cs" />
@@ -159,7 +165,7 @@
     <Compile Include="src\Command\CommandCode.cs" />
     <Compile Include="src\Exceptions\EmptyScriptException.cs" />
     <Compile Include="src\MouseRobot\MouseRobot.cs" />
-    <Compile Include="src\Utils\BinaryObjectIO.cs" />
+    <Compile Include="src\Utils\IO\BinaryObjectIO.cs" />
     <Compile Include="src\Utils\Win32\WinAPI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

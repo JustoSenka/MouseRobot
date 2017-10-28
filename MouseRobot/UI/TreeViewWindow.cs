@@ -1,4 +1,5 @@
 ﻿using Robot;
+using Robot.Utils.Win32;
 using RobotUI.Utils;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace RobotUI
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
 
             ScriptManager.Instance.scriptsModified += OnScriptsModified;
+            ScriptManager.Instance.scriptLoaded += OnScriptLoaded;
         }
 
         private void OnScriptsModified(Script script, Command command)
@@ -34,9 +36,18 @@ namespace RobotUI
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
+        private void OnScriptLoaded(Script script)
+        {
+            ScriptTreeViewUtils.AddExistingScriptToTreeView(treeView, script);
+            ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
+        }
+
         #region TreeView Drag and Drop
         private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            Point targetPoint = treeView.PointToClient(WinAPI.GetCursorPosition());
+            treeView.SelectedNode = treeView.GetNodeAt(targetPoint);
+
             DoDragDrop(e.Item, DragDropEffects.All);
         }
 

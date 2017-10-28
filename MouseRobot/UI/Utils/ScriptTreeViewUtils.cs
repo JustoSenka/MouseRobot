@@ -43,7 +43,7 @@ namespace RobotUI.Utils
             }
         }
 
-        private static void AddExistingScriptToTreeView(TreeView treeView, Script script)
+        public static void AddExistingScriptToTreeView(TreeView treeView, Script script)
         {
             TreeNode scriptNode = new TreeNode(script.Name + ((script.IsDirty) ? "*" : ""));
             scriptNode.ImageIndex = 0;
@@ -97,11 +97,7 @@ namespace RobotUI.Utils
             if (openDialog.ShowDialog() == DialogResult.OK)
             {
                 var script = ScriptManager.Instance.LoadScript(openDialog.FileName);
-                if (script != null)
-                {
-                    AddExistingScriptToTreeView(treeView, script);
-                    UpdateTreeNodeFonts(treeView);
-                }
+                // OnScriptLoaded event will take care of updating UI
             }
         }
 

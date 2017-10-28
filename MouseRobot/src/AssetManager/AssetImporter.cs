@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robot.IO;
+using System;
 using System.Drawing;
 using Graphics = System.Drawing.Graphics;
 
@@ -67,7 +68,7 @@ namespace Robot
 
             protected override object LoadAsset()
             {
-                return BinaryObjectIO.LoadObject<Script>(Path);
+                return ObjectIO.Create().LoadObject<Script>(Path);
             }
 
             public override Type HoldsType()

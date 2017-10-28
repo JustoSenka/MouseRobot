@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Robot.IO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,7 +84,7 @@ namespace Robot
                 return null;
             }
 
-            var script = (Script)BinaryObjectIO.LoadObject<Script>(path).Clone();
+            var script = (Script)ObjectIO.Create().LoadObject<Script>(path).Clone();
             script.Path = path;
 
             Console.WriteLine("Script loaded: " + path);
@@ -97,7 +98,7 @@ namespace Robot
 
         public void SaveScript(Script script, string path)
         {
-            BinaryObjectIO.SaveObject(path, script);
+            ObjectIO.Create().SaveObject(path, script);
             script.Path = path;
 
             Console.WriteLine("Script saved: " + path);

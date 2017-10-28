@@ -1,18 +1,13 @@
-﻿using Robot;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
-namespace Robot
+namespace Robot.IO
 {
-    public static class BinaryObjectIO
+    public class BinaryObjectIO : ObjectIO
     {
-        public static T LoadObject<T>(string fileName)
+        public override T LoadObject<T>(string fileName)
         {
             using (Stream stream = File.Open(fileName, FileMode.Open))
             {
@@ -28,7 +23,7 @@ namespace Robot
             }
         }
 
-        public static void SaveObject<T>(string fileName, T objToWrite)
+        public override void SaveObject<T>(string fileName, T objToWrite)
         {
             using (Stream stream = File.Open(fileName, FileMode.Create))
             {
