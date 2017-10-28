@@ -135,6 +135,9 @@ namespace RobotUI.CustomControls
         {
             m_ImagePos.X = Width / 2 - Image.Width / 2;
             m_ImagePos.Y = Height / 2 - Image.Height / 2;
+
+            m_Zoom = 1;
+            // TODO: Adjust zoom level so image fits the screen
         }
 
         public new Image Image

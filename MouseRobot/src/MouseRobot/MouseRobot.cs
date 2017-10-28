@@ -29,7 +29,7 @@ namespace Robot
             ScriptManager.Instance.NewScript();
             InputCallbacks.inputEvent += OnInputEvent;
 
-            ScreenStateThread.Instace.Start(10);
+            //ScreenStateThread.Instace.Start(10);
         }
 
         public void ForceInit() { } // This is to make sure that mouse robot singleton is created

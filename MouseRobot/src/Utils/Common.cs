@@ -22,6 +22,13 @@ namespace Robot
 
             return name;
         }
+
+        public static bool ArePathsEqual(string s, string d)
+        {
+            s = s.ToLower();
+            d = d.ToLower();
+            return s == d;
+        }
     }
 
     public static class FileExtensions

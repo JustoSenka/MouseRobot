@@ -10,12 +10,23 @@ namespace RobotUI
 {
     public partial class AssetsWindow : DockContent
     {
+        public event Action AssetSelected;
+
         public AssetsWindow()
         {
             InitializeComponent();
+            AutoScaleMode = AutoScaleMode.Dpi;
+            treeView.Font = Fonts.Default;
+            treeView.NodeMouseClick += (sender, args) => treeView.SelectedNode = args.Node;
+
             AssetManager.Instance.RefreshFinished += RefreshFinished;
 
             AssetManager.Instance.Refresh();
+        }
+
+        public Asset GetSelectedAsset()
+        {
+            return AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
         }
 
         private void RefreshFinished()
@@ -51,5 +62,31 @@ namespace RobotUI
         {
             AssetManager.Instance.Refresh();
         }
+
+        #region Context Menu Items
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (treeView.SelectedNode.Level == 1)
+                AssetSelected?.Invoke();
+        }
+
+        private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView.SelectedNode == null)
+                return;
+
+            var path = Application.StartupPath + "\\";
+            if (treeView.SelectedNode.Level == 0)
+            {
+                path += treeView.SelectedNode.Text;
+            }
+            else if (treeView.SelectedNode.Level == 1)
+            {
+                path += AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text).Path;
+            }
+
+            System.Diagnostics.Process.Start("explorer.exe", "/select, " + path);
+        }
+        #endregion
     }
 }

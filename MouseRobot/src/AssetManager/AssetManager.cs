@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Robot
 {
@@ -30,6 +31,7 @@ namespace Robot
 
         public void Refresh()
         {
+            // TODO: Keep reference to old assets if renamed
             Assets.Clear();
 
             foreach (string fileName in Directory.GetFiles(k_ImagePath, "*.png").Select(Path.GetFileName))
@@ -41,16 +43,28 @@ namespace Robot
             RefreshFinished?.Invoke();
         }
 
-        public object LoadAsset(string path)
+        public Asset GetAsset(string path)
         {
-            if (path.EndsWith(FileExtensions.Image))
-                return new ImageImporter(path);
+            return Assets.First((a) => Commons.ArePathsEqual(a.Path, path));
+        }
 
-            else if (path.EndsWith(FileExtensions.Script))
-                return new ScriptImporter(path);
+        public Asset GetAsset(string folder, string name)
+        {
+            var path = folder + "\\" + name + "." + ExtensionFromFolder(folder);
+            return GetAsset(path);
+        }
 
-            else
-                return null;
+        private static string ExtensionFromFolder(string folder)
+        {
+            switch (folder)
+            {
+                case ScriptFolder:
+                    return FileExtensions.Script;
+                case ImageFolder:
+                    return FileExtensions.Image;
+                default:
+                    return "";
+            }
         }
 
         private void InitProject()

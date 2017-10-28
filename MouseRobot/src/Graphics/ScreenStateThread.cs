@@ -29,6 +29,12 @@ namespace Robot.Graphics
                 m_ScreenBmp = value;
             }
         }
+
+        public event Action Initialized;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
         private Bitmap m_ScreenBmp;
         private Bitmap m_TempBitmap;
 
@@ -38,9 +44,6 @@ namespace Robot.Graphics
         private OutputDuplication m_DuplicatedOutput;
 
         private System.Drawing.Graphics m_GfxScreenshot;
-
-        public int Width { get; private set; }
-        public int Height { get; private set; }
 
         public static ScreenStateThread Instace { get { return m_Instance; } }
         private static ScreenStateThread m_Instance = new ScreenStateThread();
@@ -80,6 +83,8 @@ namespace Robot.Graphics
             m_TempBitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 
             //AlternativeInit(); // Should be removed after DX screenshoting issue is fixed
+
+            Initialized?.Invoke();
         }
 
         private void AlternativeInit()

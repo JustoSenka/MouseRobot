@@ -41,6 +41,7 @@
             this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,7 +75,7 @@
             this.duplicateToolStripMenuItem1,
             this.deleteToolStripMenuItem1});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 148);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 126);
             // 
             // setActiveToolStripMenuItem
             // 
@@ -131,6 +132,11 @@
             this.imageList1.Images.SetKeyName(0, "script_ICO_256.png");
             this.imageList1.Images.SetKeyName(1, "gear_ICO_512.png");
             // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(153, 26);
+            // 
             // TreeViewWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -158,5 +164,6 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.TreeView treeView;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
     }
 }

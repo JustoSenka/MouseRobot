@@ -18,6 +18,7 @@ namespace RobotUI
         {
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
+            treeView.NodeMouseClick += (sender, args) => treeView.SelectedNode = args.Node;
 
             treeView.Font = Fonts.Default;
             ScriptTreeViewUtils.UpdateTreeView(treeView);

@@ -1,4 +1,5 @@
-﻿using Robot.Graphics;
+﻿using Robot;
+using Robot.Graphics;
 using Robot.Utils;
 using RobotUI.Utils;
 using System;
@@ -12,7 +13,8 @@ namespace RobotUI
     public partial class ScreenPreviewWindow : DockContent
     {
         private bool m_Init;
-        private Bitmap m_Bitmap;
+        private Bitmap m_ScreenBitmap;
+        private Asset m_Asset;
 
         public ScreenPreviewWindow()
         {
@@ -21,9 +23,30 @@ namespace RobotUI
             var screenSize = new Size(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height);
             pictureDrawBox.Size = screenSize;
 
-            m_Bitmap = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
-            ScreenStateThread.Instace.Update += UpdatePreviewWithNewScreenshot;
+
+            ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
+
             m_Init = true;
+        }
+
+        public void Preview(Asset asset)
+        {
+            if (!asset.HoldsTypeOf(typeof(Bitmap)))
+                return;
+
+
+            pictureDrawBox.Image = asset.Importer.Cast<Bitmap>();
+            if (m_Asset != asset)
+                pictureDrawBox.CenterPosition();
+
+            pictureDrawBox.Update();
+            m_Asset = asset;
+        }
+
+        private void ScreenStateThreadInitialized()
+        {
+            m_ScreenBitmap = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
+            ScreenStateThread.Instace.Update += UpdatePreviewWithNewScreenshot;
         }
 
         private void UpdatePreviewWithNewScreenshot()
@@ -35,10 +58,10 @@ namespace RobotUI
             {
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
                 {
-                    BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_Bitmap);
+                    BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ScreenBitmap);
                 }
-                    pictureDrawBox.Image = m_Bitmap;
-                    pictureDrawBox.Update();
+                pictureDrawBox.Image = m_ScreenBitmap;
+                pictureDrawBox.Update();
             }));
         }
     }

@@ -30,6 +30,7 @@ namespace RobotUI
 
             //ShowSplashScreen(2000);
 
+            this.WindowState = FormWindowState.Maximized;
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
 
             CreateWindows();
@@ -41,6 +42,8 @@ namespace RobotUI
             actionOnPlay.SelectedIndex = 2;
 
             InputCallbacks.inputEvent += OnInputEvent;
+
+            m_AssetsWindow.AssetSelected += OnAssetSelected;
         }
 
         private void OnInputEvent(KeyEvent obj)
@@ -50,6 +53,11 @@ namespace RobotUI
 
             if (obj.IsKeyDown() && obj.keyCode == Keys.F2)
                 recordButton_Click(null, null);
+        }
+
+        private void OnAssetSelected()
+        {
+            m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
         }
 
         private void CreateWindows()
