@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Threading;
 
 namespace Robot.Utils.Win32
 {
@@ -50,14 +51,20 @@ namespace Robot.Utils.Win32
             return currentMousePoint;
         }
 
-        public static void MouseEvent(MouseEventFlags value)
+        public static void PerformAction(MouseEventFlags value)
         {
             Point position = GetCursorPosition();
             mouse_event((int)value, position.X, position.Y, 0, 0);
+            Thread.Sleep(TimeBetweenActions);
         }
 
+        public static void MouseMoveTo(int x, int y)
+        {
+            SetCursorPosition(x, y);
+            Thread.Sleep(TimeBetweenActions);
+        }
 
-
+        
         // Console show / hide
 
         [DllImport("kernel32.dll")]

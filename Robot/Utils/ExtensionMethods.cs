@@ -59,12 +59,5 @@ namespace Robot
             foreach (var item in source)
                 action(item as K);
         }
-
-        public static T ClearMethods<T>(this T commands) where T : ICollection<Command>
-        {
-            foreach(var c in commands)
-                c.ClearMethod();
-            return commands;
-        }
     }
 }

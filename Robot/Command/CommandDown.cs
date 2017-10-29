@@ -1,0 +1,30 @@
+﻿using Robot.Utils.Win32;
+using System;
+
+namespace Robot
+{
+    [Serializable]
+    class CommandDown : Command
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public CommandDown(int x, int y)
+        {
+            X = x;
+            Y = y;
+            Text = "Down on: (" + x + ", " + y + ")";
+        }
+
+        public override object Clone()
+        {
+            return new CommandDown(X, Y);
+        }
+
+        public override void Run()
+        {
+            WinAPI.MouseMoveTo(X, Y); // TODO: Do I really want this?
+            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftUp);
+        }
+    }
+}

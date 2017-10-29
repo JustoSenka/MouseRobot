@@ -20,9 +20,6 @@ namespace Robot
         [NonSerialized]
         private string m_Path;
 
-        [NonSerialized]
-        public bool dontSendMessagesToManager;
-
         public event Action<Script> DirtyChanged;
 
         public string Name
@@ -50,86 +47,46 @@ namespace Robot
         public void AddCommandSleep(int time)
         {
             m_IsDirty = true;
-            var command = new Command(() =>
-            {
-                Thread.Sleep(time);
-                CheckIfPointerOffScreen();
-            }, "Sleep for " + time + " ms.", CommandCode.G, time);
-
+            var command = new CommandSleep(time);
             m_Commands.Add(command);
 
-            if (!dontSendMessagesToManager)
-                ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandRelease()
         {
             m_IsDirty = true;
-            var command = new Command(() =>
-            {
-                MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                CheckIfPointerOffScreen();
-            }, "Release", CommandCode.K);
-
+            var command = new CommandRelease();
             m_Commands.Add(command);
 
-            if (!dontSendMessagesToManager)
-                ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandPress(int x, int y)
         {
             m_IsDirty = true;
-            var command = new Command(delegate ()
-            {
-                MouseMoveTo(x, y);
-                MouseAction(WinAPI.MouseEventFlags.LeftDown);
-                MouseAction(WinAPI.MouseEventFlags.LeftUp);
-                CheckIfPointerOffScreen();
-            }, "Press on: (" + x + ", " + y + ")", CommandCode.S, x, y);
-
+            var command = new CommandPress(x, y);
             m_Commands.Add(command);
 
-            if (!dontSendMessagesToManager)
-                ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandMove(int x, int y)
         {
             m_IsDirty = true;
-            var command = new Command(delegate ()
-            {
-                int x1, y1;
-                x1 = WinAPI.GetCursorPosition().X;
-                y1 = WinAPI.GetCursorPosition().Y;
-
-                for (int i = 1; i <= 50; i++)
-                {
-                    MouseMoveTo(x1 + ((x - x1) * i / 50), y1 + ((y - y1) * i / 50));
-                }
-                CheckIfPointerOffScreen();
-            }, "Move to: (" + x + ", " + y + ")", CommandCode.J, x, y);
-
+            var command = new CommandMove(x, y);
             m_Commands.Add(command);
 
-            if (!dontSendMessagesToManager)
-                ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void AddCommandDown(int x, int y)
         {
             m_IsDirty = true;
-            var command = new Command(delegate ()
-            {
-                MouseMoveTo(x, y);
-                MouseAction(WinAPI.MouseEventFlags.LeftDown);
-                CheckIfPointerOffScreen();
-            }, "Down on: (" + x + ", " + y + ")", CommandCode.H, x, y);
-
+            var command = new CommandDown(x, y);
             m_Commands.Add(command);
 
-            if (!dontSendMessagesToManager)
-                ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.ScriptModified(this, command);
         }
 
         public void InsertCommand(int position, Command command)
@@ -155,7 +112,7 @@ namespace Robot
             m_Commands.RemoveAt(index);
             m_IsDirty = true;
         }
-    
+
         public void EmptyScript()
         {
             m_Commands.Clear();
@@ -163,55 +120,13 @@ namespace Robot
             Console.WriteLine("List is empty.");
         }
 
-        private Action<int, int> MouseMoveTo = (int x, int y) =>
-        {
-            WinAPI.SetCursorPosition(x, y);
-            Thread.Sleep(WinAPI.TimeBetweenActions);
-        };
-
-        private Action<WinAPI.MouseEventFlags> MouseAction = (WinAPI.MouseEventFlags flags) =>
-        {
-            WinAPI.MouseEvent(flags);
-            Thread.Sleep(WinAPI.TimeBetweenActions);
-        };
-
-        private bool CheckIfPointerOffScreen()
-        {
-            if (WinAPI.GetCursorPosition().Y < 5)
-            {
-                // Stop the script here
-            }
-            return WinAPI.GetCursorPosition().Y < 5;
-        }
-
         public object Clone()
         {
             var script = new Script();
-            script.dontSendMessagesToManager = true;
 
-            foreach (var v in m_Commands)
-            {
-                switch (v.Code)
-                {
-                    case CommandCode.G:
-                        script.AddCommandSleep(v.Args.ElementAt(0));
-                        break;
-                    case CommandCode.S:
-                        script.AddCommandPress(v.Args.ElementAt(0), v.Args.ElementAt(1));
-                        break;
-                    case CommandCode.H:
-                        script.AddCommandDown(v.Args.ElementAt(0), v.Args.ElementAt(1));
-                        break;
-                    case CommandCode.J:
-                        script.AddCommandMove(v.Args.ElementAt(0), v.Args.ElementAt(1));
-                        break;
-                    case CommandCode.K:
-                        script.AddCommandRelease();
-                        break;
-                }
-            }
+            foreach (var c in m_Commands)
+                script.m_Commands.Add((Command)c.Clone());
 
-            script.dontSendMessagesToManager = false;
             script.m_IsDirty = true;
             return script;
         }
