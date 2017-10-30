@@ -7,7 +7,7 @@
     <ProjectGuid>{869A7F35-74EE-4D83-90C0-5DA908B2329F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Robot</RootNamespace>
+    <RootNamespace>RobotEditor</RootNamespace>
     <AssemblyName>MouseRobot</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

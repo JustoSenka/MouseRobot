@@ -147,9 +147,10 @@ namespace Robot
                     throw new InvalidOperationException("Cannot record while playing script.");
 
                 if (value != m_IsRecording)
+                {
+                    m_IsRecording = value;
                     RecordingStateChanged?.Invoke(value);
-
-                m_IsRecording = value;
+                }
             }
         }
 
@@ -165,9 +166,10 @@ namespace Robot
                     throw new InvalidOperationException("Cannot play a script while is recording.");
 
                 if (value != m_IsPlaying)
-                    PlayingStateChanged?.Invoke(value);
-
-                m_IsPlaying = value;
+                {
+                    m_IsPlaying = value;
+                    PlayingStateChanged?.Invoke(m_IsPlaying);
+                }
             }
         }
 

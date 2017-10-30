@@ -44,6 +44,37 @@ namespace RobotEditor
             InputCallbacks.inputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
+
+            MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
+            MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;
+        }
+
+        private void OnPlayingStateChanged(bool isPlaying)
+        {
+            if (isPlaying && actionOnPlay.SelectedIndex == 0)
+            {
+                m_DefaultWindowState = this.WindowState;
+                this.WindowState = FormWindowState.Minimized;
+            }
+
+            if (!isPlaying && actionOnPlay.SelectedIndex == 0)
+                this.WindowState = m_DefaultWindowState;
+
+            UpdateToolstripButtonStates();
+        }
+
+        private void OnRecordingStateChanged(bool isRecording)
+        {
+            if (isRecording && actionOnRec.SelectedIndex == 0)
+            {
+                m_DefaultWindowState = this.WindowState;
+                this.WindowState = FormWindowState.Minimized;
+            }
+
+            if (!isRecording && actionOnRec.SelectedIndex == 0)
+                this.WindowState = m_DefaultWindowState;
+
+            UpdateToolstripButtonStates();
         }
 
         private void OnInputEvent(KeyEvent obj)
@@ -232,16 +263,7 @@ namespace RobotEditor
                 return;
 
             MouseRobot.Instance.IsPlaying ^= true;
-            UpdateToolstripButtonStates();
-
-            if (MouseRobot.Instance.IsPlaying && actionOnPlay.SelectedIndex == 0)
-            {
-                m_DefaultWindowState = this.WindowState;
-                this.WindowState = FormWindowState.Minimized;
-            }
-
-            if (!MouseRobot.Instance.IsPlaying)
-                this.WindowState = m_DefaultWindowState;
+            //UpdateToolstripButtonStates();
         }
 
         private void recordButton_Click(object sender, EventArgs e)
@@ -250,16 +272,7 @@ namespace RobotEditor
                 return;
 
             MouseRobot.Instance.IsRecording ^= true;
-            UpdateToolstripButtonStates();
-
-            if (MouseRobot.Instance.IsRecording && actionOnRec.SelectedIndex == 0)
-            {
-                m_DefaultWindowState = this.WindowState;
-                this.WindowState = FormWindowState.Minimized;
-            }
-
-            if (!MouseRobot.Instance.IsRecording)
-                this.WindowState = m_DefaultWindowState;
+            //UpdateToolstripButtonStates();
         }
         #endregion
 
