@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Robot
+namespace RobotRuntime.Commands
 {
     [Serializable]
     class CommandSleep : Command

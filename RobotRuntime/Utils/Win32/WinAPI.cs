@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Threading;
 
-namespace Robot.Utils.Win32
+namespace RobotRuntime.Utils.Win32
 {
     public static class WinAPI
     {

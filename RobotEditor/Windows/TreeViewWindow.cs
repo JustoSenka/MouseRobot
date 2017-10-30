@@ -1,10 +1,10 @@
 ﻿using RobotEditor.Utils;
-using Robot;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using Robot.Utils.Win32;
+using RobotRuntime;
+using RobotRuntime.Utils.Win32;
 
 namespace RobotEditor
 {

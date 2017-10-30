@@ -2,6 +2,7 @@
 using Robot.Utils.Win32;
 using System.Diagnostics;
 using System.Drawing;
+using RobotRuntime;
 
 namespace Robot
 {

@@ -1,7 +1,7 @@
-﻿using Robot.Utils.Win32;
+﻿using RobotRuntime.Utils.Win32;
 using System;
 
-namespace Robot
+namespace RobotRuntime.Commands
 {
     [Serializable]
     class CommandDown : Command

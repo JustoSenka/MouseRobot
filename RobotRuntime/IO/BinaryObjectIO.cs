@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 
-namespace Robot.IO
+namespace RobotRuntime.IO
 {
     public class BinaryObjectIO : ObjectIO
     {

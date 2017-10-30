@@ -218,6 +218,10 @@
     <Content Include="Resources\Originals\ColourfulGear_ICO_256.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RobotRuntime\RobotRuntime.csproj">
+      <Project>{99e228b6-ca7a-451b-89d5-90534d871052}</Project>
+      <Name>RobotRuntime</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Robot\Robot.csproj">
       <Project>{7a078fbb-25d9-469d-abd4-6d985de70b49}</Project>
       <Name>Robot</Name>

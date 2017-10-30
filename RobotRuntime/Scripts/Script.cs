@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Diagnostics;
 using System.Collections;
-using Robot.Utils.Win32;
+using RobotRuntime.Commands;
 
-namespace Robot
+namespace RobotRuntime
 {
     [Serializable]
     public class Script : ICloneable, IEnumerable<Command>
@@ -26,7 +24,7 @@ namespace Robot
         {
             get
             {
-                return (Path == "") ? "New Script" : Regex.Match(Path, RegexExpression.GetScriptNameFromPath).Value.Trim('/', '\\').Replace(FileExtensions.ScriptD, "");
+                return (Path == "") ? "New Script" : Commons.GetName(Path);
             }
         }
 

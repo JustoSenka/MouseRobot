@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Robot
+namespace RobotRuntime
 {
     [Serializable]
     public abstract class Command : ICloneable

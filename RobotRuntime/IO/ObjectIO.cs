@@ -1,4 +1,4 @@
-﻿namespace Robot.IO
+﻿namespace RobotRuntime.IO
 {
     public abstract class ObjectIO
     {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections;
 
-namespace Robot
+namespace RobotRuntime
 {
     public static class ExtensionMethods
     {

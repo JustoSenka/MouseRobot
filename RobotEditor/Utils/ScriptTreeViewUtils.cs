@@ -1,7 +1,6 @@
 ﻿#define ENABLE_UI_TESTING
 
-using Robot;
-using RobotEditor;
+using RobotRuntime;
 using System;
 using System.Diagnostics;
 using System.Drawing;

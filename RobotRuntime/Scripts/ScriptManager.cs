@@ -1,10 +1,10 @@
-﻿using Robot.IO;
+﻿using RobotRuntime.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Robot
+namespace RobotRuntime
 {
     public class ScriptManager : IEnumerable<Script>
     {

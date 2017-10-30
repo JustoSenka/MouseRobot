@@ -3,6 +3,7 @@ using Robot.Graphics;
 using Robot.Utils.Win32;
 using RobotEditor.Editor;
 using RobotEditor.Utils;
+using RobotRuntime;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;

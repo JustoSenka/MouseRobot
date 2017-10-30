@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using RobotRuntime.Utils.Win32;
 
 namespace Robot.Utils.Win32
 {

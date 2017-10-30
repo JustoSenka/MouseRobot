@@ -2,7 +2,7 @@
 using System.IO;
 using YamlDotNet.Serialization;
 
-namespace Robot.IO
+namespace RobotRuntime.IO
 {
     public class YamlObjectIO : ObjectIO
     {
