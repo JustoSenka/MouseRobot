@@ -1,10 +1,11 @@
-﻿using RobotRuntime.IO;
+﻿using RobotRuntime;
+using RobotRuntime.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RobotRuntime
+namespace Robot
 {
     public class ScriptManager : IEnumerable<Script>
     {
@@ -84,7 +85,7 @@ namespace RobotRuntime
                 return null;
             }
 
-            var script = (Script)ObjectIO.Create().LoadObject<Script>(path).Clone();
+            var script = new Script(ObjectIO.Create().LoadObject<LightScript>(path));
             script.Path = path;
 
             Console.WriteLine("Script loaded: " + path);
@@ -98,8 +99,9 @@ namespace RobotRuntime
 
         public void SaveScript(Script script, string path)
         {
-            ObjectIO.Create().SaveObject(path, script);
+            ObjectIO.Create().SaveObject(path, script.ToLightScript());
             script.Path = path;
+            AssetManager.Instance.Refresh();
 
             Console.WriteLine("Script saved: " + path);
         }

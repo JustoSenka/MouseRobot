@@ -27,6 +27,8 @@ namespace Robot
             ScriptManager.Instance.NewScript();
             InputCallbacks.inputEvent += OnInputEvent;
 
+            ScriptThread.Instance.Finished += OnScriptFinished;
+
             //ScreenStateThread.Instace.Start(10);
         }
 
@@ -98,42 +100,22 @@ namespace Robot
 
         }
 
-        public void StartScript(int repeatTimes)
+        public void StartScript()
         {
             if (ScriptManager.Instance.ActiveScript == null)
                 return;
 
-            ScriptThread.Instance.Start(ScriptManager.Instance.ActiveScript, repeatTimes);
+            ScriptThread.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
         }
 
         public void StopScript()
         {
-            // TODO:
+            ScriptThread.Instance.Stop();
         }
 
-        public void AddCommandSleep(int time)
+        private void OnScriptFinished()
         {
-            ScriptManager.Instance.ActiveScript.AddCommandSleep(time);
-        }
-
-        public void AddCommandRelease()
-        {
-            ScriptManager.Instance.ActiveScript.AddCommandRelease();
-        }
-
-        public void AddCommandPress(int x, int y)
-        {
-            ScriptManager.Instance.ActiveScript.AddCommandPress(x, y);
-        }
-
-        public void AddCommandMove(int x, int y)
-        {
-            ScriptManager.Instance.ActiveScript.AddCommandMove(x, y);
-        }
-
-        public void AddCommandDown(int x, int y)
-        {
-            ScriptManager.Instance.ActiveScript.AddCommandDown(x, y);
+            IsPlaying = false;
         }
 
         public bool IsRecording
@@ -170,6 +152,11 @@ namespace Robot
                 {
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
+
+                    if (m_IsPlaying)
+                        StartScript();
+                    else
+                        StopScript();
                 }
             }
         }

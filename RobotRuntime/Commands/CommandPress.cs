@@ -4,7 +4,7 @@ using System;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    class CommandPress : Command
+    public class CommandPress : Command
     {
         public int X { get; set; }
         public int Y { get; set; }

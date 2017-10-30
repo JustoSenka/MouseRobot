@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using RobotRuntime;
 using RobotRuntime.Utils.Win32;
+using Robot;
 
 namespace RobotEditor
 {

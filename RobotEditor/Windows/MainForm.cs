@@ -52,16 +52,20 @@ namespace RobotEditor
 
         private void OnPlayingStateChanged(bool isPlaying)
         {
-            if (isPlaying && actionOnPlay.SelectedIndex == 0)
+            // Since Playing State can be changed from ScriptThread, we need to make sure we run this on UI thread
+            this.BeginInvoke(new MethodInvoker(delegate
             {
-                m_DefaultWindowState = this.WindowState;
-                this.WindowState = FormWindowState.Minimized;
-            }
+                if (isPlaying && actionOnPlay.SelectedIndex == 0)
+                {
+                    m_DefaultWindowState = this.WindowState;
+                    this.WindowState = FormWindowState.Minimized;
+                }
 
-            if (!isPlaying && actionOnPlay.SelectedIndex == 0)
-                this.WindowState = m_DefaultWindowState;
+                if (!isPlaying && actionOnPlay.SelectedIndex == 0)
+                    this.WindowState = m_DefaultWindowState;
 
-            UpdateToolstripButtonStates();
+                UpdateToolstripButtonStates();
+            }));
         }
 
         private void OnRecordingStateChanged(bool isRecording)

@@ -9,22 +9,33 @@ namespace RobotRuntime
         static public ScriptThread Instance { get { return m_Instance; } }
         private ScriptThread() { }
 
-        public void Start(Script script, int repeatTimes)
+        public event Action Finished;
+
+        private bool m_Run;
+
+        public void Start(LightScript lightScript)
         {
-            new Thread(delegate()
+            m_Run = true;
+            new Thread(delegate ()
             {
-                for (int i = 1; i <= repeatTimes; i++)
+                Console.WriteLine("Script start");
+                foreach (var v in lightScript.Commands)
                 {
-                    Console.WriteLine(i + " - Script start");
-                    foreach (var v in script.Commands)
-                    {
-                        Console.WriteLine(v.Text);
-                        v.Run();
-                        // BREAK THE THREAD HERE SOMEWHERE
-                    }
+                    Console.WriteLine(v.Text);
+                    v.Run();
+
+                    if (!m_Run)
+                        break;
                 }
+
+                Finished?.Invoke();
                 Console.WriteLine("End script.");
             }).Start();
+        }
+
+        public void Stop()
+        {
+            m_Run = false;
         }
     }
 }

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
-using System.Collections;
+﻿using RobotRuntime;
 using RobotRuntime.Commands;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
-namespace RobotRuntime
+namespace Robot
 {
-    [Serializable]
-    public class Script : ICloneable, IEnumerable<Command>
+    public class Script : LightScript, ICloneable, IEnumerable<Command>
     {
         private IList<Command> m_Commands;
-        public IReadOnlyList<Command> Commands { get { return m_Commands.ToList().AsReadOnly(); } }
+        public new IReadOnlyList<Command> Commands { get { return m_Commands.ToList().AsReadOnly(); } }
 
-        [NonSerialized]
         private bool m_IsDirty;
-        [NonSerialized]
-        private string m_Path;
+        private string m_Path = "";
 
         public event Action<Script> DirtyChanged;
 
@@ -39,7 +37,6 @@ namespace RobotRuntime
         public Script()
         {
             m_Commands = new List<Command>();
-            Path = "";
         }
 
         public void AddCommandSleep(int time)
@@ -160,6 +157,25 @@ namespace RobotRuntime
                 m_IsDirty = value;
             }
             get { return m_IsDirty; }
+        }
+
+        // Inheritence
+
+        public Script(Command[] commands) : base(commands) { m_Commands = commands.ToList(); }
+
+        public LightScript ToLightScript()
+        {
+            return new LightScript(m_Commands.ToArray());
+        }
+
+        public Script(LightScript lightScript)
+        {
+            m_Commands = lightScript.Commands.ToList();
+        }
+
+        public static Script FromLightScript(LightScript lightScript)
+        {
+            return new Script(lightScript);
         }
 
 

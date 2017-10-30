@@ -63,6 +63,8 @@
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\Script.cs" />
+    <Compile Include="Scripts\ScriptManager.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />

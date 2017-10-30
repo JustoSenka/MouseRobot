@@ -4,7 +4,7 @@ using System.Threading;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    class CommandSleep : Command
+    public class CommandSleep : Command
     {
         public int Time { get; set; }
 

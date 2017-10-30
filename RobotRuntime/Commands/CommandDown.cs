@@ -4,7 +4,7 @@ using System;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    class CommandDown : Command
+    public class CommandDown : Command
     {
         public int X { get; set; }
         public int Y { get; set; }

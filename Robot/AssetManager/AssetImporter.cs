@@ -68,7 +68,7 @@ namespace Robot
 
             protected override object LoadAsset()
             {
-                return ObjectIO.Create().LoadObject<Script>(Path);
+                return new Script(ObjectIO.Create().LoadObject<LightScript>(Path));
             }
 
             public override Type HoldsType()
