@@ -8,24 +8,22 @@ namespace Robot
     public class Asset
     {
         public string Name { get; private set; }
-        public string Path { get; private set; }
         public Int64 Hash { get; private set; }
 
-        private AssetImporter m_Importer;
-        public AssetImporter Importer
+        public string Path
         {
-            get
+            get { return Importer.Path; }
+            internal set
             {
-                if (m_Importer == null)
-                    m_Importer = AssetImporter.FromPath(Path);
-
-                return m_Importer;
+                Importer.Path = value;
+                Name = Commons.GetName(value);
             }
         }
 
+        public AssetImporter Importer { get; private set; }
         public Asset(string path)
         {
-            Path = path;
+            Importer = AssetImporter.FromPath(path);
             Name = Commons.GetName(path);
             Hash = GetHash(path);
         }

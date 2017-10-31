@@ -32,6 +32,7 @@ namespace Robot
         public void Refresh()
         {
             // TODO: Keep reference to old assets if renamed
+            // TODO: Do not calculate hash for known assets
             Assets.Clear();
 
             foreach (string fileName in Directory.GetFiles(k_ImagePath, "*.png").Select(Path.GetFileName))
@@ -43,9 +44,41 @@ namespace Robot
             RefreshFinished?.Invoke();
         }
 
+        public void CreateAsset(object assetValue, string path)
+        {
+            var asset = GetAsset(path);
+            if (asset != null)
+            {
+                asset.Importer.Value = assetValue;
+                asset.Importer.SaveAsset();
+            }
+            else
+            {
+                var importer = AssetImporter.FromPath(path);
+                importer.Value = assetValue;
+                importer.SaveAsset();
+                Assets.AddLast(new Asset(path));
+            }
+        }
+
+        public void DeleteAsset(string path)
+        {
+            var asset = GetAsset(path);
+            Assets.Remove(asset);
+            File.Delete(path);
+        }
+
+        public void RenameAsset(string sourcePath, string destPath)
+        {
+            var asset = GetAsset(sourcePath);
+            asset.Path = destPath;
+
+            File.Move(sourcePath, destPath);
+        }
+
         public Asset GetAsset(string path)
         {
-            return Assets.First((a) => Commons.ArePathsEqual(a.Path, path));
+            return Assets.FirstOrDefault((a) => Commons.ArePathsEqual(a.Path, path));
         }
 
         public Asset GetAsset(string folder, string name)

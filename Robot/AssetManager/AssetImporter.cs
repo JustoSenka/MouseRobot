@@ -2,6 +2,7 @@
 using RobotRuntime.IO;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Robot
 {
@@ -15,23 +16,40 @@ namespace Robot
         private object m_AssetValue;
         public object Value
         {
+            set
+            {
+                m_AssetValue = value;
+            }
             get
             {
-                if (m_AssetValue == null)
-                    m_AssetValue = LoadAsset();
+                if (m_AssetValue == null && !LoadingFailed)
+                    try { m_AssetValue = LoadAsset(); }
+                    catch (Exception) { LoadingFailed = true; }
 
                 return m_AssetValue;
             }
         }
 
-        public T Cast<T>()
+        public T Load<T>()
         {
-            return (T) Value;
+            return (T)Value;
         }
 
-        protected string Path;
+        public T ReloadAsset<T>()
+        {
+            LoadingFailed = false;
+
+            try { m_AssetValue = LoadAsset(); }
+            catch (Exception) { LoadingFailed = true; }
+
+            return (T)Value;
+        }
+
+        internal string Path;
         protected abstract object LoadAsset();
+        public abstract void SaveAsset();
         public abstract Type HoldsType();
+        public bool LoadingFailed { get; private set; }
 
         public static AssetImporter FromPath(string path)
         {
@@ -55,6 +73,11 @@ namespace Robot
                 return new Bitmap(Path);
             }
 
+            public override void SaveAsset()
+            {
+                ((Bitmap)Value).Save(Path, ImageFormat.Png);
+            }
+
             public override Type HoldsType()
             {
                 return typeof(Bitmap);
@@ -69,6 +92,11 @@ namespace Robot
             protected override object LoadAsset()
             {
                 return new Script(ObjectIO.Create().LoadObject<LightScript>(Path));
+            }
+
+            public override void SaveAsset()
+            {
+                ObjectIO.Create().SaveObject(Path, ((Script)Value).ToLightScript());
             }
 
             public override Type HoldsType()

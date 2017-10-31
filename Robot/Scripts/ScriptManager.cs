@@ -81,14 +81,14 @@ namespace Robot
         {
             if (m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(path)) != null)
             {
-                Console.WriteLine("Script is already loaded: " + path);
+                System.Diagnostics.Debug.WriteLine("Script is already loaded: " + path);
                 return null;
             }
 
-            var script = new Script(ObjectIO.Create().LoadObject<LightScript>(path));
+            var script = AssetManager.Instance.GetAsset(path).Importer.Load<Script>();
             script.Path = path;
 
-            Console.WriteLine("Script loaded: " + path);
+            System.Diagnostics.Debug.WriteLine("Script loaded: " + path);
 
             m_LoadedScripts.Add(script);
             scriptLoaded?.Invoke(script);
@@ -99,9 +99,8 @@ namespace Robot
 
         public void SaveScript(Script script, string path)
         {
-            ObjectIO.Create().SaveObject(path, script.ToLightScript());
+            AssetManager.Instance.CreateAsset(script, path);
             script.Path = path;
-            AssetManager.Instance.Refresh();
 
             Console.WriteLine("Script saved: " + path);
         }
