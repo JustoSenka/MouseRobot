@@ -9,9 +9,9 @@ using Robot;
 
 namespace RobotEditor
 {
-    public partial class TreeViewWindow : DockContent
+    public partial class HierarchyWindow : DockContent
     {
-        public TreeViewWindow()
+        public HierarchyWindow()
         {
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;

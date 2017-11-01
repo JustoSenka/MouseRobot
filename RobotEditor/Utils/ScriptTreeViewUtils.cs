@@ -254,6 +254,7 @@ namespace RobotEditor.Utils
                 nodeAfter.Parent.Nodes.Insert(nodeAfter.Index + 1, node);
             }
 
+            treeView.SelectedNode = node;
             UpdateTreeNodeFonts(treeView);
             ASSERT_TreeViewIsTheSameAsInScriptManager(treeView);
         }

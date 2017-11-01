@@ -68,7 +68,7 @@ namespace RobotEditor.Editor
         {
             m_DeserializeDockContent = new DeserializeDockContent((string persistString) =>
             {
-                if (persistString.Equals(typeof(TreeViewWindow).ToString()))
+                if (persistString.Equals(typeof(HierarchyWindow).ToString()))
                     return Windows[0];
                 if (persistString.Equals(typeof(CommandManagerWindow).ToString()))
                     return Windows[1];

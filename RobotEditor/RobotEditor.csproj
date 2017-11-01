@@ -153,11 +153,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Windows\TreeViewWindow.cs">
+    <Compile Include="Windows\HierarchyWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Windows\TreeViewWindow.Designer.cs">
-      <DependentUpon>TreeViewWindow.cs</DependentUpon>
+    <Compile Include="Windows\HierarchyWindow.Designer.cs">
+      <DependentUpon>HierarchyWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\DynamicTypeDescriptor.cs" />
     <Compile Include="Utils\ScriptTreeViewUtils.cs" />
@@ -189,8 +189,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Windows\TreeViewWindow.resx">
-      <DependentUpon>TreeViewWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Windows\HierarchyWindow.resx">
+      <DependentUpon>HierarchyWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

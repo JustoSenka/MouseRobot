@@ -17,7 +17,7 @@ namespace RobotEditor
         private DockContent[] m_Windows;
 
         // Solve this problem somehow
-        private TreeViewWindow m_TreeViewWindow;
+        private HierarchyWindow m_HierarchyWindow;
         private CommandManagerWindow m_CommandManagerWindow;
         private ScreenPreviewWindow m_ScreenPreviewWindow;
         private AssetsWindow m_AssetsWindow;
@@ -100,14 +100,14 @@ namespace RobotEditor
 
         private void CreateWindows()
         {
-            m_TreeViewWindow = new TreeViewWindow();
+            m_HierarchyWindow = new HierarchyWindow();
             m_CommandManagerWindow = new CommandManagerWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
             m_AssetsWindow = new AssetsWindow();
 
             m_Windows = new DockContent[]
             {
-                m_TreeViewWindow,
+                m_HierarchyWindow,
                 m_CommandManagerWindow,
                 m_ScreenPreviewWindow,
                 m_AssetsWindow,
@@ -167,47 +167,47 @@ namespace RobotEditor
 
         private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.SaveAllScripts(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.SaveAllScripts(m_HierarchyWindow.treeView);
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, m_TreeViewWindow.treeView, true);
+            ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, m_HierarchyWindow.treeView, true);
         }
 
         private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.SetSelectedScriptActive(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.SetSelectedScriptActive(m_HierarchyWindow.treeView);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.NewScript(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.NewScript(m_HierarchyWindow.treeView);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
 
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
 
         private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(m_TreeViewWindow.treeView);
+            ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(m_HierarchyWindow.treeView);
         }
         #endregion
 
@@ -279,7 +279,7 @@ namespace RobotEditor
 
         private void hierarchyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_TreeViewWindow.Show(m_DockPanel);
+            m_HierarchyWindow.Show(m_DockPanel);
         }
 
         private void commandsToolStripMenuItem_Click(object sender, EventArgs e)

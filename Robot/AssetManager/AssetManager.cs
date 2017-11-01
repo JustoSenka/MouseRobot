@@ -25,6 +25,7 @@ namespace Robot
         public event Action<string, string> AssetRenamed;
         public event Action<string> AssetDeleted;
         public event Action<string> AssetCreated;
+        public event Action<string> AssetUpdated;
 
         public const string ScriptFolder = "Scripts";
         public const string ImageFolder = "Images";
@@ -55,6 +56,7 @@ namespace Robot
             {
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
+                AssetUpdated?.Invoke(path);
             }
             else
             {
@@ -62,8 +64,8 @@ namespace Robot
                 importer.Value = assetValue;
                 importer.SaveAsset();
                 Assets.AddLast(new Asset(path));
+                AssetCreated?.Invoke(path);
             }
-            AssetCreated?.Invoke(path);
         }
 
         public void DeleteAsset(string path)
@@ -122,7 +124,7 @@ namespace Robot
                 return ImageFolder;
             else if (path.EndsWith(FileExtensions.Timeline))
                 return "Timeline";
-            return ""; 
+            return "";
         }
 
         private void InitProject()

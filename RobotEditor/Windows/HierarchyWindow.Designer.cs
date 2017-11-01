@@ -1,6 +1,6 @@
 ﻿namespace RobotEditor
 {
-    partial class TreeViewWindow
+    partial class HierarchyWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TreeViewWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HierarchyWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
