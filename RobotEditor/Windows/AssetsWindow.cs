@@ -49,6 +49,7 @@ namespace RobotEditor
             var folderNode = treeView.FindChild(Commons.GetFolder(path));
             var node = new TreeNode(Commons.GetName(path));
             folderNode.Nodes.Add(node);
+            UpdateIcons();
         }
 
         private void OnRefreshFinished()
@@ -78,6 +79,24 @@ namespace RobotEditor
             }
 
             treeView.ExpandAll();
+            UpdateIcons();
+        }
+
+        private void UpdateIcons()
+        {
+            UpdateIconForFolder("", 0);
+            UpdateIconForFolder(AssetManager.ScriptFolder, 1);
+            UpdateIconForFolder(AssetManager.ImageFolder, 2);
+        }
+
+        private void UpdateIconForFolder(string folder, int iconIndex)
+        {
+            var nodeCollecion = folder == "" ? treeView.Nodes : treeView.FindChild(folder).Nodes;
+            foreach (TreeNode node in nodeCollecion)
+            {
+                node.ImageIndex = iconIndex;
+                node.SelectedImageIndex = iconIndex;
+            }
         }
 
         private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
