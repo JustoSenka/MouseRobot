@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections;
+using System.Windows.Forms;
 
 namespace RobotRuntime
 {
@@ -27,7 +28,7 @@ namespace RobotRuntime
 
             if (expectedCaller is Type)
                 return (expectedCaller as Type) == actualCallerType;
-            
+
             return actualCallerType == typeof(ExpectedCallerClass);
         }
 
@@ -40,7 +41,7 @@ namespace RobotRuntime
             indexOfTarget += (indexToMove <= indexOfTarget) ? 0 : 1;
             list.Insert(indexOfTarget, elem);
         }
-        
+
         public static void MoveBefore<T>(this IList<T> list, int indexToMove, int indexOfTarget)
         {
             list.MoveAfter(indexToMove, indexOfTarget - 1);
@@ -58,6 +59,23 @@ namespace RobotRuntime
         {
             foreach (var item in source)
                 action(item as K);
+        }
+
+
+        public static TreeNode FindChild(this TreeView treeView, string name)
+        {
+            return treeView.Nodes.Cast<TreeNode>().Where(r => r.Text == name).FirstOrDefault();
+        }
+
+        public static TreeNode FindChild(this TreeNode treeView, string name)
+        {
+            return treeView.Nodes.Cast<TreeNode>().Where(r => r.Text == name).FirstOrDefault();
+        }
+
+        public static TreeNode FindNode(this TreeView treeView, string path)
+        {
+            var folderNode = treeView.FindChild(Commons.GetFolder(path));
+            return folderNode.FindChild(Commons.GetName(path));
         }
     }
 }

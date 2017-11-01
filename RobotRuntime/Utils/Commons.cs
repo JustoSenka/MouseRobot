@@ -7,7 +7,7 @@ namespace RobotRuntime
     {
         public static string GetName(string path)
         {
-            var name = Regex.Match(path, @"[/\\]{1}[\w\d ]+\.").Value.
+            var name = Regex.Match(path, @"[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value.
                 TrimStart('/', '\\').
                 TrimEnd(FileExtensions.Script.ToCharArray()).
                 TrimEnd(FileExtensions.Timeline.ToCharArray()).
@@ -17,7 +17,23 @@ namespace RobotRuntime
             return name;
         }
 
-        public static bool ArePathsEqual(string s, string d)
+        public static string GetNameWithExtension(string path)
+        {
+            var extension = Regex.Match(path, @"\.\w{2,8}$").Value;
+            return GetName(path) + extension;
+        }
+
+        public static string GetFolder(string path)
+        {
+            return GetProjectRelativePath(path).Split('\\', '/')[0];
+        }
+
+        public static string GetProjectRelativePath(string path)
+        {
+            return Regex.Match(path, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
+        }
+
+        public static bool AreRelativePathsEqual(string s, string d)
         {
             s = s.ToLower();
             d = d.ToLower();

@@ -5,6 +5,8 @@ using RobotEditor.Editor;
 using RobotEditor.Utils;
 using RobotRuntime;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -159,11 +161,9 @@ namespace RobotEditor
             timer.Enabled = true;
         }
 
+
+
         #region Menu Items (ScriptManager)
-        private void openScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ScriptTreeViewUtils.OpenScript(m_TreeViewWindow.treeView);
-        }
 
         private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -212,6 +212,43 @@ namespace RobotEditor
         #endregion
 
         #region Menu Items (General)
+
+        private void importAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Filter = string.Format("Files|*.*|Script File|*.{0}|Image File|*.{1}|Timeline File|*.{2}",
+                FileExtensions.Script, FileExtensions.Image, FileExtensions.Timeline);
+
+            openDialog.Title = "Select files to import.";
+            openDialog.Multiselect = true;
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                string unimportedPaths = "";
+                foreach (var path in openDialog.FileNames)
+                {
+                    var folder = AssetManager.FolderFromExtension(path);
+                    if (folder != "")
+                    {
+                        var newPath = folder + "\\" + Commons.GetNameWithExtension(path);
+                        try
+                        {
+                            File.Copy(path, newPath);
+                        }
+                        catch (IOException ex)
+                        {
+                            unimportedPaths += "\n " + ex.Message + " " + path;
+                        }
+                    }
+                    else
+                        unimportedPaths += "\nUnsupported format: " + path;
+                }
+
+                AssetManager.Instance.Refresh();
+                if (unimportedPaths != "")
+                    MessageBox.Show("These files cannot be imported: " + unimportedPaths);
+            }
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new AboutDialog().ShowDialog(this);

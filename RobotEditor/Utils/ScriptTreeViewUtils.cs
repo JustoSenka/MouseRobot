@@ -88,7 +88,7 @@ namespace RobotEditor.Utils
             }
             
         }
-
+        /*
         public static void OpenScript(TreeView treeView)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
@@ -99,7 +99,7 @@ namespace RobotEditor.Utils
                 var script = ScriptManager.Instance.LoadScript(openDialog.FileName);
                 // OnScriptLoaded event will take care of updating UI
             }
-        }
+        }*/
 
         public static void DeleteSelectedTreeViewItem(TreeView treeView)
         {

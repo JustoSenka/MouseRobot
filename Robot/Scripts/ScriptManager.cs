@@ -100,7 +100,7 @@ namespace Robot
         public void SaveScript(Script script, string path)
         {
             AssetManager.Instance.CreateAsset(script, path);
-            script.Path = path;
+            script.Path = Commons.GetProjectRelativePath(path);
 
             Console.WriteLine("Script saved: " + path);
         }

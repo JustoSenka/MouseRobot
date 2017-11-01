@@ -64,6 +64,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -169,9 +170,10 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newScriptToolStripMenuItem,
-            this.openScriptToolStripMenuItem,
             this.saveAllScriptsToolStripMenuItem,
             this.saveScriptToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.openScriptToolStripMenuItem,
             this.exitToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -191,8 +193,8 @@
             this.openScriptToolStripMenuItem.Name = "openScriptToolStripMenuItem";
             this.openScriptToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openScriptToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.openScriptToolStripMenuItem.Text = "Open Script";
-            this.openScriptToolStripMenuItem.Click += new System.EventHandler(this.openScriptToolStripMenuItem_Click);
+            this.openScriptToolStripMenuItem.Text = "Import Assets";
+            this.openScriptToolStripMenuItem.Click += new System.EventHandler(this.importAssetsToolStripMenuItem_Click);
             // 
             // saveAllScriptsToolStripMenuItem
             // 
@@ -334,6 +336,11 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(216, 6);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -394,5 +401,6 @@
         private System.Windows.Forms.ToolStripMenuItem imagePreviewToolStripMenuItem;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.ToolStripMenuItem assetsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     }
 }
