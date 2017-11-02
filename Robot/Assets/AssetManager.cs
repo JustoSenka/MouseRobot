@@ -13,8 +13,8 @@ namespace Robot
         static public AssetManager Instance { get { return m_Instance; } }
         private AssetManager()
         {
-            k_ScriptPath = Path.Combine(Application.StartupPath, ScriptFolder);
-            k_ImagePath = Path.Combine(Application.StartupPath, ImageFolder);
+            k_ScriptPath = Path.Combine(MouseRobot.Instance.ProjectPath, ScriptFolder);
+            k_ImagePath = Path.Combine(MouseRobot.Instance.ProjectPath, ImageFolder);
 
             InitProject();
         }

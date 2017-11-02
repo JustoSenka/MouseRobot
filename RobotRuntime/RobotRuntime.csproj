@@ -104,6 +104,7 @@
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
+    <Compile Include="Graphics\FeatureDetection.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />

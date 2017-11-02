@@ -22,14 +22,17 @@ namespace Robot
         private Point m_LastClickPos = new Point(0, 0);
 
         public CommandManagerProperties commandManagerProperties;
+        public string ProjectPath { get; private set; }
 
         private MouseRobot()
         {
+            SetupProjectPath();
+
             ScriptManager.Instance.NewScript();
-            InputCallbacks.inputEvent += OnInputEvent;
+            //InputCallbacks.inputEvent += OnInputEvent;
 
             ScriptThread.Instance.Finished += OnScriptFinished;
-
+            
             //ScreenStateThread.Instace.Start(10);
         }
 
@@ -166,6 +169,12 @@ namespace Robot
         private float Distance(Point a, Point b)
         {
             return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
+        }
+
+        private void SetupProjectPath()
+        {
+            ProjectPath = @"C:\Users\Justas-Laptop\Desktop\MProject";
+            Environment.CurrentDirectory = ProjectPath;
         }
     }
 }

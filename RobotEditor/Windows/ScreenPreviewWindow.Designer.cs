@@ -33,13 +33,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureDrawBox)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureScrollBox
+            // pictureDrawBox
             // 
             this.pictureDrawBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureDrawBox.Image = null;
-            this.pictureDrawBox.ImagePosition = ((System.Drawing.PointF)(resources.GetObject("pictureScrollBox.ImagePosition")));
+            this.pictureDrawBox.ImagePosition = ((System.Drawing.PointF)(resources.GetObject("pictureDrawBox.ImagePosition")));
             this.pictureDrawBox.Location = new System.Drawing.Point(0, 0);
-            this.pictureDrawBox.Name = "pictureScrollBox";
+            this.pictureDrawBox.Name = "pictureDrawBox";
             this.pictureDrawBox.Size = new System.Drawing.Size(430, 406);
             this.pictureDrawBox.TabIndex = 0;
             this.pictureDrawBox.TabStop = false;

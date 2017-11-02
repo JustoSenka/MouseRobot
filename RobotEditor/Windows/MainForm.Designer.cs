@@ -44,9 +44,10 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.openScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,7 +65,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -188,14 +188,6 @@
             this.newScriptToolStripMenuItem.Text = "New Script";
             this.newScriptToolStripMenuItem.Click += new System.EventHandler(this.newScriptToolStripMenuItem_Click);
             // 
-            // openScriptToolStripMenuItem
-            // 
-            this.openScriptToolStripMenuItem.Name = "openScriptToolStripMenuItem";
-            this.openScriptToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openScriptToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
-            this.openScriptToolStripMenuItem.Text = "Import Assets";
-            this.openScriptToolStripMenuItem.Click += new System.EventHandler(this.importAssetsToolStripMenuItem_Click);
-            // 
             // saveAllScriptsToolStripMenuItem
             // 
             this.saveAllScriptsToolStripMenuItem.Name = "saveAllScriptsToolStripMenuItem";
@@ -212,6 +204,19 @@
             this.saveScriptToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
             this.saveScriptToolStripMenuItem.Text = "Save Script As";
             this.saveScriptToolStripMenuItem.Click += new System.EventHandler(this.saveScriptToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(216, 6);
+            // 
+            // openScriptToolStripMenuItem
+            // 
+            this.openScriptToolStripMenuItem.Name = "openScriptToolStripMenuItem";
+            this.openScriptToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openScriptToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.openScriptToolStripMenuItem.Text = "Import Assets";
+            this.openScriptToolStripMenuItem.Click += new System.EventHandler(this.importAssetsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -335,11 +340,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(216, 6);
             // 
             // MainForm
             // 

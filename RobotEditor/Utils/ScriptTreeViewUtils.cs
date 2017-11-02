@@ -77,6 +77,7 @@ namespace RobotEditor.Utils
         public static void SaveScript(Script script, TreeView treeView, bool updateUI = true)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.InitialDirectory = MouseRobot.Instance.ProjectPath + "\\" + AssetManager.ScriptFolder;
             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
             saveDialog.Title = "Select a path for script to save.";
             saveDialog.FileName = script.Name + FileExtensions.ScriptD;

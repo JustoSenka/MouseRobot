@@ -127,7 +127,7 @@ namespace RobotEditor
             if (treeView.SelectedNode == null)
                 return;
 
-            var path = Application.StartupPath + "\\";
+            var path = MouseRobot.Instance.ProjectPath + "\\";
             if (treeView.SelectedNode.Level == 0)
             {
                 path += treeView.SelectedNode.Text;
