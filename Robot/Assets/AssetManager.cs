@@ -60,7 +60,7 @@ namespace Robot
             }
             else
             {
-                var importer = AssetImporter.FromPath(path);
+                var importer = EditorAssetImporter.FromPath(path);
                 importer.Value = assetValue;
                 importer.SaveAsset();
                 Assets.AddLast(new Asset(path));

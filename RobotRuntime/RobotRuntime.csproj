@@ -45,6 +45,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -91,6 +92,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AssetImporter.cs" />
+    <Compile Include="Assets\AssetPointer.cs" />
+    <Compile Include="Assets\ImageImporter.cs" />
+    <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDown.cs" />
     <Compile Include="Commands\CommandTeleportOnImage.cs" />

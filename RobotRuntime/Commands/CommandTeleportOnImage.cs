@@ -7,16 +7,16 @@ namespace RobotRuntime.Commands
     [Serializable]
     public class CommandTeleportOnImage : Command
     {
-        public Bitmap Image { get; set; }
+        public AssetPointer Asset { get; set; }
 
-        public CommandTeleportOnImage(Bitmap image)
+        public CommandTeleportOnImage(AssetPointer asset)
         {
-            Image = image;
+            Asset = asset;
         }
 
         public override object Clone()
         {
-            return new CommandTeleportOnImage(Image);
+            return new CommandTeleportOnImage(Asset);
         }
 
         public override void Run()

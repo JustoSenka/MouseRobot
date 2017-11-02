@@ -23,7 +23,7 @@ namespace Robot
         public AssetImporter Importer { get; private set; }
         public Asset(string path)
         {
-            Importer = AssetImporter.FromPath(path);
+            Importer = EditorAssetImporter.FromPath(path);
             Name = Commons.GetName(path);
             Hash = GetHash(path);
         }
@@ -33,6 +33,11 @@ namespace Robot
             var bytes = File.ReadAllBytes(filePath);
             byte[] hashBytes = MD5.Create().ComputeHash(bytes);
             return BitConverter.ToInt64(hashBytes, 0);
+        }
+
+        public AssetPointer ToAssetPointer()
+        {
+            return new AssetPointer(Path, Hash);
         }
 
         public bool HoldsTypeOf(Type type)

@@ -61,9 +61,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetManager\Asset.cs" />
-    <Compile Include="AssetManager\AssetImporter.cs" />
-    <Compile Include="AssetManager\AssetManager.cs" />
+    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\AssetManager.cs" />
+    <Compile Include="Assets\EditorAssetImporter.cs" />
+    <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Command\CommandManagerProperties.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
