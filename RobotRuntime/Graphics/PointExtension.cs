@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Robot.Graphics
+namespace RobotRuntime.Graphics
 {
     public static class PointExtension
     {

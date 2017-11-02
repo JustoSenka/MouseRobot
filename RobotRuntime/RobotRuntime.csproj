@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -78,10 +79,16 @@
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDown.cs" />
+    <Compile Include="Commands\CommandTeleportOnImage.cs" />
+    <Compile Include="Commands\CommandMoveOnImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
+    <Compile Include="Graphics\PointExtension.cs" />
+    <Compile Include="Graphics\ScreenStateThread.cs" />
+    <Compile Include="Graphics\StableRepeatingThread.cs" />
+    <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />
     <Compile Include="IO\BinaryObjectIO.cs" />
