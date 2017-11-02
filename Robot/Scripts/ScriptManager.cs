@@ -85,6 +85,9 @@ namespace Robot
                 return null;
             }
 
+            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count == 0)
+                RemoveScript(0);
+
             var script = AssetManager.Instance.GetAsset(path).Importer.Load<Script>();
             script.Path = path;
 

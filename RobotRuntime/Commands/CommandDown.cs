@@ -23,8 +23,8 @@ namespace RobotRuntime.Commands
 
         public override void Run()
         {
-            WinAPI.MouseMoveTo(X, Y); // TODO: Do I really want this?
-            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftUp);
+            WinAPI.MouseMoveTo(X, Y);
+            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftDown);
         }
     }
 }

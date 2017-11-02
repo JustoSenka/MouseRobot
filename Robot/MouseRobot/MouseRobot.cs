@@ -3,6 +3,7 @@ using Robot.Utils.Win32;
 using System.Diagnostics;
 using System.Drawing;
 using RobotRuntime;
+using RobotRuntime.Commands;
 
 namespace Robot
 {
@@ -43,53 +44,54 @@ namespace Robot
                 return;
 
             var activeScript = ScriptManager.Instance.ActiveScript;
+            var props = commandManagerProperties;
 
             if (e.IsKeyDown())
             {
-                if (e.keyCode == commandManagerProperties.DefaultSleepKey)
-                    activeScript.AddCommandSleep(commandManagerProperties.DefaultSleepTime);
+                if (e.keyCode == props.DefaultSleepKey)
+                    activeScript.AddCommand(new CommandSleep(props.DefaultSleepTime));
 
-                if (e.keyCode == commandManagerProperties.SleepKey)
-                {
-                    m_SleepTimer.Reset();
-                    m_SleepTimer.Start();
-                }
+                if (e.keyCode == props.SleepKey)
+                    m_SleepTimer.Restart();
 
-                if (e.keyCode == commandManagerProperties.SmoothMouseMoveKey)
+                if (e.keyCode == props.SmoothMouseMoveKey)
                 {
-                    activeScript.AddCommandMove(e.X, e.Y);
+                    activeScript.AddCommand(new CommandMove(e.X, e.Y));
                     m_LastClickPos = e.Point;
                     // TODO: TIME ?
                 }
 
-                if (e.keyCode == commandManagerProperties.MouseDownButton)
+                if (e.keyCode == props.MouseDownButton)
                 {
-                    if (commandManagerProperties.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommandMove(e.X, e.Y); // TODO: TIME ?
+                    if (props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
+                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
-                    if (commandManagerProperties.TreatMouseDownAsMouseClick)
-                        activeScript.AddCommandPress(e.X, e.Y);
+                    if (props.TreatMouseDownAsMouseClick)
+                        activeScript.AddCommand(new CommandPress(e.X, e.Y));
                     else
-                        activeScript.AddCommandDown(e.X, e.Y);
+                        activeScript.AddCommand(new CommandDown(e.X, e.Y));
                     m_LastClickPos = e.Point;
                 }
             }
             else if (e.IsKeyUp())
             {
-                if (e.keyCode == commandManagerProperties.SleepKey)
+                if (e.keyCode == props.SleepKey)
                 {
                     m_SleepTimer.Stop();
-                    activeScript.AddCommandSleep((int)m_SleepTimer.ElapsedMilliseconds);
+                    activeScript.AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
                 }
 
-                if (e.keyCode == commandManagerProperties.MouseDownButton && !commandManagerProperties.TreatMouseDownAsMouseClick)
+                if (e.keyCode == props.MouseDownButton && !props.TreatMouseDownAsMouseClick)
                 {
-                    if (commandManagerProperties.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommandMove(e.X, e.Y); // TODO: TIME ?
+                    if (props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
+                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
                     else
-                        activeScript.AddCommandSleep(commandManagerProperties.ThresholdBetweenMouseDownAndMouseUp);
+                    {
+                        if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
+                            activeScript.AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
+                    }
 
-                    activeScript.AddCommandRelease();
+                    activeScript.AddCommand(new CommandRelease(e.X, e.Y));
                     m_LastClickPos = e.Point;
                 }
             }

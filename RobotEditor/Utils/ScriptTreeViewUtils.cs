@@ -39,7 +39,7 @@ namespace RobotEditor.Utils
                 else if (script.IsDirty)
                     treeView.Nodes[i].NodeFont = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
                 else
-                    treeView.Nodes[i].NodeFont = Fonts.Default;   
+                    treeView.Nodes[i].NodeFont = Fonts.Default;
             }
         }
 
@@ -86,7 +86,7 @@ namespace RobotEditor.Utils
                 if (updateUI)
                     UpdateTreeNodeFonts(treeView);
             }
-            
+
         }
         /*
         public static void OpenScript(TreeView treeView)
@@ -109,9 +109,10 @@ namespace RobotEditor.Utils
             if (treeView.SelectedNode.Level == 0)
                 ScriptManager.Instance.RemoveScript(treeView.SelectedNode.Index);
             else
+            {
                 ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].RemoveCommand(treeView.SelectedNode.Index);
-
-            treeView.SelectedNode.Remove();
+                treeView.SelectedNode.Remove();
+            }
 
             UpdateTreeNodeFonts(treeView);
             ASSERT_TreeViewIsTheSameAsInScriptManager(treeView);

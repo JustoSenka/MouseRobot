@@ -9,18 +9,21 @@ namespace RobotRuntime.Commands
         public int X { get; set; }
         public int Y { get; set; }
 
-        public CommandRelease()
+        public CommandRelease(int x, int y)
         {
-            Text = "Release";
-        }
+            X = x;
+            Y = y;
+            Text = "Release on: (" + x + ", " + y + ")";
+        } 
 
         public override object Clone()
         {
-            return new CommandRelease();
+            return new CommandRelease(X, Y);
         }
 
         public override void Run()
         {
+            WinAPI.MouseMoveTo(X, Y);
             WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftUp);
         }
     }

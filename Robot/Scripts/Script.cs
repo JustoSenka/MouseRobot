@@ -17,12 +17,13 @@ namespace Robot
         private string m_Path = "";
 
         public event Action<Script> DirtyChanged;
+        public const string DefaultScriptName = "New Script";
 
         public string Name
         {
             get
             {
-                return (Path == "") ? "New Script" : Commons.GetName(Path);
+                return (Path == "") ? DefaultScriptName : Commons.GetName(Path);
             }
         }
 
@@ -34,53 +35,15 @@ namespace Robot
             }
         }
 
-        public Script()
+        internal Script()
         {
             m_Commands = new List<Command>();
         }
 
-        public void AddCommandSleep(int time)
+        public void AddCommand(Command command)
         {
             m_IsDirty = true;
-            var command = new CommandSleep(time);
             m_Commands.Add(command);
-
-            ScriptManager.Instance.ScriptModified(this, command);
-        }
-
-        public void AddCommandRelease()
-        {
-            m_IsDirty = true;
-            var command = new CommandRelease();
-            m_Commands.Add(command);
-
-            ScriptManager.Instance.ScriptModified(this, command);
-        }
-
-        public void AddCommandPress(int x, int y)
-        {
-            m_IsDirty = true;
-            var command = new CommandPress(x, y);
-            m_Commands.Add(command);
-
-            ScriptManager.Instance.ScriptModified(this, command);
-        }
-
-        public void AddCommandMove(int x, int y)
-        {
-            m_IsDirty = true;
-            var command = new CommandMove(x, y);
-            m_Commands.Add(command);
-
-            ScriptManager.Instance.ScriptModified(this, command);
-        }
-
-        public void AddCommandDown(int x, int y)
-        {
-            m_IsDirty = true;
-            var command = new CommandDown(x, y);
-            m_Commands.Add(command);
-
             ScriptManager.Instance.ScriptModified(this, command);
         }
 

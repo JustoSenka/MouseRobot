@@ -23,12 +23,17 @@ namespace RobotEditor
 
             ScriptManager.Instance.scriptsModified += OnScriptsModified;
             ScriptManager.Instance.scriptLoaded += OnScriptLoaded;
+            ScriptManager.Instance.scriptRemoved += OnScriptRemoved;
         }
 
         private void OnScriptsModified(Script script, Command command)
         {
             // Add Command to tree view that was probably added to manager while recording
-            treeView.Nodes[script.Index].Nodes.Add(command.ToString());
+            var node = new TreeNode(command.ToString());
+            node.ImageIndex = 1;
+            node.SelectedImageIndex = 1;
+
+            treeView.Nodes[script.Index].Nodes.Add(node);
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
@@ -36,6 +41,11 @@ namespace RobotEditor
         {
             ScriptTreeViewUtils.AddExistingScriptToTreeView(treeView, script);
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
+        }
+
+        private void OnScriptRemoved(int index)
+        {
+            treeView.Nodes[index].Remove();
         }
 
         #region TreeView Drag and Drop
