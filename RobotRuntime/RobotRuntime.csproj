@@ -35,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -109,6 +110,8 @@
     <Compile Include="Graphics\FeatureDetectionThread.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />
+    <Compile Include="Perf\LimitedStack.cs" />
+    <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />

@@ -51,7 +51,7 @@ namespace Robot
 
             ScriptManager.Instance.NewScript();
 
-            InputCallbacks.inputEvent += OnInputEvent;
+            //InputCallbacks.inputEvent += OnInputEvent;
 
             ScriptThread.Instance.Finished += OnScriptFinished;
             
@@ -195,9 +195,7 @@ namespace Robot
                     if (m_IsVisualizationOn)
                     {
                         ScreenStateThread.Instace.Start(10);
-                        FeatureDetectionThread.Instace.Start(30);
-                        FeatureDetectionThread.Instace.SampleImageFromAsset = 
-                            AssetManager.Instance.GetAsset("Images", "UnityButton").ToAssetPointer();
+                        FeatureDetectionThread.Instace.Start(5);
                     }
                     else
                     {

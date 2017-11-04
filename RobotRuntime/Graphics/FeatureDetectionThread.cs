@@ -1,6 +1,8 @@
 ﻿using Emgu.CV;
+using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -23,6 +25,8 @@ namespace RobotRuntime.Graphics
 
         public event Action<Point[]> PositionFound;
 
+        protected override string Name { get { return "FeatureDetectionThread"; } }
+
         public override void Init()
         {
             base.Init();
@@ -44,25 +48,23 @@ namespace RobotRuntime.Graphics
             if (m_SampleMat == null)
                 return;
 
-            
+            Profiler.Start(Name);
+
+            Profiler.Start(Name + "_Clone Screen");
             lock (ScreenStateThread.Instace.ScreenBmpLock)
             {
                 BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, ObservedImage);
             }
-            /*
-            PointF[] points;
-            lock (ObservedImageLock)
-            {
-                ObservedImage = BitmapUtility.TakeScreenshot();
-                
-                long time;
-                points = FeatureDetection.FindImagePos(m_SampleMat, ObservedImage.ToMat(), out time);
-            }*/
+            Profiler.Stop(Name + "_Clone Screen");
 
+            Profiler.Start(Name + "_Find Match");
             long time;
             var points = FeatureDetection.FindImagePos(m_SampleMat, ObservedImage.ToMat(), out time);
+            Profiler.Stop(Name + "_Find Match");
+
 
             PositionFound?.Invoke(points.Select(p => new Point((int)p.X, (int)p.Y)).ToArray());
+            Profiler.Stop(Name);
         }
 
         public AssetPointer SampleImageFromAsset

@@ -109,17 +109,17 @@ namespace RobotEditor
                 ScriptManager.Instance.LoadScript(asset.Path);
         }
 
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (treeView.SelectedNode != null && treeView.SelectedNode.Level == 1)
+                AssetSelected?.Invoke();
+        }
+
         #region Context Menu Items
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AssetManager.Instance.Refresh();
-        }
-
-        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (treeView.SelectedNode != null && treeView.SelectedNode.Level == 1)
-                AssetSelected?.Invoke();
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)

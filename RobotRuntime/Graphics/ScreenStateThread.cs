@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Utils;
+﻿using RobotRuntime.Perf;
+using RobotRuntime.Utils;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -6,7 +7,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
@@ -45,6 +45,8 @@ namespace RobotRuntime.Graphics
 
         private System.Drawing.Graphics m_GfxScreenshot;
 
+        protected override string Name { get { return "ScreenStateThread"; } }
+
         public static ScreenStateThread Instace { get { return m_Instance; } }
         private static ScreenStateThread m_Instance = new ScreenStateThread();
         private ScreenStateThread() { }
@@ -61,7 +63,7 @@ namespace RobotRuntime.Graphics
             m_Output1 = output.QueryInterface<Output1>();
             Width = output.Description.DesktopBounds.Right;
             Height = output.Description.DesktopBounds.Bottom;
-
+            /*
             m_DuplicatedOutput = m_Output1.DuplicateOutput(m_Device);
 
             var textureDesc = new Texture2DDescription
@@ -78,38 +80,27 @@ namespace RobotRuntime.Graphics
                 Usage = ResourceUsage.Staging
             };
             m_ScreenTexture = new Texture2D(m_Device, textureDesc);
-
+            */
             m_ScreenBmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
             m_TempBitmap = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
-
-            //AlternativeInit(); // Should be removed after DX screenshoting issue is fixed
 
             Initialized?.Invoke();
         }
 
-        private void AlternativeInit()
-        {
-            m_GfxScreenshot = System.Drawing.Graphics.FromImage(m_TempBitmap);
-        }
-
-        private void AlternativeScreenshot()
-        {
-            //m_GfxScreenshot.CopyFromScreen(Width, Height, 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
-            //ScreenCapture sc = new ScreenCapture();
-            // capture entire screen, and save it to a file
-            //Image img = sc.CaptureScreen();
-        }
-
         protected override void ThreadAction()
         {
-            //TakeScreenshot(m_TempBitmap);
-            //AlternativeScreenshot(); no work, why?
+            Profiler.Start(Name);
+            Profiler.Start(Name + "_Take Screenshot");
+            BitmapUtility.TakeScreenshot(m_TempBitmap);
+            Profiler.Stop(Name + "_Take Screenshot");
 
-            m_TempBitmap = BitmapUtility.TakeScreenshot();
+            Profiler.Start(Name + "_Clone Bitmap");
             lock (ScreenBmpLock)
             {
                 BitmapUtility.Clone32BPPBitmap(m_TempBitmap, ScreenBmp);
             }
+            Profiler.Stop(Name + "_Clone Bitmap");
+            Profiler.Stop(Name);
         }
 
         public void TakeScreenshot(Bitmap tempBitmap)

@@ -49,6 +49,7 @@ namespace RobotRuntime.Perf
                 throw new InvalidOperationException("Stack is empty");
 
             T ret = m_Data[m_First];
+            m_Data[m_First] = default(T);
             if (m_First == m_Last)
             {
                 m_First = -1;

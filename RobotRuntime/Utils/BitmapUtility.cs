@@ -78,6 +78,7 @@ namespace RobotRuntime.Utils
         public static Bitmap TakeScreenshot()
         {
             var screen = Screen.PrimaryScreen;
+            // TODO: Creates hell a lot of garbage
             var bmp = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
             using (var graphics = System.Drawing.Graphics.FromImage(bmp))
             {
@@ -85,7 +86,16 @@ namespace RobotRuntime.Utils
             }
             return bmp;
         }
-        
+
+        public static void TakeScreenshot(Bitmap dest)
+        {
+            var screen = Screen.PrimaryScreen;
+            using (var graphics = System.Drawing.Graphics.FromImage(dest))
+            {
+                graphics.CopyFromScreen(new Point(screen.Bounds.Left, screen.Bounds.Top), new Point(0, 0), screen.Bounds.Size);
+            }
+        }
+
         /*
         public static bool Contains(this Bitmap template, Bitmap bmp)
         {

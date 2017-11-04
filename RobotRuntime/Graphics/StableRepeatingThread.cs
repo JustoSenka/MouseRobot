@@ -13,6 +13,8 @@ namespace RobotRuntime.Graphics
         private bool m_Run;
         private bool m_Init;
 
+        protected virtual string Name { get { return "StableRepeatingThread"; } }
+
         protected StableRepeatingThread()
         {
             m_Thread = new Thread(new ThreadStart(ThreadRun));
@@ -84,6 +86,7 @@ namespace RobotRuntime.Graphics
 
                 m_Stopwatch.Reset();
 
+                System.Diagnostics.Debug.WriteLine(Name + " took " + elapsed + " ms. to complete");
                 Update?.Invoke();
             }
         }

@@ -1,4 +1,5 @@
 ﻿#define ENABLE_PROFILER
+#define ENABLE_PROFILER_DEBUGGING
 
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,11 @@ namespace RobotRuntime.Perf
 
         private void InstanceStart(string name)
         {
+#if ENABLE_PROFILER_DEBUGGING
+            if (m_TakenWatches.ContainsKey(name))
+                throw new InvalidOperationException("No Stop was called for name: " + name);
+#endif
+
             LimitedStack<string> stack;
             if (m_Table.ContainsKey(name))
                 stack = m_Table[name];
@@ -40,6 +46,11 @@ namespace RobotRuntime.Perf
                 stack = new LimitedStack<string>(StackLimit);
                 m_Table.Add(name, stack);
             }
+
+#if ENABLE_PROFILER_DEBUGGING
+            if (m_FreeWatches.Count() == 0)
+                throw new Exception("No free watches left, maybe try increasing watch count?");
+#endif
 
             Stopwatch watch;
             lock (FreeWatchesLock)
@@ -52,13 +63,20 @@ namespace RobotRuntime.Perf
                 m_TakenWatches.Add(name, watch);
             }
 
+#if ENABLE_PROFILER_DEBUGGING
+            if (m_FreeWatches.Count() + m_TakenWatches.Count != m_StopwatchCount) // Might fail, even if everything is correct
+                throw new Exception("m_FreeWatches.Count() + m_TakenWatches.Count != m_StopwatchCount");
+#endif
+
             watch.Start();
         }
 
         private void InstanceStop(string name)
         {
+#if ENABLE_PROFILER_DEBUGGING
             if (!m_TakenWatches.ContainsKey(name))
                 throw new InvalidOperationException("No start was called for this name: " + name);
+#endif
 
             Stopwatch watch;
             lock (TakenWatchesLock)
@@ -67,8 +85,10 @@ namespace RobotRuntime.Perf
                 m_TakenWatches.Remove(name);
             }
 
+#if ENABLE_PROFILER_DEBUGGING
             if (m_TakenWatches.ContainsKey(name))
                 throw new Exception("Watch should be removed for name: " + name);
+#endif
 
             watch.Stop();
             var millis = watch.ElapsedMilliseconds;

@@ -48,7 +48,7 @@ namespace RobotEditor
             actionOnRec.SelectedIndex = 2;
             actionOnPlay.SelectedIndex = 2;
 
-            InputCallbacks.inputEvent += OnInputEvent;
+            //InputCallbacks.inputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
 
@@ -106,6 +106,8 @@ namespace RobotEditor
         private void OnAssetSelected()
         {
             m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
+            if (MouseRobot.Instance.IsVisualizationOn)
+                FeatureDetectionThread.Instace.SampleImageFromAsset = m_AssetsWindow.GetSelectedAsset().ToAssetPointer();
         }
 
         private void CreateWindows()

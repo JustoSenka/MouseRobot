@@ -1,5 +1,6 @@
 ﻿using RobotRuntime;
 using RobotRuntime.Graphics;
+using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using System;
 using System.Drawing;
@@ -30,7 +31,7 @@ namespace RobotEditor.Windows
 
             FeatureDetectionThread.Instace.PositionFound += OnPositionFound;
 
-            m_ObservedScreen = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
+            m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
             ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
         }
 
@@ -58,46 +59,59 @@ namespace RobotEditor.Windows
 
         public static Point[] PointsFrom { get; set; }
         public static Point[] PointsTo { get; set; }
+
         private Bitmap m_ObservedScreen;
+        private object m_ObservedScreenLock = new object();
+
+        private Pen pen = new Pen(Color.Blue, 5);
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            Profiler.Start(typeof(InvisibleForm).ToString() + "_On Paint");
             base.OnPaint(e);
 
             var g = e.Graphics;
 
-            if (m_ObservedScreen != null)
-                g.DrawImage(m_ObservedScreen, new Rectangle(30, 200, 200, 150));
+            lock (m_ObservedScreenLock)
+            {
+                if (m_ObservedScreen != null)
+                    g.DrawImage(m_ObservedScreen, new Rectangle(30, 200, 200, 150));
+            }
 
             var count = PointsFrom != null ? "" + PointsFrom.Length : "null";
             g.DrawString("Points found: " + count, Fonts.Big, Brushes.Red, new Point(30, 30));
 
 
-            if (PointsFrom == null || PointsTo == null)
-                return;
-
-            var pen = new Pen(Color.Blue, 5);
-            for (int i = 0; i < PointsFrom.Length; ++i)
+            if (PointsFrom != null && PointsTo != null)
             {
-                g.DrawLine(pen, PointsFrom[i], PointsTo[i]);
+                var maxLinesToDraw = PointsFrom.Length > 10 ? 10 : PointsFrom.Length;
+                for (int i = 0; i < maxLinesToDraw; ++i)
+                {
+                    g.DrawLine(pen, PointsFrom[i], PointsTo[i]);
+                }
             }
+
+            Profiler.Stop(typeof(InvisibleForm).ToString() + "_On Paint");
         }
 
 
         private void OnPositionFound(Point[] points)
         {
+            Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Positions");
             PointsTo = points;
             PointsFrom = points.Select(p => new Point(5, 5)).ToArray();
 
             if (m_ObservedScreen != null)
             {
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
-                {
-                    BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
-                }
+                    lock (m_ObservedScreenLock)
+                    {
+                        BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
+                    }
             }
 
             Invalidate();
+            Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Positions");
         }
 
 

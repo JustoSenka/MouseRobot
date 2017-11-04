@@ -86,6 +86,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="GraphicsTests.cs" />
+    <Compile Include="LimitedStackTests.cs" />
     <Compile Include="ListExtensionTests.cs" />
     <Compile Include="ExtensionMethodsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

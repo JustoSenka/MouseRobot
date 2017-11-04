@@ -35,8 +35,6 @@ namespace Tests
             var list = FindMatches(modelImage, observedImage, out time);
             var avgPos = FeatureDetection.FindImagePos(modelImage, observedImage, out time);
 
-            Debug.WriteLine(avgPos);
-
             Assert.IsTrue(true);
         }
 
