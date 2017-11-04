@@ -8,6 +8,8 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using Emgu.CV.Cuda;
 using Emgu.CV.XFeatures2D;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
@@ -148,6 +150,36 @@ namespace RobotRuntime.Graphics
                 return result;
 
             }
+        }
+
+        public static PointF[] FindImagePos(Mat modelImage, Mat observedImage, out long matchTime)
+        {
+            Mat homography;
+            VectorOfKeyPoint modelKeyPoints;
+            VectorOfKeyPoint observedKeyPoints;
+
+            var list = new List<PointF>();
+            using (VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch())
+            {
+                Mat mask;
+                FindMatch(modelImage, observedImage, out matchTime, out modelKeyPoints, out observedKeyPoints, matches,
+                   out mask, out homography);
+
+                for (int i = 0; i < matches.Size; i++)
+                {
+                    var arrayOfMatches = matches[i].ToArray();
+                    if (mask.GetData(i)[0] == 0) continue;
+                    foreach (var match in arrayOfMatches)
+                    {
+                        var matchingModelKeyPoint = modelKeyPoints[match.TrainIdx];
+                        var matchingObservedKeyPoint = observedKeyPoints[match.QueryIdx];
+                    }
+
+                    list.Add(observedKeyPoints[arrayOfMatches[0].QueryIdx].Point);
+                }
+            }
+
+            return list.ToArray();
         }
     }
 }

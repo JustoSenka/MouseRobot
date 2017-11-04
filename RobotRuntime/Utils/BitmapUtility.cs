@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace RobotUtility.Utils
+namespace RobotRuntime.Utils
 {
     public static class BitmapUtility
     {
@@ -65,6 +68,24 @@ namespace RobotUtility.Utils
 
             return result;
         }
+
+        public static Mat ToMat(this Bitmap bmp)
+        {
+            Image<Bgr, Byte> imageCV = new Image<Bgr, byte>(bmp);
+            return imageCV.Mat;
+        }
+
+        public static Bitmap TakeScreenshot()
+        {
+            var screen = Screen.PrimaryScreen;
+            var bmp = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+            using (var graphics = System.Drawing.Graphics.FromImage(bmp))
+            {
+                graphics.CopyFromScreen(new Point(screen.Bounds.Left, screen.Bounds.Top), new Point(0, 0), screen.Bounds.Size);
+            }
+            return bmp;
+        }
+        
         /*
         public static bool Contains(this Bitmap template, Bitmap bmp)
         {

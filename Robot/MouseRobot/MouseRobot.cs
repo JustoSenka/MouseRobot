@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Drawing;
 using RobotRuntime;
 using RobotRuntime.Commands;
+using RobotRuntime.Graphics;
+using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Robot
 {
@@ -14,12 +17,29 @@ namespace Robot
 
         public event Action<bool> RecordingStateChanged;
         public event Action<bool> PlayingStateChanged;
+        public event Action<bool> VisualizationStateChanged;
 
         private bool m_IsRecording;
         private bool m_IsPlaying;
+        private bool m_IsVisualizationOn;
 
         private Stopwatch m_SleepTimer = new Stopwatch();
         private Point m_LastClickPos = new Point(0, 0);
+
+        /// <summary>
+        /// Post messages to async operation in order to run them on UI thread
+        /// </summary>
+        public AsyncOperation AsyncOperationOnUI
+        {
+            get { return m_AsyncOperationOnUI; }
+            set
+            {
+                m_AsyncOperationOnUI = value;
+                InputCallbacks.AsyncOperationOnUI = value;
+            }
+        }
+        private AsyncOperation m_AsyncOperationOnUI;
+
 
         public CommandManagerProperties commandManagerProperties;
         public string ProjectPath { get; private set; }
@@ -28,8 +48,10 @@ namespace Robot
         {
             SetupProjectPath();
 
+
             ScriptManager.Instance.NewScript();
-            //InputCallbacks.inputEvent += OnInputEvent;
+
+            InputCallbacks.inputEvent += OnInputEvent;
 
             ScriptThread.Instance.Finished += OnScriptFinished;
             
@@ -125,10 +147,7 @@ namespace Robot
 
         public bool IsRecording
         {
-            get
-            {
-                return m_IsRecording;
-            }
+            get { return m_IsRecording; }
             set
             {
                 if (m_IsPlaying)
@@ -144,10 +163,7 @@ namespace Robot
 
         public bool IsPlaying
         {
-            get
-            {
-                return m_IsPlaying;
-            }
+            get { return m_IsPlaying; }
             set
             {
                 if (m_IsRecording)
@@ -162,6 +178,32 @@ namespace Robot
                         StartScript();
                     else
                         StopScript();
+                }
+            }
+        }
+
+        public bool IsVisualizationOn
+        {
+            get { return m_IsVisualizationOn; }
+            set
+            {
+                if (value != m_IsVisualizationOn)
+                {
+                    m_IsVisualizationOn = value;
+                    VisualizationStateChanged?.Invoke(m_IsVisualizationOn);
+
+                    if (m_IsVisualizationOn)
+                    {
+                        ScreenStateThread.Instace.Start(10);
+                        FeatureDetectionThread.Instace.Start(30);
+                        FeatureDetectionThread.Instace.SampleImageFromAsset = 
+                            AssetManager.Instance.GetAsset("Images", "UnityButton").ToAssetPointer();
+                    }
+                    else
+                    {
+                        ScreenStateThread.Instace.Stop();
+                        FeatureDetectionThread.Instace.Stop();
+                    }
                 }
             }
         }

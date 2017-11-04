@@ -28,6 +28,10 @@ namespace RobotRuntime.Graphics
 
             this.FPS = FPS;
             m_Run = true;
+
+            if (!m_Thread.IsAlive)
+                m_Thread = new Thread(new ThreadStart(ThreadRun));
+
             m_Thread.Start();
         }
 

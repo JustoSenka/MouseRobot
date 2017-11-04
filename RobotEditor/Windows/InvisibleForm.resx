@@ -117,23 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ToolButton_Record_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\ToolButton_Record_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ToolButton_RecordStop_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\ToolButton_RecordStop_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ToolButton_Play_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\ToolButton_Play_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ToolButton_Stop_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\ToolButton_Stop_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Eye_d_ICO_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Eye_d_ICO_256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Eye_e_ICO_256" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Icons\Eye_e_ICO_256.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>

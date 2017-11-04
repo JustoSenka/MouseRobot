@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using RobotRuntime.Utils.Win32;
+using System.Threading;
+using System.ComponentModel;
 
 namespace Robot.Utils.Win32
 {
@@ -26,11 +28,16 @@ namespace Robot.Utils.Win32
         private static IntPtr m_MouseHook = IntPtr.Zero;
 
         public static event Action<KeyEvent> inputEvent;
+        public static AsyncOperation AsyncOperationOnUI { private get; set; }
 
         static InputCallbacks()
         {
-            m_KeyboardHook = SetHook(m_CachedLowLevelKeyboardProcDelegate, WH_KEYBOARD_LL);
-            m_MouseHook = SetHook(m_CachedLowLevelMouseProcDelegate, WH_MOUSE_LL);
+            new Thread(() =>
+            {
+                m_KeyboardHook = SetHook(m_CachedLowLevelKeyboardProcDelegate, WH_KEYBOARD_LL);
+                m_MouseHook = SetHook(m_CachedLowLevelMouseProcDelegate, WH_MOUSE_LL);
+                Application.Run(); // TODO: Find a better way to implement Application Message Loop.... LOL
+            }).Start();
         }
 
         public static void ForgetAll()
@@ -38,6 +45,8 @@ namespace Robot.Utils.Win32
             if (inputEvent != null)
                 foreach (var d in inputEvent.GetInvocationList())
                     inputEvent -= (d as Action<KeyEvent>);
+
+            inputEvent = null;
         }
 
         private static readonly Destructor Finalise = new Destructor();
@@ -76,7 +85,7 @@ namespace Robot.Utils.Win32
                 {
                     var keyAction = wParam == WM_KEYDOWN ? KeyAction.KeyDown : KeyAction.KeyUp;
                     var key = (Keys)Marshal.ReadInt32(lParam);
-                    inputEvent?.Invoke(new KeyEvent(key, keyAction, WinAPI.GetCursorPosition()));
+                    InvokeEventOnAsyncOperation(new KeyEvent(key, keyAction, WinAPI.GetCursorPosition()));
                 }
             return CallNextHookEx(m_KeyboardHook, nCode, wParam, lParam);
         }
@@ -87,16 +96,29 @@ namespace Robot.Utils.Win32
                 if (wParam == WM_LBUTTONDOWN || wParam == WM_LBUTTONUP ||
                     wParam == WM_RBUTTONDOWN || wParam == WM_RBUTTONUP)
                 {
-                    var keyAction = (wParam == WM_RBUTTONDOWN || wParam == WM_LBUTTONDOWN) ? 
+                    var keyAction = (wParam == WM_RBUTTONDOWN || wParam == WM_LBUTTONDOWN) ?
                         KeyAction.KeyDown : KeyAction.KeyUp;
                     var key = (wParam == WM_LBUTTONDOWN || wParam == WM_LBUTTONUP) ?
                         Keys.LButton : Keys.RButton;
 
                     var hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 
-                    inputEvent?.Invoke(new KeyEvent(key, keyAction, new Point(hookStruct.pt.x, hookStruct.pt.y)));
+                    InvokeEventOnAsyncOperation(new KeyEvent(key, keyAction, new Point(hookStruct.pt.x, hookStruct.pt.y)));
                 }
             return CallNextHookEx(m_KeyboardHook, nCode, wParam, lParam);
+        }
+
+        private static void InvokeEventOnAsyncOperation(KeyEvent e)
+        {
+            if (inputEvent == null || AsyncOperationOnUI == null)
+                return;
+
+            AsyncOperationOnUI.Post(new SendOrPostCallback(delegate (object state)
+            {
+                inputEvent?.Invoke(e);
+            }), null);
+
+            //AsyncOperation.OperationCompleted();
         }
 
 

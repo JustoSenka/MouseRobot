@@ -9,6 +9,10 @@ using System.Drawing;
 using Robot;
 using System.Collections.Generic;
 using System.Linq;
+using RobotRuntime.Utils;
+using System.Drawing.Imaging;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Tests
 {
@@ -22,10 +26,16 @@ namespace Tests
             AssetManager.Instance.Refresh();
 
             var modelImage = new Mat(AssetManager.Instance.GetAsset("Images", "UnityButton").Path);
+            //var observedImage = BitmapUtility.TakeScreenshot().ToMat();
             var observedImage = new Mat(AssetManager.Instance.GetAsset("Images", "UnityCollab").Path);
+
+            //observedImage.Bitmap.Save("test2.png");
 
             long time;
             var list = FindMatches(modelImage, observedImage, out time);
+            var avgPos = FeatureDetection.FindImagePos(modelImage, observedImage, out time);
+
+            Debug.WriteLine(avgPos);
 
             Assert.IsTrue(true);
         }

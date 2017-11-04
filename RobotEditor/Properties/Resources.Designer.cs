@@ -63,6 +63,26 @@ namespace RobotEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Eye_d_ICO_256 {
+            get {
+                object obj = ResourceManager.GetObject("Eye_d_ICO_256", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Eye_e_ICO_256 {
+            get {
+                object obj = ResourceManager.GetObject("Eye_e_ICO_256", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ToolButton_Play_32 {
             get {
                 object obj = ResourceManager.GetObject("ToolButton_Play_32", resourceCulture);

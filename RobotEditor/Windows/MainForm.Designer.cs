@@ -41,6 +41,7 @@
             this.recordButton = new System.Windows.Forms.ToolStripButton();
             this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
             this.actionOnRec = new System.Windows.Forms.ToolStripComboBox();
+            this.visualizationButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,12 +102,13 @@
             this.playButton,
             this.recordButton,
             this.actionOnPlay,
-            this.actionOnRec});
+            this.actionOnRec,
+            this.visualizationButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(763, 25);
             this.toolStrip.TabIndex = 7;
-            this.toolStrip.Text = "toolStrip1";
+            this.toolStrip.Text = "Tool Strip";
             // 
             // playButton
             // 
@@ -149,6 +151,17 @@
             "Do Nothing On Rec"});
             this.actionOnRec.Name = "actionOnRec";
             this.actionOnRec.Size = new System.Drawing.Size(140, 25);
+            // 
+            // visualizationButton
+            // 
+            this.visualizationButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.visualizationButton.Image = global::RobotEditor.Properties.Resources.Eye_d_ICO_256;
+            this.visualizationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.visualizationButton.Name = "visualizationButton";
+            this.visualizationButton.Size = new System.Drawing.Size(23, 22);
+            this.visualizationButton.Text = "Enable/Disable realtime Image Detection visualization";
+            this.visualizationButton.ToolTipText = "Enable/Disable Realtime Image Detection Visualization";
+            this.visualizationButton.Click += new System.EventHandler(this.enableVizualization_Click);
             // 
             // menuStrip
             // 
@@ -402,5 +415,6 @@
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.ToolStripMenuItem assetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripButton visualizationButton;
     }
 }

@@ -106,6 +106,7 @@
     <Compile Include="Commands\CommandSleep.cs" />
     <Compile Include="Graphics\FeatureDetection.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
+    <Compile Include="Graphics\FeatureDetectionThread.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />

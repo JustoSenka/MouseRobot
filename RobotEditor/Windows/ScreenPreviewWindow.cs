@@ -1,6 +1,6 @@
 ﻿using Robot;
 using RobotRuntime.Graphics;
-using RobotUtility.Utils;
+using RobotRuntime.Utils;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -18,11 +18,7 @@ namespace RobotEditor
         {
             InitializeComponent();
 
-            var screenSize = new Size(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height);
-            pictureDrawBox.Size = screenSize;
-
-
-            ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
+            //ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
 
             m_Init = true;
         }

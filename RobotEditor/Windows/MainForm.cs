@@ -2,9 +2,11 @@
 using Robot.Utils.Win32;
 using RobotEditor.Editor;
 using RobotEditor.Utils;
+using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Graphics;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -27,10 +29,13 @@ namespace RobotEditor
 
         public MainForm()
         {
+            MouseRobot.Instance.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
+
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
 
             //ShowSplashScreen(2000);
+            //InvisibleForm.Instace.Owner = this;
 
             this.WindowState = FormWindowState.Maximized;
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
@@ -49,6 +54,7 @@ namespace RobotEditor
 
             MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;
+            MouseRobot.Instance.VisualizationStateChanged += OnVisualizationStateChanged;
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -80,6 +86,11 @@ namespace RobotEditor
             if (!isRecording && actionOnRec.SelectedIndex == 0)
                 this.WindowState = m_DefaultWindowState;
 
+            UpdateToolstripButtonStates();
+        }
+
+        private void OnVisualizationStateChanged(bool isVisualizationOn)
+        {
             UpdateToolstripButtonStates();
         }
 
@@ -304,7 +315,6 @@ namespace RobotEditor
                 return;
 
             MouseRobot.Instance.IsPlaying ^= true;
-            //UpdateToolstripButtonStates();
         }
 
         private void recordButton_Click(object sender, EventArgs e)
@@ -313,7 +323,17 @@ namespace RobotEditor
                 return;
 
             MouseRobot.Instance.IsRecording ^= true;
-            //UpdateToolstripButtonStates();
+        }
+
+
+        private void enableVizualization_Click(object sender, EventArgs e)
+        {
+            MouseRobot.Instance.IsVisualizationOn ^= true;
+
+            if (MouseRobot.Instance.IsVisualizationOn)
+                InvisibleForm.Instace.Show();
+            else
+                InvisibleForm.Instace.Hide();
         }
         #endregion
 
@@ -325,6 +345,9 @@ namespace RobotEditor
 
             recordButton.Image = (MouseRobot.Instance.IsRecording) ?
                 RobotEditor.Properties.Resources.ToolButton_RecordStop_32 : RobotEditor.Properties.Resources.ToolButton_Record_32;
+
+            visualizationButton.Image = (MouseRobot.Instance.IsVisualizationOn) ?
+                RobotEditor.Properties.Resources.Eye_e_ICO_256 : RobotEditor.Properties.Resources.Eye_d_ICO_256;
 
             // Disable/Enable buttons
             playButton.Enabled = !MouseRobot.Instance.IsRecording;
@@ -341,6 +364,7 @@ namespace RobotEditor
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             ScreenStateThread.Instace.Stop();
+            FeatureDetectionThread.Instace.Stop();
             Application.Exit();
         }
 

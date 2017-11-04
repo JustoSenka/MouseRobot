@@ -1,4 +1,4 @@
-﻿using RobotUtility.Utils;
+﻿using RobotRuntime.Utils;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -94,14 +94,18 @@ namespace RobotRuntime.Graphics
 
         private void AlternativeScreenshot()
         {
-            m_GfxScreenshot.CopyFromScreen(Width, Height, 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
+            //m_GfxScreenshot.CopyFromScreen(Width, Height, 0, 0, Screen.PrimaryScreen.Bounds.Size, CopyPixelOperation.SourceCopy);
+            //ScreenCapture sc = new ScreenCapture();
+            // capture entire screen, and save it to a file
+            //Image img = sc.CaptureScreen();
         }
 
         protected override void ThreadAction()
         {
-            TakeScreenshot(m_TempBitmap);
+            //TakeScreenshot(m_TempBitmap);
             //AlternativeScreenshot(); no work, why?
 
+            m_TempBitmap = BitmapUtility.TakeScreenshot();
             lock (ScreenBmpLock)
             {
                 BitmapUtility.Clone32BPPBitmap(m_TempBitmap, ScreenBmp);
