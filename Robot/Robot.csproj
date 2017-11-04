@@ -72,7 +72,6 @@
     <Compile Include="Scripts\ScriptManager.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />
-    <Compile Include="Utils\StableRepeatingThread.cs" />
     <Compile Include="Utils\Win32\InputCallbacks.cs" />
     <Compile Include="Utils\Win32\KeyEvent.cs" />
   </ItemGroup>
