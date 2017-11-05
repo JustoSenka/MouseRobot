@@ -23,7 +23,7 @@ namespace RobotRuntime.Perf
         private const int StackLimit = 50;
         private const int m_StopwatchCount = 10;
 
-        private Dictionary<string, LimitedStack<string>> m_Table = new Dictionary<string, LimitedStack<string>>();
+        private Dictionary<string, LimitedStack<ProfilerNode>> m_Table = new Dictionary<string, LimitedStack<ProfilerNode>>();
 
         private Dictionary<string, Stopwatch> m_TakenWatches = new Dictionary<string, Stopwatch>();
         private LimitedStack<Stopwatch> m_FreeWatches = new LimitedStack<Stopwatch>(m_StopwatchCount);
@@ -38,12 +38,12 @@ namespace RobotRuntime.Perf
                 throw new InvalidOperationException("No Stop was called for name: " + name);
 #endif
 
-            LimitedStack<string> stack;
+            LimitedStack<ProfilerNode> stack;
             if (m_Table.ContainsKey(name))
                 stack = m_Table[name];
             else
             {
-                stack = new LimitedStack<string>(StackLimit);
+                stack = new LimitedStack<ProfilerNode>(StackLimit);
                 m_Table.Add(name, stack);
             }
 
@@ -62,11 +62,6 @@ namespace RobotRuntime.Perf
             {
                 m_TakenWatches.Add(name, watch);
             }
-
-#if ENABLE_PROFILER_DEBUGGING
-            if (m_FreeWatches.Count() + m_TakenWatches.Count != m_StopwatchCount) // Might fail, even if everything is correct
-                throw new Exception("m_FreeWatches.Count() + m_TakenWatches.Count != m_StopwatchCount");
-#endif
 
             watch.Start();
         }
@@ -100,7 +95,7 @@ namespace RobotRuntime.Perf
                 m_FreeWatches.Add(watch);
             }
 
-            m_Table[name].Add(name + ": " + millis + " ms.");
+            m_Table[name].Add(new ProfilerNode(name, millis + " ms."));
         }
 
         public static void Start(string name)

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using RobotEditor.Windows;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -76,6 +77,8 @@ namespace RobotEditor.Editor
                     return Windows[2];
                 if (persistString.Equals(typeof(AssetsWindow).ToString()))
                     return Windows[3];
+                if (persistString.Equals(typeof(ProfilerWindow).ToString()))
+                    return Windows[4];
 
                 return null;
             });

@@ -22,6 +22,7 @@ namespace RobotEditor
         private CommandManagerWindow m_CommandManagerWindow;
         private ScreenPreviewWindow m_ScreenPreviewWindow;
         private AssetsWindow m_AssetsWindow;
+        private ProfilerWindow m_ProfilerWindow;
 
         private ThemeBase m_CurrentTheme;
 
@@ -33,14 +34,15 @@ namespace RobotEditor
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
+            this.WindowState = FormWindowState.Maximized;
 
             //ShowSplashScreen(2000);
             //InvisibleForm.Instace.Owner = this;
 
-            this.WindowState = FormWindowState.Maximized;
+            CreateWindows();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
 
-            CreateWindows();
+            DockLayout.Windows = m_Windows;
             DockLayout.Restore(m_DockPanel);
 
             visualStudioToolStripExtender.DefaultRenderer = new ToolStripProfessionalRenderer();
@@ -116,6 +118,7 @@ namespace RobotEditor
             m_CommandManagerWindow = new CommandManagerWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
             m_AssetsWindow = new AssetsWindow();
+            m_ProfilerWindow = new ProfilerWindow();
 
             m_Windows = new DockContent[]
             {
@@ -123,9 +126,8 @@ namespace RobotEditor
                 m_CommandManagerWindow,
                 m_ScreenPreviewWindow,
                 m_AssetsWindow,
+                m_ProfilerWindow,
             };
-
-            DockLayout.Windows = m_Windows;
         }
 
         private void SetWindowTheme(ThemeBase theme, bool emptyLayout = false)
@@ -153,6 +155,8 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(menuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
+
+            visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.toolStrip, version, theme);
         }
 
         private void ShowSplashScreen(int millis)
@@ -288,6 +292,9 @@ namespace RobotEditor
         {
             Close();
         }
+        #endregion
+
+        #region Menu Items (Windows)
 
         private void hierarchyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -308,6 +315,12 @@ namespace RobotEditor
         {
             m_AssetsWindow.Show(m_DockPanel);
         }
+
+        private void profilerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_ProfilerWindow.Show(m_DockPanel);
+        }
+
         #endregion
 
         #region Toolstrip item clicks

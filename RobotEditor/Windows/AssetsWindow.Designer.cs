@@ -126,6 +126,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(402, 372);
             this.Controls.Add(this.treeView);
+            this.HideOnClose = true;
             this.Name = "AssetsWindow";
             this.Text = "Assets";
             this.contextMenuStrip1.ResumeLayout(false);

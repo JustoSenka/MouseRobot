@@ -77,6 +77,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -134,6 +138,12 @@
     <Compile Include="Windows\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\ProfilerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\ProfilerWindow.Designer.cs">
+      <DependentUpon>ProfilerWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ScreenPreviewWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -171,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\ProfilerWindow.resx">
+      <DependentUpon>ProfilerWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\ScreenPreviewWindow.resx">
       <DependentUpon>ScreenPreviewWindow.cs</DependentUpon>

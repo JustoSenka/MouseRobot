@@ -50,6 +50,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(430, 406);
             this.Controls.Add(this.pictureDrawBox);
+            this.HideOnClose = true;
             this.Name = "ScreenPreviewWindow";
             this.Text = "Image Preview";
             ((System.ComponentModel.ISupportInitialize)(this.pictureDrawBox)).EndInit();

@@ -86,7 +86,7 @@ namespace RobotRuntime.Graphics
 
                 m_Stopwatch.Reset();
 
-                System.Diagnostics.Debug.WriteLine(Name + " took " + elapsed + " ms. to complete");
+                //System.Diagnostics.Debug.WriteLine(Name + " took " + elapsed + " ms. to complete");
                 Update?.Invoke();
             }
         }

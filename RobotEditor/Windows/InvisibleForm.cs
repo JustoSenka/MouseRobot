@@ -26,18 +26,17 @@ namespace RobotEditor.Windows
             this.TopMost = true;
             this.ShowInTaskbar = false;
 
+            // Fix flickering when redrawing
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+
+            // Click-through
             int initialStyle = GetWindowLong(this.Handle, -20);
             SetWindowLong(this.Handle, -20, initialStyle | 0x80000 | 0x20);
 
             FeatureDetectionThread.Instace.PositionFound += OnPositionFound;
+            ScreenStateThread.Instace.Update += OnUpdate;
 
             m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
-            ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
-        }
-
-        private void ScreenStateThreadInitialized()
-        {
-            m_ObservedScreen = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
         }
 
         protected override bool ShowWithoutActivation
@@ -67,7 +66,7 @@ namespace RobotEditor.Windows
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Profiler.Start(typeof(InvisibleForm).ToString() + "_On Paint");
+            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_On Paint");
             base.OnPaint(e);
 
             var g = e.Graphics;
@@ -75,7 +74,7 @@ namespace RobotEditor.Windows
             lock (m_ObservedScreenLock)
             {
                 if (m_ObservedScreen != null)
-                    g.DrawImage(m_ObservedScreen, new Rectangle(30, 200, 200, 150));
+                    g.DrawImage(m_ObservedScreen, new Rectangle(20, 150, m_ObservedScreen.Width / 10, m_ObservedScreen.Height / 10));
             }
 
             var count = PointsFrom != null ? "" + PointsFrom.Length : "null";
@@ -87,20 +86,29 @@ namespace RobotEditor.Windows
                 var maxLinesToDraw = PointsFrom.Length > 10 ? 10 : PointsFrom.Length;
                 for (int i = 0; i < maxLinesToDraw; ++i)
                 {
-                    g.DrawLine(pen, PointsFrom[i], PointsTo[i]);
+                    // i % PointsFrom.Length is used because PointsTo can be changed from another thread while running this exact line
+                    // Very rare, but no big difference, don't draw the lines just
+                    g.DrawLine(pen, PointsFrom[i % PointsFrom.Length], PointsTo[i % PointsFrom.Length]);
                 }
             }
 
-            Profiler.Stop(typeof(InvisibleForm).ToString() + "_On Paint");
+            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_On Paint");
         }
 
 
         private void OnPositionFound(Point[] points)
         {
-            Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Positions");
+            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Positions");
             PointsTo = points;
             PointsFrom = points.Select(p => new Point(5, 5)).ToArray();
 
+            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Positions");
+            Invalidate();
+        }
+
+        private void OnUpdate()
+        {
+            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Screen Bitmap");
             if (m_ObservedScreen != null)
             {
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
@@ -109,9 +117,8 @@ namespace RobotEditor.Windows
                         BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
                     }
             }
-
+            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Screen Bitmap");
             Invalidate();
-            Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Positions");
         }
 
 
