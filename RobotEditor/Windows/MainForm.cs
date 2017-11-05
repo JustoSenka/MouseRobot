@@ -141,7 +141,7 @@ namespace RobotEditor
             m_CurrentTheme = theme;
             m_DockPanel.Theme = theme;
 
-            EnableVSRenderer(VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            EnableVSDesignForToolstrips(VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
 
             if (m_DockPanel.Theme.ColorPalette != null)
                 statusStrip.BackColor = m_DockPanel.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
@@ -150,13 +150,14 @@ namespace RobotEditor
                 DockLayout.Restore(m_DockPanel);
         }
 
-        private void EnableVSRenderer(VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
+        private void EnableVSDesignForToolstrips(VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
         {
             visualStudioToolStripExtender.SetStyle(menuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
 
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.toolStrip, version, theme);
+            m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
         }
 
         private void ShowSplashScreen(int millis)

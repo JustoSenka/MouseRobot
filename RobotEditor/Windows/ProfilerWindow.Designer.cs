@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -38,10 +39,10 @@
             // 
             this.treeListView.CellEditUseWholeCell = false;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeListView.Location = new System.Drawing.Point(0, 0);
+            this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
-            this.treeListView.Size = new System.Drawing.Size(469, 458);
+            this.treeListView.Size = new System.Drawing.Size(469, 433);
             this.treeListView.TabIndex = 0;
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
@@ -62,11 +63,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(469, 458);
-            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.treeListView);
+            this.Controls.Add(this.toolStrip);
             this.HideOnClose = true;
             this.Name = "ProfilerWindow";
             this.Text = "Profiler";
+            this.ResizeEnd += new System.EventHandler(this.ProfilerWindow_ResizeEnd);
             this.Resize += new System.EventHandler(this.ProfilerWindow_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
             this.ResumeLayout(false);
@@ -78,5 +80,6 @@
 
         private BrightIdeasSoftware.TreeListView treeListView;
         public System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

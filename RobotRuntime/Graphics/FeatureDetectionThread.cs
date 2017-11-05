@@ -50,17 +50,17 @@ namespace RobotRuntime.Graphics
 
             Profiler.Start(Name);
 
-            Profiler.Start(Name + "_Clone Screen");
+            Profiler.Start(Name + "_CloneScreen");
             lock (ScreenStateThread.Instace.ScreenBmpLock)
             {
                 BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, ObservedImage);
             }
-            Profiler.Stop(Name + "_Clone Screen");
+            Profiler.Stop(Name + "_CloneScreen");
 
-            Profiler.Start(Name + "_Find Match");
+            Profiler.Start(Name + "_FindMatch");
             long time;
             var points = FeatureDetection.FindImagePos(m_SampleMat, ObservedImage.ToMat(), out time);
-            Profiler.Stop(Name + "_Find Match");
+            Profiler.Stop(Name + "_FindMatch");
 
 
             PositionFound?.Invoke(points.Select(p => new Point((int)p.X, (int)p.Y)).ToArray());
@@ -72,7 +72,10 @@ namespace RobotRuntime.Graphics
             set
             {
                 lock (m_SampleMatLock)
-                    m_SampleMat = new Mat(value.Path);
+                {
+                    if (value.Path.EndsWith(FileExtensions.Image))
+                        m_SampleMat = new Mat(value.Path);
+                }
             }
         }
 

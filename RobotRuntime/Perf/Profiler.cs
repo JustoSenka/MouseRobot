@@ -20,10 +20,24 @@ namespace RobotRuntime.Perf
                 m_FreeWatches.Add(new Stopwatch());
         }
 
-        private const int StackLimit = 50;
+        public const int NodeLimit = 50;
         private const int m_StopwatchCount = 10;
 
         private Dictionary<string, LimitedStack<ProfilerNode>> m_Table = new Dictionary<string, LimitedStack<ProfilerNode>>();
+        public object m_TableLock = new object();
+
+        public Dictionary<string, ProfilerNode[]> CopyNodes()
+        {
+            var newTable = new Dictionary<string, ProfilerNode[]>();
+            lock (m_TableLock)
+            {
+                foreach (var pair in m_Table)
+                {
+                    newTable.Add(pair.Key, pair.Value.ToArray());
+                }
+            }
+            return newTable;
+        }
 
         private Dictionary<string, Stopwatch> m_TakenWatches = new Dictionary<string, Stopwatch>();
         private LimitedStack<Stopwatch> m_FreeWatches = new LimitedStack<Stopwatch>(m_StopwatchCount);
@@ -39,12 +53,16 @@ namespace RobotRuntime.Perf
 #endif
 
             LimitedStack<ProfilerNode> stack;
+
             if (m_Table.ContainsKey(name))
                 stack = m_Table[name];
             else
             {
-                stack = new LimitedStack<ProfilerNode>(StackLimit);
-                m_Table.Add(name, stack);
+                stack = new LimitedStack<ProfilerNode>(NodeLimit);
+                lock (m_TableLock)
+                {
+                    m_Table.Add(name, stack);
+                }
             }
 
 #if ENABLE_PROFILER_DEBUGGING
@@ -95,7 +113,10 @@ namespace RobotRuntime.Perf
                 m_FreeWatches.Add(watch);
             }
 
-            m_Table[name].Add(new ProfilerNode(name, millis + " ms."));
+            lock (m_TableLock)
+            {
+                m_Table[name].Add(new ProfilerNode(name, (int)millis/* + " ms."*/));
+            }
         }
 
         public static void Start(string name)

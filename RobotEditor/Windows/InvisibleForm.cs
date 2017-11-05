@@ -66,7 +66,7 @@ namespace RobotEditor.Windows
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_On Paint");
+            RobotRuntime.Perf.Profiler.Start("InvisibleForm_OnPaint");
             base.OnPaint(e);
 
             var g = e.Graphics;
@@ -92,23 +92,21 @@ namespace RobotEditor.Windows
                 }
             }
 
-            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_On Paint");
+            RobotRuntime.Perf.Profiler.Stop("InvisibleForm_OnPaint");
         }
 
 
         private void OnPositionFound(Point[] points)
         {
-            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Positions");
             PointsTo = points;
             PointsFrom = points.Select(p => new Point(5, 5)).ToArray();
 
-            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Positions");
             Invalidate();
         }
 
         private void OnUpdate()
         {
-            RobotRuntime.Perf.Profiler.Start(typeof(InvisibleForm).ToString() + "_Update Screen Bitmap");
+            RobotRuntime.Perf.Profiler.Start("InvisibleForm_UpdateScreenBitmap");
             if (m_ObservedScreen != null)
             {
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
@@ -117,7 +115,7 @@ namespace RobotEditor.Windows
                         BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
                     }
             }
-            RobotRuntime.Perf.Profiler.Stop(typeof(InvisibleForm).ToString() + "_Update Screen Bitmap");
+            RobotRuntime.Perf.Profiler.Stop("InvisibleForm_UpdateScreenBitmap");
             Invalidate();
         }
 

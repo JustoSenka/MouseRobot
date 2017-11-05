@@ -90,16 +90,16 @@ namespace RobotRuntime.Graphics
         protected override void ThreadAction()
         {
             Profiler.Start(Name);
-            Profiler.Start(Name + "_Take Screenshot");
+            Profiler.Start(Name + "_TakeScreenshot");
             BitmapUtility.TakeScreenshot(m_TempBitmap);
-            Profiler.Stop(Name + "_Take Screenshot");
+            Profiler.Stop(Name + "_TakeScreenshot");
 
-            Profiler.Start(Name + "_Clone Bitmap");
+            Profiler.Start(Name + "_CloneBitmap");
             lock (ScreenBmpLock)
             {
                 BitmapUtility.Clone32BPPBitmap(m_TempBitmap, ScreenBmp);
             }
-            Profiler.Stop(Name + "_Clone Bitmap");
+            Profiler.Stop(Name + "_CloneBitmap");
             Profiler.Stop(Name);
         }
 
