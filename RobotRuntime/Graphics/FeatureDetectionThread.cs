@@ -1,11 +1,8 @@
-﻿using Emgu.CV;
-using RobotRuntime.Perf;
+﻿using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
@@ -16,14 +13,14 @@ namespace RobotRuntime.Graphics
         public Bitmap ObservedImage { get; private set; }
         public object ObservedImageLock = new object();
 
-        private Mat m_SampleMat;
-        private object m_SampleMatLock = new object();
+        public Bitmap m_SampleImage;
+        private object m_SampleImageLock = new object();
+
+        public event Action<Point[]> PositionFound;
 
         public static FeatureDetectionThread Instace { get { return m_Instance; } }
         private static FeatureDetectionThread m_Instance = new FeatureDetectionThread();
         private FeatureDetectionThread() { }
-
-        public event Action<Point[]> PositionFound;
 
         protected override string Name { get { return "FeatureDetectionThread"; } }
 
@@ -45,7 +42,7 @@ namespace RobotRuntime.Graphics
             if (ObservedImage == null)
                 return;
 
-            if (m_SampleMat == null)
+            if (m_SampleImage == null)
                 return;
 
             Profiler.Start(Name);
@@ -58,12 +55,14 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name + "_CloneScreen");
 
             Profiler.Start(Name + "_FindMatch");
-            long time;
-            var points = FeatureDetection.FindImagePos(m_SampleMat, ObservedImage.ToMat(), out time);
+            Point[] points;
+            lock (m_SampleImageLock)
+            {
+                points = FeatureDetector.Get().FindImageRect(m_SampleImage, ObservedImage, 0.25f);
+            }
             Profiler.Stop(Name + "_FindMatch");
 
-
-            PositionFound?.Invoke(points.Select(p => new Point((int)p.X, (int)p.Y)).ToArray());
+            PositionFound?.Invoke(points);
             Profiler.Stop(Name);
         }
 
@@ -71,20 +70,21 @@ namespace RobotRuntime.Graphics
         {
             set
             {
-                lock (m_SampleMatLock)
+                lock (m_SampleImageLock)
                 {
-                    if (value.Path.EndsWith(FileExtensions.Image))
-                        m_SampleMat = new Mat(value.Path);
+                    m_SampleImage = AssetImporter.FromPath(value.Path).Load<Bitmap>();
                 }
             }
         }
 
-        public Bitmap SampleImageFromBitmap
+        public Bitmap SampleImage
         {
             set
             {
-                lock (m_SampleMatLock)
-                    m_SampleMat = value.ToMat();
+                lock (m_SampleImageLock)
+                {
+                    m_SampleImage = value;
+                }
             }
         }
     }

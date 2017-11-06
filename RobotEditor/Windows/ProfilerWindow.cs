@@ -100,8 +100,11 @@ namespace RobotEditor.Windows
             FillListWithAllNodesForFrame(m_Nodes, index);
             //FillListWithParentOnlyNodesForFrame(m_Nodes, index);
 
+            var selected = treeListView.SelectedItem;
             treeListView.Roots = m_Nodes;
             treeListView.Sort();
+            treeListView.SelectedItem = selected;
+
             treeListView.Refresh();
         }
 

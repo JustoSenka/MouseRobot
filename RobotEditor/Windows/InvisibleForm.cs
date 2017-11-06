@@ -56,57 +56,63 @@ namespace RobotEditor.Windows
         }
 
 
-        public static Point[] PointsFrom { get; set; }
-        public static Point[] PointsTo { get; set; }
+        public Point[] ImagePoints { get; set; }
+        private object ImagePointsLock = new object();
 
         private Bitmap m_ObservedScreen;
         private object m_ObservedScreenLock = new object();
 
-        private Pen pen = new Pen(Color.Blue, 5);
+        private Pen pen = new Pen(Color.Blue, 4);
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            RobotRuntime.Perf.Profiler.Start("InvisibleForm_OnPaint");
+            Profiler.Start("InvisibleForm_OnPaint");
             base.OnPaint(e);
 
             var g = e.Graphics;
 
+            DrawSmallScreenCopy(g);
+
+            var count = ImagePoints != null ? "" + ImagePoints.Length : "null";
+            g.DrawString("Points found: " + count, Fonts.Big, Brushes.Red, new Point(30, 30));
+
+            DrawPolygonFromPoints(g);
+
+            Profiler.Stop("InvisibleForm_OnPaint");
+        }
+
+        private void DrawSmallScreenCopy(Graphics g)
+        {
             lock (m_ObservedScreenLock)
             {
                 if (m_ObservedScreen != null)
                     g.DrawImage(m_ObservedScreen, new Rectangle(20, 150, m_ObservedScreen.Width / 10, m_ObservedScreen.Height / 10));
             }
-
-            var count = PointsFrom != null ? "" + PointsFrom.Length : "null";
-            g.DrawString("Points found: " + count, Fonts.Big, Brushes.Red, new Point(30, 30));
-
-
-            if (PointsFrom != null && PointsTo != null)
-            {
-                var maxLinesToDraw = PointsFrom.Length > 10 ? 10 : PointsFrom.Length;
-                for (int i = 0; i < maxLinesToDraw; ++i)
-                {
-                    // i % PointsFrom.Length is used because PointsTo can be changed from another thread while running this exact line
-                    // Very rare, but no big difference, don't draw the lines just
-                    g.DrawLine(pen, PointsFrom[i % PointsFrom.Length], PointsTo[i % PointsFrom.Length]);
-                }
-            }
-
-            RobotRuntime.Perf.Profiler.Stop("InvisibleForm_OnPaint");
         }
 
+        private void DrawPolygonFromPoints(Graphics g)
+        {
+            if (ImagePoints != null && ImagePoints.Length >= 2)
+            {
+                lock (ImagePointsLock)
+                {
+                    g.DrawPolygon(pen, ImagePoints);
+                }
+            }
+        }
 
         private void OnPositionFound(Point[] points)
         {
-            PointsTo = points;
-            PointsFrom = points.Select(p => new Point(5, 5)).ToArray();
-
+            lock (ImagePointsLock)
+            {
+                ImagePoints = points;
+            }
             Invalidate();
         }
 
         private void OnUpdate()
         {
-            RobotRuntime.Perf.Profiler.Start("InvisibleForm_UpdateScreenBitmap");
+            Profiler.Start("InvisibleForm_UpdateScreenBitmap");
             if (m_ObservedScreen != null)
             {
                 lock (ScreenStateThread.Instace.ScreenBmpLock)
@@ -115,7 +121,7 @@ namespace RobotEditor.Windows
                         BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
                     }
             }
-            RobotRuntime.Perf.Profiler.Stop("InvisibleForm_UpdateScreenBitmap");
+            Profiler.Stop("InvisibleForm_UpdateScreenBitmap");
             Invalidate();
         }
 

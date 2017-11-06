@@ -54,7 +54,7 @@ namespace RobotEditor.CustomControls
             {
                 m_ImagePos = GetNewImagePosition(e.Location);
                 m_OldImagePos = m_ImagePos;
-                Refresh();
+                Invalidate();
                 m_IsBeingDragged = false;
             }
         }
@@ -66,7 +66,7 @@ namespace RobotEditor.CustomControls
             if (m_IsBeingDragged)
             {
                 m_ImagePos = GetNewImagePosition(e.Location);
-                Refresh();
+                Invalidate();
             }
         }
 
@@ -89,7 +89,7 @@ namespace RobotEditor.CustomControls
                 m_ImagePos = m_ImagePos.Add(GetImagePositionDeltaFromScroll(e.Location, zoomDelta));
             }
 
-            Refresh();
+            Invalidate();
         }
 
         protected override void OnMouseEnter(EventArgs e)

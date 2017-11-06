@@ -69,10 +69,9 @@ namespace RobotRuntime.Utils
             return result;
         }
 
-        public static Mat ToMat(this Bitmap bmp)
+        public static Image<Bgr, byte> ToImage(this Bitmap bmp)
         {
-            Image<Bgr, Byte> imageCV = new Image<Bgr, byte>(bmp);
-            return imageCV.Mat;
+            return new Image<Bgr, byte>(bmp);
         }
 
         public static Bitmap TakeScreenshot()
