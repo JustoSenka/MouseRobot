@@ -1,8 +1,10 @@
 ﻿using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
@@ -16,7 +18,7 @@ namespace RobotRuntime.Graphics
         public Bitmap m_SampleImage;
         private object m_SampleImageLock = new object();
 
-        public event Action<Point[]> PositionFound;
+        public event Action<Point[][]> PositionFound;
 
         public static FeatureDetectionThread Instace { get { return m_Instance; } }
         private static FeatureDetectionThread m_Instance = new FeatureDetectionThread();
@@ -55,15 +57,22 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name + "_CloneScreen");
 
             Profiler.Start(Name + "_FindMatch");
-            Point[] points;
-            lock (m_SampleImageLock)
-            {
-                points = FeatureDetector.Get().FindImagePos(m_SampleImage, ObservedImage);
-            }
+            var points = FindImagePositions();
             Profiler.Stop(Name + "_FindMatch");
 
             PositionFound?.Invoke(points);
             Profiler.Stop(Name);
+        }
+
+        private Point[][] FindImagePositions()
+        {
+            lock (m_SampleImageLock)
+            {
+                if (FeatureDetector.Get().SupportsMultipleMatches)
+                    return FeatureDetector.Get().FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
+                else
+                    return new[] { FeatureDetector.Get().FindImagePos(m_SampleImage, ObservedImage) };
+            }
         }
 
         public AssetPointer SampleImageFromAsset
@@ -71,7 +80,7 @@ namespace RobotRuntime.Graphics
             set
             {
                 lock (m_SampleImageLock)
-                {             
+                {
                     if (value.Path.EndsWith(FileExtensions.Image))
                         m_SampleImage = AssetImporter.FromPath(value.Path).Load<Bitmap>();
                 }

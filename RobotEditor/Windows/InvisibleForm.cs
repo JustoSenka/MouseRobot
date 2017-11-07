@@ -3,6 +3,7 @@ using RobotRuntime.Graphics;
 using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace RobotEditor.Windows
         }
 
 
-        public Point[] ImagePoints { get; set; }
+        public Point[][] ImagePoints { get; private set; }
         private object ImagePointsLock = new object();
 
         private Bitmap m_ObservedScreen;
@@ -72,10 +73,6 @@ namespace RobotEditor.Windows
             var g = e.Graphics;
 
             DrawSmallScreenCopy(g);
-
-            var count = ImagePoints != null ? "" + ImagePoints.Length : "null";
-            g.DrawString("Points found: " + count, Fonts.Big, Brushes.Red, new Point(30, 30));
-
             DrawPolygonFromPoints(g);
 
             Profiler.Stop("InvisibleForm_OnPaint");
@@ -92,20 +89,24 @@ namespace RobotEditor.Windows
 
         private void DrawPolygonFromPoints(Graphics g)
         {
-            if (ImagePoints != null && ImagePoints.Length >= 2)
+            if (ImagePoints != null)
             {
                 lock (ImagePointsLock)
                 {
-                    g.DrawPolygon(pen, ImagePoints);
+                    foreach (var p in ImagePoints)
+                    {
+                        if (p != null && p.Length > 1)
+                            g.DrawPolygon(pen, p);
+                    }
                 }
             }
         }
 
-        private void OnPositionFound(Point[] points)
+        private void OnPositionFound(IEnumerable<Point[]> points)
         {
             lock (ImagePointsLock)
             {
-                ImagePoints = points;
+                ImagePoints = points.ToArray();
             }
             Invalidate();
         }

@@ -194,8 +194,8 @@ namespace Robot
 
                     if (m_IsVisualizationOn)
                     {
-                        ScreenStateThread.Instace.Start(10);
-                        FeatureDetectionThread.Instace.Start(5);
+                        ScreenStateThread.Instace.Start(20);
+                        FeatureDetectionThread.Instace.Start(20);
                     }
                     else
                     {

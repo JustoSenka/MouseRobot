@@ -1,7 +1,5 @@
 ﻿using System.Drawing;
 using Emgu.CV;
-using Emgu.CV.Util;
-using System;
 using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
 using System.Collections.Generic;

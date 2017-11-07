@@ -15,7 +15,8 @@ namespace RobotRuntime.Graphics
         protected virtual int MinimumImageScaleSize { get { return 100; } }
         protected virtual float MaxScaleDownFactor { get { return 0.25f; } }
         protected virtual float MaxScaleUpFactor { get { return 2f; } }
-        
+        public virtual bool SupportsMultipleMatches { get { return false; } }
+
         protected float SmartResize(ref Image<Bgr, byte> big, ref Image<Bgr, byte> small, bool canChangeTheRatio = false)
         {
             var minS = small.Width < small.Height ? small.Width : small.Height;
@@ -43,7 +44,6 @@ namespace RobotRuntime.Graphics
         }
 
 
-
         private static FeatureDetector s_CurrentDetector;
         public static FeatureDetector Get()
         {
@@ -55,7 +55,8 @@ namespace RobotRuntime.Graphics
         
         private static FeatureDetector Create()
         {
-            return new FeatureDetectorSURF();
+            //return new FeatureDetectorSURF();
+            return new FeatureDetectorPP();
             //return new FeatureDetectorTemplate();
         }
     }
