@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
@@ -160,6 +162,61 @@ namespace RobotRuntime.Graphics
                 points[i] = new PointF(points[i].X * scale, points[i].Y * scale);
             }
             return points;
+        }
+
+        /// <summary>
+        /// Returns false if points are not persistent in distance from rectangle center.
+        /// threshold - distance difference from center which is still allowed
+        /// </summary>
+        public static bool IsRectangleish(this Point[] p, float threshold)
+        {
+            float dd1, dd2, dd3, dd4;
+            threshold = sqr(threshold);
+
+            var c = p.FindCenter();
+            float cx = c.X;
+            float cy = c.Y;
+
+            dd1 = sqr(cx - p[0].X) + sqr(cy - p[0].Y);
+            dd2 = sqr(cx - p[1].X) + sqr(cy - p[1].Y);
+            dd3 = sqr(cx - p[2].X) + sqr(cy - p[2].Y);
+            dd4 = sqr(cx - p[3].X) + sqr(cy - p[3].Y);
+
+            return dd1.AreSimilar(threshold, dd2, dd3, dd4) &&
+                dd2.AreSimilar(threshold, dd3, dd4) &&
+                dd3.AreSimilar(threshold, dd4);
+        }
+
+        public static Point FindCenter(this Point[] points)
+        {
+            var sumx = points.Select(p => p.X).Sum();
+            var sumy = points.Select(p => p.Y).Sum();
+            return new Point(sumx / points.Length, sumy / points.Length);
+        }
+
+        public static float DistanceTo(this Point p, Point d)
+        {
+            return (float) Math.Sqrt(sqr(p.X - d.X) + sqr(p.Y - d.Y));
+        }
+
+        public static float Magnitude(this Point p)
+        {
+            return Point.Empty.DistanceTo(p);
+        }
+
+        public static bool AreSimilar(this float orig, float threshold, params float[] values)
+        {
+            foreach(var v in values)
+            {
+                if (orig > v + threshold || orig < v - threshold)
+                    return false;
+            }
+            return true;
+        }
+
+        private static float sqr(float a)
+        {
+            return a*a;
         }
     }
 }

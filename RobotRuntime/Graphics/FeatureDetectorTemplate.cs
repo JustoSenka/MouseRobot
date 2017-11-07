@@ -15,6 +15,7 @@ namespace RobotRuntime.Graphics
         {
             var model = sampleImage.ToImage();
             var observed = observedImage.ToImage();
+            // TODO: Should I use grayscale images here?
 
             Point[] points = null;
             using (Image<Gray, float> result = observed.MatchTemplate(model, TemplateMatchingType.CcoeffNormed))

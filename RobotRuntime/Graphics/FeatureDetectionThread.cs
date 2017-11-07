@@ -2,6 +2,7 @@
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -15,8 +16,17 @@ namespace RobotRuntime.Graphics
         public Bitmap ObservedImage { get; private set; }
         public object ObservedImageLock = new object();
 
-        public Bitmap m_SampleImage;
+        private Bitmap m_SampleImage;
         private object m_SampleImageLock = new object();
+
+        public Point[][] LastKnownPositions { get; private set; }
+        public bool WasImageFound { get; private set; }
+        public bool WasLastCheckSuccess { get; private set; }
+        public int TimeSinceLastFind { get; private set; }
+
+        private Stopwatch m_Watch = new Stopwatch();
+
+        private const float k_RectangleTolerance = 0.4f;
 
         public event Action<Point[][]> PositionFound;
 
@@ -58,9 +68,24 @@ namespace RobotRuntime.Graphics
 
             Profiler.Start(Name + "_FindMatch");
             var points = FindImagePositions();
+            var success = ValidatePointsCorrectness(points);
             Profiler.Stop(Name + "_FindMatch");
 
-            PositionFound?.Invoke(points);
+            if (success)
+            {
+                PositionFound?.Invoke(points);
+                LastKnownPositions = points;
+                WasImageFound = true;
+                WasLastCheckSuccess = true;
+                TimeSinceLastFind = 0;
+                m_Watch.Restart();
+            }
+            else
+            {
+                WasLastCheckSuccess = false;
+                TimeSinceLastFind = (int)m_Watch.ElapsedMilliseconds;
+            }
+
             Profiler.Stop(Name);
         }
 
@@ -75,25 +100,37 @@ namespace RobotRuntime.Graphics
             }
         }
 
-        public AssetPointer SampleImageFromAsset
+        /// <summary>
+        /// Returns false if points array is bad, or if it is not square like
+        /// </summary>
+        private bool ValidatePointsCorrectness(Point[][] points)
         {
-            set
+            if (points == null || points.Length == 0 || points[0] == null || points[0].Length < 4)
+                return false;
+
+            if (points.GetLength(0) == 1 && points[0].Length == 4)
             {
-                lock (m_SampleImageLock)
-                {
-                    if (value.Path.EndsWith(FileExtensions.Image))
-                        m_SampleImage = AssetImporter.FromPath(value.Path).Load<Bitmap>();
-                }
+                var threshold = k_RectangleTolerance * new Point(m_SampleImage.Width + m_SampleImage.Height).Magnitude() / 2;
+                if (!points[0].IsRectangleish(threshold))
+                    return false;
             }
+
+            return true;
         }
 
-        public Bitmap SampleImage
+
+        public void StartNewImageSearch(AssetPointer asset)
         {
-            set
+            if (asset.Path.EndsWith(FileExtensions.Image))
             {
                 lock (m_SampleImageLock)
                 {
-                    m_SampleImage = value;
+                    m_SampleImage = AssetImporter.FromPath(asset.Path).Load<Bitmap>();
+                    WasLastCheckSuccess = false;
+                    WasImageFound = false;
+                    LastKnownPositions = null;
+                    TimeSinceLastFind = 0;
+                    m_Watch.Restart();
                 }
             }
         }

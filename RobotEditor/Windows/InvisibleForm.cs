@@ -63,7 +63,9 @@ namespace RobotEditor.Windows
         private Bitmap m_ObservedScreen;
         private object m_ObservedScreenLock = new object();
 
-        private Pen pen = new Pen(Color.Blue, 4);
+        private Pen bluePen = new Pen(Color.Blue, 3);
+        private Pen redPen = new Pen(Color.Red, 3);
+        private Pen greenPen = new Pen(Color.Green, 3);
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -93,10 +95,14 @@ namespace RobotEditor.Windows
             {
                 lock (ImagePointsLock)
                 {
+                    Pen penToUse = FeatureDetectionThread.Instace.WasImageFound ? bluePen : redPen;
+                    penToUse = FeatureDetectionThread.Instace.WasLastCheckSuccess ? greenPen : penToUse;
+                    penToUse = FeatureDetectionThread.Instace.TimeSinceLastFind > 3000 ? redPen : penToUse;
+
                     foreach (var p in ImagePoints)
                     {
-                        if (p != null && p.Length > 1)
-                            g.DrawPolygon(pen, p);
+                        if (p != null && p.Length > 1) // Should not be needed anymore, but crashes if wrong values are passed
+                            g.DrawPolygon(penToUse, p);
                     }
                 }
             }

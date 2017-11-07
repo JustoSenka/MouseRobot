@@ -110,7 +110,7 @@ namespace RobotEditor
         {
             m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
             if (MouseRobot.Instance.IsVisualizationOn)
-                FeatureDetectionThread.Instace.SampleImageFromAsset = m_AssetsWindow.GetSelectedAsset().ToAssetPointer();
+                FeatureDetectionThread.Instace.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().ToAssetPointer());
         }
 
         private void CreateWindows()
