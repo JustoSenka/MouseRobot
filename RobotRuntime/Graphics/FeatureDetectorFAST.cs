@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
-    public static class FeatureDetectionFAST
+    public static class FeatureDetectorFAST
     {
         /*
         public static Image<Bgr, Byte> Draw(Image<Gray, Byte> modelImage, Image<Gray, byte> observedImage)

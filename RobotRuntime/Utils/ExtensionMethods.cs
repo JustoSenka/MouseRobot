@@ -61,6 +61,13 @@ namespace RobotRuntime
                 action(item as K);
         }
 
+        public static float Clamp(this float source, float min, float max)
+        {
+            source = source > min ? source : min;
+            source = source < max ? source : max;
+            return source;
+        }
+
 
         public static TreeNode FindChild(this TreeView treeView, string name)
         {

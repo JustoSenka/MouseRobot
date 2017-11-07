@@ -1,64 +1,62 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using RobotRuntime.Utils;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
     public abstract class FeatureDetector
     {
-        protected abstract PointF[] FindImageLines(Mat sampleImage, Mat observedImage);
-        public Point[] FindImageLines(Bitmap sampleImage, Bitmap observedImage, float scaleDownFactor = 1)
-        {
-            var o = observedImage.ToImage();
-            var s = sampleImage.ToImage();
-            var scale = scaleDownFactor;
+        public abstract Point[] FindImagePos(Bitmap sampleImage, Bitmap observedImage);
+        public abstract IEnumerable<Point[]> FindImageMultiplePos(Bitmap sampleImage, Bitmap observedImage);
 
-            if (scale != 1)
+        protected virtual int MinimumImageScaleSize { get { return 100; } }
+        protected virtual float MaxScaleDownFactor { get { return 0.25f; } }
+        protected virtual float MaxScaleUpFactor { get { return 2f; } }
+        
+        protected float SmartResize(ref Image<Bgr, byte> big, ref Image<Bgr, byte> small, bool canChangeTheRatio = false)
+        {
+            var minS = small.Width < small.Height ? small.Width : small.Height;
+            var minB = big.Width < big.Height ? big.Width : big.Height;
+
+            float scaleS = minS > MinimumImageScaleSize ? MinimumImageScaleSize * 1.0f / minS : 1;
+            scaleS = scaleS.Clamp(MaxScaleDownFactor, MaxScaleUpFactor);
+
+            float scaleB = minB > MinimumImageScaleSize ? MinimumImageScaleSize * 1.0f / minB : 1;
+            scaleB = scaleB.Clamp(MaxScaleDownFactor, MaxScaleUpFactor);
+
+            if (canChangeTheRatio)
             {
-                o = o.Resize((int)(o.Width * scale), (int)(o.Height * scale), Inter.Linear);
-                s = s.Resize((int)(s.Width * scale), (int)(s.Height * scale), Inter.Linear);
+                big = big.Resize(scaleS, Inter.Linear);
+                small = small.Resize(scaleB, Inter.Linear);
+            }
+            else
+            {
+                scaleB = scaleS > scaleB ? scaleS : scaleB;
+                big = big.Resize(scaleB, Inter.Linear);
+                small = small.Resize(scaleB, Inter.Linear);
             }
 
-            var points = FindImageLines(s.Mat, o.Mat);
-
-            return points.Select(p => new Point((int)(p.X / scale), (int)(p.Y / scale))).ToArray();
+            return scaleB;
         }
 
-        protected abstract PointF[] FindImageRect(Mat sampleImage, Mat observedImage);
-        public Point[] FindImageRect(Bitmap sampleImage, Bitmap observedImage, float scaleDownFactor = 1)
-        {
-            var o = observedImage.ToImage();
-            var s = sampleImage.ToImage();
-            var scale = scaleDownFactor;
 
-            if (scale != 1)
-            {
-                o = o.Resize(scale, Inter.Linear);
-                s = s.Resize(scale, Inter.Linear);
-                
-                list_o.Add(o);
-                list_s.Add(s);
-            }
-
-            var points = FindImageRect(s.Mat, o.Mat);
-
-            return points.Select(p => new Point((int)(p.X / scale), (int)(p.Y / scale))).ToArray();
-        }
-
-        private List<Image<Bgr, byte>> list_o = new List<Image<Bgr, byte>>();
-        private List<Image<Bgr, byte>> list_s = new List<Image<Bgr, byte>>();
 
         private static FeatureDetector s_CurrentDetector;
         public static FeatureDetector Get()
         {
             if (s_CurrentDetector == null)
-                s_CurrentDetector = new FeatureDetectorSURF();
+                s_CurrentDetector = Create();
 
             return s_CurrentDetector;
+        }
+        
+        private static FeatureDetector Create()
+        {
+            return new FeatureDetectorSURF();
+            //return new FeatureDetectorTemplate();
         }
     }
 }

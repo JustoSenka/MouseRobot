@@ -58,7 +58,7 @@ namespace RobotRuntime.Graphics
             Point[] points;
             lock (m_SampleImageLock)
             {
-                points = FeatureDetector.Get().FindImageRect(m_SampleImage, ObservedImage, 0.25f);
+                points = FeatureDetector.Get().FindImagePos(m_SampleImage, ObservedImage);
             }
             Profiler.Stop(Name + "_FindMatch");
 
@@ -71,8 +71,9 @@ namespace RobotRuntime.Graphics
             set
             {
                 lock (m_SampleImageLock)
-                {
-                    m_SampleImage = AssetImporter.FromPath(value.Path).Load<Bitmap>();
+                {             
+                    if (value.Path.EndsWith(FileExtensions.Image))
+                        m_SampleImage = AssetImporter.FromPath(value.Path).Load<Bitmap>();
                 }
             }
         }

@@ -8,36 +8,32 @@ using Emgu.CV.Util;
 using Emgu.CV.Cuda;
 using Emgu.CV.XFeatures2D;
 using System.Collections.Generic;
+using System;
+using RobotRuntime.Utils;
 
 namespace RobotRuntime.Graphics
 {
     public class FeatureDetectorSURF : FeatureDetector
     {
-        protected override PointF[] FindImageLines(Mat sampleImage, Mat observedImage)
+        protected override float MaxScaleDownFactor { get { return 0.4f; } }
+        protected override int MinimumImageScaleSize { get { return 130; } }
+
+        public override IEnumerable<Point[]> FindImageMultiplePos(Bitmap sampleImage, Bitmap observedImage)
         {
-            Mat mask;
-            Mat homography;
-            VectorOfKeyPoint modelKeyPoints;
-            VectorOfKeyPoint observedKeyPoints;
-
-            var list = new List<PointF>();
-            using (VectorOfVectorOfDMatch matches = new VectorOfVectorOfDMatch())
-            {
-                FindMatch(sampleImage, observedImage, out modelKeyPoints, out observedKeyPoints, matches, out mask, out homography);
-
-                for (int i = 0; i < matches.Size; i++)
-                {
-                    if (mask.GetData(i)[0] == 0)
-                        continue; // Removes observed points which are not in the mask
-
-                    list.Add(observedKeyPoints[matches[i].ToArray()[0].QueryIdx].Point);
-                }
-            }
-
-            return list.ToArray();
+            yield return FindImagePos(sampleImage, observedImage); // SURF cannot find multiple images
         }
 
-        protected override PointF[] FindImageRect(Mat sampleImage, Mat observedImage)
+        public override Point[] FindImagePos(Bitmap sampleImage, Bitmap observedImage)
+        {
+            var o = observedImage.ToImage();
+            var s = sampleImage.ToImage();
+
+            var scale = SmartResize(ref o, ref s);
+
+            return FindImageInternal(s.Mat, o.Mat).Scale(1 / scale).ToPoint();
+        }
+
+        private static PointF[] FindImageInternal(Mat sampleImage, Mat observedImage)
         {
             Mat mask;
             Mat homography;
@@ -52,13 +48,7 @@ namespace RobotRuntime.Graphics
                 if (homography != null)
                 {
                     var rect = new Rectangle(Point.Empty, sampleImage.Size);
-                    var pts = new PointF[]
-                    {
-                        new PointF(rect.Left, rect.Bottom),
-                        new PointF(rect.Right, rect.Bottom),
-                        new PointF(rect.Right, rect.Top),
-                        new PointF(rect.Left, rect.Top)
-                    };
+                    var pts = rect.ToPointF();
                     points = CvInvoke.PerspectiveTransform(pts, homography);
                 }
             }

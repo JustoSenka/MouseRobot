@@ -128,8 +128,9 @@
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
-    <Compile Include="Graphics\FeatureDetectionSURF.cs" />
-    <Compile Include="Graphics\FeatureDetectionFAST.cs" />
+    <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
+    <Compile Include="Graphics\FeatureDetectorSURF.cs" />
+    <Compile Include="Graphics\FeatureDetectorFAST.cs" />
     <Compile Include="Graphics\FeatureDetector.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
     <Compile Include="Graphics\FeatureDetectionThread.cs" />
