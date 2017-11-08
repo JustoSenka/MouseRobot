@@ -59,7 +59,7 @@ namespace RobotEditor.Editor
                 document.DockHandler.DockPanel = null;
                 document.DockHandler.Close();
             }
-
+            Properties.Settings.Default.Save();
             System.Diagnostics.Debug.Assert(dockPanel.Panes.Count == 0);
             System.Diagnostics.Debug.Assert(dockPanel.Contents.Count == 0);
             System.Diagnostics.Debug.Assert(dockPanel.FloatWindows.Count == 0);

@@ -85,6 +85,7 @@
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
+    <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,7 +93,6 @@
     <Compile Include="Scripts\ScriptManager.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
-    <Compile Include="Utils\SortedCategoryAttribute.cs" />
     <Compile Include="Utils\Win32\InputCallbacks.cs" />
     <Compile Include="Utils\Win32\KeyEvent.cs" />
   </ItemGroup>

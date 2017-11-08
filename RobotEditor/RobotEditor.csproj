@@ -130,7 +130,9 @@
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
+    <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
+    <Compile Include="Utils\SortedCategoryAttribute.cs" />
     <Compile Include="Windows\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>

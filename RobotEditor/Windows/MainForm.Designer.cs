@@ -59,15 +59,16 @@
             this.blueThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.whiteThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.profilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.recordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -314,20 +315,28 @@
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
             // 
+            // commandsToolStripMenuItem
+            // 
+            this.commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.recordingToolStripMenuItem,
+            this.imageDetectionToolStripMenuItem});
+            this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
+            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.commandsToolStripMenuItem.Text = "Settings";
+            // 
+            // recordingToolStripMenuItem
+            // 
+            this.recordingToolStripMenuItem.Name = "recordingToolStripMenuItem";
+            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.recordingToolStripMenuItem.Text = "Recording";
+            this.recordingToolStripMenuItem.Click += new System.EventHandler(this.recordingToolStripMenuItem_Click);
+            // 
             // hierarchyToolStripMenuItem
             // 
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
             this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
             this.hierarchyToolStripMenuItem.Click += new System.EventHandler(this.hierarchyToolStripMenuItem_Click);
-            // 
-            // commandsToolStripMenuItem
-            // 
-            this.commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.recordingToolStripMenuItem});
-            this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
-            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.commandsToolStripMenuItem.Text = "Settings";
             // 
             // imagePreviewToolStripMenuItem
             // 
@@ -365,12 +374,12 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // recordingToolStripMenuItem
+            // imageDetectionToolStripMenuItem
             // 
-            this.recordingToolStripMenuItem.Name = "recordingToolStripMenuItem";
-            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.recordingToolStripMenuItem.Text = "Recording";
-            this.recordingToolStripMenuItem.Click += new System.EventHandler(this.recordingToolStripMenuItem_Click);
+            this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
+            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.imageDetectionToolStripMenuItem.Text = "Image Detection";
+            this.imageDetectionToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -436,5 +445,6 @@
         private System.Windows.Forms.ToolStripButton visualizationButton;
         private System.Windows.Forms.ToolStripMenuItem profilerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recordingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageDetectionToolStripMenuItem;
     }
 }

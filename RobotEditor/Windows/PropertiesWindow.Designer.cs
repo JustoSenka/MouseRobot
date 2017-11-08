@@ -28,8 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropertiesWindow));
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.recordingSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageDetectionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // propertyGrid
@@ -46,21 +51,48 @@
             this.propertyGrid.UseCompatibleTextRendering = true;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.recordingSettingsToolStripMenuItem,
+            this.imageDetectionSettingsToolStripMenuItem});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(207, 70);
+            // 
+            // recordingSettingsToolStripMenuItem
+            // 
+            this.recordingSettingsToolStripMenuItem.Name = "recordingSettingsToolStripMenuItem";
+            this.recordingSettingsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.recordingSettingsToolStripMenuItem.Text = "Recording Settings";
+            this.recordingSettingsToolStripMenuItem.Click += new System.EventHandler(this.recordingSettingsToolStripMenuItem_Click);
+            // 
+            // imageDetectionSettingsToolStripMenuItem
+            // 
+            this.imageDetectionSettingsToolStripMenuItem.Name = "imageDetectionSettingsToolStripMenuItem";
+            this.imageDetectionSettingsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.imageDetectionSettingsToolStripMenuItem.Text = "Image Detection Settings";
+            this.imageDetectionSettingsToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionSettingsToolStripMenuItem_Click);
+            // 
             // PropertiesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(514, 482);
+            this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.propertyGrid);
             this.HideOnClose = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PropertiesWindow";
             this.Text = "Properties";
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.ToolStripMenuItem recordingSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageDetectionSettingsToolStripMenuItem;
+        public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
     }
 }

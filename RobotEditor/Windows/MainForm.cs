@@ -158,6 +158,10 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
 
+            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.contextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_AssetsWindow.contextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_PropertiesWindow.contextMenuStrip, version, theme);
+
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.toolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
         }
@@ -327,6 +331,12 @@ namespace RobotEditor
         {
             m_PropertiesWindow.Show(m_DockPanel);
             m_PropertiesWindow.ShowSettings(SettingsManager.Instance.RecordingSettings);
+        }
+
+        private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_PropertiesWindow.Show(m_DockPanel);
+            m_PropertiesWindow.ShowSettings(SettingsManager.Instance.FeatureDetectionSettings);
         }
 
         #endregion

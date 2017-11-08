@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Robot.Utils
+namespace RobotEditor.Utils
 {
     public class SortedCategoryAttribute : CategoryAttribute
     {

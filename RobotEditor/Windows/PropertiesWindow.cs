@@ -1,5 +1,4 @@
-﻿using Robot;
-using Robot.Settings;
+﻿using Robot.Settings;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using System;
@@ -42,15 +41,35 @@ namespace RobotEditor
                 return new RecordingProperties(settings);
             }
 
+            if (settings is FeatureDetectionSettings)
+            {
+                type = typeof(FeatureDetectionProperties);
+                return new FeatureDetectionProperties(settings);
+            }
+
             throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");
         }
 
-        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
 
             m_CurrentObject.HideProperties(dt);
             propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
         }
+
+        #region Context Menu Items
+
+        private void recordingSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowSettings(SettingsManager.Instance.RecordingSettings);
+        }
+
+        private void imageDetectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowSettings(SettingsManager.Instance.FeatureDetectionSettings);
+        }
+
+        #endregion
     }
 }

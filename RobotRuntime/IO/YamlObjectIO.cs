@@ -25,7 +25,7 @@ namespace RobotRuntime.IO
         {
             try
             {
-                var serializer = new SerializerBuilder().Build();
+                var serializer = new SerializerBuilder().EmitDefaults().Build();
                 var text = serializer.Serialize(objToWrite);
                 File.WriteAllText(path, text);
             }

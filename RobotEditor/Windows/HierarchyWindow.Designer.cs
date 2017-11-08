@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HierarchyWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.treeView = new System.Windows.Forms.TreeView();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.setActiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -41,15 +41,14 @@
             this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeView
             // 
             this.treeView.AllowDrop = true;
             this.treeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.treeView.ContextMenuStrip = this.contextMenuStrip1;
+            this.treeView.ContextMenuStrip = this.contextMenuStrip;
             this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView.FullRowSelect = true;
             this.treeView.HideSelection = false;
@@ -66,10 +65,10 @@
             this.treeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
             this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
             // 
-            // contextMenuStrip1
+            // contextMenuStrip
             // 
-            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setActiveToolStripMenuItem,
             this.newScriptToolStripMenuItem1,
             this.toolStripSeparator1,
@@ -77,8 +76,8 @@
             this.toolStripMenuItem1,
             this.duplicateToolStripMenuItem1,
             this.deleteToolStripMenuItem1});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(175, 126);
+            this.contextMenuStrip.Name = "contextMenuStrip1";
+            this.contextMenuStrip.Size = new System.Drawing.Size(175, 148);
             // 
             // setActiveToolStripMenuItem
             // 
@@ -135,11 +134,6 @@
             this.imageList1.Images.SetKeyName(0, "script_ICO_256.png");
             this.imageList1.Images.SetKeyName(1, "gear_ICO_512.png");
             // 
-            // contextMenuStrip2
-            // 
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
-            // 
             // HierarchyWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -150,14 +144,13 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "HierarchyWindow";
             this.Text = "Hierarchy";
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem setActiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -167,6 +160,6 @@
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.TreeView treeView;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
     }
 }
