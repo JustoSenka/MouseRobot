@@ -56,8 +56,8 @@ namespace RobotRuntime.Graphics
         private static FeatureDetector Create()
         {
             //return new FeatureDetectorSURF();
-            return new FeatureDetectorPP();
-            //return new FeatureDetectorTemplate();
+            //return new FeatureDetectorPP();
+            return new FeatureDetectorTemplate();
         }
     }
 }

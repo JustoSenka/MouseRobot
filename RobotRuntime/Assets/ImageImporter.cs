@@ -12,7 +12,13 @@ namespace RobotRuntime
 
             protected override object LoadAsset()
             {
-                return new Bitmap(Path);
+                Bitmap bmp;
+                // This will load bitmap without keeping a lock on the file
+                using (var bmpTemp = new Bitmap(Path))
+                {
+                    bmp = new Bitmap(bmpTemp);
+                }
+                return bmp; 
             }
 
             public override void SaveAsset()

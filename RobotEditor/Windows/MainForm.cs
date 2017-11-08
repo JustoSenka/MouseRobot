@@ -1,4 +1,5 @@
 ﻿using Robot;
+using Robot.Settings;
 using Robot.Utils.Win32;
 using RobotEditor.Editor;
 using RobotEditor.Utils;
@@ -20,7 +21,7 @@ namespace RobotEditor
 
         // Solve this problem somehow
         private HierarchyWindow m_HierarchyWindow;
-        private CommandManagerWindow m_CommandManagerWindow;
+        private PropertiesWindow m_PropertiesWindow;
         private ScreenPreviewWindow m_ScreenPreviewWindow;
         private AssetsWindow m_AssetsWindow;
         private ProfilerWindow m_ProfilerWindow;
@@ -51,7 +52,7 @@ namespace RobotEditor
             actionOnRec.SelectedIndex = 2;
             actionOnPlay.SelectedIndex = 2;
 
-            //InputCallbacks.inputEvent += OnInputEvent;
+            InputCallbacks.inputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
 
@@ -116,7 +117,7 @@ namespace RobotEditor
         private void CreateWindows()
         {
             m_HierarchyWindow = new HierarchyWindow();
-            m_CommandManagerWindow = new CommandManagerWindow();
+            m_PropertiesWindow = new PropertiesWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
             m_AssetsWindow = new AssetsWindow();
             m_ProfilerWindow = new ProfilerWindow();
@@ -124,7 +125,7 @@ namespace RobotEditor
             m_Windows = new DockContent[]
             {
                 m_HierarchyWindow,
-                m_CommandManagerWindow,
+                m_PropertiesWindow,
                 m_ScreenPreviewWindow,
                 m_AssetsWindow,
                 m_ProfilerWindow,
@@ -303,11 +304,6 @@ namespace RobotEditor
             m_HierarchyWindow.Show(m_DockPanel);
         }
 
-        private void commandsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            m_CommandManagerWindow.Show(m_DockPanel);
-        }
-
         private void imagePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_ScreenPreviewWindow.Show(m_DockPanel);
@@ -321,6 +317,16 @@ namespace RobotEditor
         private void profilerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_ProfilerWindow.Show(m_DockPanel);
+        }
+
+        #endregion
+
+        #region Menu Items (Windows -> Settings)
+
+        private void recordingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_PropertiesWindow.Show(m_DockPanel);
+            m_PropertiesWindow.ShowSettings(SettingsManager.Instance.RecordingSettings);
         }
 
         #endregion

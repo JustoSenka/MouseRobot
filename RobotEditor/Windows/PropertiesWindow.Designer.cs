@@ -1,6 +1,6 @@
 ﻿namespace RobotEditor
 {
-    partial class CommandManagerWindow
+    partial class PropertiesWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CommandManagerWindow));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropertiesWindow));
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
@@ -46,7 +46,7 @@
             this.propertyGrid.UseCompatibleTextRendering = true;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
-            // CommandManagerWindow
+            // PropertiesWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -54,8 +54,8 @@
             this.Controls.Add(this.propertyGrid);
             this.HideOnClose = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "CommandManagerWindow";
-            this.Text = "Commands";
+            this.Name = "PropertiesWindow";
+            this.Text = "Properties";
             this.ResumeLayout(false);
 
         }

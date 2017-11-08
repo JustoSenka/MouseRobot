@@ -5,8 +5,8 @@ using System.Drawing;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
-using System.Windows.Forms;
 using System.ComponentModel;
+using Robot.Settings;
 
 namespace Robot
 {
@@ -40,22 +40,15 @@ namespace Robot
         }
         private AsyncOperation m_AsyncOperationOnUI;
 
-
-        public CommandManagerProperties commandManagerProperties;
         public string ProjectPath { get; private set; }
 
         private MouseRobot()
         {
             SetupProjectPath();
-
-
             ScriptManager.Instance.NewScript();
-
-            //InputCallbacks.inputEvent += OnInputEvent;
-
             ScriptThread.Instance.Finished += OnScriptFinished;
-            
-            //ScreenStateThread.Instace.Start(10);
+
+            InputCallbacks.inputEvent += OnInputEvent;
         }
 
         public void ForceInit() { } // This is to make sure that mouse robot singleton is created
@@ -69,7 +62,7 @@ namespace Robot
                 return;
 
             var activeScript = ScriptManager.Instance.ActiveScript;
-            var props = commandManagerProperties;
+            var props = SettingsManager.Instance.RecordingSettings;
 
             if (e.IsKeyDown())
             {

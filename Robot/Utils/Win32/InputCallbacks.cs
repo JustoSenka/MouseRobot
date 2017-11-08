@@ -32,14 +32,14 @@ namespace Robot.Utils.Win32
 
         static InputCallbacks()
         {
-            /*
+            
             new Thread(() =>
             {
                 m_KeyboardHook = SetHook(m_CachedLowLevelKeyboardProcDelegate, WH_KEYBOARD_LL);
                 m_MouseHook = SetHook(m_CachedLowLevelMouseProcDelegate, WH_MOUSE_LL);
                 Application.Run(); // TODO: Find a better way to implement Application Message Loop.... LOL
             }).Start();
-            */
+            
         }
 
         public static void ForgetAll()

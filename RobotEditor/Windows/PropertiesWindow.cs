@@ -1,0 +1,56 @@
+﻿using Robot;
+using Robot.Settings;
+using RobotEditor.Settings;
+using RobotEditor.Utils;
+using System;
+using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
+
+namespace RobotEditor
+{
+    public partial class PropertiesWindow : DockContent
+    {
+        private BaseProperties m_CurrentObject;
+        private Type m_CurrentObjectType;
+
+        public PropertiesWindow()
+        {
+            InitializeComponent();
+            ShowSettings(SettingsManager.Instance.RecordingSettings);
+        }
+
+        public void ShowProperties<T>(T properties) where T : BaseProperties
+        {
+            m_CurrentObject = properties;
+            m_CurrentObjectType = properties.GetType();
+            this.Text = properties.Title;
+            propertyGrid_PropertyValueChanged(this, null);
+        }
+
+        public void ShowSettings<T>(T settings) where T : BaseSettings
+        {
+            m_CurrentObject = WrapSettingsToProperties(settings, ref m_CurrentObjectType);
+            this.Text = m_CurrentObject.Title;
+            propertyGrid_PropertyValueChanged(this, null);
+        }
+
+        private static BaseProperties WrapSettingsToProperties<T>(T settings, ref Type type) where T : BaseSettings
+        {
+            if (settings is RecordingSettings)
+            {
+                type = typeof(RecordingProperties);
+                return new RecordingProperties(settings);
+            }
+
+            throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");
+        }
+
+        private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
+
+            m_CurrentObject.HideProperties(dt);
+            propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
+        }
+    }
+}

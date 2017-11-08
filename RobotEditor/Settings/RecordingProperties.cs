@@ -1,40 +1,46 @@
-﻿using Robot.Utils;
+﻿using Robot.Settings;
+using Robot.Utils;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using RobotEditor.Utils;
 
-namespace Robot
+namespace RobotEditor.Settings
 {
     [Serializable]
-    public class CommandManagerProperties
+    public class RecordingProperties : BaseProperties
     {
+        [NonSerialized]
+        private RecordingSettings m_Settings;
+
+        [Browsable(false)]
+        public override string Title { get { return "Recording Settings"; } }
+
+        public RecordingProperties(BaseSettings settings)
+        {
+            this.m_Settings = (RecordingSettings)settings;
+        }
+
+        public override void HideProperties(DynamicTypeDescriptor dt)
+        {
+            if (TreatMouseDownAsMouseClick)
+                dt.RemoveProperty("ThresholdBetweenMouseDownAndMouseUp");
+        }
+
+
         private const int NumOfCategories = 4;
         private const int SleepOptionsCategoryPosition = 1;
         private const int MouseMoveOptionsCategoryPosition = 2;
         private const int MouseOptionsCategoryPosition = 3;
         private const int AdditionalOptionsCategoryPosition = 4;
 
-        private Keys m_SleepKey = Keys.S;
-        private Keys m_DefaultSleepKey = Keys.D;
-        private int m_DefaultSleepTime = 1000;
-
-        private Keys m_SmoothMouseMoveKey = Keys.F;
-        private int m_SmoothMoveLengthInTime = 100;
-
-        private Keys m_MouseDownButton = Keys.LButton;
-        private bool m_TreatMouseDownAsMouseClick = false;
-        private int m_ThresholdBetweenMouseDownAndMouseUp = 20;
-
-        private bool m_AutomaticSmoothMoveBeforeMouseDown = false;
-        private bool m_AutomaticSmoothMoveBeforeMouseUp = true;
-
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.S)]
         [DisplayName("Sleep Key")]
         public Keys SleepKey
         {
-            get { return m_SleepKey; }
-            set { m_SleepKey = value; }
+            get { return m_Settings.SleepKey; }
+            set { m_Settings.SleepKey = value; }
         }
 
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
@@ -42,8 +48,8 @@ namespace Robot
         [DisplayName("Default Sleep Key")]
         public Keys DefaultSleepKey
         {
-            get { return m_DefaultSleepKey; }
-            set { m_DefaultSleepKey = value; }
+            get { return m_Settings.DefaultSleepKey; }
+            set { m_Settings.DefaultSleepKey = value; }
         }
 
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
@@ -51,8 +57,8 @@ namespace Robot
         [DisplayName("Default Sleep Time")]
         public int DefaultSleepTime
         {
-            get { return m_DefaultSleepTime; }
-            set { m_DefaultSleepTime = value; }
+            get { return m_Settings.DefaultSleepTime; }
+            set { m_Settings.DefaultSleepTime = value; }
         }
 
         [SortedCategory("Mouse Move Options", MouseMoveOptionsCategoryPosition, NumOfCategories)]
@@ -60,8 +66,8 @@ namespace Robot
         [DisplayName("Smooth Mouse Move Key")]
         public Keys SmoothMouseMoveKey
         {
-            get { return m_SmoothMouseMoveKey; }
-            set { m_SmoothMouseMoveKey = value; }
+            get { return m_Settings.SmoothMouseMoveKey; }
+            set { m_Settings.SmoothMouseMoveKey = value; }
         }
 
         [SortedCategory("Mouse Move Options", MouseMoveOptionsCategoryPosition, NumOfCategories)]
@@ -69,8 +75,8 @@ namespace Robot
         [DisplayName("Smooth Move Length in Time")]
         public int SmoothMoveLengthInTime
         {
-            get { return m_SmoothMoveLengthInTime; }
-            set { m_SmoothMoveLengthInTime = value; }
+            get { return m_Settings.SmoothMoveLengthInTime; }
+            set { m_Settings.SmoothMoveLengthInTime = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
@@ -78,8 +84,8 @@ namespace Robot
         [DisplayName("Mouse Down Key")]
         public Keys MouseDownButton
         {
-            get { return m_MouseDownButton; }
-            set { m_MouseDownButton = value; }
+            get { return m_Settings.MouseDownButton; }
+            set { m_Settings.MouseDownButton = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
@@ -87,8 +93,8 @@ namespace Robot
         [DisplayName("Treat Mouse Down as Mouse Click")]
         public bool TreatMouseDownAsMouseClick
         {
-            get { return m_TreatMouseDownAsMouseClick; }
-            set { m_TreatMouseDownAsMouseClick = value; }
+            get { return m_Settings.TreatMouseDownAsMouseClick; }
+            set { m_Settings.TreatMouseDownAsMouseClick = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
@@ -96,8 +102,8 @@ namespace Robot
         [DisplayName("Threshold Between Mouse Down and Mouse Up")]
         public int ThresholdBetweenMouseDownAndMouseUp
         {
-            get { return m_ThresholdBetweenMouseDownAndMouseUp; }
-            set { m_ThresholdBetweenMouseDownAndMouseUp = value; }
+            get { return m_Settings.ThresholdBetweenMouseDownAndMouseUp; }
+            set { m_Settings.ThresholdBetweenMouseDownAndMouseUp = value; }
         }
 
         [SortedCategory("Additional Options", AdditionalOptionsCategoryPosition, NumOfCategories)]
@@ -105,8 +111,8 @@ namespace Robot
         [DisplayName("Automatic Smooth Move Before Mouse Down")]
         public bool AutomaticSmoothMoveBeforeMouseDown
         {
-            get { return m_AutomaticSmoothMoveBeforeMouseDown; }
-            set { m_AutomaticSmoothMoveBeforeMouseDown = value; }
+            get { return m_Settings.AutomaticSmoothMoveBeforeMouseDown; }
+            set { m_Settings.AutomaticSmoothMoveBeforeMouseDown = value; }
         }
 
         [SortedCategory("Additional Options", AdditionalOptionsCategoryPosition, NumOfCategories)]
@@ -114,9 +120,8 @@ namespace Robot
         [DisplayName("Automatic Smooth Move Before Mouse Up")]
         public bool AutomaticSmoothMoveBeforeMouseUp
         {
-            get { return m_AutomaticSmoothMoveBeforeMouseUp; }
-            set { m_AutomaticSmoothMoveBeforeMouseUp = value; }
+            get { return m_Settings.AutomaticSmoothMoveBeforeMouseUp; }
+            set { m_Settings.AutomaticSmoothMoveBeforeMouseUp = value; }
         }
-
     }
 }
