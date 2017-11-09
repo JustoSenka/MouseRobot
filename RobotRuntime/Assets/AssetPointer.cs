@@ -2,6 +2,7 @@
 
 namespace RobotRuntime
 {
+    [Serializable]
     public struct AssetPointer
     {
         public string Path { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace Robot.Settings
+﻿namespace RobotRuntime.Settings
 {
     public class BaseSettings
     {

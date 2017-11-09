@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotRuntime.Settings;
+using System;
 using System.Windows.Forms;
 
 namespace Robot.Settings
@@ -19,5 +20,9 @@ namespace Robot.Settings
 
         public bool AutomaticSmoothMoveBeforeMouseDown { get; set; } = false;
         public bool AutomaticSmoothMoveBeforeMouseUp { get; set; } = true;
+
+        public Keys PerformActionOnImage { get; set; } = Keys.Shift;
+        public Keys FindImage { get; set; } = Keys.Q;
+        public Keys CropImage { get; set; } = Keys.W;
     }
 }

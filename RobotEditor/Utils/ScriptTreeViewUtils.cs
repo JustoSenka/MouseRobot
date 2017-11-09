@@ -142,7 +142,7 @@ namespace RobotEditor.Utils
                 clone = (TreeNode)treeView.SelectedNode.Clone();
                 treeView.SelectedNode.Parent.Nodes.Insert(treeView.SelectedNode.Index + 1, clone);
             }
-
+            
             treeView.SelectedNode = clone;
             treeView.Focus();
 
@@ -273,7 +273,7 @@ namespace RobotEditor.Utils
 
                 for (int j = 0; j < treeView.Nodes[i].Nodes.Count; j++)
                 {
-                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands[j].Text),
+                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands[j].ToString()),
                         string.Format("Hierarchy missmatch: i:{0} j:{1}", i, j));
                 }
             }

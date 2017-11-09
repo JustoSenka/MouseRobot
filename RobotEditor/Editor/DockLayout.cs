@@ -1,7 +1,7 @@
 ﻿using RobotEditor.Windows;
+using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Editor
@@ -27,7 +27,11 @@ namespace RobotEditor.Editor
 
         public static void Save(DockPanel dockPanel)
         {
-            dockPanel.SaveAsXml(GetLayoutPath());
+            var fileInfo = new FileInfo(GetLayoutPath());
+            if (!fileInfo.Directory.Exists)
+                fileInfo.Directory.Create();
+
+            dockPanel.SaveAsXml(fileInfo.FullName);
         }
 
         public static void Restore(DockPanel dockPanel)
@@ -59,7 +63,7 @@ namespace RobotEditor.Editor
                 document.DockHandler.DockPanel = null;
                 document.DockHandler.Close();
             }
-            Properties.Settings.Default.Save();
+            
             System.Diagnostics.Debug.Assert(dockPanel.Panes.Count == 0);
             System.Diagnostics.Debug.Assert(dockPanel.Contents.Count == 0);
             System.Diagnostics.Debug.Assert(dockPanel.FloatWindows.Count == 0);
@@ -91,7 +95,7 @@ namespace RobotEditor.Editor
 
         private static string GetLayoutPath()
         {
-            return Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), k_LayoutName);
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + k_LayoutName;
         }
     }
 }

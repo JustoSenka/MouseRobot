@@ -122,7 +122,6 @@
     <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDown.cs" />
-    <Compile Include="Commands\CommandTeleportOnImage.cs" />
     <Compile Include="Commands\CommandMoveOnImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
     <Compile Include="Commands\CommandPress.cs" />
@@ -140,6 +139,9 @@
     <Compile Include="Perf\LimitedStack.cs" />
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />
+    <Compile Include="Settings\BaseSettings.cs" />
+    <Compile Include="Settings\FeatureDetectionSettings.cs" />
+    <Compile Include="Settings\RuntimeSettings.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />

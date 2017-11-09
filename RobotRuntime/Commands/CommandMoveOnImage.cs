@@ -1,6 +1,7 @@
-﻿using RobotRuntime.Utils.Win32;
+﻿using RobotRuntime.Graphics;
+using RobotRuntime.Utils.Win32;
 using System;
-using System.Drawing;
+using System.Threading.Tasks;
 
 namespace RobotRuntime.Commands
 {
@@ -8,15 +9,19 @@ namespace RobotRuntime.Commands
     public class CommandMoveOnImage : Command
     {
         public AssetPointer Asset { get; set; }
+        public int TimeOut { get; set; }
+        public bool Smooth { get; set; }
 
-        public CommandMoveOnImage(AssetPointer asset)
+        public CommandMoveOnImage(AssetPointer asset, int timeOut, bool smooth)
         {
             Asset = asset;
+            TimeOut = timeOut;
+            Smooth = smooth;
         }
 
         public override object Clone()
         {
-            return new CommandMoveOnImage(Asset);
+            return new CommandMoveOnImage(Asset, TimeOut, Smooth);
         }
 
         public override void Run()
@@ -25,10 +30,33 @@ namespace RobotRuntime.Commands
             x1 = WinAPI.GetCursorPosition().X;
             y1 = WinAPI.GetCursorPosition().Y;
 
-            for (int i = 1; i <= 50; i++)
+            FeatureDetectionThread.Instace.StartNewImageSearch(Asset);
+            while (TimeOut > FeatureDetectionThread.Instace.TimeSinceLastFind)
             {
-                // WinAPI.MouseMoveTo(x1 + ((X - x1) * i / 50), y1 + ((Y - y1) * i / 50));
+                Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
+                if (FeatureDetectionThread.Instace.WasImageFound)
+                {
+                    // TODO: start searching for image for next command while doing this long operation
+                    var p = FeatureDetectionThread.Instace.LastKnownPositions[0].FindCenter();
+
+                    if (Smooth)
+                        for (int i = 1; i <= 50; i++)
+                            WinAPI.MouseMoveTo(x1 + ((p.X - x1) * i / 50), y1 + ((p.Y - y1) * i / 50));
+
+                    else
+                        WinAPI.MouseMoveTo(p.X, p.Y);
+
+                    break;
+                }
             }
+        }
+
+        public override string ToString()
+        {
+            if (Smooth)
+                return "Smooth Move to image: " + Commons.GetName(Asset.Path);
+            else
+                return "Move to image: " + Commons.GetName(Asset.Path);
         }
     }
 }

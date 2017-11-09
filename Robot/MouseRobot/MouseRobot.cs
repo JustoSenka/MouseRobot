@@ -1,12 +1,10 @@
 ﻿using System;
 using Robot.Utils.Win32;
-using System.Diagnostics;
-using System.Drawing;
 using RobotRuntime;
-using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
 using System.ComponentModel;
 using Robot.Settings;
+using RobotRuntime.Settings;
 
 namespace Robot
 {
@@ -23,8 +21,6 @@ namespace Robot
         private bool m_IsPlaying;
         private bool m_IsVisualizationOn;
 
-        private Stopwatch m_SleepTimer = new Stopwatch();
-        private Point m_LastClickPos = new Point(0, 0);
 
         /// <summary>
         /// Post messages to async operation in order to run them on UI thread
@@ -48,77 +44,11 @@ namespace Robot
             ScriptManager.Instance.NewScript();
             ScriptThread.Instance.Finished += OnScriptFinished;
 
-            InputCallbacks.inputEvent += OnInputEvent;
+            var a = RecordingManager.Instance; // Initializing, if nobody is referencing, sinlgeton is not created
         }
 
         public void ForceInit() { } // This is to make sure that mouse robot singleton is created
-
-        private void OnInputEvent(KeyEvent e)
-        {
-            if (!m_IsRecording)
-                return;
-
-            if (ScriptManager.Instance.LoadedScripts.Count == 0)
-                return;
-
-            var activeScript = ScriptManager.Instance.ActiveScript;
-            var props = SettingsManager.Instance.RecordingSettings;
-
-            if (e.IsKeyDown())
-            {
-                if (e.keyCode == props.DefaultSleepKey)
-                    activeScript.AddCommand(new CommandSleep(props.DefaultSleepTime));
-
-                if (e.keyCode == props.SleepKey)
-                    m_SleepTimer.Restart();
-
-                if (e.keyCode == props.SmoothMouseMoveKey)
-                {
-                    activeScript.AddCommand(new CommandMove(e.X, e.Y));
-                    m_LastClickPos = e.Point;
-                    // TODO: TIME ?
-                }
-
-                if (e.keyCode == props.MouseDownButton)
-                {
-                    if (props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
-
-                    if (props.TreatMouseDownAsMouseClick)
-                        activeScript.AddCommand(new CommandPress(e.X, e.Y));
-                    else
-                        activeScript.AddCommand(new CommandDown(e.X, e.Y));
-                    m_LastClickPos = e.Point;
-                }
-            }
-            else if (e.IsKeyUp())
-            {
-                if (e.keyCode == props.SleepKey)
-                {
-                    m_SleepTimer.Stop();
-                    activeScript.AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
-                }
-
-                if (e.keyCode == props.MouseDownButton && !props.TreatMouseDownAsMouseClick)
-                {
-                    if (props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
-                    else
-                    {
-                        if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
-                            activeScript.AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
-                    }
-
-                    activeScript.AddCommand(new CommandRelease(e.X, e.Y));
-                    m_LastClickPos = e.Point;
-                }
-            }
-            else
-            {
-                throw new Exception("Key event was fired but neither KeyUp or KeyDown was true");
-            }
-
-        }
+       
 
         public void StartScript()
         {
@@ -126,11 +56,6 @@ namespace Robot
                 return;
 
             ScriptThread.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
-        }
-
-        public void StopScript()
-        {
-            ScriptThread.Instance.Stop();
         }
 
         private void OnScriptFinished()
@@ -170,7 +95,7 @@ namespace Robot
                     if (m_IsPlaying)
                         StartScript();
                     else
-                        StopScript();
+                        ScriptThread.Instance.Stop();
                 }
             }
         }
@@ -187,8 +112,9 @@ namespace Robot
 
                     if (m_IsVisualizationOn)
                     {
-                        ScreenStateThread.Instace.Start(20);
-                        FeatureDetectionThread.Instace.Start(20);
+                        RuntimeSettings.ApplySettings(SettingsManager.Instance.FeatureDetectionSettings);
+                        ScreenStateThread.Instace.Start();
+                        FeatureDetectionThread.Instace.Start();
                     }
                     else
                     {
@@ -197,11 +123,6 @@ namespace Robot
                     }
                 }
             }
-        }
-
-        private float Distance(Point a, Point b)
-        {
-            return (float)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
 
         private void SetupProjectPath()

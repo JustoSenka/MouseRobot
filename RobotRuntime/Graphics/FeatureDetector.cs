@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using RobotRuntime.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -45,19 +46,28 @@ namespace RobotRuntime.Graphics
 
 
         private static FeatureDetector s_CurrentDetector;
-        public static FeatureDetector Get()
+        private static DetectionMode s_CurrentDetectionMode;
+        public static FeatureDetector Get(DetectionMode detectionMode)
         {
-            if (s_CurrentDetector == null)
-                s_CurrentDetector = Create();
-
-            return s_CurrentDetector;
+            if (s_CurrentDetector != null && detectionMode == s_CurrentDetectionMode)
+                return s_CurrentDetector;
+            else
+                return s_CurrentDetector = Create(detectionMode);
         }
-        
-        private static FeatureDetector Create()
+
+        private static FeatureDetector Create(DetectionMode detectionMode)
         {
-            //return new FeatureDetectorSURF();
-            //return new FeatureDetectorPP();
-            return new FeatureDetectorTemplate();
+            switch (detectionMode)
+            {
+                case DetectionMode.FeatureSURF:
+                    return new FeatureDetectorSURF();
+                case DetectionMode.PixelPerfect:
+                    return new FeatureDetectorPP();
+                case DetectionMode.Template:
+                    return new FeatureDetectorTemplate();
+                default:
+                    return null;
+            }
         }
     }
 }

@@ -94,7 +94,8 @@ namespace Robot
         public Asset GetAsset(string path)
         {
             path = Commons.GetProjectRelativePath(path);
-            return Assets.FirstOrDefault((a) => Commons.AreRelativePathsEqual(a.Path, path));
+            return Assets.FirstOrDefault((a) => 
+            Commons.AreRelativePathsEqual(a.Path, path));
         }
 
         public Asset GetAsset(string folder, string name)

@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Perf;
+using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,6 @@ namespace RobotRuntime.Graphics
 {
     public class FeatureDetectionThread : StableRepeatingThread
     {
-        public Point ImagePos { get; private set; }
-
         public Bitmap ObservedImage { get; private set; }
         public object ObservedImageLock = new object();
 
@@ -23,6 +22,8 @@ namespace RobotRuntime.Graphics
         public bool WasImageFound { get; private set; }
         public bool WasLastCheckSuccess { get; private set; }
         public int TimeSinceLastFind { get; private set; }
+
+        public DetectionMode DetectionMode { get; set; } = DetectionMode.FeatureSURF;
 
         private Stopwatch m_Watch = new Stopwatch();
 
@@ -89,16 +90,33 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name);
         }
 
+        public void StartNewImageSearch(AssetPointer asset)
+        {
+            if (asset.Path.EndsWith(FileExtensions.Image))
+            {
+                lock (m_SampleImageLock)
+                {
+                    m_SampleImage = AssetImporter.FromPath(asset.Path).Load<Bitmap>();
+                    WasLastCheckSuccess = false;
+                    WasImageFound = false;
+                    LastKnownPositions = null;
+                    TimeSinceLastFind = 0;
+                    m_Watch.Restart();
+                }
+            }
+        }
+
         private Point[][] FindImagePositions()
         {
             lock (m_SampleImageLock)
             {
-                if (FeatureDetector.Get().SupportsMultipleMatches)
-                    return FeatureDetector.Get().FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
+                if (FeatureDetector.Get(DetectionMode).SupportsMultipleMatches)
+                    return FeatureDetector.Get(DetectionMode).FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
                 else
-                    return new[] { FeatureDetector.Get().FindImagePos(m_SampleImage, ObservedImage) };
+                    return new[] { FeatureDetector.Get(DetectionMode).FindImagePos(m_SampleImage, ObservedImage) };
             }
         }
+
 
         /// <summary>
         /// Returns false if points array is bad, or if it is not square like
@@ -116,23 +134,6 @@ namespace RobotRuntime.Graphics
             }
 
             return true;
-        }
-
-
-        public void StartNewImageSearch(AssetPointer asset)
-        {
-            if (asset.Path.EndsWith(FileExtensions.Image))
-            {
-                lock (m_SampleImageLock)
-                {
-                    m_SampleImage = AssetImporter.FromPath(asset.Path).Load<Bitmap>();
-                    WasLastCheckSuccess = false;
-                    WasImageFound = false;
-                    LastKnownPositions = null;
-                    TimeSinceLastFind = 0;
-                    m_Watch.Restart();
-                }
-            }
         }
     }
 }

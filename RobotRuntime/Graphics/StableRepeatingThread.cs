@@ -23,12 +23,12 @@ namespace RobotRuntime.Graphics
 
         // Thread methods / properties
         public virtual void Init() { m_Init = true; }
-        public void Start(int FPS = 60)
+        public void Start(int FPS = 0)
         {
             if (!m_Init)
                 Init();
 
-            this.FPS = FPS;
+            this.FPS = FPS == 0 && m_FPS == 0 ? 30 : (m_FPS == 0) ? FPS : 30;
             m_Run = true;
 
             if (!m_Thread.IsAlive)

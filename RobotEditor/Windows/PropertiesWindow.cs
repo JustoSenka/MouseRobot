@@ -1,6 +1,7 @@
 ﻿using Robot.Settings;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
+using RobotRuntime.Settings;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -55,6 +56,7 @@ namespace RobotEditor
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
 
             m_CurrentObject.HideProperties(dt);
+            m_CurrentObject.OnPropertiesModified();
             propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
         }
 

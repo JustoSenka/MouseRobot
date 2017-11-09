@@ -8,23 +8,33 @@ namespace RobotRuntime.Commands
     {
         public int X { get; set; }
         public int Y { get; set; }
+        public bool DontMove { get; set; }
 
-        public CommandRelease(int x, int y)
+        public CommandRelease(int x, int y, bool DontMove)
         {
             X = x;
             Y = y;
-            Text = "Release on: (" + x + ", " + y + ")";
-        } 
+            this.DontMove = DontMove;
+        }
 
         public override object Clone()
         {
-            return new CommandRelease(X, Y);
+            return new CommandRelease(X, Y, DontMove);
         }
 
         public override void Run()
         {
-            WinAPI.MouseMoveTo(X, Y);
+            if (!DontMove)
+                WinAPI.MouseMoveTo(X, Y);
             WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftUp);
+        }
+
+        public override string ToString()
+        {
+            if (DontMove)
+                return "Release";
+            else
+                return "Release on: (" + X + ", " + Y + ")";
         }
     }
 }

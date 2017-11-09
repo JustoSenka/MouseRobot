@@ -1,6 +1,6 @@
 ﻿using Robot.Settings;
-using Robot.Utils;
 using RobotEditor.Utils;
+using RobotRuntime.Settings;
 using System;
 using System.ComponentModel;
 
@@ -24,12 +24,17 @@ namespace RobotEditor.Settings
 
         }
 
+        public override void OnPropertiesModified()
+        {
+            RuntimeSettings.ApplySettings(SettingsManager.Instance.FeatureDetectionSettings);
+        }
+
         private const int NumOfCategories = 2;
         private const int DetectionModeCategoryPosition = 1;
         private const int ThreadFramerateCategoryPosition = 2;
 
         [SortedCategory("Detection Mode", DetectionModeCategoryPosition, NumOfCategories)]
-        [DefaultValue(Robot.Settings.DetectionMode.FeatureSURF)]
+        [DefaultValue(RobotRuntime.Settings.DetectionMode.FeatureSURF)]
         [DisplayName("DetectionMode")]
         public DetectionMode DetectionMode
         {

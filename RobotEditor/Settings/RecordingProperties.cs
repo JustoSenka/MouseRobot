@@ -1,9 +1,9 @@
 ﻿using Robot.Settings;
-using Robot.Utils;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using RobotEditor.Utils;
+using RobotRuntime.Settings;
 
 namespace RobotEditor.Settings
 {
@@ -28,11 +28,12 @@ namespace RobotEditor.Settings
         }
 
 
-        private const int NumOfCategories = 4;
+        private const int NumOfCategories = 5;
         private const int SleepOptionsCategoryPosition = 1;
         private const int MouseMoveOptionsCategoryPosition = 2;
         private const int MouseOptionsCategoryPosition = 3;
         private const int AdditionalOptionsCategoryPosition = 4;
+        private const int ImageCapturingCategoryPosition = 5;
 
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.S)]
@@ -122,6 +123,33 @@ namespace RobotEditor.Settings
         {
             get { return m_Settings.AutomaticSmoothMoveBeforeMouseUp; }
             set { m_Settings.AutomaticSmoothMoveBeforeMouseUp = value; }
+        }
+
+        [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.Shift)]
+        [DisplayName("Perform Action On Image (Hold)")]
+        public Keys PerformActionOnImage
+        {
+            get { return m_Settings.PerformActionOnImage; }
+            set { m_Settings.PerformActionOnImage = value; }
+        }
+
+        [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.Q)]
+        [DisplayName("Find Hovered Image Reference")]
+        public Keys FindImage
+        {
+            get { return m_Settings.FindImage; }
+            set { m_Settings.FindImage = value; }
+        }
+
+        [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.W)]
+        [DisplayName("Start Cropping Image")]
+        public Keys CropImage
+        {
+            get { return m_Settings.CropImage; }
+            set { m_Settings.CropImage = value; }
         }
     }
 }

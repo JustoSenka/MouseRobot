@@ -8,23 +8,33 @@ namespace RobotRuntime.Commands
     {
         public int X { get; set; }
         public int Y { get; set; }
+        public bool DontMove { get; set; }
 
-        public CommandDown(int x, int y)
+        public CommandDown(int x, int y, bool DontMove)
         {
             X = x;
             Y = y;
-            Text = "Down on: (" + x + ", " + y + ")";
+            this.DontMove = DontMove;
         }
 
         public override object Clone()
         {
-            return new CommandDown(X, Y);
+            return new CommandDown(X, Y, DontMove);
         }
 
         public override void Run()
         {
-            WinAPI.MouseMoveTo(X, Y);
+            if (!DontMove)
+                WinAPI.MouseMoveTo(X, Y);
             WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftDown);
+        }
+
+        public override string ToString()
+        {
+            if (DontMove)
+                return "Hold Mouse Down";
+            else
+                return "Down on: (" + X + ", " + Y + ")";
         }
     }
 }

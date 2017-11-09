@@ -95,6 +95,47 @@ namespace RobotRuntime.Utils
             }
         }
 
+        public static Bitmap CropImageFromPoint(Bitmap source, Point from, int size)
+        {
+            return CropImageFromPoint(source, from, new Point(from.X + size, from.Y + size));
+        }
+
+        public static Bitmap CropImageFromPoint(Bitmap source, Point from, Point to)
+        {
+            var topLeft = new Point(from.X < to.X ? from.X : to.X, from.Y < to.Y ? from.Y : to.Y);
+            var botRight = new Point(from.X >= to.X ? from.X : to.X, from.Y >= to.Y ? from.Y : to.Y);
+            var rect = new Rectangle(0, 0, botRight.X - topLeft.X, botRight.Y - topLeft.Y);
+
+            var bmp = new Bitmap(rect.Width, rect.Height, source.PixelFormat);
+
+            for (int x = 0; x < rect.Width; ++x)
+                for (int y = 0; y < rect.Height; ++y)
+                    bmp.SetPixel(x, y, source.GetPixel(topLeft.X + x, topLeft.Y + y));
+
+            return bmp;
+        }
+
+
+        // Those Might be way faster than taking screenshot and getting pixels
+        //   while you can take pixels from screen directly without taking screenshot
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetDesktopWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindowDC(IntPtr window);
+        [DllImport("gdi32.dll", SetLastError = true)]
+        public static extern uint GetPixel(IntPtr dc, int x, int y);
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int ReleaseDC(IntPtr window, IntPtr dc);
+
+        public static Color GetColorAt(int x, int y)
+        {
+            IntPtr desk = GetDesktopWindow();
+            IntPtr dc = GetWindowDC(desk);
+            int a = (int)GetPixel(dc, x, y);
+            ReleaseDC(desk, dc);
+            return Color.FromArgb(255, (a >> 0) & 0xff, (a >> 8) & 0xff, (a >> 16) & 0xff);
+        }
+
         public static Rectangle Bounds(this Bitmap bmp)
         {
             return new Rectangle(0, 0, bmp.Width, bmp.Height);

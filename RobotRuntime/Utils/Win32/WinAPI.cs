@@ -7,7 +7,7 @@ namespace RobotRuntime.Utils.Win32
 {
     public static class WinAPI
     {
-        public static readonly int TimeBetweenActions = 10;
+        public static readonly int TimeBetweenActions = 5;
 
         [Flags]
         public enum MouseEventFlags

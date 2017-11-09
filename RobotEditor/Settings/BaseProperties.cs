@@ -12,5 +12,9 @@ namespace RobotEditor.Settings
         {
 
         }
+        public virtual void OnPropertiesModified()
+        {
+
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Robot.Settings
+namespace RobotRuntime.Settings
 {
     [Serializable]
     public class FeatureDetectionSettings : BaseSettings

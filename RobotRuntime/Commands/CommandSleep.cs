@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace RobotRuntime.Commands
 {
@@ -11,7 +11,6 @@ namespace RobotRuntime.Commands
         public CommandSleep(int millis)
         {
             Time = millis;
-            Text = "Sleep for " + millis + " ms.";
         }
 
         public override object Clone()
@@ -21,7 +20,12 @@ namespace RobotRuntime.Commands
 
         public override void Run()
         {
-            Thread.Sleep(Time);
+            Task.Delay(Time).Wait();
+        }
+
+        public override string ToString()
+        {
+            return "Sleep for " + Time + " ms.";
         }
     }
 }

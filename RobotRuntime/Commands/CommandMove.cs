@@ -13,7 +13,6 @@ namespace RobotRuntime.Commands
         {
             X = x;
             Y = y;
-            Text = "Move to: (" + x + ", " + y + ")";
         }
 
         public override object Clone()
@@ -31,6 +30,11 @@ namespace RobotRuntime.Commands
             {
                 WinAPI.MouseMoveTo(x1 + ((X - x1) * i / 50), y1 + ((Y - y1) * i / 50));
             }
+        }
+
+        public override string ToString()
+        {
+            return "Move to: (" + X + ", " + Y + ")";
         }
     }
 }
