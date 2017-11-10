@@ -103,7 +103,8 @@ namespace RobotEditor.Windows
             var selected = treeListView.SelectedItem;
             treeListView.Roots = m_Nodes;
             treeListView.Sort();
-            treeListView.SelectedItem = selected;
+            try { treeListView.SelectedItem = selected; }
+            catch (ArgumentOutOfRangeException) { treeListView.SelectedItem = null; }
 
             treeListView.Refresh();
         }

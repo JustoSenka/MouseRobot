@@ -59,6 +59,8 @@ namespace RobotEditor
             MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.Instance.VisualizationStateChanged += OnVisualizationStateChanged;
+
+            ScreenDrawForm.Instace.Show();
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -362,11 +364,11 @@ namespace RobotEditor
         private void enableVizualization_Click(object sender, EventArgs e)
         {
             MouseRobot.Instance.IsVisualizationOn ^= true;
-
+            /*
             if (MouseRobot.Instance.IsVisualizationOn)
-                InvisibleForm.Instace.Show();
+                ScreenDrawForm.Instace.Show();
             else
-                InvisibleForm.Instace.Hide();
+                ScreenDrawForm.Instace.Hide();*/
         }
         #endregion
 

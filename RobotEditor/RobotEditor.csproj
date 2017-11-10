@@ -145,6 +145,9 @@
     <Compile Include="Windows\AssetsWindow.Designer.cs">
       <DependentUpon>AssetsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Base\InvisibleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Windows\PropertiesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -155,11 +158,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\DockLayout.cs" />
-    <Compile Include="Windows\InvisibleForm.cs">
+    <Compile Include="Windows\ScreenDrawForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Windows\InvisibleForm.Designer.cs">
-      <DependentUpon>InvisibleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\MainForm.cs">
       <SubType>Form</SubType>
@@ -204,9 +204,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\PropertiesWindow.resx">
       <DependentUpon>PropertiesWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows\InvisibleForm.resx">
-      <DependentUpon>InvisibleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -271,12 +268,15 @@
     <Content Include="Resources\Icons\ColourfulGear_ICO_32.ico" />
     <None Include="Resources\Icons\Eye_d_ICO_256.png" />
     <None Include="Resources\Icons\Eye_e_ICO_256.png" />
+    <Content Include="Resources\Icons\Folder_ICO_128.png" />
     <Content Include="Resources\Icons\gear_ICO_512.png" />
+    <Content Include="Resources\Icons\Image_ICO_128.png" />
     <Content Include="Resources\Icons\script_ICO_256.png" />
     <None Include="Resources\Icons\ToolButton_Record_32.png" />
     <None Include="Resources\Icons\ToolButton_RecordStop_32.png" />
     <None Include="Resources\Icons\ToolButton_Play_32.png" />
     <None Include="Resources\Icons\ToolButton_Stop_32.png" />
+    <Content Include="Resources\Icons\X_ICO_256.png" />
     <Content Include="Resources\Images\LogoWhite.png" />
     <Content Include="Resources\Images\SplashLogo.jpg" />
     <Content Include="Resources\Images\WhiteGears.png" />

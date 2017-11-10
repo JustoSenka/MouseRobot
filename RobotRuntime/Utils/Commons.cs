@@ -70,6 +70,7 @@ namespace RobotRuntime
         public static Font ActiveAndDirtyScript = DirtyScript.AddFont(ActiveScript);
 
         public static Font Big = new Font(FontFamily.GenericSansSerif, 20F, FontStyle.Bold);
+        public static Font Normal = new Font(FontFamily.GenericSansSerif, 12F, FontStyle.Bold);
 
         public static Font AddFont(this Font main, Font newFont)
         {

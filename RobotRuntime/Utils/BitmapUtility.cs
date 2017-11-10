@@ -74,16 +74,21 @@ namespace RobotRuntime.Utils
             return new Image<Bgr, byte>(bmp);
         }
 
+        public static Bitmap TakeScreenshotOfSpecificRect(Point upperLeftPoint, Size size)
+        {
+            var screen = Screen.PrimaryScreen;
+            var bmp = new Bitmap(size.Width, size.Height);
+            using (var graphics = System.Drawing.Graphics.FromImage(bmp))
+            {
+                graphics.CopyFromScreen(upperLeftPoint, new Point(0, 0), size);
+            }
+            return bmp;
+        }
+
         public static Bitmap TakeScreenshot()
         {
             var screen = Screen.PrimaryScreen;
-            // TODO: Creates hell a lot of garbage
-            var bmp = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
-            using (var graphics = System.Drawing.Graphics.FromImage(bmp))
-            {
-                graphics.CopyFromScreen(new Point(screen.Bounds.Left, screen.Bounds.Top), new Point(0, 0), screen.Bounds.Size);
-            }
-            return bmp;
+            return TakeScreenshotOfSpecificRect(new Point(screen.Bounds.Left, screen.Bounds.Top), screen.Bounds.Size);
         }
 
         public static void TakeScreenshot(Bitmap dest)
@@ -95,9 +100,11 @@ namespace RobotRuntime.Utils
             }
         }
 
-        public static Bitmap CropImageFromPoint(Bitmap source, Point from, int size)
+        public static Bitmap CropImageFromPoint(Bitmap source, Point center, int size)
         {
-            return CropImageFromPoint(source, from, new Point(from.X + size, from.Y + size));
+            return CropImageFromPoint(source, 
+                new Point(center.X - size / 2, center.Y - size / 2), 
+                new Point(center.X + size / 2, center.Y + size / 2));
         }
 
         public static Bitmap CropImageFromPoint(Bitmap source, Point from, Point to)
@@ -113,6 +120,16 @@ namespace RobotRuntime.Utils
                     bmp.SetPixel(x, y, source.GetPixel(topLeft.X + x, topLeft.Y + y));
 
             return bmp;
+        }
+
+        public static Bitmap ResizeBitmap(Bitmap bmp, Rectangle rect)
+        {
+            var newBmp = new Bitmap(rect.Width, rect.Height);
+            using (var g = System.Drawing.Graphics.FromImage(newBmp))
+            {
+                g.DrawImage(bmp, new Rectangle(0, 0, newBmp.Width, newBmp.Height), 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel);
+            }
+            return newBmp;
         }
 
 

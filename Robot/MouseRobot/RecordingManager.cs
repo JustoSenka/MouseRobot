@@ -3,6 +3,7 @@ using Robot.Utils.Win32;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
+using RobotRuntime.Perf;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
@@ -26,6 +27,8 @@ namespace Robot
         public event Action<Asset, Point> ImageFoundInAssets;
         public event Action<Point> ImageNotFoundInAssets;
         public event Action<Bitmap> ImageCropped;
+
+        private readonly Size k_ImageForReferenceSearchUnderCursorSize = new Size(12, 12);
 
         static private RecordingManager m_Instance = new RecordingManager();
         static public RecordingManager Instance { get { return m_Instance; } }
@@ -160,26 +163,40 @@ namespace Robot
             }
         }
 
-        private Asset FindImage(Point point)
+        private Asset FindImage(Point cursorPos)
         {
-            var screen = BitmapUtility.TakeScreenshot();
-            var crop = BitmapUtility.CropImageFromPoint(screen, WinAPI.GetCursorPosition(), 10);
+            Profiler.Start("RecordingManager_FindImage");
+            Profiler.Start("RecordingManager_CropFromScreen");
+
+            var size = k_ImageForReferenceSearchUnderCursorSize;
+            var crop = BitmapUtility.TakeScreenshotOfSpecificRect(
+                WinAPI.GetCursorPosition().Sub(new Point(size.Width / 2, size.Width / 2)), size);
+
+            Profiler.Stop("RecordingManager_CropFromScreen");
+            Profiler.Start("RecordingManager_FindAssetReference");
+
             var detector = FeatureDetector.Get(DetectionMode.PixelPerfect);
-            crop.Save("test.png", System.Drawing.Imaging.ImageFormat.Png);
+            Asset retAsset = null;
             foreach (var asset in AssetManager.Instance.Assets)
             {
                 if (asset.HoldsTypeOf(typeof(Bitmap)))
                 {
                     if (detector.FindImagePos(crop, asset.Importer.Load<Bitmap>()) != null)
                     {
-                        ImageFoundInAssets?.Invoke(asset, point);
-                        return asset;
+                        ImageFoundInAssets?.Invoke(asset, cursorPos);
+                        retAsset = asset;
+                        break;
                     }
                 }
             }
 
-            ImageNotFoundInAssets?.Invoke(point);
-            return null;
+            Profiler.Stop("RecordingManager_FindAssetReference");
+            Profiler.Stop("RecordingManager_FindImage");
+
+            if (retAsset == null)
+                ImageNotFoundInAssets?.Invoke(cursorPos);
+
+            return retAsset;
         }
 
         private void CropImage()
