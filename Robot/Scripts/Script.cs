@@ -50,7 +50,18 @@ namespace Robot
         {
             m_IsDirty = true;
             m_Commands.Add(command);
-            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
+            ScriptManager.Instance.InvokeCommandAddedToScript(this, command);
+        }
+
+        public void ReplaceCommand(Command originalCommand, Command newCommand)
+        {
+            m_IsDirty = true;
+
+            var index = m_Commands.IndexOf(originalCommand);
+            m_Commands.RemoveAt(index);
+            m_Commands.Insert(index, newCommand);
+
+            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
         }
 
         public void InsertCommand(int position, Command command)

@@ -51,6 +51,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(450, 402);
             this.Controls.Add(this.propertyGrid);
+            this.HideOnClose = true;
             this.Name = "InspectorWindow";
             this.Text = "Inspector";
             this.ResumeLayout(false);

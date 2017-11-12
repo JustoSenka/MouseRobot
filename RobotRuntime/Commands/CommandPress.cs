@@ -37,5 +37,7 @@ namespace RobotRuntime.Commands
             else
                 return "Click on: (" + X + ", " + Y + ")";
         }
+
+        public override CommandType CommandType { get { return CommandType.Press; } }
     }
 }

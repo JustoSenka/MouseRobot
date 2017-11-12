@@ -56,7 +56,7 @@ namespace RobotEditor
             InputCallbacks.inputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
-            m_HierarchyWindow.OnCommandDoubleClick += OnCommandDoubleClick;
+            m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick;
 
             MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;

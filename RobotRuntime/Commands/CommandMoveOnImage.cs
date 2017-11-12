@@ -53,10 +53,11 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            if (Smooth)
-                return "Smooth Move to image: " + Commons.GetName(Asset.Path);
-            else
-                return "Move to image: " + Commons.GetName(Asset.Path);
+            var assetName = ((Asset.Path != "" && Asset.Path != null) ? Commons.GetName(Asset.Path) : "...");
+            var smooth = (Smooth) ? "Smooth " : "";
+            return smooth + "Move to image: " + assetName;
         }
+
+        public override CommandType CommandType { get { return CommandType.MoveOnImage; } }
     }
 }

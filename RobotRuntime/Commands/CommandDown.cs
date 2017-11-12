@@ -36,5 +36,7 @@ namespace RobotRuntime.Commands
             else
                 return "Down on: (" + X + ", " + Y + ")";
         }
+
+        public override CommandType CommandType { get { return CommandType.Down; } }
     }
 }

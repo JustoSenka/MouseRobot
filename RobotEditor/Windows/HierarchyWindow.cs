@@ -11,7 +11,7 @@ namespace RobotEditor
 {
     public partial class HierarchyWindow : DockContent
     {
-        public event Action<Command> OnCommandDoubleClick;
+        public event Action<Command> OnCommandSelected;
 
         public HierarchyWindow()
         {
@@ -59,19 +59,23 @@ namespace RobotEditor
 
         private void OnScriptRemoved(int index)
         {
+            if (treeView.SelectedNode.Level >= 1 && treeView.SelectedNode.Parent.Index == index)
+                OnCommandSelected?.Invoke(null);
+
             treeView.Nodes[index].Remove();
         }
 
-        private void treeView_DoubleClick(object sender, EventArgs e)
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            Point targetPoint = treeView.PointToClient(WinAPI.GetCursorPosition());
-            var node = treeView.GetNodeAt(targetPoint);
-
-            if (node.Level >= 1)
+            if (e.Node.Level >= 1)
             {
-                var script = ScriptManager.Instance.LoadedScripts[node.Parent.Index];
-                var command = script.Commands[node.Index];
-                OnCommandDoubleClick?.Invoke(command);
+                var script = ScriptManager.Instance.LoadedScripts[e.Node.Parent.Index];
+                var command = script.Commands[e.Node.Index];
+                OnCommandSelected?.Invoke(command);
+            }
+            else
+            {
+                OnCommandSelected?.Invoke(null);
             }
         }
 

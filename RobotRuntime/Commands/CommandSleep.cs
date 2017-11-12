@@ -27,5 +27,7 @@ namespace RobotRuntime.Commands
         {
             return "Sleep for " + Time + " ms.";
         }
+
+        public override CommandType CommandType { get { return CommandType.Sleep; } }
     }
 }

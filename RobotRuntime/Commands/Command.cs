@@ -7,6 +7,7 @@ namespace RobotRuntime
     {
         public abstract void Run();
         public abstract object Clone();
+        public abstract CommandType CommandType { get; }
     }
 
     public enum CommandType

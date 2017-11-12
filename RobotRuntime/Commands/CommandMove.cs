@@ -36,5 +36,7 @@ namespace RobotRuntime.Commands
         {
             return "Move to: (" + X + ", " + Y + ")";
         }
+
+        public override CommandType CommandType { get { return CommandType.Move; } }
     }
 }

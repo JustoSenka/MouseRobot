@@ -13,33 +13,32 @@ namespace RobotEditor.Windows
 {
     public partial class InspectorWindow : DockContent
     {
-        private BaseProperties m_CurrentObject;
-        private Command m_Command;
+        private CommandProperties<Command> m_CurrentObject;
 
         public InspectorWindow()
         {
             InitializeComponent();
-            //ShowSettings(SettingsManager.Instance.RecordingSettings);
+            propertyGrid.SelectedObject = null;
         }
 
         public void ShowCommand<T>(T command) where T : Command
         {
-            m_Command = command;
-            m_CurrentObject = new CommandProperties<Command>(command);
-            //m_CurrentObject = WrapCommandsToProperties(command, ref m_CurrentObjectType);
-            propertyGrid_PropertyValueChanged(this, null);
-        }
+            if (command == null)
+            {
+                propertyGrid.SelectedObject = null;
+                return;
+            }
 
-        private static BaseProperties WrapCommandsToProperties<T>(T command, ref Type type) where T : Command
-        {
-            return new CommandProperties<Command>(command);
+            m_CurrentObject = new CommandProperties<Command>(command);
+            propertyGrid_PropertyValueChanged(this, null);
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObject.GetType());
+            var command = m_CurrentObject.Command;
+            ScriptManager.Instance.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
-            ScriptManager.Instance.GetScriptFromCommand(m_Command).ApplyCommandModifications(m_Command);
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObject.GetType());
 
             m_CurrentObject.HideProperties(dt);
             m_CurrentObject.OnPropertiesModified();

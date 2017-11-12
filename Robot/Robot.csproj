@@ -85,6 +85,7 @@
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="MouseRobot\RecordingManager.cs" />
+    <Compile Include="Scripts\CommandFactory.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

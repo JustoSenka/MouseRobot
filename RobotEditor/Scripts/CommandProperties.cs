@@ -1,4 +1,6 @@
-﻿using RobotEditor.Settings;
+﻿using Robot;
+using Robot.Scripts;
+using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Commands;
@@ -11,7 +13,9 @@ namespace RobotEditor.Scripts
 {
     public class CommandProperties<T> : BaseProperties where T : Command
     {
-        private Command m_Command;
+        [Browsable(false)]
+        public Command Command { get; private set; }
+
         private readonly PropertyDescriptorCollection m_Properties;
 
         [Browsable(false)]
@@ -20,31 +24,32 @@ namespace RobotEditor.Scripts
         public CommandProperties(T command)
         {
             m_Properties = TypeDescriptor.GetProperties(this);
-            m_Command = command;
+            Command = command;
         }
 
         public override void HideProperties(DynamicTypeDescriptor dt)
         {
             dt.Properties.Clear();
+            AddProperty(dt, "CommandType");
 
-            if (m_Command is CommandDown || m_Command is CommandRelease || m_Command is CommandPress)
+            if (Command is CommandDown || Command is CommandRelease || Command is CommandPress)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
                 AddProperty(dt, "DontMove");
             }
-            else if (m_Command is CommandMove)
+            else if (Command is CommandMove)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
             }
-            else if (m_Command is CommandMoveOnImage)
+            else if (Command is CommandMoveOnImage)
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Smooth");
                 AddProperty(dt, "Timeout");
             }
-            else if (m_Command is CommandSleep)
+            else if (Command is CommandSleep)
             {
                 AddProperty(dt, "Time");
             }
@@ -55,11 +60,25 @@ namespace RobotEditor.Scripts
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue(0)]
+        [DisplayName("Command Type")]
+        public CommandType CommandType
+        {
+            get { return Command.CommandType; }
+            set
+            {
+                var newCommand = CommandFactory.Create(value, Command);
+                ScriptManager.Instance.GetScriptFromCommand(Command).ReplaceCommand(Command, newCommand);
+                Command = newCommand;
+            }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue(0)]
         [DisplayName("X")]
         public int X
         {
-            get { return DynamicCast(m_Command).X; }
-            set { DynamicCast(m_Command).X = value; }
+            get { return DynamicCast(Command).X; }
+            set { DynamicCast(Command).X = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -67,26 +86,26 @@ namespace RobotEditor.Scripts
         [DisplayName("Y")]
         public int Y
         {
-            get { return DynamicCast(m_Command).Y; }
-            set { DynamicCast(m_Command).Y = value; }
+            get { return DynamicCast(Command).Y; }
+            set { DynamicCast(Command).Y = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
-        [DefaultValue(0)]
+        [DefaultValue(false)]
         [DisplayName("Dont Move")]
         public bool DontMove
         {
-            get { return DynamicCast(m_Command).DontMove; }
-            set { DynamicCast(m_Command).DontMove = value; }
+            get { return DynamicCast(Command).DontMove; }
+            set { DynamicCast(Command).DontMove = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue(0)]
         [DisplayName("Time")]
-        public bool Time
+        public int Time
         {
-            get { return DynamicCast(m_Command).Time; }
-            set { DynamicCast(m_Command).Time = value; }
+            get { return DynamicCast(Command).Time; }
+            set { DynamicCast(Command).Time = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -94,8 +113,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Timeout")]
         public int Timeout
         {
-            get { return DynamicCast(m_Command).Timeout; }
-            set { DynamicCast(m_Command).Timeout = value; }
+            get { return DynamicCast(Command).Timeout; }
+            set { DynamicCast(Command).Timeout = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -103,8 +122,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Smooth")]
         public bool Smooth
         {
-            get { return DynamicCast(m_Command).Smooth; }
-            set { DynamicCast(m_Command).Smooth = value; }
+            get { return DynamicCast(Command).Smooth; }
+            set { DynamicCast(Command).Smooth = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -112,8 +131,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Referenced Asset")]
         public AssetPointer Asset
         {
-            get { return DynamicCast(m_Command).Asset; }
-            set { DynamicCast(m_Command).Asset = value; }
+            get { return DynamicCast(Command).Asset; }
+            set { DynamicCast(Command).Asset = value; }
         }
 
         private dynamic DynamicCast(Command command)
