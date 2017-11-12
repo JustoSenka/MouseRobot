@@ -9,19 +9,19 @@ namespace RobotRuntime.Commands
     public class CommandMoveOnImage : Command
     {
         public AssetPointer Asset { get; set; }
-        public int TimeOut { get; set; }
+        public int Timeout { get; set; }
         public bool Smooth { get; set; }
 
         public CommandMoveOnImage(AssetPointer asset, int timeOut, bool smooth)
         {
             Asset = asset;
-            TimeOut = timeOut;
+            Timeout = timeOut;
             Smooth = smooth;
         }
 
         public override object Clone()
         {
-            return new CommandMoveOnImage(Asset, TimeOut, Smooth);
+            return new CommandMoveOnImage(Asset, Timeout, Smooth);
         }
 
         public override void Run()
@@ -31,7 +31,7 @@ namespace RobotRuntime.Commands
             y1 = WinAPI.GetCursorPosition().Y;
 
             FeatureDetectionThread.Instace.StartNewImageSearch(Asset);
-            while (TimeOut > FeatureDetectionThread.Instace.TimeSinceLastFind)
+            while (Timeout > FeatureDetectionThread.Instace.TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
                 if (FeatureDetectionThread.Instace.WasImageFound)

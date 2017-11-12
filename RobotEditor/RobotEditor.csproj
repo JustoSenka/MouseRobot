@@ -129,7 +129,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
-    <Compile Include="Scripts\CommandMoveProperties.cs" />
+    <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />

@@ -14,7 +14,6 @@ namespace RobotEditor.Windows
     public partial class InspectorWindow : DockContent
     {
         private BaseProperties m_CurrentObject;
-        private Type m_CurrentObjectType;
         private Command m_Command;
 
         public InspectorWindow()
@@ -26,24 +25,19 @@ namespace RobotEditor.Windows
         public void ShowCommand<T>(T command) where T : Command
         {
             m_Command = command;
-            m_CurrentObject = WrapCommandsToProperties(command, ref m_CurrentObjectType);
+            m_CurrentObject = new CommandProperties<Command>(command);
+            //m_CurrentObject = WrapCommandsToProperties(command, ref m_CurrentObjectType);
             propertyGrid_PropertyValueChanged(this, null);
         }
 
         private static BaseProperties WrapCommandsToProperties<T>(T command, ref Type type) where T : Command
         {
-            if (command is CommandMove)
-            {
-                type = typeof(CommandMoveProperties);
-                return new CommandMoveProperties(command as CommandMove);
-            }
-
-            throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");
+            return new CommandProperties<Command>(command);
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObject.GetType());
 
             ScriptManager.Instance.GetScriptFromCommand(m_Command).ApplyCommandModifications(m_Command);
 
