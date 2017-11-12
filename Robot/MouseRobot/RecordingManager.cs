@@ -175,7 +175,8 @@ namespace Robot
             Profiler.Stop("RecordingManager_CropFromScreen");
             Profiler.Start("RecordingManager_FindAssetReference");
 
-            var detector = FeatureDetector.Get(DetectionMode.PixelPerfect);
+            // TODO: FeatureDetector.Get will fail to find proper match if another thread already used/is using it
+            var detector = FeatureDetector.Create(DetectionMode.PixelPerfect);
             Asset retAsset = null;
             foreach (var asset in AssetManager.Instance.Assets)
             {

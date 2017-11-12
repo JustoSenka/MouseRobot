@@ -30,16 +30,22 @@ namespace Robot
         public event Action<Script, Script> activeScriptChanged;
         public event Action<Script> scriptLoaded;
         public event Action<int> scriptRemoved;
-        public event Action<Script, Command> scriptsModified;
+        public event Action<Script, Command> CommandAddedToScript;
+        public event Action<Script, Command> CommandModifiedOnScript;
 
         private ScriptManager()
         {
             m_LoadedScripts = new List<Script>();
         }
 
-        public void ScriptModified(Script script, Command command)
+        public void InvokeCommandAddedToScript(Script script, Command command)
         {
-            scriptsModified?.Invoke(script, command);
+            CommandAddedToScript?.Invoke(script, command);
+        }
+
+        public void InvokeCommandModifiedOnScript(Script script, Command command)
+        {
+            CommandModifiedOnScript?.Invoke(script, command);
         }
 
         public Script NewScript(Script clone = null)
@@ -134,6 +140,11 @@ namespace Robot
         public void MoveScriptBefore(int index, int before)
         {
             m_LoadedScripts.MoveBefore(index, before);
+        }
+
+        public Script GetScriptFromCommand(Command command)
+        {
+            return LoadedScripts.FirstOrDefault((s) => s.Commands.Contains(command));
         }
 
 

@@ -64,6 +64,7 @@
             this.treeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
             this.treeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
             this.treeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
+            this.treeView.DoubleClick += new System.EventHandler(this.treeView_DoubleClick);
             // 
             // contextMenuStrip
             // 
@@ -77,7 +78,7 @@
             this.duplicateToolStripMenuItem1,
             this.deleteToolStripMenuItem1});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(175, 148);
+            this.contextMenuStrip.Size = new System.Drawing.Size(175, 126);
             // 
             // setActiveToolStripMenuItem
             // 

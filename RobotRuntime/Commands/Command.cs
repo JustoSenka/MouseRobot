@@ -8,4 +8,9 @@ namespace RobotRuntime
         public abstract void Run();
         public abstract object Clone();
     }
+
+    public enum CommandType
+    {
+        Down, Move, Press, Release, Sleep, MoveOnImage
+    }
 }

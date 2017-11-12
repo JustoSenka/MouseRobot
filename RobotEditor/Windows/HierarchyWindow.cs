@@ -11,6 +11,8 @@ namespace RobotEditor
 {
     public partial class HierarchyWindow : DockContent
     {
+        public event Action<Command> OnCommandDoubleClick;
+
         public HierarchyWindow()
         {
             InitializeComponent();
@@ -21,31 +23,56 @@ namespace RobotEditor
             ScriptTreeViewUtils.UpdateTreeView(treeView);
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
 
-            ScriptManager.Instance.scriptsModified += OnScriptsModified;
+            ScriptManager.Instance.CommandAddedToScript += OnCommandAddedToScript;
+            ScriptManager.Instance.CommandModifiedOnScript += OnCommandModifiedOnScript;
             ScriptManager.Instance.scriptLoaded += OnScriptLoaded;
             ScriptManager.Instance.scriptRemoved += OnScriptRemoved;
         }
 
-        private void OnScriptsModified(Script script, Command command)
+        private void OnCommandAddedToScript(Script script, Command command)
         {
-            // Add Command to tree view that was probably added to manager while recording
             var node = new TreeNode(command.ToString());
             node.ImageIndex = 1;
             node.SelectedImageIndex = 1;
 
             treeView.Nodes[script.Index].Nodes.Add(node);
+            if (treeView.Nodes[script.Index].GetNodeCount(false) == 1)
+                treeView.Nodes[script.Index].Expand();
+
+            ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
+        }
+
+        private void OnCommandModifiedOnScript(Script script, Command command)
+        {
+            var commandIndex = script.Commands.IndexOf(command);
+            treeView.Nodes[script.Index].Nodes[commandIndex].Text = command.ToString();
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
         private void OnScriptLoaded(Script script)
         {
             ScriptTreeViewUtils.AddExistingScriptToTreeView(treeView, script);
+            treeView.Nodes[script.Index].Expand();
+
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
         }
 
         private void OnScriptRemoved(int index)
         {
             treeView.Nodes[index].Remove();
+        }
+
+        private void treeView_DoubleClick(object sender, EventArgs e)
+        {
+            Point targetPoint = treeView.PointToClient(WinAPI.GetCursorPosition());
+            var node = treeView.GetNodeAt(targetPoint);
+
+            if (node.Level >= 1)
+            {
+                var script = ScriptManager.Instance.LoadedScripts[node.Parent.Index];
+                var command = script.Commands[node.Index];
+                OnCommandDoubleClick?.Invoke(command);
+            }
         }
 
         #region TreeView Drag and Drop

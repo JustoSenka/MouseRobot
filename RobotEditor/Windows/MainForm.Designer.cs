@@ -61,6 +61,7 @@
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.imageDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.inspectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -310,7 +311,8 @@
             this.hierarchyToolStripMenuItem,
             this.imagePreviewToolStripMenuItem,
             this.assetsToolStripMenuItem,
-            this.profilerToolStripMenuItem});
+            this.profilerToolStripMenuItem,
+            this.inspectorToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -330,6 +332,13 @@
             this.recordingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.recordingToolStripMenuItem.Text = "Recording";
             this.recordingToolStripMenuItem.Click += new System.EventHandler(this.recordingToolStripMenuItem_Click);
+            // 
+            // imageDetectionToolStripMenuItem
+            // 
+            this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
+            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.imageDetectionToolStripMenuItem.Text = "Image Detection";
+            this.imageDetectionToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionToolStripMenuItem_Click);
             // 
             // hierarchyToolStripMenuItem
             // 
@@ -374,12 +383,12 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // imageDetectionToolStripMenuItem
+            // inspectorToolStripMenuItem
             // 
-            this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
-            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.imageDetectionToolStripMenuItem.Text = "Image Detection";
-            this.imageDetectionToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionToolStripMenuItem_Click);
+            this.inspectorToolStripMenuItem.Name = "inspectorToolStripMenuItem";
+            this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.inspectorToolStripMenuItem.Text = "Inspector";
+            this.inspectorToolStripMenuItem.Click += new System.EventHandler(this.inspectorToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -446,5 +455,6 @@
         private System.Windows.Forms.ToolStripMenuItem profilerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem recordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageDetectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem inspectorToolStripMenuItem;
     }
 }

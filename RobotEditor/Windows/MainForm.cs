@@ -25,6 +25,7 @@ namespace RobotEditor
         private ScreenPreviewWindow m_ScreenPreviewWindow;
         private AssetsWindow m_AssetsWindow;
         private ProfilerWindow m_ProfilerWindow;
+        private InspectorWindow m_InspectorWindow;
 
         private ThemeBase m_CurrentTheme;
 
@@ -55,6 +56,7 @@ namespace RobotEditor
             InputCallbacks.inputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
+            m_HierarchyWindow.OnCommandDoubleClick += OnCommandDoubleClick;
 
             MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;
@@ -116,6 +118,11 @@ namespace RobotEditor
                 FeatureDetectionThread.Instace.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().ToAssetPointer());
         }
 
+        private void OnCommandDoubleClick(Command command)
+        {
+            m_InspectorWindow.ShowCommand(command);
+        }
+
         private void CreateWindows()
         {
             m_HierarchyWindow = new HierarchyWindow();
@@ -123,6 +130,7 @@ namespace RobotEditor
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
             m_AssetsWindow = new AssetsWindow();
             m_ProfilerWindow = new ProfilerWindow();
+            m_InspectorWindow = new InspectorWindow();
 
             m_Windows = new DockContent[]
             {
@@ -131,6 +139,7 @@ namespace RobotEditor
                 m_ScreenPreviewWindow,
                 m_AssetsWindow,
                 m_ProfilerWindow,
+                m_InspectorWindow,
             };
         }
 
@@ -325,6 +334,11 @@ namespace RobotEditor
             m_ProfilerWindow.Show(m_DockPanel);
         }
 
+        private void inspectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            m_InspectorWindow.Show(m_DockPanel);
+        }
+
         #endregion
 
         #region Menu Items (Windows -> Settings)
@@ -364,7 +378,7 @@ namespace RobotEditor
         private void enableVizualization_Click(object sender, EventArgs e)
         {
             MouseRobot.Instance.IsVisualizationOn ^= true;
-            /*
+            /*  now it is always shown. Might cause performance issues, maybe fix will come in future if it's a problem
             if (MouseRobot.Instance.IsVisualizationOn)
                 ScreenDrawForm.Instace.Show();
             else
@@ -406,6 +420,8 @@ namespace RobotEditor
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DockLayout.Save(m_DockPanel);
+            MouseRobot.Instance.IsRecording = false;
+            MouseRobot.Instance.IsPlaying = false;
         }
     }
 }

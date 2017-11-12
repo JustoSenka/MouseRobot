@@ -73,16 +73,11 @@ namespace RobotEditor.Editor
         {
             m_DeserializeDockContent = new DeserializeDockContent((string persistString) =>
             {
-                if (persistString.Equals(typeof(HierarchyWindow).ToString()))
-                    return Windows[0];
-                if (persistString.Equals(typeof(PropertiesWindow).ToString()))
-                    return Windows[1];
-                if (persistString.Equals(typeof(ScreenPreviewWindow).ToString()))
-                    return Windows[2];
-                if (persistString.Equals(typeof(AssetsWindow).ToString()))
-                    return Windows[3];
-                if (persistString.Equals(typeof(ProfilerWindow).ToString()))
-                    return Windows[4];
+                foreach (var win in Windows)
+                {
+                    if (persistString.Equals(win.GetType().ToString()))
+                        return win;
+                }
 
                 return null;
             });

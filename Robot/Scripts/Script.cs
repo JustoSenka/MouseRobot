@@ -40,11 +40,17 @@ namespace Robot
             m_Commands = new List<Command>();
         }
 
+        public void ApplyCommandModifications(Command command)
+        {
+            m_IsDirty = true;
+            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
+        }
+
         public void AddCommand(Command command)
         {
             m_IsDirty = true;
             m_Commands.Add(command);
-            ScriptManager.Instance.ScriptModified(this, command);
+            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
         }
 
         public void InsertCommand(int position, Command command)

@@ -47,6 +47,9 @@ namespace RobotRuntime.Graphics
 
         private static FeatureDetector s_CurrentDetector;
         private static DetectionMode s_CurrentDetectionMode;
+        /// <summary>
+        /// Not Thread Safe
+        /// </summary>
         public static FeatureDetector Get(DetectionMode detectionMode)
         {
             if (s_CurrentDetector != null && detectionMode == s_CurrentDetectionMode)
@@ -55,7 +58,10 @@ namespace RobotRuntime.Graphics
                 return s_CurrentDetector = Create(detectionMode);
         }
 
-        private static FeatureDetector Create(DetectionMode detectionMode)
+        /// <summary>
+        /// Thread Sade but creates garbage
+        /// </summary>
+        public static FeatureDetector Create(DetectionMode detectionMode)
         {
             switch (detectionMode)
             {
