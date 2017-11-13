@@ -5,7 +5,6 @@ using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq.Expressions;
@@ -120,7 +119,7 @@ namespace RobotEditor.Scripts
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
-        [DefaultValue(0)]
+        [DefaultValue(false)]
         [DisplayName("Smooth")]
         public bool Smooth
         {
@@ -129,7 +128,6 @@ namespace RobotEditor.Scripts
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
-        [DefaultValue(0)]
         [DisplayName("Referenced Asset")]
         [TypeConverter(typeof(AssetPointerImageStringConverter))]
         [Editor(typeof(AssetPointerImageUITypeEditor), typeof(UITypeEditor))]

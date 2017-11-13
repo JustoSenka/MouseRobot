@@ -1,6 +1,5 @@
 ﻿using Robot.Settings;
 using Robot.Utils.Win32;
-using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
 using RobotRuntime.Perf;
@@ -11,7 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 
-namespace Robot
+namespace Robot.Recording
 {
     public class RecordingManager
     {
@@ -21,12 +20,8 @@ namespace Robot
         private Point m_LastImagePosition = Point.Empty;
         private bool m_ActionOnImage = false;
 
-        public bool ImageCroppingMode { get; private set; }
-        public Point CropStartPoint { get; private set; }
-
         public event Action<Asset, Point> ImageFoundInAssets;
         public event Action<Point> ImageNotFoundInAssets;
-        public event Action<Bitmap> ImageCropped;
 
         private readonly Size k_ImageForReferenceSearchUnderCursorSize = new Size(12, 12);
 
@@ -48,8 +43,19 @@ namespace Robot
             var activeScript = ScriptManager.Instance.ActiveScript;
             var props = SettingsManager.Instance.RecordingSettings;
 
+            if (!CroppingManager.Instance.IsCropping)
+            {
+                if (ShouldStartCropImage(e, props))
+                    return;
+            }
+            else
+            {
+                if (ShouldEndCropImage(e, props));
+                    return;
+            }
+
             RecordCommand(e, activeScript, props);
-            ImageOperations(e, activeScript, props);
+            ImageFindOperations(e, activeScript, props);
         }
 
         private void RecordCommand(KeyEvent e, Script activeScript, RecordingSettings props)
@@ -143,7 +149,7 @@ namespace Robot
             }
         }
 
-        private void ImageOperations(KeyEvent e, Script activeScript, RecordingSettings props)
+        private void ImageFindOperations(KeyEvent e, Script activeScript, RecordingSettings props)
         {
             if (e.IsKeyDown())
             {
@@ -152,9 +158,6 @@ namespace Robot
 
                 if (e.keyCode == props.FindImage)
                     FindImage(e.Point);
-
-                if (e.keyCode == props.CropImage)
-                    CropImage();
             }
             else if (e.IsKeyUp())
             {
@@ -200,9 +203,28 @@ namespace Robot
             return retAsset;
         }
 
-        private void CropImage()
+        private bool ShouldStartCropImage(KeyEvent e, RecordingSettings props)
         {
-            throw new NotImplementedException();
+            if (e.IsKeyDown() && e.keyCode == props.CropImage)
+            {
+                CroppingManager.Instance.StartCropImage(e.Point);
+                return true;
+            }
+            return false;
+        }
+
+        private bool ShouldEndCropImage(KeyEvent e, RecordingSettings props)
+        {
+            if (e.IsKeyDown())
+            {
+                if (e.keyCode == props.CropImage)
+                    CroppingManager.Instance.EndCropImage(e.Point);
+                else
+                    CroppingManager.Instance.CancelCropImage();
+
+                return true;
+            }
+            return false;
         }
 
         private float Distance(Point a, Point b)

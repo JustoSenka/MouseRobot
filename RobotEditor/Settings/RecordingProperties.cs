@@ -126,7 +126,7 @@ namespace RobotEditor.Settings
         }
 
         [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
-        [DefaultValue(Keys.Shift)]
+        [DefaultValue(Keys.E)]
         [DisplayName("Perform Action On Image (Hold)")]
         public Keys PerformActionOnImage
         {

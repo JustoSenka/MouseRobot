@@ -74,6 +74,14 @@ namespace RobotRuntime.Utils
             return new Image<Bgr, byte>(bmp);
         }
 
+        public static Bitmap TakeScreenshotOfSpecificRect(Point p1, Point p2)
+        {
+            var topLeft = new Point(p1.X < p2.X ? p1.X : p2.X, p1.Y < p2.Y ? p1.Y : p2.Y);
+            var botRight = new Point(p1.X >= p2.X ? p1.X : p2.X, p1.Y >= p2.Y ? p1.Y : p2.Y);
+            var rect = new Rectangle(0, 0, botRight.X - topLeft.X, botRight.Y - topLeft.Y);
+            return TakeScreenshotOfSpecificRect(topLeft, rect.Size);
+        }
+
         public static Bitmap TakeScreenshotOfSpecificRect(Point upperLeftPoint, Size size)
         {
             var screen = Screen.PrimaryScreen;
@@ -130,6 +138,15 @@ namespace RobotRuntime.Utils
                 g.DrawImage(bmp, new Rectangle(0, 0, newBmp.Width, newBmp.Height), 0, 0, bmp.Width, bmp.Height, GraphicsUnit.Pixel);
             }
             return newBmp;
+        }
+
+        public static Rectangle GetRect(Point p1, Point p2)
+        {
+            var topLeft = new Point(p1.X < p2.X ? p1.X : p2.X, p1.Y < p2.Y ? p1.Y : p2.Y);
+            var botRight = new Point(p1.X >= p2.X ? p1.X : p2.X, p1.Y >= p2.Y ? p1.Y : p2.Y);
+            var rect = new Rectangle(0, 0, botRight.X - topLeft.X, botRight.Y - topLeft.Y);
+            rect.Location = topLeft;
+            return rect;
         }
 
 

@@ -5,6 +5,7 @@ using RobotRuntime.Graphics;
 using System.ComponentModel;
 using Robot.Settings;
 using RobotRuntime.Settings;
+using Robot.Recording;
 
 namespace Robot
 {

@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using System;
 using RobotEditor.Properties;
 using RobotRuntime;
+using RobotRuntime.Utils.Win32;
+using Robot.Recording;
 
 namespace RobotEditor.Windows
 {
@@ -21,11 +23,18 @@ namespace RobotEditor.Windows
         private static ScreenDrawForm m_Instance = new ScreenDrawForm();
         private ScreenDrawForm() : base()
         {
+            m_UpdateTimer.Interval = 30;
+            m_UpdateTimer.Tick += CallInvalidate;
+            m_UpdateTimer.Enabled = true;
+
             FeatureDetectionThread.Instace.PositionFound += OnPositionFound;
             ScreenStateThread.Instace.Update += OnUpdate;
 
             RecordingManager.Instance.ImageFoundInAssets += OnImageFoundInAssets;
             RecordingManager.Instance.ImageNotFoundInAssets += OnImageNotFoundInAssets;
+
+            CroppingManager.Instance.ImageCropStarted += OnImageCropStarted;
+            CroppingManager.Instance.ImageCropEnded += OnImageCropEnded;
 
             m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
 
@@ -33,9 +42,18 @@ namespace RobotEditor.Windows
             m_FindImageTimer.Interval = 30;
         }
 
+        private void CallInvalidate(object sender, EventArgs e)
+        {
+            if (m_ControlsThatNeedUpdate > 0)
+                Invalidate();
+        }
+
         private Pen bluePen = new Pen(Color.Blue, 3);
         private Pen redPen = new Pen(Color.Red, 3);
         private Pen greenPen = new Pen(Color.Green, 3);
+
+        private Timer m_UpdateTimer = new Timer();
+        private int m_ControlsThatNeedUpdate = 0;
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -54,6 +72,11 @@ namespace RobotEditor.Windows
             {
                 var rect = DrawFoundImageUnderCursor(g);
                 DrawImageAssetTextUnderCursor(g, rect);
+            }
+
+            if (CroppingManager.Instance.IsCropping)
+            {
+                DrawCroppingRectangle(g);
             }
 
             Profiler.Stop("InvisibleForm_OnPaint");
@@ -119,7 +142,7 @@ namespace RobotEditor.Windows
 
         #endregion
 
-        #region Recording Manager Visual
+        #region Recording Manager Find Image
 
         private Stopwatch m_FindImageWatch = new Stopwatch();
         private Timer m_FindImageTimer = new Timer();
@@ -136,6 +159,7 @@ namespace RobotEditor.Windows
             m_LastCursorPos = point;
             m_FindImageTimer.Enabled = true;
             m_LastScreeBmpAtPos = null;
+            m_ControlsThatNeedUpdate++;
             Invalidate();
         }
 
@@ -146,6 +170,7 @@ namespace RobotEditor.Windows
             m_LastCursorPos = point;
             m_FindImageTimer.Enabled = true;
             m_LastScreeBmpAtPos = null;
+            m_ControlsThatNeedUpdate++;
             Invalidate();
         }
 
@@ -179,12 +204,43 @@ namespace RobotEditor.Windows
         private void OnFindImageTimerTick(object sender, EventArgs e)
         {
             if (m_FindImageWatch.ElapsedMilliseconds > k_ImageShowLength)
+            {
                 m_FindImageTimer.Enabled = false;
-
-            Invalidate();
+                m_ControlsThatNeedUpdate--;
+            }
         }
 
         #endregion
+
+        #region Recording Manager Image Cropping
+
+        private void OnImageCropStarted(Point p)
+        {
+            m_ControlsThatNeedUpdate++;
+            Invalidate();
+        }
+
+        private void OnImageCropEnded(Point p)
+        {
+            m_ControlsThatNeedUpdate--;
+            Invalidate();
+        }
+
+        private void DrawCroppingRectangle(Graphics g)
+        {
+            var rect = BitmapUtility.GetRect(CroppingManager.Instance.StartPoint, WinAPI.GetCursorPosition());
+
+            rect.Location = rect.Location.Sub(new Point(1, 1));
+            rect.Width++;
+            rect.Height++;
+
+            g.DrawRectangle(Pens.Black, rect);
+        }
+
+        #endregion
+
+
+
 
         public Bitmap BlendTwoImagesWithOpacity(Bitmap background, Bitmap front, float opacity)
         {
