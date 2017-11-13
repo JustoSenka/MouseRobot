@@ -90,18 +90,6 @@ namespace RobotEditor.Utils
             }
 
         }
-        /*
-        public static void OpenScript(TreeView treeView)
-        {
-            OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
-            openDialog.Title = "Select a script file to load.";
-            if (openDialog.ShowDialog() == DialogResult.OK)
-            {
-                var script = ScriptManager.Instance.LoadScript(openDialog.FileName);
-                // OnScriptLoaded event will take care of updating UI
-            }
-        }*/
 
         public static void DeleteSelectedTreeViewItem(TreeView treeView)
         {

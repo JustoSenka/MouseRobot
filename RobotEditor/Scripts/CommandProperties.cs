@@ -5,7 +5,9 @@ using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -14,7 +16,7 @@ namespace RobotEditor.Scripts
     public class CommandProperties<T> : BaseProperties where T : Command
     {
         [Browsable(false)]
-        public Command Command { get; private set; }
+        public Command m_Command { get; private set; }
 
         private readonly PropertyDescriptorCollection m_Properties;
 
@@ -24,7 +26,7 @@ namespace RobotEditor.Scripts
         public CommandProperties(T command)
         {
             m_Properties = TypeDescriptor.GetProperties(this);
-            Command = command;
+            m_Command = command;
         }
 
         public override void HideProperties(DynamicTypeDescriptor dt)
@@ -32,24 +34,24 @@ namespace RobotEditor.Scripts
             dt.Properties.Clear();
             AddProperty(dt, "CommandType");
 
-            if (Command is CommandDown || Command is CommandRelease || Command is CommandPress)
+            if (m_Command is CommandDown || m_Command is CommandRelease || m_Command is CommandPress)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
                 AddProperty(dt, "DontMove");
             }
-            else if (Command is CommandMove)
+            else if (m_Command is CommandMove)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
             }
-            else if (Command is CommandMoveOnImage)
+            else if (m_Command is CommandMoveOnImage)
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Smooth");
                 AddProperty(dt, "Timeout");
             }
-            else if (Command is CommandSleep)
+            else if (m_Command is CommandSleep)
             {
                 AddProperty(dt, "Time");
             }
@@ -63,12 +65,12 @@ namespace RobotEditor.Scripts
         [DisplayName("Command Type")]
         public CommandType CommandType
         {
-            get { return Command.CommandType; }
+            get { return m_Command.CommandType; }
             set
             {
-                var newCommand = CommandFactory.Create(value, Command);
-                ScriptManager.Instance.GetScriptFromCommand(Command).ReplaceCommand(Command, newCommand);
-                Command = newCommand;
+                var newCommand = CommandFactory.Create(value, m_Command);
+                ScriptManager.Instance.GetScriptFromCommand(m_Command).ReplaceCommand(m_Command, newCommand);
+                m_Command = newCommand;
             }
         }
 
@@ -77,8 +79,8 @@ namespace RobotEditor.Scripts
         [DisplayName("X")]
         public int X
         {
-            get { return DynamicCast(Command).X; }
-            set { DynamicCast(Command).X = value; }
+            get { return DynamicCast(m_Command).X; }
+            set { DynamicCast(m_Command).X = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -86,8 +88,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Y")]
         public int Y
         {
-            get { return DynamicCast(Command).Y; }
-            set { DynamicCast(Command).Y = value; }
+            get { return DynamicCast(m_Command).Y; }
+            set { DynamicCast(m_Command).Y = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -95,8 +97,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Dont Move")]
         public bool DontMove
         {
-            get { return DynamicCast(Command).DontMove; }
-            set { DynamicCast(Command).DontMove = value; }
+            get { return DynamicCast(m_Command).DontMove; }
+            set { DynamicCast(m_Command).DontMove = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -104,8 +106,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Time")]
         public int Time
         {
-            get { return DynamicCast(Command).Time; }
-            set { DynamicCast(Command).Time = value; }
+            get { return DynamicCast(m_Command).Time; }
+            set { DynamicCast(m_Command).Time = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -113,8 +115,8 @@ namespace RobotEditor.Scripts
         [DisplayName("Timeout")]
         public int Timeout
         {
-            get { return DynamicCast(Command).Timeout; }
-            set { DynamicCast(Command).Timeout = value; }
+            get { return DynamicCast(m_Command).Timeout; }
+            set { DynamicCast(m_Command).Timeout = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -122,17 +124,31 @@ namespace RobotEditor.Scripts
         [DisplayName("Smooth")]
         public bool Smooth
         {
-            get { return DynamicCast(Command).Smooth; }
-            set { DynamicCast(Command).Smooth = value; }
+            get { return DynamicCast(m_Command).Smooth; }
+            set { DynamicCast(m_Command).Smooth = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue(0)]
         [DisplayName("Referenced Asset")]
-        public AssetPointer Asset
+        [TypeConverter(typeof(AssetPointerImageStringConverter))]
+        [Editor(typeof(AssetPointerImageUITypeEditor), typeof(UITypeEditor))]
+        public string Asset
         {
-            get { return DynamicCast(Command).Asset; }
-            set { DynamicCast(Command).Asset = value; }
+            get
+            {
+                string path = DynamicCast(m_Command).Asset.Path;
+                if (path == null || path == "")
+                    return "...";
+                else
+                    return Commons.GetName(DynamicCast(m_Command).Asset.Path);
+            }
+            set
+            {
+                Asset asset = AssetManager.Instance.GetAsset(AssetManager.ImageFolder, value);
+                if (asset != null)
+                    DynamicCast(m_Command).Asset = asset.ToAssetPointer();
+            }
         }
 
         private dynamic DynamicCast(Command command)
