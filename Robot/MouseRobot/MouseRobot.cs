@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Robot.Settings;
 using RobotRuntime.Settings;
 using Robot.Recording;
+using System.IO;
 
 namespace Robot
 {
@@ -128,7 +129,10 @@ namespace Robot
 
         private void SetupProjectPath()
         {
-            ProjectPath = @"C:\Users\Justas-Laptop\Desktop\MProject";
+            ProjectPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject";
+            if (!Directory.Exists(ProjectPath))
+                Directory.CreateDirectory(ProjectPath);
+
             Environment.CurrentDirectory = ProjectPath;
         }
     }
