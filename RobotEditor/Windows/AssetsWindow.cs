@@ -109,6 +109,15 @@ namespace RobotEditor
                 ScriptManager.Instance.LoadScript(asset.Path);
         }
 
+        private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
+                return;
+
+            var asset = AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            ScriptManager.Instance.LoadScript(asset.Path);
+        }
+
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (treeView.SelectedNode != null && treeView.SelectedNode.Level == 1)

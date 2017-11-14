@@ -58,6 +58,20 @@ namespace RobotEditor.Utils
             }
         }
 
+        public static void UpdateExistingScriptNode(TreeView treeView, Script script)
+        {
+            TreeNode scriptNode = treeView.Nodes[script.Index];
+            scriptNode.ImageIndex = 0;
+            scriptNode.SelectedImageIndex = 0;
+            scriptNode.Nodes.Clear();
+            foreach (var c in script)
+            {
+                var commandNode = scriptNode.Nodes.Add(c.ToString());
+                commandNode.ImageIndex = 1;
+                commandNode.SelectedImageIndex = 1;
+            }
+        }
+
         #region MENU ITEMS
         public static void SaveAllScripts(TreeView treeView, bool silent = false)
         {

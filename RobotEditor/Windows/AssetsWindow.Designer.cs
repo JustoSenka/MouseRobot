@@ -40,19 +40,23 @@
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.treeView = new RobotEditor.CustomControls.EditableTreeView();
+            this.reloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.reloadScriptToolStripMenuItem,
+            this.toolStripMenuItem2,
             this.refreshToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripMenuItem1,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(162, 120);
+            this.contextMenuStrip.Size = new System.Drawing.Size(162, 148);
             // 
             // refreshToolStripMenuItem
             // 
@@ -120,6 +124,18 @@
             this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             this.treeView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseDoubleClick);
             // 
+            // reloadScriptToolStripMenuItem
+            // 
+            this.reloadScriptToolStripMenuItem.Name = "reloadScriptToolStripMenuItem";
+            this.reloadScriptToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.reloadScriptToolStripMenuItem.Text = "Reload Script";
+            this.reloadScriptToolStripMenuItem.Click += new System.EventHandler(this.reloadScriptToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(158, 6);
+            // 
             // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -144,5 +160,7 @@
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem reloadScriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     }
 }

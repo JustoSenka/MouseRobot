@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace RobotRuntime
 {
@@ -68,6 +69,15 @@ namespace RobotRuntime
             return source;
         }
 
+        public static TreeNode FindChildRegex(this TreeView treeView, string regex)
+        {
+            return treeView.Nodes.Cast<TreeNode>().Where(r => Regex.IsMatch(r.Text, regex)).FirstOrDefault();
+        }
+
+        public static TreeNode FindChildRegex(this TreeNode treeView, string regex)
+        {
+            return treeView.Nodes.Cast<TreeNode>().Where(r => Regex.IsMatch(r.Text, regex)).FirstOrDefault();
+        }
 
         public static TreeNode FindChild(this TreeView treeView, string name)
         {

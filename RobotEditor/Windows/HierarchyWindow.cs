@@ -51,7 +51,12 @@ namespace RobotEditor
 
         private void OnScriptLoaded(Script script)
         {
-            ScriptTreeViewUtils.AddExistingScriptToTreeView(treeView, script);
+            var node = treeView.FindChildRegex("^" + script.Name + @" ?\*?$");
+            if (node == null)
+                ScriptTreeViewUtils.AddExistingScriptToTreeView(treeView, script);
+            else
+                ScriptTreeViewUtils.UpdateExistingScriptNode(treeView, script);
+
             treeView.Nodes[script.Index].Expand();
 
             ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);

@@ -85,25 +85,35 @@ namespace Robot
 
         public Script LoadScript(string path)
         {
-            if (m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(path)) != null)
-            {
-                System.Diagnostics.Debug.WriteLine("Script is already loaded: " + path);
-                return null;
-            }
+            var asset = AssetManager.Instance.GetAsset(path);
+            if (asset == null)
+                throw new ArgumentException("No such asset at path: " + path);
 
+            // if hierarchy contains empty untitled script, remove it
             if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count == 0)
                 RemoveScript(0);
 
-            var script = AssetManager.Instance.GetAsset(path).Importer.Load<Script>();
-            script.Path = path;
+            Script newScript = asset.Importer.ReloadAsset<Script>();
+            newScript.Path = asset.Path;
+
+            // If script was already loaded, reload it to last saved state
+            var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(path));
+            if (oldScript != default(Script))
+            {
+                var index = m_LoadedScripts.IndexOf(oldScript);
+                m_LoadedScripts[index] = newScript;
+            }
+            else
+            {
+                m_LoadedScripts.Add(newScript);
+            }
 
             System.Diagnostics.Debug.WriteLine("Script loaded: " + path);
 
-            m_LoadedScripts.Add(script);
-            scriptLoaded?.Invoke(script);
+            scriptLoaded?.Invoke(newScript);
 
             MakeSureActiveScriptExist();
-            return script;
+            return newScript;
         }
 
         public void SaveScript(Script script, string path)
