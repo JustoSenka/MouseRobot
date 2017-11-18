@@ -55,7 +55,10 @@ namespace RobotRuntime.Graphics
             if (s_CurrentDetector != null && detectionMode == s_CurrentDetectionMode)
                 return s_CurrentDetector;
             else
+            {
+                s_CurrentDetectionMode = detectionMode;
                 return s_CurrentDetector = Create(detectionMode);
+            }
         }
 
         /// <summary>

@@ -40,6 +40,7 @@ namespace RobotRuntime.Graphics
             var scale = SmartResize(ref observed, ref model);
 
             Point[] points = null;
+            // TODO: Crashes here if image is too small
             using (Image<Gray, float> result = observed.MatchTemplate(model, TemplateMatchingType.CcoeffNormed))
             {
                 double[] minValues, maxValues;

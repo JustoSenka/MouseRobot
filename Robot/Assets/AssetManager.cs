@@ -87,6 +87,7 @@ namespace Robot
             File.SetAttributes(sourcePath, FileAttributes.Normal);
             File.Move(sourcePath, destPath);
 
+            RenameAssetReferencesInAllScripts(asset.Path, destPath);
             asset.Path = destPath;
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
@@ -126,6 +127,11 @@ namespace Robot
             else if (path.EndsWith(FileExtensions.Timeline))
                 return "Timeline";
             return "";
+        }
+
+        private void RenameAssetReferencesInAllScripts(string path, string destPath)
+        {
+            throw new NotImplementedException();
         }
 
         private void InitProject()

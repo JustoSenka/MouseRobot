@@ -40,6 +40,8 @@ namespace Robot.Recording
             if (ScriptManager.Instance.LoadedScripts.Count == 0)
                 return;
 
+
+
             var activeScript = ScriptManager.Instance.ActiveScript;
             var props = SettingsManager.Instance.RecordingSettings;
 
