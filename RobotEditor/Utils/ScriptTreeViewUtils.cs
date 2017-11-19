@@ -29,7 +29,6 @@ namespace RobotEditor.Utils
             foreach (var script in ScriptManager.Instance)
             {
                 i++;
-                // TODO: this throws if program is exited while recording
                 treeView.Nodes[i].Text = script.Name + ((script.IsDirty) ? "*" : "");
                 treeView.Nodes[i].NodeFont = Fonts.Default;
 

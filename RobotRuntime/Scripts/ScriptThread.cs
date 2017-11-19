@@ -31,7 +31,7 @@ namespace RobotRuntime
                 foreach (var v in lightScript.Commands)
                 {
                     Console.WriteLine(v.ToString());
-                    v.Run();
+                    v.value.Run();
 
                     if (!m_Run)
                         break;

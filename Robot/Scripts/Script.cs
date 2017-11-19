@@ -1,5 +1,7 @@
-﻿using RobotRuntime;
+﻿using Robot.Utils;
+using RobotRuntime;
 using RobotRuntime.Commands;
+using RobotRuntime.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,10 +10,10 @@ using System.Linq;
 
 namespace Robot
 {
-    public class Script : LightScript, ICloneable, IEnumerable<Command>
+    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
     {
-        private IList<Command> m_Commands;
-        public new IReadOnlyList<Command> Commands { get { return m_Commands.ToList().AsReadOnly(); } }
+        private TreeNode<Command> m_Commands;
+        public new IReadOnlyList<Command> Commands { get { return m_Commands.Select(node => node.value).ToList().AsReadOnly(); } }
 
         private bool m_IsDirty;
         private string m_Path = "";
@@ -37,7 +39,7 @@ namespace Robot
 
         internal Script()
         {
-            m_Commands = new List<Command>();
+            m_Commands = new TreeNode<Command>();
         }
 
         public void ApplyCommandModifications(Command command)
@@ -49,7 +51,7 @@ namespace Robot
         public void AddCommand(Command command)
         {
             m_IsDirty = true;
-            m_Commands.Add(command);
+            m_Commands.AddChild(command);
             ScriptManager.Instance.InvokeCommandAddedToScript(this, command);
         }
 
@@ -88,19 +90,11 @@ namespace Robot
             m_IsDirty = true;
         }
 
-        public void EmptyScript()
-        {
-            m_Commands.Clear();
-            m_IsDirty = true;
-            Console.WriteLine("List is empty.");
-        }
-
         public object Clone()
         {
             var script = new Script();
 
-            foreach (var c in m_Commands)
-                script.m_Commands.Add((Command)c.Clone());
+            script.m_Commands = (TreeNode<Command>)m_Commands.Clone();
 
             script.m_IsDirty = true;
             return script;
@@ -141,16 +135,16 @@ namespace Robot
 
         // Inheritence
 
-        public Script(Command[] commands) : base(commands) { m_Commands = commands.ToList(); }
+        public Script(TreeNode<Command> commands) : base(commands) { m_Commands = commands; }
 
         public LightScript ToLightScript()
         {
-            return new LightScript(m_Commands.ToArray());
+            return new LightScript(m_Commands);
         }
 
         public Script(LightScript lightScript)
         {
-            m_Commands = lightScript.Commands.ToList();
+            m_Commands = lightScript.Commands;
         }
 
         public static Script FromLightScript(LightScript lightScript)
@@ -161,7 +155,7 @@ namespace Robot
 
         // IEnumerator -----------
 
-        public IEnumerator<Command> GetEnumerator()
+        public IEnumerator<TreeNode<Command>> GetEnumerator()
         {
             return m_Commands.GetEnumerator();
         }

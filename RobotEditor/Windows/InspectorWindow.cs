@@ -30,7 +30,7 @@ namespace RobotEditor.Windows
             }
 
             m_CurrentObject = new CommandProperties<Command>(command);
-            propertyGrid_PropertyValueChanged(this, null);
+            ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
@@ -38,6 +38,11 @@ namespace RobotEditor.Windows
             var command = m_CurrentObject.m_Command;
             ScriptManager.Instance.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
+            ApplyDynamicTypeDescriptorToPropertyView();
+        }
+
+        private void ApplyDynamicTypeDescriptorToPropertyView()
+        {
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObject.GetType());
 
             m_CurrentObject.HideProperties(dt);

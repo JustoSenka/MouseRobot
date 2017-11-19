@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotRuntime.Utils;
+using System;
 namespace RobotRuntime
 {
     [Serializable]
@@ -6,11 +7,11 @@ namespace RobotRuntime
     {
         public LightScript() { }
 
-        public LightScript(Command[] commands)
+        public LightScript(TreeNode<Command> commands)
         {
             Commands = commands;
         }
 
-        public Command[] Commands { get; protected set; }
+        public TreeNode<Command> Commands { get; protected set; }
     }
 }

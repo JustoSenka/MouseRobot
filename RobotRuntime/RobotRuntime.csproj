@@ -152,6 +152,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\LightScript.cs" />
     <Compile Include="Scripts\ScriptThread.cs" />
+    <Compile Include="Utils\LinkedTree.cs" />
     <Compile Include="Utils\Win32\WinAPI.cs" />
   </ItemGroup>
   <ItemGroup>

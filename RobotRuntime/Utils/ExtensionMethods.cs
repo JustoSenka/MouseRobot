@@ -56,6 +56,21 @@ namespace RobotRuntime
             return index;
         }
 
+        public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index) 
+        {
+            var currentNode = list.First;
+            
+            while (true)
+            {
+                if (--index == -1)
+                    return currentNode;
+
+                currentNode = currentNode.Next;
+                if (currentNode == null)
+                    return null;
+            }
+        }
+
         public static void ForEach<T, K>(this T source, Action<K> action) where T : IEnumerable where K : class
         {
             foreach (var item in source)
