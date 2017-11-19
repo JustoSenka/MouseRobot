@@ -75,7 +75,7 @@ namespace RobotEditor
             if (e.Node.Level >= 1)
             {
                 var script = ScriptManager.Instance.LoadedScripts[e.Node.Parent.Index];
-                var command = script.Commands[e.Node.Index];
+                var command = script.Commands.GetChild(e.Node.Index).value;
                 OnCommandSelected?.Invoke(command);
             }
             else

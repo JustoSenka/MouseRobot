@@ -1,6 +1,4 @@
-﻿using Robot.Utils;
-using RobotRuntime;
-using RobotRuntime.Commands;
+﻿using RobotRuntime;
 using RobotRuntime.Utils;
 using System;
 using System.Collections;
@@ -12,9 +10,6 @@ namespace Robot
 {
     public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
     {
-        private TreeNode<Command> m_Commands;
-        public new IReadOnlyList<Command> Commands { get { return m_Commands.Select(node => node.value).ToList().AsReadOnly(); } }
-
         private bool m_IsDirty;
         private string m_Path = "";
 
@@ -39,7 +34,7 @@ namespace Robot
 
         internal Script()
         {
-            m_Commands = new TreeNode<Command>();
+            Commands = new TreeNode<Command>();
         }
 
         public void ApplyCommandModifications(Command command)
@@ -51,7 +46,7 @@ namespace Robot
         public void AddCommand(Command command)
         {
             m_IsDirty = true;
-            m_Commands.AddChild(command);
+            Commands.AddChild(command);
             ScriptManager.Instance.InvokeCommandAddedToScript(this, command);
         }
 
@@ -59,34 +54,34 @@ namespace Robot
         {
             m_IsDirty = true;
 
-            var index = m_Commands.IndexOf(originalCommand);
-            m_Commands.RemoveAt(index);
-            m_Commands.Insert(index, newCommand);
+            var index = Commands.IndexOf(originalCommand);
+            Commands.RemoveAt(index);
+            Commands.Insert(index, newCommand);
 
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
         }
 
         public void InsertCommand(int position, Command command)
         {
-            m_Commands.Insert(position, command);
+            Commands.Insert(position, command);
             m_IsDirty = true;
         }
 
         public void MoveCommandAfter(int index, int after)
         {
-            m_Commands.MoveAfter(index, after);
+            Commands.MoveAfter(index, after);
             m_IsDirty = true;
         }
 
         public void MoveCommandBefore(int index, int before)
         {
-            m_Commands.MoveBefore(index, before);
+            Commands.MoveBefore(index, before);
             m_IsDirty = true;
         }
 
         public void RemoveCommand(int index)
         {
-            m_Commands.RemoveAt(index);
+            Commands.RemoveAt(index);
             m_IsDirty = true;
         }
 
@@ -94,7 +89,7 @@ namespace Robot
         {
             var script = new Script();
 
-            script.m_Commands = (TreeNode<Command>)m_Commands.Clone();
+            script.Commands = (TreeNode<Command>) Commands.Clone();
 
             script.m_IsDirty = true;
             return script;
@@ -135,16 +130,16 @@ namespace Robot
 
         // Inheritence
 
-        public Script(TreeNode<Command> commands) : base(commands) { m_Commands = commands; }
+        public Script(TreeNode<Command> commands) : base(commands) { Commands = commands; }
 
         public LightScript ToLightScript()
         {
-            return new LightScript(m_Commands);
+            return new LightScript(Commands);
         }
 
         public Script(LightScript lightScript)
         {
-            m_Commands = lightScript.Commands;
+            Commands = lightScript.Commands;
         }
 
         public static Script FromLightScript(LightScript lightScript)
@@ -157,12 +152,12 @@ namespace Robot
 
         public IEnumerator<TreeNode<Command>> GetEnumerator()
         {
-            return m_Commands.GetEnumerator();
+            return Commands.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_Commands.GetEnumerator();
+            return Commands.GetEnumerator();
         }
     }
 }

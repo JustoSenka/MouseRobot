@@ -1,5 +1,4 @@
 ﻿using RobotRuntime;
-using RobotRuntime.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -90,7 +89,7 @@ namespace Robot
                 throw new ArgumentException("No such asset at path: " + path);
 
             // if hierarchy contains empty untitled script, remove it
-            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count == 0)
+            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
                 RemoveScript(0);
 
             Script newScript = asset.Importer.ReloadAsset<Script>();
@@ -132,7 +131,7 @@ namespace Robot
             }
             else // Move between two different scripts
             {
-                var command = m_LoadedScripts[scriptIndex].Commands[commandIndex];
+                var command = m_LoadedScripts[scriptIndex].Commands.GetChild(commandIndex).value;
                 m_LoadedScripts[scriptIndex].RemoveCommand(commandIndex);
                 m_LoadedScripts[destinationScriptIndex].InsertCommand(positionAfter + 1, command);
 
@@ -154,7 +153,7 @@ namespace Robot
 
         public Script GetScriptFromCommand(Command command)
         {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.Contains(command));
+            return LoadedScripts.FirstOrDefault((s) => s.Commands.Select(node => node.value).Contains(command));
         }
 
 

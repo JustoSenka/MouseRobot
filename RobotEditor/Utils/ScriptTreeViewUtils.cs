@@ -49,9 +49,9 @@ namespace RobotEditor.Utils
             scriptNode.ImageIndex = 0;
             scriptNode.SelectedImageIndex = 0;
             treeView.Nodes.Add(scriptNode);
-            foreach (var c in script)
+            foreach (var node in script)
             {
-                var commandNode = scriptNode.Nodes.Add(c.ToString());
+                var commandNode = scriptNode.Nodes.Add(node.value.ToString());
                 commandNode.ImageIndex = 1;
                 commandNode.SelectedImageIndex = 1;
             }
@@ -63,9 +63,9 @@ namespace RobotEditor.Utils
             scriptNode.ImageIndex = 0;
             scriptNode.SelectedImageIndex = 0;
             scriptNode.Nodes.Clear();
-            foreach (var c in script)
+            foreach (var node in script)
             {
-                var commandNode = scriptNode.Nodes.Add(c.ToString());
+                var commandNode = scriptNode.Nodes.Add(node.value.ToString());
                 commandNode.ImageIndex = 1;
                 commandNode.SelectedImageIndex = 1;
             }
@@ -138,7 +138,7 @@ namespace RobotEditor.Utils
             }
             else
             {
-                var c = (Command)ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].Commands[treeView.SelectedNode.Index].Clone();
+                var c = (Command)ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].Commands.GetChild(treeView.SelectedNode.Index).value.Clone();
                 ScriptManager.Instance.LoadedScripts[treeView.SelectedNode.Parent.Index].InsertCommand(treeView.SelectedNode.Index + 1, c);
 
                 clone = (TreeNode)treeView.SelectedNode.Clone();
@@ -275,7 +275,7 @@ namespace RobotEditor.Utils
 
                 for (int j = 0; j < treeView.Nodes[i].Nodes.Count; j++)
                 {
-                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands[j].ToString()),
+                    Debug.Assert(treeView.Nodes[i].Nodes[j].Text.Equals(ScriptManager.Instance.LoadedScripts[i].Commands.GetChild(j).value.ToString()),
                         string.Format("Hierarchy missmatch: i:{0} j:{1}", i, j));
                 }
             }
