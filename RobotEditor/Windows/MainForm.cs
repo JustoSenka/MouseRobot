@@ -201,47 +201,27 @@ namespace RobotEditor
 
         private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.SaveAllScripts(m_HierarchyWindow.treeView);
+            //ScriptTreeViewUtils.SaveAllScripts(m_HierarchyWindow.treeView);
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, m_HierarchyWindow.treeView, true);
-        }
-
-        private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ScriptTreeViewUtils.SetSelectedScriptActive(m_HierarchyWindow.treeView);
+            //ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, m_HierarchyWindow.treeView, true);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.NewScript(m_HierarchyWindow.treeView);
+            //ScriptTreeViewUtils.NewScript(m_HierarchyWindow.treeView);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
+            //ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
-        }
-
-        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
-        }
-
-        private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
-        }
-
-        private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ScriptTreeViewUtils.ShowSelectedTreeViewItemInExplorer(m_HierarchyWindow.treeView);
+            //ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
         }
         #endregion
 

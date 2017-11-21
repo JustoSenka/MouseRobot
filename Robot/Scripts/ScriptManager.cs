@@ -19,16 +19,21 @@ namespace Robot
             set
             {
                 if (m_ActiveScript != value)
-                    activeScriptChanged?.Invoke(m_ActiveScript, value);
+                    ActiveScriptChanged?.Invoke(m_ActiveScript, value);
 
                 m_ActiveScript = value;
             }
             get { return m_ActiveScript; }
         }
 
-        public event Action<Script, Script> activeScriptChanged;
-        public event Action<Script> scriptLoaded;
-        public event Action<int> scriptRemoved;
+        public event Action<Script, Script> ActiveScriptChanged;
+        public event Action<Script> ScriptLoaded;
+        public event Action<Script> ScriptModified;
+        public event Action<int> ScriptRemoved;
+        public event Action<Script> ScriptSaved;
+
+        public event Action ScriptPositioningChanged;
+
         public event Action<Script, Command> CommandAddedToScript;
         public event Action<Script, Command> CommandModifiedOnScript;
 
@@ -60,6 +65,7 @@ namespace Robot
             script.IsDirty = true; 
 
             MakeSureActiveScriptExist();
+            ScriptLoaded?.Invoke(script);
             return script;
         }
 
@@ -69,17 +75,17 @@ namespace Robot
 
             m_LoadedScripts.Remove(script);
 
-            scriptRemoved?.Invoke(position);
-
             MakeSureActiveScriptExist();
+
+            ScriptRemoved?.Invoke(position);
         }
 
         public void RemoveScript(int position)
         {
             m_LoadedScripts.RemoveAt(position);
-            scriptRemoved?.Invoke(position);
 
             MakeSureActiveScriptExist();
+            ScriptRemoved?.Invoke(position);
         }
 
         public Script LoadScript(string path)
@@ -99,19 +105,21 @@ namespace Robot
             var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(path));
             if (oldScript != default(Script))
             {
+                // Reload Script
                 var index = m_LoadedScripts.IndexOf(oldScript);
                 m_LoadedScripts[index] = newScript;
+                MakeSureActiveScriptExist();
+                ScriptModified?.Invoke(newScript);
             }
             else
             {
+                // Load New Script
                 m_LoadedScripts.Add(newScript);
+                MakeSureActiveScriptExist();
+                ScriptLoaded?.Invoke(newScript);
             }
 
             System.Diagnostics.Debug.WriteLine("Script loaded: " + path);
-
-            scriptLoaded?.Invoke(newScript);
-
-            MakeSureActiveScriptExist();
             return newScript;
         }
 
@@ -120,6 +128,7 @@ namespace Robot
             AssetManager.Instance.CreateAsset(script, path);
             script.Path = Commons.GetProjectRelativePath(path);
 
+            ScriptSaved?.Invoke(script);
             Console.WriteLine("Script saved: " + path);
         }
 
@@ -144,11 +153,13 @@ namespace Robot
         public void MoveScriptAfter(int index, int after)
         {
             m_LoadedScripts.MoveAfter(index, after);
+            ScriptPositioningChanged?.Invoke();
         }
 
         public void MoveScriptBefore(int index, int before)
         {
             m_LoadedScripts.MoveBefore(index, before);
+            ScriptPositioningChanged?.Invoke();
         }
 
         public Script GetScriptFromCommand(Command command)

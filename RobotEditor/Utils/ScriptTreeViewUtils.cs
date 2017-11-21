@@ -1,5 +1,6 @@
 ﻿#define ENABLE_UI_TESTING
 
+using BrightIdeasSoftware;
 using Robot;
 using RobotRuntime;
 using System;
@@ -11,6 +12,19 @@ namespace RobotEditor.Utils
 {
     public class ScriptTreeViewUtils
     {
+        public static void UpdateTreeView(TreeListView treeView)
+        {
+            /*Console.WriteLine("Clear & Update tree view");
+            treeView.Nodes.Clear();
+
+            foreach (var script in ScriptManager.Instance)
+                AddExistingScriptToTreeView(treeView, script);
+
+            treeView.ExpandAll();
+            ASSERT_TreeViewIsTheSameAsInScriptManager(treeView);*/
+        }
+
+
         public static void UpdateTreeView(TreeView treeView)
         {
             Console.WriteLine("Clear & Update tree view");
@@ -213,6 +227,8 @@ namespace RobotEditor.Utils
                 e.Effect = DragDropEffects.Move;
             else
                 e.Effect = DragDropEffects.None;
+
+            e.Effect = DragDropEffects.Link;
         }
 
         private static bool CanReleaseDragAndDrop(TreeView treeView, DragEventArgs e)

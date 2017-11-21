@@ -63,7 +63,18 @@ namespace Robot
 
         public void InsertCommand(int position, Command command)
         {
+            // TODO: Callback
             Commands.Insert(position, command);
+            m_IsDirty = true;
+        }
+
+        public void InsertCommandAfter(Command commandAfter, Command command)
+        {
+            if (commandAfter == null)
+                InsertCommand(0, command);
+            else
+                InsertCommand(Commands.IndexOf(commandAfter) + 1, command);
+
             m_IsDirty = true;
         }
 
