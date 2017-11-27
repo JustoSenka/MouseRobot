@@ -1,4 +1,5 @@
-﻿using RobotRuntime;
+﻿using Robot.Scripts;
+using RobotRuntime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,14 +28,16 @@ namespace Robot
         }
 
         public event Action<Script, Script> ActiveScriptChanged;
+        public event Action<Script> ScriptSaved;
+
         public event Action<Script> ScriptLoaded;
         public event Action<Script> ScriptModified;
         public event Action<int> ScriptRemoved;
-        public event Action<Script> ScriptSaved;
-
         public event Action ScriptPositioningChanged;
 
         public event Action<Script, Command> CommandAddedToScript;
+        public event Action<Script, Command, int> CommandInsertedInScript;
+        public event Action<Script, int> CommandRemovedFromScript;
         public event Action<Script, Command> CommandModifiedOnScript;
 
         private ScriptManager()
@@ -45,6 +48,16 @@ namespace Robot
         public void InvokeCommandAddedToScript(Script script, Command command)
         {
             CommandAddedToScript?.Invoke(script, command);
+        }
+
+        public void InvokeCommandInsertedInScript(Script script, Command command, int index)
+        {
+            CommandInsertedInScript?.Invoke(script, command, index);
+        }
+
+        public void InvokeCommandRemovedFromScript(Script script, int index)
+        {
+            CommandRemovedFromScript?.Invoke(script, index);
         }
 
         public void InvokeCommandModifiedOnScript(Script script, Command command)
@@ -132,11 +145,13 @@ namespace Robot
             Console.WriteLine("Script saved: " + path);
         }
 
+        // Won't work with nesting
         public void MoveCommandAfter(int commandIndex, int positionAfter, int scriptIndex, int destinationScriptIndex = -1)
         {
             if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
             {
-                m_LoadedScripts[scriptIndex].MoveCommandAfter(commandIndex, positionAfter);
+                var script = m_LoadedScripts[scriptIndex];
+                script.MoveCommandAfter(commandIndex, positionAfter);
             }
             else // Move between two different scripts
             {

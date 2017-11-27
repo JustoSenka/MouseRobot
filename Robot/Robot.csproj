@@ -86,6 +86,7 @@
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Recording\CroppingManager.cs" />
     <Compile Include="Recording\RecordingManager.cs" />
+    <Compile Include="Scripts\CommandExtension.cs" />
     <Compile Include="Scripts\CommandFactory.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />

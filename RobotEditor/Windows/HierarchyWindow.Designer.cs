@@ -132,6 +132,8 @@
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
+            this.treeListView.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelCanDrop);
+            this.treeListView.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelDropped);
             this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             // 
             // HierarchyWindow

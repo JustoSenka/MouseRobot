@@ -69,6 +69,9 @@ namespace RobotRuntime.Utils
 
         public void MoveAfter(int source, int dest)
         {
+            if (source == dest)
+                return;
+
             var sourceNode = children.NodeAt(source);
             var destNode = children.NodeAt(dest);
             children.Remove(sourceNode);
@@ -81,6 +84,9 @@ namespace RobotRuntime.Utils
 
         public void MoveBefore(int source, int dest)
         {
+            if (source == dest)
+                return;
+
             var sourceNode = children.NodeAt(source);
             var destNode = children.NodeAt(dest);
             children.Remove(sourceNode);
@@ -114,7 +120,7 @@ namespace RobotRuntime.Utils
 
         public object Clone()
         {
-            var clone = new TreeNode<T>(value);
+            var clone = value is ICloneable ? new TreeNode<T>((T)(value as ICloneable).Clone()) : new TreeNode<T>(value);
             clone.children = new LinkedList<TreeNode<T>>();
             foreach (var node in children)
             {

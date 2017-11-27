@@ -1,6 +1,5 @@
 ﻿#define ENABLE_UI_TESTING
 
-using RobotEditor.Utils;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -10,8 +9,8 @@ using RobotEditor.Scripts;
 using BrightIdeasSoftware;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
+using Robot.Scripts;
 
 namespace RobotEditor
 {
@@ -27,11 +26,11 @@ namespace RobotEditor
             //treeView.NodeMouseClick += (sender, args) => treeView.SelectedNode = args.Node;
 
             treeListView.Font = Fonts.Default;
-            //ScriptTreeViewUtils.UpdateTreeView(treeListView);
-            //ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
 
             ScriptManager.Instance.CommandAddedToScript += OnCommandAddedToScript;
+            ScriptManager.Instance.CommandRemovedFromScript += OnCommandRemovedFromScript;
             ScriptManager.Instance.CommandModifiedOnScript += OnCommandModifiedOnScript;
+            ScriptManager.Instance.CommandInsertedInScript += OnCommandInsertedInScript;
 
             ScriptManager.Instance.ScriptLoaded += OnScriptLoaded;
             ScriptManager.Instance.ScriptModified += OnScriptModified;
@@ -56,8 +55,30 @@ namespace RobotEditor
                 return imageListIndex;
             };
 
+            treeListView.UseCellFormatEvents = true;
+            treeListView.FormatCell += UpdateFontsTreeListView;
+
+            treeListView.IsSimpleDragSource = true;
+            treeListView.IsSimpleDropSink = true;
+
             nameColumn.Width = treeListView.Width;
             treeListView.Columns.Add(nameColumn);
+        }
+
+        private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
+        {
+            var node = e.Model as HierarchyNode;
+            if (node == null || node.Script == null)
+                return;
+
+            if (node.Script == ScriptManager.Instance.ActiveScript && node.Script.IsDirty)
+                e.SubItem.Font = Fonts.ActiveAndDirtyScript;//.AddFont(Fonts.ActiveScript);
+            else if (node.Script == ScriptManager.Instance.ActiveScript)
+                e.SubItem.Font = Fonts.ActiveScript;
+            else if (node.Script.IsDirty)
+                e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
+            else
+                e.SubItem.Font = Fonts.Default;
         }
 
         private void UpdateHierarchy()
@@ -71,6 +92,18 @@ namespace RobotEditor
             treeListView.ExpandAll();
         }
 
+        private void RefreshTreeListView()
+        {
+            treeListView.Roots = m_Nodes;
+
+            for (int i = 0; i < treeListView.Items.Count; ++i)
+            {
+                treeListView.Items[i].ImageIndex = 0;
+            }
+            treeListView.Refresh();
+        }
+
+
         #region ScriptManager Callbacks
 
         private void OnScriptLoaded(Script script)
@@ -82,7 +115,6 @@ namespace RobotEditor
 
             treeListView.SelectedObject = node;
 
-            //ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
@@ -93,7 +125,6 @@ namespace RobotEditor
             m_Nodes[index] = node;
             RefreshTreeListView();
 
-            //ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
@@ -108,7 +139,6 @@ namespace RobotEditor
                 OnCommandSelected?.Invoke(null);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
-
         }
 
         private void OnScriptPositioningChanged()
@@ -119,19 +149,27 @@ namespace RobotEditor
                 m_Nodes.MoveBefore(index, script.Index);
             }
 
+            RefreshTreeListView();
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
+        // Will not work in nested scenario
         private void OnCommandAddedToScript(Script script, Command command)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
             scriptNode.Children.Add(new HierarchyNode(command, scriptNode));
             RefreshTreeListView();
-
-            //ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
+        // Will not work in nested scenario
+        private void OnCommandRemovedFromScript(Script script, int commandIndex)
+        {
+            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
+            scriptNode.Children.RemoveAt(commandIndex);
+            RefreshTreeListView();
+        }
+
+        // Will not work in nested scenario
         private void OnCommandModifiedOnScript(Script script, Command command)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
@@ -139,62 +177,21 @@ namespace RobotEditor
             var commandNode = scriptNode.Children[commandIndex];
             commandNode.Update(command);
             RefreshTreeListView();
-
-            //ScriptTreeViewUtils.UpdateTreeNodeFonts(treeView);
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-#endregion
-
-        private void RefreshTreeListView()
+        // Will not work in nested scenario
+        private void OnCommandInsertedInScript(Script script, Command command, int pos)
         {
-            treeListView.Roots = m_Nodes;
-            treeListView.Refresh();
-            for (int i = 0; i < treeListView.Items.Count; ++i)
-            {
-                treeListView.Items[i].ImageIndex = 0;
-            }
+            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
+            var node = new HierarchyNode(command, scriptNode);
+            scriptNode.Children.Insert(pos, node);
+            // Will not work with multi dragging
+            RefreshTreeListView();
+            treeListView.SelectedObject = node;
         }
 
-        //-----------------------------------
-
-        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (e.Node.Level >= 1)
-            {
-                var script = ScriptManager.Instance.LoadedScripts[e.Node.Parent.Index];
-                var command = script.Commands.GetChild(e.Node.Index).value;
-                OnCommandSelected?.Invoke(command);
-            }
-            else
-            {
-                OnCommandSelected?.Invoke(null);
-            }
-        }
-
-
-
-        /*
-        #region TreeView Drag and Drop
-        private void treeView_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            Point targetPoint = treeView.PointToClient(WinAPI.GetCursorPosition());
-            treeView.SelectedNode = treeView.GetNodeAt(targetPoint);
-
-            DoDragDrop(e.Item, DragDropEffects.All);
-        }
-
-        private void treeView_DragDrop(object sender, DragEventArgs e)
-        {
-            ScriptTreeViewUtils.TreeView_DragDrop(treeView, e);
-        }
-
-        private void treeView_DragOver(object sender, DragEventArgs e)
-        {
-            ScriptTreeViewUtils.TreeView_DragOver(treeView, e);
-        }
         #endregion
-        */
+
         #region Context Menu Items
         private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -203,12 +200,15 @@ namespace RobotEditor
                 return;
 
             ScriptManager.Instance.ActiveScript = selectedNode.Script;
-            //UpdateTreeNodeFonts(treeView);
+            RefreshTreeListView();
         }
 
-        private void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
+        public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             ScriptManager.Instance.NewScript();
+            RefreshTreeListView();
+
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -220,8 +220,7 @@ namespace RobotEditor
             Process.Start("explorer.exe", "/select, " + selectedNode.Script.Path);
         }
 
-        // no callback yet for moveafter
-        private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
+        public void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;
             if (selectedNode == null)
@@ -241,14 +240,115 @@ namespace RobotEditor
                 selectedNode.Parent.Script.InsertCommandAfter(selectedNode.Command, clone);
             }
 
+            RefreshTreeListView();
             treeListView.Focus();
-            //UpdateTreeNodeFonts(treeView);
+
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        public void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.DeleteSelectedTreeViewItem(treeView);
+            var selectedNode = treeListView.SelectedObject as HierarchyNode;
+            if (selectedNode == null)
+                return;
+
+            if (selectedNode.Script != null)
+                ScriptManager.Instance.RemoveScript(selectedNode.Script);
+            else if (selectedNode.Command != null)
+                ScriptManager.Instance.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+
+            RefreshTreeListView();
+
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
+        #endregion
+
+        #region Menu Items (save scripts from MainForm)
+        public void SaveAllScripts()
+        {
+            foreach (var script in ScriptManager.Instance)
+            {
+                if (!script.IsDirty)
+                    continue;
+
+                if (script.Path != "")
+                    ScriptManager.Instance.SaveScript(script, script.Path);
+                else
+                    SaveSelectedScriptWithDialog(script, updateUI: false);
+            }
+
+            RefreshTreeListView();
+        }
+
+        public void SaveSelectedScriptWithDialog(Script script, bool updateUI = true)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.InitialDirectory = MouseRobot.Instance.ProjectPath + "\\" + AssetManager.ScriptFolder;
+            saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
+            saveDialog.Title = "Select a path for script to save.";
+            saveDialog.FileName = script.Name + FileExtensions.ScriptD;
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                ScriptManager.Instance.SaveScript(ScriptManager.Instance.ActiveScript, saveDialog.FileName);
+                if (updateUI)
+                    RefreshTreeListView();
+            }
+        }
+        #endregion
+
+        #region Drag & Drop
+
+        private void treeListView_ModelCanDrop(object sender, ModelDropEventArgs e)
+        {
+            var targetNode = e.TargetModel as HierarchyNode;
+            var sourceNode = e.SourceModels[0] as HierarchyNode;
+
+            e.DropSink.CanDropBetween = true;
+            e.DropSink.CanDropOnItem = false;
+
+            if (targetNode == null || sourceNode == null ||
+                targetNode.Script == null && sourceNode.Command == null ||
+                targetNode.Command == null && sourceNode.Script == null ||
+                targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item)
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
+        {
+            var targetNode = e.TargetModel as HierarchyNode;
+            var sourceNode = e.SourceModels[0] as HierarchyNode;
+
+            if (targetNode.Script != null && sourceNode.Script != null)
+            {
+                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                    ScriptManager.Instance.MoveScriptBefore(sourceNode.Script.Index, targetNode.Script.Index);
+                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                    ScriptManager.Instance.MoveScriptAfter(sourceNode.Script.Index, targetNode.Script.Index);
+            }
+
+            if (targetNode.Command != null && sourceNode.Command != null)
+            {
+                var targetScript = ScriptManager.Instance.GetScriptFromCommand(targetNode.Command);
+                var sourceScript = ScriptManager.Instance.GetScriptFromCommand(sourceNode.Command);
+
+                // Will not work with nesting
+                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command.GetIndex(), targetNode.Command.GetIndex() - 1, sourceScript.Index, targetScript.Index);
+                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command.GetIndex(), targetNode.Command.GetIndex(), sourceScript.Index, targetScript.Index);
+
+                if (e.DropTargetLocation == DropTargetLocation.Item)
+                {
+                    // Do something here to nest commands
+                }
+            }
+        }
+
         #endregion
 
         private void treeListView_SelectionChanged(object sender, EventArgs e)

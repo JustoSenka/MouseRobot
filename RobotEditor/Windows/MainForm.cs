@@ -201,27 +201,27 @@ namespace RobotEditor
 
         private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.SaveAllScripts(m_HierarchyWindow.treeView);
+            m_HierarchyWindow.SaveAllScripts();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.SaveScript(ScriptManager.Instance.ActiveScript, m_HierarchyWindow.treeView, true);
+            m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.Instance.ActiveScript, true);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.NewScript(m_HierarchyWindow.treeView);
+            m_HierarchyWindow.newScriptToolStripMenuItem1_Click(sender, e);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.DeleteSelectedTreeViewItem(m_HierarchyWindow.treeView);
+            m_HierarchyWindow.deleteToolStripMenuItem1_Click(sender, e);
         }
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //ScriptTreeViewUtils.DuplicateSelectedTreeViewItem(m_HierarchyWindow.treeView);
+            m_HierarchyWindow.duplicateToolStripMenuItem1_Click(sender, e);
         }
         #endregion
 

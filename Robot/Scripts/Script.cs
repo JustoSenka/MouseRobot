@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Robot
+namespace Robot.Scripts
 {
     public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
     {
@@ -61,13 +61,15 @@ namespace Robot
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
         }
 
+        // Will not work in nested scenario
         public void InsertCommand(int position, Command command)
         {
-            // TODO: Callback
             Commands.Insert(position, command);
             m_IsDirty = true;
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, command, position);
         }
 
+        // Will not work in nested scenario
         public void InsertCommandAfter(Command commandAfter, Command command)
         {
             if (commandAfter == null)
@@ -78,29 +80,49 @@ namespace Robot
             m_IsDirty = true;
         }
 
+        // Will not work between different levels of nesting
         public void MoveCommandAfter(int index, int after)
         {
-            Commands.MoveAfter(index, after);
+            var commandSource = Commands.GetChild(index).value;
+            Commands.MoveAfter(commandSource.GetIndex(), after);
+
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, commandSource, commandSource.GetIndex());
             m_IsDirty = true;
         }
 
+        // Will not work between different levels of nesting
         public void MoveCommandBefore(int index, int before)
         {
+            var commandSource = Commands.GetChild(index).value;
+            var commandAfter = Commands.GetChild(before).value;
             Commands.MoveBefore(index, before);
+
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, commandSource, commandSource.GetIndex());
             m_IsDirty = true;
         }
 
+        // Will not work in nested scenario
         public void RemoveCommand(int index)
         {
             Commands.RemoveAt(index);
             m_IsDirty = true;
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
+        }
+
+        // Will not work in nested scenario
+        public void RemoveCommand(Command command)
+        {
+            var i = Commands.IndexOf(command);
+            RemoveCommand(i);
         }
 
         public object Clone()
         {
             var script = new Script();
 
-            script.Commands = (TreeNode<Command>) Commands.Clone();
+            script.Commands = (TreeNode<Command>)Commands.Clone();
 
             script.m_IsDirty = true;
             return script;
@@ -108,7 +130,10 @@ namespace Robot
 
         public override string ToString()
         {
-            return Name;
+            if (m_IsDirty)
+                return Name + "*";
+            else
+                return Name;
         }
 
         // Special properties
