@@ -11,6 +11,7 @@ namespace RobotRuntime.Utils
     public class TreeNode<T> : IEnumerable<TreeNode<T>>, ICloneable
     {
         public T value;
+        public TreeNode<T> parent;
         private LinkedList<TreeNode<T>> children;
 
         public TreeNode()
@@ -27,6 +28,7 @@ namespace RobotRuntime.Utils
         public TreeNode<T> AddChild(T value)
         {
             var child = new TreeNode<T>(value);
+            child.parent = this;
             children.AddLast(child);
             return child;
         }
@@ -34,6 +36,7 @@ namespace RobotRuntime.Utils
         public TreeNode<T> Insert(int index, T value)
         {
             var child = new TreeNode<T>(value);
+            child.parent = this;
 
             LinkedListNode<TreeNode<T>> node;
             if (index == 0)
@@ -101,11 +104,30 @@ namespace RobotRuntime.Utils
             return null;
         }
 
+        public TreeNode<T> GetNodeFromValue(T value)
+        {
+            var all = GetAllNodes(false);
+            return all.FirstOrDefault(n => n.value.Equals(value));
+        }
+
         public void Traverse(TreeNode<T> node, TreeVisitor<T> visitor)
         {
             visitor(node.value);
             foreach (TreeNode<T> child in node.children)
                 Traverse(child, visitor);
+        }
+
+        public IEnumerable<TreeNode<T>> GetAllNodes(bool includeSelf = true)
+        {
+            if (includeSelf)
+                yield return this;
+
+            foreach (var c in children)
+            {
+                yield return c;
+                foreach (var child in c.GetAllNodes(false))
+                    yield return child;
+            }
         }
 
         public IEnumerator<TreeNode<T>> GetEnumerator()
@@ -122,6 +144,7 @@ namespace RobotRuntime.Utils
         {
             var clone = value is ICloneable ? new TreeNode<T>((T)(value as ICloneable).Clone()) : new TreeNode<T>(value);
             clone.children = new LinkedList<TreeNode<T>>();
+            clone.parent = parent;
             foreach (var node in children)
             {
                 clone.children.AddLast((TreeNode<T>)node.Clone());

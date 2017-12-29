@@ -44,10 +44,9 @@ namespace RobotEditor.Scripts
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
             }
-            else if (m_Command is CommandMoveOnImage)
+            else if (m_Command is CommandForImage || m_Command is CommandForeachImage)
             {
                 AddProperty(dt, "Asset");
-                AddProperty(dt, "Smooth");
                 AddProperty(dt, "Timeout");
             }
             else if (m_Command is CommandSleep)

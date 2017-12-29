@@ -1,6 +1,7 @@
 ﻿using Robot.Scripts;
 using Robot.Settings;
 using Robot.Utils.Win32;
+using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
 using RobotRuntime.Perf;
@@ -18,8 +19,10 @@ namespace Robot.Recording
         private Stopwatch m_SleepTimer = new Stopwatch();
         private Point m_LastClickPos = new Point(0, 0);
 
-        private Point m_LastImagePosition = Point.Empty;
-        private bool m_ActionOnImage = false;
+        private Asset m_ImageAssetUnderCursor;
+        private Command m_ParentCommand;
+        private bool m_ForImage = false;
+        private bool m_ForEachImage = false;
 
         public event Action<Asset, Point> ImageFoundInAssets;
         public event Action<Point> ImageNotFoundInAssets;
@@ -41,8 +44,6 @@ namespace Robot.Recording
             if (ScriptManager.Instance.LoadedScripts.Count == 0)
                 return;
 
-
-
             var activeScript = ScriptManager.Instance.ActiveScript;
             var props = SettingsManager.Instance.RecordingSettings;
 
@@ -53,8 +54,8 @@ namespace Robot.Recording
             }
             else
             {
-                if (ShouldEndCropImage(e, props));
-                    return;
+                if (ShouldEndCropImage(e, props)) ;
+                return;
             }
 
             RecordCommand(e, activeScript, props);
@@ -63,45 +64,30 @@ namespace Robot.Recording
 
         private void RecordCommand(KeyEvent e, Script activeScript, RecordingSettings props)
         {
-            var imageSmooth = true;
-            var timeOut = 2000;
-
             if (e.IsKeyDown())
             {
                 if (e.keyCode == props.DefaultSleepKey)
-                    activeScript.AddCommand(new CommandSleep(props.DefaultSleepTime));
+                    AddCommand(new CommandSleep(props.DefaultSleepTime));
 
                 if (e.keyCode == props.SleepKey)
                     m_SleepTimer.Restart();
 
                 if (e.keyCode == props.SmoothMouseMoveKey)
                 {
-                    activeScript.AddCommand(new CommandMove(e.X, e.Y));
+                    AddCommand(new CommandMove(e.X, e.Y));
                     m_LastClickPos = e.Point;
                     // TODO: TIME ?
                 }
 
                 if (e.keyCode == props.MouseDownButton)
                 {
-                    if (!m_ActionOnImage && props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
+                    if (!m_ForImage && props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
+                        AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
                     if (props.TreatMouseDownAsMouseClick)
-                        if (m_ActionOnImage)
-                        {
-                            AddMoveToImageOrNoneIfAlreadyOnImage(e, activeScript, props, timeOut);
-                            activeScript.AddCommand(new CommandPress(e.X, e.Y, true));
-                        }
-                        else
-                            activeScript.AddCommand(new CommandPress(e.X, e.Y, false));
-
-                    else if (m_ActionOnImage)
-                    {
-                        AddMoveToImageOrNoneIfAlreadyOnImage(e, activeScript, props, timeOut);
-                        activeScript.AddCommand(new CommandDown(e.X, e.Y, true));
-                    }
+                        AddCommand(new CommandPress(e.X, e.Y, false));
                     else
-                        activeScript.AddCommand(new CommandDown(e.X, e.Y, false));
+                        AddCommand(new CommandDown(e.X, e.Y, false));
 
                     m_LastClickPos = e.Point;
                 }
@@ -111,27 +97,18 @@ namespace Robot.Recording
                 if (e.keyCode == props.SleepKey)
                 {
                     m_SleepTimer.Stop();
-                    activeScript.AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
+                    AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
                 }
 
                 if (e.keyCode == props.MouseDownButton && !props.TreatMouseDownAsMouseClick)
                 {
-                    if (!m_ActionOnImage && props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
-                        activeScript.AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
+                    if (props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
+                        AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
-                    else if (!m_ActionOnImage)
-                    {
-                        if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
-                            activeScript.AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
-                    }
+                    if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
+                        AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
 
-                    if (m_ActionOnImage)
-                    {
-                        AddMoveToImageOrNoneIfAlreadyOnImage(e, activeScript, props, timeOut);
-                        activeScript.AddCommand(new CommandRelease(e.X, e.Y, true));
-                    }
-                    else
-                        activeScript.AddCommand(new CommandRelease(e.X, e.Y, false));
+                    AddCommand(new CommandRelease(e.X, e.Y, false));
 
                     m_LastClickPos = e.Point;
                 }
@@ -142,30 +119,52 @@ namespace Robot.Recording
             }
         }
 
-        private void AddMoveToImageOrNoneIfAlreadyOnImage(KeyEvent e, Script activeScript, RecordingSettings props, int timeOut)
+        private void AddCommand(Command command)
         {
-            if (Distance(m_LastImagePosition, e.Point) > 40)
-            {
-                var imageAsset = FindImage(e.Point);
-                if (imageAsset != null)
-                    activeScript.AddCommand(new CommandMoveOnImage(imageAsset.ToAssetPointer(), timeOut, props.AutomaticSmoothMoveBeforeMouseDown));
-            }
+            if (m_ForImage || m_ForEachImage)
+                ScriptManager.Instance.ActiveScript.AddCommand(command, m_ParentCommand);
+            else
+                ScriptManager.Instance.ActiveScript.AddCommand(command);
         }
 
         private void ImageFindOperations(KeyEvent e, Script activeScript, RecordingSettings props)
         {
+            var timeOut = 2000;
+
             if (e.IsKeyDown())
             {
-                if (e.keyCode == props.PerformActionOnImage)
-                    m_ActionOnImage = true;
+                if (e.keyCode == props.ForEachImage && m_ForImage == false)
+                {
+                    m_ImageAssetUnderCursor = FindImage(e.Point);
+                    if (m_ImageAssetUnderCursor != null)
+                    {
+                        m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.ToAssetPointer(), timeOut);
+                        ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
+                        m_ForImage = true;
+                    }
+                }
+
+                if (e.keyCode == props.ForImage && m_ForEachImage == false)
+                {
+                    m_ImageAssetUnderCursor = FindImage(e.Point);
+                    if (m_ImageAssetUnderCursor != null)
+                    {
+                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.ToAssetPointer(), timeOut);
+                        ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
+                        m_ForEachImage = true;
+                    }
+                }
 
                 if (e.keyCode == props.FindImage)
                     FindImage(e.Point);
             }
             else if (e.IsKeyUp())
             {
-                if (e.keyCode == props.PerformActionOnImage)
-                    m_ActionOnImage = false;
+                if (e.keyCode == props.ForEachImage)
+                    m_ForImage = false;
+
+                if (e.keyCode == props.ForImage)
+                    m_ForEachImage = false;
             }
         }
 

@@ -6,22 +6,20 @@ using System.Threading.Tasks;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    public class CommandMoveOnImage : Command
+    public class CommandForeachImage : Command
     {
         public AssetPointer Asset { get; set; }
         public int Timeout { get; set; }
-        public bool Smooth { get; set; }
 
-        public CommandMoveOnImage(AssetPointer asset, int timeOut, bool smooth)
+        public CommandForeachImage(AssetPointer asset, int timeOut)
         {
             Asset = asset;
             Timeout = timeOut;
-            Smooth = smooth;
         }
 
         public override object Clone()
         {
-            return new CommandMoveOnImage(Asset, Timeout, Smooth);
+            return new CommandForeachImage(Asset, Timeout);
         }
 
         public override void Run()
@@ -36,15 +34,8 @@ namespace RobotRuntime.Commands
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
                 if (FeatureDetectionThread.Instace.WasImageFound)
                 {
-                    // TODO: start searching for image for next command while doing this long operation
                     var p = FeatureDetectionThread.Instace.LastKnownPositions[0].FindCenter();
 
-                    if (Smooth)
-                        for (int i = 1; i <= 50; i++)
-                            WinAPI.MouseMoveTo(x1 + ((p.X - x1) * i / 50), y1 + ((p.Y - y1) * i / 50));
-
-                    else
-                        WinAPI.MouseMoveTo(p.X, p.Y);
 
                     break;
                 }
@@ -54,10 +45,9 @@ namespace RobotRuntime.Commands
         public override string ToString()
         {
             var assetName = ((Asset.Path != "" && Asset.Path != null) ? Commons.GetName(Asset.Path) : "...");
-            var smooth = (Smooth) ? "Smooth " : "";
-            return smooth + "Move to image: " + assetName;
+            return "For Each image '" + assetName + "':";
         }
 
-        public override CommandType CommandType { get { return CommandType.MoveOnImage; } }
+        public override CommandType CommandType { get { return CommandType.ForeachImage; } }
     }
 }

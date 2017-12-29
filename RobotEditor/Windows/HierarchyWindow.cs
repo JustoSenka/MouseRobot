@@ -153,11 +153,22 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        // Will not work in nested scenario
+        // should work now
         private void OnCommandAddedToScript(Script script, Command command)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
-            scriptNode.Children.Add(new HierarchyNode(command, scriptNode));
+            var commandTreeNode = script.Commands.GetNodeFromValue(command);
+            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
+
+            if (commandTreeNode.parent.value == null)
+            {
+                scriptNode.Children.Add(new HierarchyNode(command, scriptNode));
+            }
+            else
+            {
+                var parentCommandNode = scriptNode.Children.First(node => node.Value == commandTreeNode.parent.value);
+                parentCommandNode.Children.Add(new HierarchyNode(command, parentCommandNode));
+            }
+
             RefreshTreeListView();
         }
 
@@ -371,13 +382,13 @@ namespace RobotEditor
             for (int i = 0; i < m_Nodes.Count; i++)
             {
                 Debug.Assert(m_Nodes[i].Script == ScriptManager.Instance.LoadedScripts[i],
-                    string.Format("Hierarchy script missmatch: {0}:{1}", i,  m_Nodes[i].Value.ToString()));
+                    string.Format("Hierarchy script missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
 
                 // Will not work in nested scenarios
                 for (int j = 0; j < m_Nodes[i].Script.Commands.Count(); j++)
                 {
                     Debug.Assert(m_Nodes[i].Children[j].Command == ScriptManager.Instance.LoadedScripts[i].Commands.GetChild(j).value,
-                        string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}", 
+                        string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
                         i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Script.Commands.GetChild(j).value.ToString()));
                 }
             }

@@ -29,6 +29,10 @@ namespace Robot.Recording
 
         public void EndCropImage(Point endPoint)
         {
+            var r = BitmapUtility.GetRect(StartPoint, endPoint);
+            if (r.Width < 10 || r.Height < 10)
+                return;
+
             var bmp = BitmapUtility.TakeScreenshotOfSpecificRect(StartPoint, endPoint);
 
             CreateNewAsset(bmp);

@@ -122,7 +122,8 @@
     <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDown.cs" />
-    <Compile Include="Commands\CommandMoveOnImage.cs" />
+    <Compile Include="Commands\CommandForeachImage.cs" />
+    <Compile Include="Commands\CommandForImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />

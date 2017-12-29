@@ -160,6 +160,47 @@ namespace Tests
         }
 
         [TestMethod]
+        public void LinkedTree_Parent_GivesCorrectParent()
+        {
+            var tree = new TreeNode<string>("script");
+
+            var node_0 = tree.AddChild("0");
+            var node_1 = tree.AddChild("1");
+
+            node_0.AddChild("00");
+            node_0.AddChild("01");
+
+            node_1.AddChild("10");
+            var node_11 = node_1.AddChild("11");
+
+            Assert.AreEqual("11", node_11.value);
+            Assert.AreEqual("1", node_11.parent.value);
+            Assert.AreEqual("script", node_11.parent.parent.value);
+        }
+
+        [TestMethod]
+        public void LinkedTree_GetNodeFromValue_GivesCorrectNode()
+        {
+            var tree = new TreeNode<string>("script");
+
+            var node_0 = tree.AddChild("0");
+            var node_1 = tree.AddChild("1");
+
+            node_0.AddChild("00");
+            node_0.AddChild("01");
+
+            node_1.AddChild("10");
+            var node_11 = node_1.AddChild("11");
+
+            Assert.AreEqual("0", tree.GetNodeFromValue("0").value);
+            Assert.AreEqual("1", tree.GetNodeFromValue("1").value);
+            Assert.AreEqual("00", tree.GetNodeFromValue("00").value);
+            Assert.AreEqual("01", tree.GetNodeFromValue("01").value);
+            Assert.AreEqual("10", tree.GetNodeFromValue("10").value);
+            Assert.AreEqual("11", tree.GetNodeFromValue("11").value);
+        }
+
+        [TestMethod]
         public void LinkedTree_Clone_MakesDeepCopy()
         {
             var tree = new TreeNode<int>();

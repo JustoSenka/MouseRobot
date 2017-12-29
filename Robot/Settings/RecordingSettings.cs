@@ -21,7 +21,8 @@ namespace Robot.Settings
         public bool AutomaticSmoothMoveBeforeMouseDown { get; set; } = false;
         public bool AutomaticSmoothMoveBeforeMouseUp { get; set; } = true;
 
-        public Keys PerformActionOnImage { get; set; } = Keys.E;
+        public Keys ForImage { get; set; } = Keys.E;
+        public Keys ForEachImage { get; set; } = Keys.R;
         public Keys FindImage { get; set; } = Keys.Q;
         public Keys CropImage { get; set; } = Keys.W;
     }

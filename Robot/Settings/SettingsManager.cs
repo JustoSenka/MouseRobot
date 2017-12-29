@@ -63,7 +63,10 @@ namespace Robot.Settings
         {
             string filePath = RoamingAppdataPathFromType(settings);
             if (File.Exists(filePath))
-                return new YamlObjectIO().LoadObject<T>(filePath);
+            {
+                var newSettings = new YamlObjectIO().LoadObject<T>(filePath);
+                return newSettings ?? settings;
+            }
             else
                 return settings;
         }

@@ -12,6 +12,6 @@ namespace RobotRuntime
 
     public enum CommandType
     {
-        Down, Move, Press, Release, Sleep, MoveOnImage
+        Down, Move, Press, Release, Sleep, ForImage, ForeachImage
     }
 }

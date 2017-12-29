@@ -27,8 +27,10 @@ namespace Robot.Scripts
                     return new CommandRelease(0, 0, false);
                 case CommandType.Sleep:
                     return new CommandSleep(0);
-                case CommandType.MoveOnImage:
-                    return new CommandMoveOnImage(default(AssetPointer), 0, false);
+                case CommandType.ForImage:
+                    return new CommandForImage(default(AssetPointer), 2000);
+                case CommandType.ForeachImage:
+                    return new CommandForeachImage(default(AssetPointer), 2000);
                 default:
                     return default(Command);
             }

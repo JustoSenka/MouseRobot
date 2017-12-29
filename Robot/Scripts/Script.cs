@@ -43,10 +43,13 @@ namespace Robot.Scripts
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
         }
 
-        public void AddCommand(Command command)
+        public void AddCommand(Command command, Command parentCommand = null)
         {
             m_IsDirty = true;
-            Commands.AddChild(command);
+
+            var nodeToAddCommand = parentCommand == null ? Commands : Commands.First(c => c.value == parentCommand);
+
+            nodeToAddCommand.AddChild(command);
             ScriptManager.Instance.InvokeCommandAddedToScript(this, command);
         }
 

@@ -127,11 +127,21 @@ namespace RobotEditor.Settings
 
         [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.E)]
-        [DisplayName("Perform Action On Image (Hold)")]
-        public Keys PerformActionOnImage
+        [DisplayName("Perform Action For Image Position (Hold)")]
+        public Keys ForImage
         {
-            get { return m_Settings.PerformActionOnImage; }
-            set { m_Settings.PerformActionOnImage = value; }
+            get { return m_Settings.ForImage; }
+            set { m_Settings.ForImage = value; }
+        }
+
+
+        [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.R)]
+        [DisplayName("Perform Action For Each Image (Hold)")]
+        public Keys ForEachImage
+        {
+            get { return m_Settings.ForEachImage; }
+            set { m_Settings.ForEachImage = value; }
         }
 
         [SortedCategory("Image Capturing", ImageCapturingCategoryPosition, NumOfCategories)]
