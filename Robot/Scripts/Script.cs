@@ -64,10 +64,14 @@ namespace Robot.Scripts
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
         }
 
-        // Will not work in nested scenario
-        public void InsertCommand(int position, Command command)
+        // should work now
+        public void InsertCommand(Command command, int position, Command parentCommand = null)
         {
-            Commands.Insert(position, command);
+            if (parentCommand == null)
+                Commands.Insert(position, command);
+            else
+                Commands.GetNodeFromValue(parentCommand).Insert(position, command);
+                    
             m_IsDirty = true;
             ScriptManager.Instance.InvokeCommandInsertedInScript(this, command, position);
         }
@@ -76,9 +80,13 @@ namespace Robot.Scripts
         public void InsertCommandAfter(Command commandAfter, Command command)
         {
             if (commandAfter == null)
-                InsertCommand(0, command);
+                InsertCommand(command, 0);
             else
-                InsertCommand(Commands.IndexOf(commandAfter) + 1, command);
+            {
+                var nodeAfter = Commands.GetNodeFromValue(commandAfter);
+                var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+                InsertCommand(command, indexAfter, nodeAfter.parent.value);
+            }
 
             m_IsDirty = true;
         }

@@ -153,7 +153,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        // should work now
+        // should work now (tested)
         private void OnCommandAddedToScript(Script script, Command command)
         {
             var commandTreeNode = script.Commands.GetNodeFromValue(command);
@@ -247,8 +247,7 @@ namespace RobotEditor
                 var clone = (Command)selectedNode.Command.Clone();
                 var parent = selectedNode.Parent;
 
-                // TODO: this will fail if parent is another command
-                selectedNode.Parent.Script.InsertCommandAfter(selectedNode.Command, clone);
+                selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(selectedNode.Command, clone);
             }
 
             RefreshTreeListView();

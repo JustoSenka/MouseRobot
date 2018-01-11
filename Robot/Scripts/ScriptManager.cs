@@ -157,7 +157,7 @@ namespace Robot
             {
                 var command = m_LoadedScripts[scriptIndex].Commands.GetChild(commandIndex).value;
                 m_LoadedScripts[scriptIndex].RemoveCommand(commandIndex);
-                m_LoadedScripts[destinationScriptIndex].InsertCommand(positionAfter + 1, command);
+                m_LoadedScripts[destinationScriptIndex].InsertCommand(command, positionAfter + 1);
 
                 m_LoadedScripts[destinationScriptIndex].IsDirty = true;
             }

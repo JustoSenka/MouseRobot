@@ -1,5 +1,6 @@
 ﻿using RobotRuntime;
 using RobotRuntime.Commands;
+using System;
 
 namespace Robot.Scripts
 {
@@ -32,7 +33,7 @@ namespace Robot.Scripts
                 case CommandType.ForeachImage:
                     return new CommandForeachImage(default(AssetPointer), 2000);
                 default:
-                    return default(Command);
+                    throw new ArgumentException("Not able to create Command with type of: " + commandType);
             }
         }
 

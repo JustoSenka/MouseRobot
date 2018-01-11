@@ -39,6 +39,18 @@ namespace RobotEditor.Scripts
                 Children.Add(new HierarchyNode(node.value, this));
         }
 
+        public HierarchyNode TopLevelScriptNode
+        {
+            get
+            {
+                var node = this;
+                while (node.Level != 0)
+                    node = node.Parent;
+
+                return node;
+            }
+        }
+
         public void Update(Command command)
         {
             Command = command;

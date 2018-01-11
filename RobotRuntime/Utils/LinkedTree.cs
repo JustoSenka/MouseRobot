@@ -104,6 +104,9 @@ namespace RobotRuntime.Utils
             return null;
         }
 
+        /// <summary>
+        /// Checks all nodes and child child nodes for correct value and returns that node
+        /// </summary>
         public TreeNode<T> GetNodeFromValue(T value)
         {
             var all = GetAllNodes(false);
@@ -117,6 +120,9 @@ namespace RobotRuntime.Utils
                 Traverse(child, visitor);
         }
 
+        /// <summary>
+        /// Returns all nodes in the tree hierarchy recursivelly, including all child and grandchild nodes
+        /// </summary>
         public IEnumerable<TreeNode<T>> GetAllNodes(bool includeSelf = true)
         {
             if (includeSelf)
