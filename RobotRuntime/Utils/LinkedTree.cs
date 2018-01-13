@@ -65,9 +65,41 @@ namespace RobotRuntime.Utils
             return -1;
         }
 
+        public bool Remove(T value)
+        {
+            return Remove(GetNodeFromValue(value));
+        }
+
+        public bool Remove(TreeNode<T> node)
+        {
+            return node.parent.children.Remove(node);
+        }
+
         public void RemoveAt(int index)
         {
             children.Remove(children.NodeAt(index));
+        }
+
+        public void MoveAfter(TreeNode<T> source, TreeNode<T> dest)
+        {
+            if (source == dest)
+                return;
+
+            var destLinkedListNode = dest.parent.children.Find(dest);
+
+            source.parent.Remove(source);
+            dest.parent.children.AddAfter(destLinkedListNode, source);
+        }
+
+        public void MoveBefore(TreeNode<T> source, TreeNode<T> dest)
+        {
+            if (source == dest)
+                return;
+
+            var destLinkedListNode = dest.parent.children.Find(dest);
+
+            source.parent.Remove(source);
+            dest.parent.children.AddBefore(destLinkedListNode, source);
         }
 
         public void MoveAfter(int source, int dest)
@@ -75,14 +107,13 @@ namespace RobotRuntime.Utils
             if (source == dest)
                 return;
 
-            var sourceNode = children.NodeAt(source);
-            var destNode = children.NodeAt(dest);
-            children.Remove(sourceNode);
+            var sourceNode = GetChild(source);
+            var destNode = GetChild(dest);
 
             if (dest == -1)
-                children.AddBefore(children.First, sourceNode);
+                MoveBefore(sourceNode, GetChild(0));
             else
-                children.AddAfter(destNode, sourceNode);
+                MoveAfter(sourceNode, destNode);
         }
 
         public void MoveBefore(int source, int dest)
@@ -90,10 +121,29 @@ namespace RobotRuntime.Utils
             if (source == dest)
                 return;
 
-            var sourceNode = children.NodeAt(source);
-            var destNode = children.NodeAt(dest);
-            children.Remove(sourceNode);
-            children.AddBefore(destNode, sourceNode);
+            var sourceNode = GetChild(source);
+            var destNode = GetChild(dest);
+            MoveBefore(sourceNode, destNode);
+        }
+
+        public void MoveAfter(T source, T dest)
+        {
+            if (source.Equals(dest))
+                return;
+
+            var sourceNode = GetNodeFromValue(source);
+            var destNode = GetNodeFromValue(dest);
+            MoveAfter(sourceNode, destNode);
+        }
+
+        public void MoveBefore(T source, T dest)
+        {
+            if (source.Equals(dest))
+                return;
+
+            var sourceNode = GetNodeFromValue(source);
+            var destNode = GetNodeFromValue(dest);
+            MoveBefore(sourceNode, destNode);
         }
 
         public TreeNode<T> GetChild(int i)
@@ -102,6 +152,17 @@ namespace RobotRuntime.Utils
                 if (--i == -1)
                     return n;
             return null;
+        }
+
+        public int Index
+        {
+            get
+            {
+                if (parent == null)
+                    return 0;
+
+                return parent.children.IndexOf(this);
+            }
         }
 
         /// <summary>

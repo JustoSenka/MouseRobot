@@ -154,26 +154,39 @@ namespace RobotEditor
         }
 
         // should work now (tested)
-        private void OnCommandAddedToScript(Script script, Command command)
+        // TODO: parent is now provided
+        private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
-            var commandTreeNode = script.Commands.GetNodeFromValue(command);
+            var parentNode = script.Commands.GetNodeFromValue(command).parent;
+            System.Diagnostics.Debug.Assert(parentNode.value == parentCommand, "parentCommand and parentNode missmatched");
+
             var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
 
-            if (commandTreeNode.parent.value == null)
+            if (parentNode.value == null) // No parent which is a command
             {
-                scriptNode.Children.Add(new HierarchyNode(command, scriptNode));
+                AddCommandToParentRecursive(script, command, scriptNode);
             }
             else
             {
-                var parentCommandNode = scriptNode.Children.First(node => node.Value == commandTreeNode.parent.value);
-                parentCommandNode.Children.Add(new HierarchyNode(command, parentCommandNode));
+                var parentCommandNode = scriptNode.Children.First(node => node.Value == parentNode.value);
+                AddCommandToParentRecursive(script, command, parentCommandNode);
             }
 
             RefreshTreeListView();
         }
 
+        private static void AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode)
+        {
+            var nodeToAdd = new HierarchyNode(command, parentHierarchyNode);
+            parentHierarchyNode.Children.Add(nodeToAdd);
+
+            var commandNode = script.Commands.GetNodeFromValue(command);
+            foreach (var childNode in commandNode)
+                AddCommandToParentRecursive(script, childNode.value, nodeToAdd);
+        }
+
         // Will not work in nested scenario
-        private void OnCommandRemovedFromScript(Script script, int commandIndex)
+        private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
             scriptNode.Children.RemoveAt(commandIndex);
@@ -191,7 +204,7 @@ namespace RobotEditor
         }
 
         // Will not work in nested scenario
-        private void OnCommandInsertedInScript(Script script, Command command, int pos)
+        private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
             var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
             var node = new HierarchyNode(command, scriptNode);
@@ -348,9 +361,9 @@ namespace RobotEditor
 
                 // Will not work with nesting
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command.GetIndex(), targetNode.Command.GetIndex() - 1, sourceScript.Index, targetScript.Index);
+                    ScriptManager.Instance.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command.GetIndex(), targetNode.Command.GetIndex(), sourceScript.Index, targetScript.Index);
+                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
 
                 if (e.DropTargetLocation == DropTargetLocation.Item)
                 {

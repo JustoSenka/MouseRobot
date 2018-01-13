@@ -16,7 +16,8 @@ namespace Robot
         public IReadOnlyList<Script> LoadedScripts { get { return m_LoadedScripts.ToList().AsReadOnly(); } }
 
         private Script m_ActiveScript;
-        public Script ActiveScript {
+        public Script ActiveScript
+        {
             set
             {
                 if (m_ActiveScript != value)
@@ -35,9 +36,9 @@ namespace Robot
         public event Action<int> ScriptRemoved;
         public event Action ScriptPositioningChanged;
 
-        public event Action<Script, Command> CommandAddedToScript;
-        public event Action<Script, Command, int> CommandInsertedInScript;
-        public event Action<Script, int> CommandRemovedFromScript;
+        public event Action<Script, Command, Command> CommandAddedToScript;
+        public event Action<Script, Command, Command, int> CommandInsertedInScript;
+        public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command> CommandModifiedOnScript;
 
         private ScriptManager()
@@ -45,19 +46,19 @@ namespace Robot
             m_LoadedScripts = new List<Script>();
         }
 
-        public void InvokeCommandAddedToScript(Script script, Command command)
+        public void InvokeCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
-            CommandAddedToScript?.Invoke(script, command);
+            CommandAddedToScript?.Invoke(script, parentCommand, command);
         }
 
-        public void InvokeCommandInsertedInScript(Script script, Command command, int index)
+        public void InvokeCommandInsertedInScript(Script script, Command parentCommand, Command command, int index)
         {
-            CommandInsertedInScript?.Invoke(script, command, index);
+            CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
         }
 
-        public void InvokeCommandRemovedFromScript(Script script, int index)
+        public void InvokeCommandRemovedFromScript(Script script, Command parentCommand, int index)
         {
-            CommandRemovedFromScript?.Invoke(script, index);
+            CommandRemovedFromScript?.Invoke(script, parentCommand, index);
         }
 
         public void InvokeCommandModifiedOnScript(Script script, Command command)
@@ -68,14 +69,14 @@ namespace Robot
         public Script NewScript(Script clone = null)
         {
             Script script;
-            
+
             if (clone == null)
                 script = new Script();
             else
-                script = (Script) clone.Clone();
+                script = (Script)clone.Clone();
 
             m_LoadedScripts.Add(script);
-            script.IsDirty = true; 
+            script.IsDirty = true;
 
             MakeSureActiveScriptExist();
             ScriptLoaded?.Invoke(script);
@@ -145,19 +146,39 @@ namespace Robot
             Console.WriteLine("Script saved: " + path);
         }
 
-        // Won't work with nesting
-        public void MoveCommandAfter(int commandIndex, int positionAfter, int scriptIndex, int destinationScriptIndex = -1)
+        // Should work now
+        public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
             if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
             {
                 var script = m_LoadedScripts[scriptIndex];
-                script.MoveCommandAfter(commandIndex, positionAfter);
+                script.MoveCommandAfter(source, after);
             }
             else // Move between two different scripts
             {
-                var command = m_LoadedScripts[scriptIndex].Commands.GetChild(commandIndex).value;
-                m_LoadedScripts[scriptIndex].RemoveCommand(commandIndex);
-                m_LoadedScripts[destinationScriptIndex].InsertCommand(command, positionAfter + 1);
+                m_LoadedScripts[scriptIndex].RemoveCommand(source);
+                m_LoadedScripts[destinationScriptIndex].InsertCommandAfter(source, after);
+
+                m_LoadedScripts[destinationScriptIndex].IsDirty = true;
+            }
+
+            m_LoadedScripts[scriptIndex].IsDirty = true;
+        }
+
+        public void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
+        {
+            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
+            {
+                var script = m_LoadedScripts[scriptIndex];
+                script.MoveCommandBefore(source, before);
+            }
+            else // Move between two different scripts
+            {
+                var indexBefore = before.GetIndex();
+                var commandParent = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(before).parent.value;
+
+                m_LoadedScripts[scriptIndex].RemoveCommand(source);
+                m_LoadedScripts[destinationScriptIndex].InsertCommand(source, indexBefore, commandParent);
 
                 m_LoadedScripts[destinationScriptIndex].IsDirty = true;
             }

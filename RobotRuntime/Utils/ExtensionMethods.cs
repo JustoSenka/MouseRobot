@@ -56,10 +56,10 @@ namespace RobotRuntime
             return index;
         }
 
-        public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index) 
+        public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index)
         {
             var currentNode = list.First;
-            
+
             while (true)
             {
                 if (--index == -1)
@@ -69,6 +69,17 @@ namespace RobotRuntime
                 if (currentNode == null)
                     return null;
             }
+        }
+
+        public static int IndexOf<T>(this LinkedList<T> list, T item)
+        {
+            var count = 0;
+            for (var node = list.First; node != null; node = node.Next, count++)
+            {
+                if (item.Equals(node.Value))
+                    return count;
+            }
+            return -1;
         }
 
         public static void ForEach<T, K>(this T source, Action<K> action) where T : IEnumerable where K : class

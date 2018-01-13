@@ -201,6 +201,50 @@ namespace Tests
         }
 
         [TestMethod]
+        public void LinkedTree_MoveAfter_CanWorkWithDifferentNodeLevels()
+        {
+            var tree = new TreeNode<string>("script");
+
+            var node_0 = tree.AddChild("0");
+            var node_1 = tree.AddChild("1");
+
+            node_0.AddChild("00");
+            node_0.AddChild("01");
+
+            node_1.AddChild("10");
+            node_1.AddChild("11");
+
+            tree.MoveAfter("00", "11");
+
+            Assert.AreEqual("01", node_0.GetChild(0).value);
+            Assert.AreEqual("10", node_1.GetChild(0).value);
+            Assert.AreEqual("11", node_1.GetChild(1).value);
+            Assert.AreEqual("00", node_1.GetChild(2).value);
+        }
+
+        [TestMethod]
+        public void LinkedTree_MoveBefore_CanWorkWithMultipleObjects()
+        {
+            var tree = new TreeNode<string>("script");
+
+            var node_0 = tree.AddChild("0");
+            var node_1 = tree.AddChild("1");
+
+            node_0.AddChild("00");
+            node_0.AddChild("01");
+
+            node_1.AddChild("10");
+            node_1.AddChild("11");
+
+            tree.MoveBefore("0", "11");
+
+            Assert.AreEqual("1", tree.GetChild(0).value);
+            Assert.AreEqual("10", node_1.GetChild(0).value);
+            Assert.AreEqual("0", node_1.GetChild(1).value);
+            Assert.AreEqual("11", node_1.GetChild(2).value);
+        }
+
+        [TestMethod]
         public void LinkedTree_Clone_MakesDeepCopy()
         {
             var tree = new TreeNode<int>();

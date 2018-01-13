@@ -43,17 +43,18 @@ namespace Robot.Scripts
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
         }
 
-        public void AddCommand(Command command, Command parentCommand = null)
+        public Command AddCommand(Command command, Command parentCommand = null)
         {
             m_IsDirty = true;
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.First(c => c.value == parentCommand);
 
             nodeToAddCommand.AddChild(command);
-            ScriptManager.Instance.InvokeCommandAddedToScript(this, command);
+            ScriptManager.Instance.InvokeCommandAddedToScript(this, parentCommand, command);
+            return command;
         }
 
-        public void ReplaceCommand(Command originalCommand, Command newCommand)
+        public Command ReplaceCommand(Command originalCommand, Command newCommand)
         {
             m_IsDirty = true;
 
@@ -62,71 +63,69 @@ namespace Robot.Scripts
             Commands.Insert(index, newCommand);
 
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
+            return newCommand;
         }
 
         // should work now
-        public void InsertCommand(Command command, int position, Command parentCommand = null)
+        public Command InsertCommand(Command command, int position, Command parentCommand = null)
         {
             if (parentCommand == null)
                 Commands.Insert(position, command);
             else
                 Commands.GetNodeFromValue(parentCommand).Insert(position, command);
-                    
+
             m_IsDirty = true;
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, command, position);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, command, position);
+            return command;
         }
 
-        // Will not work in nested scenario
-        public void InsertCommandAfter(Command commandAfter, Command command)
+        // should work now
+        public Command InsertCommandAfter(Command sourceCommand, Command commandAfter)
         {
-            if (commandAfter == null)
-                InsertCommand(command, 0);
-            else
-            {
-                var nodeAfter = Commands.GetNodeFromValue(commandAfter);
-                var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
-                InsertCommand(command, indexAfter, nodeAfter.parent.value);
-            }
+            var nodeAfter = Commands.GetNodeFromValue(commandAfter);
+            var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+            InsertCommand(sourceCommand, indexAfter, nodeAfter.parent.value);
 
             m_IsDirty = true;
+            return sourceCommand;
         }
 
-        // Will not work between different levels of nesting
-        public void MoveCommandAfter(int index, int after)
+        // should work now
+        public void MoveCommandAfter(Command source, Command after)
         {
-            var commandSource = Commands.GetChild(index).value;
-            Commands.MoveAfter(commandSource.GetIndex(), after);
+            var oldIndex = source.GetIndex();
+            var parentCommand = Commands.GetNodeFromValue(source).parent.value;
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, commandSource, commandSource.GetIndex());
+            Commands.MoveAfter(source, after);
+
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, source, source.GetIndex());
             m_IsDirty = true;
         }
 
-        // Will not work between different levels of nesting
-        public void MoveCommandBefore(int index, int before)
+        // should work now
+        public void MoveCommandBefore(Command source, Command before)
         {
-            var commandSource = Commands.GetChild(index).value;
-            var commandAfter = Commands.GetChild(before).value;
-            Commands.MoveBefore(index, before);
+            var oldIndex = source.GetIndex();
+            var parentCommand = Commands.GetNodeFromValue(source).parent.value;
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, commandSource, commandSource.GetIndex());
+            Commands.MoveBefore(source, before);
+
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, source, source.GetIndex());
             m_IsDirty = true;
         }
 
-        // Will not work in nested scenario
-        public void RemoveCommand(int index)
-        {
-            Commands.RemoveAt(index);
-            m_IsDirty = true;
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, index);
-        }
-
-        // Will not work in nested scenario
+        // should work now
         public void RemoveCommand(Command command)
         {
-            var i = Commands.IndexOf(command);
-            RemoveCommand(i);
+            var oldIndex = command.GetIndex();
+            var parentCommand = Commands.GetNodeFromValue(command).parent.value;
+
+            Commands.Remove(command);
+
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
+            m_IsDirty = true;
         }
 
         public object Clone()
