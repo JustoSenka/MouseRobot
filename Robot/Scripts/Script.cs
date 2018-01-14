@@ -32,7 +32,7 @@ namespace Robot.Scripts
             }
         }
 
-        internal Script()
+        public Script()
         {
             Commands = new TreeNode<Command>();
         }
@@ -43,8 +43,13 @@ namespace Robot.Scripts
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command, command);
         }
 
+        /// <summary>
+        /// Adds non existant command to script bottom
+        /// </summary>
         public Command AddCommand(Command command, Command parentCommand = null)
         {
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on script");
+
             m_IsDirty = true;
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
@@ -54,8 +59,14 @@ namespace Robot.Scripts
             return command;
         }
 
+        /// <summary>
+        /// Adds non existant command node to bottom of the script/parent with all its children.
+        /// Calls CommandAdded event with root command of the node.
+        /// </summary>
         public Command AddCommandNode(TreeNode<Command> commandNode, Command parentCommand = null)
         {
+            Debug.Assert(!Commands.GetAllNodes().Contains(commandNode), "Command Node should not exist on script. Did you forget to remove it?");
+
             m_IsDirty = true;
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
@@ -65,8 +76,15 @@ namespace Robot.Scripts
             return commandNode.value;
         }
 
+        /// <summary>
+        /// Replace existing command value on its node. Will keep nested commands intact.
+        /// Calls CommandModified event.
+        /// </summary>
         public Command ReplaceCommand(Command originalCommand, Command newCommand)
         {
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(originalCommand), "Original Command should exist on script");
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(newCommand), "New Command should not exist on script");
+
             m_IsDirty = true;
 
             var node = Commands.GetNodeFromValue(originalCommand);
@@ -76,8 +94,13 @@ namespace Robot.Scripts
             return newCommand;
         }
 
+        /// <summary>
+        /// Insert single non existant command to specific location.
+        /// </summary>
         public Command InsertCommand(Command command, int position, Command parentCommand = null)
         {
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on script");
+
             var treeNodeToInsert = (parentCommand == null) ? Commands : Commands.GetNodeFromValue(parentCommand);
             treeNodeToInsert.Insert(position, command);
 
@@ -86,18 +109,32 @@ namespace Robot.Scripts
             return command;
         }
 
+        /// <summary>
+        /// Insert non existant command to specific location.
+        /// Redirects call to InsertCommand(position)
+        /// </summary>
         public Command InsertCommandAfter(Command sourceCommand, Command commandAfter)
         {
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(sourceCommand), "Source Command should not exist on script");
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on script");
+
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
             var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
-            InsertCommand(sourceCommand, indexAfter, nodeAfter.parent.value);
+            InsertCommand(sourceCommand, indexAfter + 1, nodeAfter.parent.value);
 
             m_IsDirty = true;
             return sourceCommand;
         }
 
+        /// <summary>
+        /// Moves an existing command from script to other place.
+        /// Calls Removed and Inserted command events.
+        /// </summary>
         public void MoveCommandAfter(Command source, Command after)
         {
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on script");
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(after), "Destination Command should exist on script");
+
             var oldIndex = source.GetIndex();
             var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
             var destParentCommand = Commands.GetNodeFromValue(after).parent.value;
@@ -109,8 +146,15 @@ namespace Robot.Scripts
             m_IsDirty = true;
         }
 
+        /// <summary>
+        /// Moves an existing command from script to other place.
+        /// Calls Removed and Inserted command events.
+        /// </summary>
         public void MoveCommandBefore(Command source, Command before)
         {
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on script");
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(before), "Destination Command should exist on script");
+
             var oldIndex = source.GetIndex();
             var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
             var destParentCommand = Commands.GetNodeFromValue(before).parent.value;
@@ -124,6 +168,8 @@ namespace Robot.Scripts
 
         public void RemoveCommand(Command command)
         {
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should exist on script");
+
             var oldIndex = command.GetIndex();
             var parentCommand = Commands.GetNodeFromValue(command).parent.value;
 
