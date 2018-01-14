@@ -11,13 +11,14 @@ using System.Threading.Tasks;
 
 namespace RobotRuntime
 {
-    public class ScriptThread
+    public class ScriptRunner
     {
-        static private ScriptThread m_Instance = new ScriptThread();
-        static public ScriptThread Instance { get { return m_Instance; } }
-        private ScriptThread() { }
+        static private ScriptRunner m_Instance = new ScriptRunner();
+        static public ScriptRunner Instance { get { return m_Instance; } }
+        private ScriptRunner() { }
 
         public event Action Finished;
+        public event Action<Command> RunningCommand;
 
         private bool m_Run;
 
@@ -35,6 +36,7 @@ namespace RobotRuntime
                 Console.WriteLine("Script start");
                 foreach (var v in lightScript.Commands)
                 {
+                    RunningCommand?.Invoke(v.value);
                     RunCommand(v);
 
                     if (!m_Run)

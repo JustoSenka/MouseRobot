@@ -44,7 +44,7 @@ namespace Robot
         {
             SetupProjectPath();
             ScriptManager.Instance.NewScript();
-            ScriptThread.Instance.Finished += OnScriptFinished;
+            ScriptRunner.Instance.Finished += OnScriptFinished;
 
             var a = RecordingManager.Instance; // Initializing, if nobody is referencing, sinlgeton is not created
         }
@@ -57,7 +57,7 @@ namespace Robot
             if (ScriptManager.Instance.ActiveScript == null)
                 return;
 
-            ScriptThread.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
+            ScriptRunner.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
         }
 
         private void OnScriptFinished()
@@ -70,11 +70,11 @@ namespace Robot
             get { return m_IsRecording; }
             set
             {
-                if (m_IsPlaying)
-                    throw new InvalidOperationException("Cannot record while playing script.");
-
                 if (value != m_IsRecording)
                 {
+                    if (m_IsPlaying)
+                        throw new InvalidOperationException("Cannot record while playing script.");
+
                     InputCallbacks.Init();
                     m_IsRecording = value;
                     RecordingStateChanged?.Invoke(value);
@@ -87,18 +87,18 @@ namespace Robot
             get { return m_IsPlaying; }
             set
             {
-                if (m_IsRecording)
-                    throw new InvalidOperationException("Cannot play a script while is recording.");
-
                 if (value != m_IsPlaying)
                 {
+                    if (m_IsRecording)
+                        throw new InvalidOperationException("Cannot play a script while is recording.");
+
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
 
                     if (m_IsPlaying)
                         StartScript();
                     else
-                        ScriptThread.Instance.Stop();
+                        ScriptRunner.Instance.Stop();
                 }
             }
         }

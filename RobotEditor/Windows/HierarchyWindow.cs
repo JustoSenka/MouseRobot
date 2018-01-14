@@ -12,6 +12,7 @@ using System.Linq;
 using System.Diagnostics;
 using Robot.Scripts;
 using RobotRuntime.Utils;
+using System.Drawing;
 
 namespace RobotEditor
 {
@@ -19,6 +20,8 @@ namespace RobotEditor
     {
         public event Action<Command> OnCommandSelected;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
+
+        private HierarchyNode m_HighlightedNode;
 
         public HierarchyWindow()
         {
@@ -37,6 +40,9 @@ namespace RobotEditor
             ScriptManager.Instance.ScriptModified += OnScriptModified;
             ScriptManager.Instance.ScriptRemoved += OnScriptRemoved;
             ScriptManager.Instance.ScriptPositioningChanged += OnScriptPositioningChanged;
+
+            ScriptRunner.Instance.Finished += OnScriptsFinishedRunning;
+            ScriptRunner.Instance.RunningCommand += OnCommandRunning;
 
             CreateColumns();
             UpdateHierarchy();
@@ -69,17 +75,26 @@ namespace RobotEditor
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
         {
             var node = e.Model as HierarchyNode;
-            if (node == null || node.Script == null)
+            if (node == null)
                 return;
 
-            if (node.Script == ScriptManager.Instance.ActiveScript && node.Script.IsDirty)
-                e.SubItem.Font = Fonts.ActiveAndDirtyScript;//.AddFont(Fonts.ActiveScript);
-            else if (node.Script == ScriptManager.Instance.ActiveScript)
-                e.SubItem.Font = Fonts.ActiveScript;
-            else if (node.Script.IsDirty)
-                e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
-            else
-                e.SubItem.Font = Fonts.Default;
+            if (node.Script != null)
+            {
+                if (node.Script == ScriptManager.Instance.ActiveScript && node.Script.IsDirty)
+                    e.SubItem.Font = Fonts.ActiveAndDirtyScript;//.AddFont(Fonts.ActiveScript);
+                else if (node.Script == ScriptManager.Instance.ActiveScript)
+                    e.SubItem.Font = Fonts.ActiveScript;
+                else if (node.Script.IsDirty)
+                    e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
+                else
+                    e.SubItem.Font = Fonts.Default;
+            }
+
+            if (node.Command != null)
+            {
+                if (node == m_HighlightedNode)
+                    e.SubItem.BackColor = SystemColors.Highlight;
+            }
         }
 
         private void UpdateHierarchy()
@@ -208,7 +223,7 @@ namespace RobotEditor
             var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
 
             var node = AddCommandToParentRecursive(script, command, parentNode, pos);
-            
+
             RefreshTreeListView();
             treeListView.SelectedObject = node;
         }
@@ -258,7 +273,7 @@ namespace RobotEditor
             {
                 var script = selectedNode.TopLevelScriptNode.Script;
                 var node = script.Commands.GetNodeFromValue(selectedNode.Command);
-                var clone = (TreeNode<Command>) node.Clone();
+                var clone = (TreeNode<Command>)node.Clone();
 
                 script.AddCommandNode(clone, node.parent.value);
                 script.MoveCommandAfter(clone.value, selectedNode.Command);
@@ -380,6 +395,31 @@ namespace RobotEditor
                     targetScript.AddCommandNode(node, targetNode.Command);
                 }
             }
+        }
+
+        #endregion
+
+        #region ScriptRunner Callbacks
+
+        private void OnCommandRunning(Command command)
+        {
+            var script = ScriptManager.Instance.GetScriptFromCommand(command);
+            if (script == null)
+                return;
+
+            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
+            if (scriptNode == null)
+                return;
+
+            var commandNode = scriptNode.GetNodeFromValue(command);
+            m_HighlightedNode = commandNode;
+            treeListView.Invoke(new Action(() => treeListView.Refresh()));
+        }
+
+        private void OnScriptsFinishedRunning()
+        {
+            m_HighlightedNode = null;
+            treeListView.Invoke(new Action(() => treeListView.Refresh()));
         }
 
         #endregion
