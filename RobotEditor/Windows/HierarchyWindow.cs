@@ -153,8 +153,6 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        // should work now (tested)
-        // TODO: parent is now provided
         private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
             var parentNode = script.Commands.GetNodeFromValue(command).parent;
@@ -162,54 +160,55 @@ namespace RobotEditor
 
             var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
 
-            if (parentNode.value == null) // No parent which is a command
-            {
-                AddCommandToParentRecursive(script, command, scriptNode);
-            }
-            else
-            {
-                var parentCommandNode = scriptNode.Children.First(node => node.Value == parentNode.value);
-                AddCommandToParentRecursive(script, command, parentCommandNode);
-            }
+            var parentHierarchyNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentNode.value);
+            AddCommandToParentRecursive(script, command, parentHierarchyNode);
 
             RefreshTreeListView();
         }
 
-        private static void AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode)
+        private static HierarchyNode AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode, int pos = -1)
         {
             var nodeToAdd = new HierarchyNode(command, parentHierarchyNode);
-            parentHierarchyNode.Children.Add(nodeToAdd);
+
+            if (pos == -1)
+                parentHierarchyNode.Children.Add(nodeToAdd);
+            else
+                parentHierarchyNode.Children.Insert(pos, nodeToAdd);
 
             var commandNode = script.Commands.GetNodeFromValue(command);
             foreach (var childNode in commandNode)
                 AddCommandToParentRecursive(script, childNode.value, nodeToAdd);
+
+            return nodeToAdd;
         }
 
-        // Will not work in nested scenario
+        // should work now
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
-            scriptNode.Children.RemoveAt(commandIndex);
+            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
+
+            parentNode.Children.RemoveAt(commandIndex);
             RefreshTreeListView();
         }
 
-        // Will not work in nested scenario
-        private void OnCommandModifiedOnScript(Script script, Command command)
+        private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
-            var commandIndex = script.Commands.IndexOf(command);
-            var commandNode = scriptNode.Children[commandIndex];
-            commandNode.Update(command);
+            var commandNode = scriptNode.GetNodeFromValue(oldCommand);
+
+            commandNode.Update(newCommand);
             RefreshTreeListView();
         }
 
-        // Will not work in nested scenario
+        // Will not work with multi dragging
         private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
             var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
-            var node = new HierarchyNode(command, scriptNode);
-            scriptNode.Children.Insert(pos, node);
-            // Will not work with multi dragging
+            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
+
+            var node = AddCommandToParentRecursive(script, command, parentNode, pos);
+            
             RefreshTreeListView();
             treeListView.SelectedObject = node;
         }
@@ -258,9 +257,7 @@ namespace RobotEditor
             else if (selectedNode.Command != null)
             {
                 var clone = (Command)selectedNode.Command.Clone();
-                var parent = selectedNode.Parent;
-
-                selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(selectedNode.Command, clone);
+                selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(clone, selectedNode.Command);
             }
 
             RefreshTreeListView();
@@ -327,12 +324,19 @@ namespace RobotEditor
             var sourceNode = e.SourceModels[0] as HierarchyNode;
 
             e.DropSink.CanDropBetween = true;
-            e.DropSink.CanDropOnItem = false;
 
             if (targetNode == null || sourceNode == null ||
                 targetNode.Script == null && sourceNode.Command == null ||
                 targetNode.Command == null && sourceNode.Script == null ||
                 targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item)
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested();
+
+            if (sourceNode.GetAllNodes().Contains(targetNode))
             {
                 e.Effect = DragDropEffects.None;
                 return;
@@ -359,15 +363,16 @@ namespace RobotEditor
                 var targetScript = ScriptManager.Instance.GetScriptFromCommand(targetNode.Command);
                 var sourceScript = ScriptManager.Instance.GetScriptFromCommand(sourceNode.Command);
 
-                // Will not work with nesting
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
                     ScriptManager.Instance.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
                     ScriptManager.Instance.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
 
-                if (e.DropTargetLocation == DropTargetLocation.Item)
+                if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested())
                 {
-                    // Do something here to nest commands
+                    var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
+                    sourceScript.RemoveCommand(sourceNode.Command);
+                    targetScript.AddCommandNode(node, targetNode.Command);
                 }
             }
         }

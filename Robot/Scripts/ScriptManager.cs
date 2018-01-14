@@ -39,7 +39,7 @@ namespace Robot
         public event Action<Script, Command, Command> CommandAddedToScript;
         public event Action<Script, Command, Command, int> CommandInsertedInScript;
         public event Action<Script, Command, int> CommandRemovedFromScript;
-        public event Action<Script, Command> CommandModifiedOnScript;
+        public event Action<Script, Command, Command> CommandModifiedOnScript;
 
         private ScriptManager()
         {
@@ -61,9 +61,9 @@ namespace Robot
             CommandRemovedFromScript?.Invoke(script, parentCommand, index);
         }
 
-        public void InvokeCommandModifiedOnScript(Script script, Command command)
+        public void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
-            CommandModifiedOnScript?.Invoke(script, command);
+            CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
         }
 
         public Script NewScript(Script clone = null)
@@ -146,7 +146,6 @@ namespace Robot
             Console.WriteLine("Script saved: " + path);
         }
 
-        // Should work now
         public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
             if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
@@ -156,10 +155,18 @@ namespace Robot
             }
             else // Move between two different scripts
             {
-                m_LoadedScripts[scriptIndex].RemoveCommand(source);
-                m_LoadedScripts[destinationScriptIndex].InsertCommandAfter(source, after);
+                var destScript = m_LoadedScripts[destinationScriptIndex];
+                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(after).parent;
+                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
 
-                m_LoadedScripts[destinationScriptIndex].IsDirty = true;
+                m_LoadedScripts[scriptIndex].RemoveCommand(source);
+
+                destParentNode.Join(sourceNode);
+                destScript.Commands.MoveAfter(source, after);
+
+                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex());
+
+                destScript.IsDirty = true;
             }
 
             m_LoadedScripts[scriptIndex].IsDirty = true;
@@ -174,13 +181,18 @@ namespace Robot
             }
             else // Move between two different scripts
             {
-                var indexBefore = before.GetIndex();
-                var commandParent = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(before).parent.value;
+                var destScript = m_LoadedScripts[destinationScriptIndex];
+                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(before).parent;
+                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
 
                 m_LoadedScripts[scriptIndex].RemoveCommand(source);
-                m_LoadedScripts[destinationScriptIndex].InsertCommand(source, indexBefore, commandParent);
 
-                m_LoadedScripts[destinationScriptIndex].IsDirty = true;
+                destParentNode.Join(sourceNode);
+                destScript.Commands.MoveBefore(source, before);
+
+                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex());
+
+                destScript.IsDirty = true;
             }
 
             m_LoadedScripts[scriptIndex].IsDirty = true;
@@ -200,9 +212,8 @@ namespace Robot
 
         public Script GetScriptFromCommand(Command command)
         {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.Select(node => node.value).Contains(command));
+            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes().Select(n => n.value).Contains(command));
         }
-
 
         private void MakeSureActiveScriptExist()
         {

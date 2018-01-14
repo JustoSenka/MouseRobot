@@ -25,6 +25,12 @@ namespace RobotRuntime.Utils
             children = new LinkedList<TreeNode<T>>();
         }
 
+        public void Join(TreeNode<T> anotherTree)
+        {
+            children.AddLast(anotherTree);
+            anotherTree.parent = this;
+        }
+
         public TreeNode<T> AddChild(T value)
         {
             var child = new TreeNode<T>(value);
@@ -39,10 +45,9 @@ namespace RobotRuntime.Utils
             child.parent = this;
 
             LinkedListNode<TreeNode<T>> node;
-            if (index == 0)
+            if (index == 0 || children.Count == 0)
             {
-                node = children.First;
-                children.AddBefore(node, child);
+                children.AddFirst(child);
             }
             else
             {
@@ -88,7 +93,9 @@ namespace RobotRuntime.Utils
             var destLinkedListNode = dest.parent.children.Find(dest);
 
             source.parent.Remove(source);
+
             dest.parent.children.AddAfter(destLinkedListNode, source);
+            source.parent = dest.parent;
         }
 
         public void MoveBefore(TreeNode<T> source, TreeNode<T> dest)
@@ -99,7 +106,9 @@ namespace RobotRuntime.Utils
             var destLinkedListNode = dest.parent.children.Find(dest);
 
             source.parent.Remove(source);
+
             dest.parent.children.AddBefore(destLinkedListNode, source);
+            source.parent = dest.parent;
         }
 
         public void MoveAfter(int source, int dest)

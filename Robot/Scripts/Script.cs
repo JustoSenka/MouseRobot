@@ -40,46 +40,55 @@ namespace Robot.Scripts
         public void ApplyCommandModifications(Command command)
         {
             m_IsDirty = true;
-            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command);
+            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command, command);
         }
 
         public Command AddCommand(Command command, Command parentCommand = null)
         {
             m_IsDirty = true;
 
-            var nodeToAddCommand = parentCommand == null ? Commands : Commands.First(c => c.value == parentCommand);
+            var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.AddChild(command);
             ScriptManager.Instance.InvokeCommandAddedToScript(this, parentCommand, command);
             return command;
         }
 
+        public Command AddCommandNode(TreeNode<Command> commandNode, Command parentCommand = null)
+        {
+            m_IsDirty = true;
+
+            var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
+
+            nodeToAddCommand.Join(commandNode);
+            ScriptManager.Instance.InvokeCommandAddedToScript(this, parentCommand, commandNode.value);
+            return commandNode.value;
+        }
+
         public Command ReplaceCommand(Command originalCommand, Command newCommand)
         {
             m_IsDirty = true;
 
-            var index = Commands.IndexOf(originalCommand);
-            Commands.RemoveAt(index);
-            Commands.Insert(index, newCommand);
+            var parentNode = Commands.GetNodeFromValue(originalCommand).parent;
+            var index = parentNode.IndexOf(originalCommand);
 
-            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, newCommand);
+            parentNode.RemoveAt(index);
+            parentNode.Insert(index, newCommand);
+
+            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, originalCommand, newCommand);
             return newCommand;
         }
 
-        // should work now
         public Command InsertCommand(Command command, int position, Command parentCommand = null)
         {
-            if (parentCommand == null)
-                Commands.Insert(position, command);
-            else
-                Commands.GetNodeFromValue(parentCommand).Insert(position, command);
+            var treeNodeToInsert = (parentCommand == null) ? Commands : Commands.GetNodeFromValue(parentCommand);
+            treeNodeToInsert.Insert(position, command);
 
             m_IsDirty = true;
             ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, command, position);
             return command;
         }
 
-        // should work now
         public Command InsertCommandAfter(Command sourceCommand, Command commandAfter)
         {
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
@@ -90,33 +99,32 @@ namespace Robot.Scripts
             return sourceCommand;
         }
 
-        // should work now
         public void MoveCommandAfter(Command source, Command after)
         {
             var oldIndex = source.GetIndex();
-            var parentCommand = Commands.GetNodeFromValue(source).parent.value;
+            var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
+            var destParentCommand = Commands.GetNodeFromValue(after).parent.value;
 
             Commands.MoveAfter(source, after);
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, source, source.GetIndex());
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex());
             m_IsDirty = true;
         }
 
-        // should work now
         public void MoveCommandBefore(Command source, Command before)
         {
             var oldIndex = source.GetIndex();
-            var parentCommand = Commands.GetNodeFromValue(source).parent.value;
+            var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
+            var destParentCommand = Commands.GetNodeFromValue(before).parent.value;
 
             Commands.MoveBefore(source, before);
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, source, source.GetIndex());
+            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
+            ScriptManager.Instance.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex());
             m_IsDirty = true;
         }
 
-        // should work now
         public void RemoveCommand(Command command)
         {
             var oldIndex = command.GetIndex();

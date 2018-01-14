@@ -6,12 +6,14 @@ namespace Robot
     {
         public static int GetIndex(this Command command)
         {
-            return ScriptManager.Instance.GetScriptFromCommand(command).Commands.IndexOf(command);
+            var script = ScriptManager.Instance.GetScriptFromCommand(command);
+            var node = script.Commands.GetNodeFromValue(command);
+            return node.parent.IndexOf(command);
         }
 
         public static bool CanBeNested(this Command command)
         {
-            return command.CommandType == CommandType.ForeachImage || command.CommandType == CommandType.ForImage;
+            return command != null && (command.CommandType == CommandType.ForeachImage || command.CommandType == CommandType.ForImage);
         }
     }
 }

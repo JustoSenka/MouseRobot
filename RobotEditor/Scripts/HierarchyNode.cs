@@ -1,12 +1,15 @@
 ﻿using Robot;
 using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RobotEditor.Scripts
 {
-    public class HierarchyNode
+    public class HierarchyNode : IEnumerable<HierarchyNode>
     {
         public int Level { get; private set; }
 
@@ -36,7 +39,16 @@ namespace RobotEditor.Scripts
             Children = new List<HierarchyNode>();
 
             foreach (var node in script)
-                Children.Add(new HierarchyNode(node.value, this));
+                AddChildRecursively(node);
+        }
+
+        private void AddChildRecursively(TreeNode<Command> commandNode)
+        {
+            var newHierarchyNode = new HierarchyNode(commandNode.value, this);
+            Children.Add(newHierarchyNode);
+
+            foreach (var childNode in commandNode)
+                newHierarchyNode.AddChildRecursively(childNode);
         }
 
         public HierarchyNode TopLevelScriptNode
@@ -61,6 +73,37 @@ namespace RobotEditor.Scripts
         {
             Script = script;
             Value = script;
+        }
+
+        public HierarchyNode GetNodeFromValue(Command command)
+        {
+            return GetAllNodes().FirstOrDefault(n => n.Value.Equals(command));
+        }
+
+        /// <summary>
+        /// Returns all nodes in the tree hierarchy recursivelly, including all child and grandchild nodes
+        /// </summary>
+        public IEnumerable<HierarchyNode> GetAllNodes(bool includeSelf = true)
+        {
+            if (includeSelf)
+                yield return this;
+
+            foreach (var c in Children)
+            {
+                yield return c;
+                foreach (var child in c.GetAllNodes(false))
+                    yield return child;
+            }
+        }
+
+        public IEnumerator<HierarchyNode> GetEnumerator()
+        {
+            return Children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
