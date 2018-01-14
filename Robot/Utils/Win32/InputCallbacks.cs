@@ -28,19 +28,26 @@ namespace Robot.Utils.Win32
         private static IntPtr m_MouseHook = IntPtr.Zero;
 
         public static event Action<KeyEvent> inputEvent;
-        public static AsyncOperation AsyncOperationOnUI { private get; set; }
 
-        static InputCallbacks()
+        private static bool m_Init = false;
+
+        internal static void Init()
         {
-            
+            if (m_Init)
+                return;
+
+            m_Init = true;
             new Thread(() =>
             {
                 m_KeyboardHook = SetHook(m_CachedLowLevelKeyboardProcDelegate, WH_KEYBOARD_LL);
                 m_MouseHook = SetHook(m_CachedLowLevelMouseProcDelegate, WH_MOUSE_LL);
                 Application.Run(); // TODO: Find a better way to implement Application Message Loop.... LOL
             }).Start();
-            
         }
+
+        public static AsyncOperation AsyncOperationOnUI { private get; set; }
+
+        static InputCallbacks() { }
 
         public static void ForgetAll()
         {

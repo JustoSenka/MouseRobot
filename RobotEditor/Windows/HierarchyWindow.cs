@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using Robot.Scripts;
+using RobotRuntime.Utils;
 
 namespace RobotEditor
 {
@@ -182,7 +183,6 @@ namespace RobotEditor
             return nodeToAdd;
         }
 
-        // should work now
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
             var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
@@ -256,8 +256,13 @@ namespace RobotEditor
             }
             else if (selectedNode.Command != null)
             {
-                var clone = (Command)selectedNode.Command.Clone();
-                selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(clone, selectedNode.Command);
+                var script = selectedNode.TopLevelScriptNode.Script;
+                var node = script.Commands.GetNodeFromValue(selectedNode.Command);
+                var clone = (TreeNode<Command>) node.Clone();
+
+                script.AddCommandNode(clone, node.parent.value);
+                script.MoveCommandAfter(clone.value, selectedNode.Command);
+                //selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(clone, selectedNode.Command);
             }
 
             RefreshTreeListView();

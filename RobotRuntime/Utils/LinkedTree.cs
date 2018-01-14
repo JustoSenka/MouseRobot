@@ -223,7 +223,9 @@ namespace RobotRuntime.Utils
             clone.parent = parent;
             foreach (var node in children)
             {
-                clone.children.AddLast((TreeNode<T>)node.Clone());
+                var childClone = (TreeNode<T>)node.Clone();
+                childClone.parent = clone;
+                clone.children.AddLast(childClone);
             }
             return clone;
         }

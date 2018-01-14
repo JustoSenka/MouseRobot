@@ -54,8 +54,8 @@ namespace Robot.Recording
             }
             else
             {
-                if (ShouldEndCropImage(e, props)) ;
-                return;
+                if (ShouldEndCropImage(e, props))
+                    return;
             }
 
             RecordCommand(e, activeScript, props);

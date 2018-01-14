@@ -69,11 +69,8 @@ namespace Robot.Scripts
         {
             m_IsDirty = true;
 
-            var parentNode = Commands.GetNodeFromValue(originalCommand).parent;
-            var index = parentNode.IndexOf(originalCommand);
-
-            parentNode.RemoveAt(index);
-            parentNode.Insert(index, newCommand);
+            var node = Commands.GetNodeFromValue(originalCommand);
+            node.value = newCommand;
 
             ScriptManager.Instance.InvokeCommandModifiedOnScript(this, originalCommand, newCommand);
             return newCommand;

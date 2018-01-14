@@ -75,6 +75,7 @@ namespace Robot
 
                 if (value != m_IsRecording)
                 {
+                    InputCallbacks.Init();
                     m_IsRecording = value;
                     RecordingStateChanged?.Invoke(value);
                 }
