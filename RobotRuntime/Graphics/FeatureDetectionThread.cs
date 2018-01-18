@@ -90,7 +90,7 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name);
         }
 
-        public void StartNewImageSearch(AssetPointer asset)
+        public void StartNewImageSearch(AssetGUID asset)
         {
             if (asset.Path.EndsWith(FileExtensions.Image))
             {

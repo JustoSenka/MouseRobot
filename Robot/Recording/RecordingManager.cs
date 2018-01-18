@@ -138,7 +138,7 @@ namespace Robot.Recording
                     m_ImageAssetUnderCursor = FindImage(e.Point);
                     if (m_ImageAssetUnderCursor != null)
                     {
-                        m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.ToAssetPointer(), timeOut);
+                        m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.GUID, timeOut);
                         ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
                         m_ForImage = true;
                     }
@@ -149,7 +149,7 @@ namespace Robot.Recording
                     m_ImageAssetUnderCursor = FindImage(e.Point);
                     if (m_ImageAssetUnderCursor != null)
                     {
-                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.ToAssetPointer(), timeOut);
+                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.GUID, timeOut);
                         ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
                         m_ForEachImage = true;
                     }

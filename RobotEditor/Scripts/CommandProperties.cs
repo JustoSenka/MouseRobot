@@ -128,8 +128,8 @@ namespace RobotEditor.Scripts
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DisplayName("Referenced Asset")]
-        [TypeConverter(typeof(AssetPointerImageStringConverter))]
-        [Editor(typeof(AssetPointerImageUITypeEditor), typeof(UITypeEditor))]
+        [TypeConverter(typeof(AssetGUIDImageStringConverter))]
+        [Editor(typeof(AssetGUIDImageUITypeEditor), typeof(UITypeEditor))]
         public string Asset
         {
             get
@@ -144,7 +144,7 @@ namespace RobotEditor.Scripts
             {
                 Asset asset = AssetManager.Instance.GetAsset(AssetManager.ImageFolder, value);
                 if (asset != null)
-                    DynamicCast(m_Command).Asset = asset.ToAssetPointer();
+                    DynamicCast(m_Command).Asset = asset.GUID;
             }
         }
 

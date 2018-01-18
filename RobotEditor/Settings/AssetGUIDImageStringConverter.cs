@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace RobotEditor.Settings
 {
-    public class AssetPointerImageStringConverter : StringConverter
+    public class AssetGUIDImageStringConverter : StringConverter
     {
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }

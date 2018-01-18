@@ -8,10 +8,10 @@ namespace RobotRuntime.Commands
     [Serializable]
     public class CommandForeachImage : Command
     {
-        public AssetPointer Asset { get; set; }
+        public AssetGUID Asset { get; set; }
         public int Timeout { get; set; }
 
-        public CommandForeachImage(AssetPointer asset, int timeOut)
+        public CommandForeachImage(AssetGUID asset, int timeOut)
         {
             Asset = asset;
             Timeout = timeOut;

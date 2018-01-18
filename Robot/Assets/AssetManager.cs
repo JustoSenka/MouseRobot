@@ -1,5 +1,4 @@
-﻿using Robot.Assets;
-using Robot.Scripts;
+﻿using Robot.Scripts;
 using RobotRuntime;
 using RobotRuntime.Perf;
 using System;
@@ -40,16 +39,12 @@ namespace Robot
 
         public void Refresh()
         {
-            // TODO: Keep reference to old assets if renamed
-            // TODO: Do not calculate hash for known assets
-            //Assets.Clear();
-
             Profiler.Start("AssetManager_Refresh");
 
             var paths = GetAllPathsInProjectDirectory();
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
-            // Rename
+            // Detect Rename
             foreach(var assetInMemory in Assets)
             {
                 if (!File.Exists(assetInMemory.Path))

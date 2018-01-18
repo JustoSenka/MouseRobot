@@ -29,9 +29,9 @@ namespace Robot.Scripts
                 case CommandType.Sleep:
                     return new CommandSleep(0);
                 case CommandType.ForImage:
-                    return new CommandForImage(default(AssetPointer), 2000);
+                    return new CommandForImage(default(AssetGUID), 2000);
                 case CommandType.ForeachImage:
-                    return new CommandForeachImage(default(AssetPointer), 2000);
+                    return new CommandForeachImage(default(AssetGUID), 2000);
                 default:
                     throw new ArgumentException("Not able to create Command with type of: " + commandType);
             }

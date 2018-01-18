@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Asset.cs" />
-    <Compile Include="Assets\AssetGUID.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Assets\ScriptImporter.cs" />

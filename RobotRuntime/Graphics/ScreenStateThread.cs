@@ -40,10 +40,10 @@ namespace RobotRuntime.Graphics
 
         private Device m_Device;
         private Output1 m_Output1;
-        private Texture2D m_ScreenTexture;
-        private OutputDuplication m_DuplicatedOutput;
+        //private Texture2D m_ScreenTexture;
+        //private OutputDuplication m_DuplicatedOutput;
 
-        private System.Drawing.Graphics m_GfxScreenshot;
+        //private System.Drawing.Graphics m_GfxScreenshot;
 
         protected override string Name { get { return "ScreenStateThread"; } }
 
@@ -102,7 +102,7 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name + "_CloneBitmap");
             Profiler.Stop(Name);
         }
-
+        /*
         public void TakeScreenshot(Bitmap tempBitmap)
         {
             try
@@ -153,6 +153,6 @@ namespace RobotRuntime.Graphics
                     Trace.TraceError(e.StackTrace);
                 }
             }
-        }
+        }*/
     }
 }

@@ -5,7 +5,7 @@ using System.Drawing.Design;
 
 namespace RobotEditor.Settings
 {
-    class AssetPointerImageUITypeEditor : UITypeEditor
+    class AssetGUIDImageUITypeEditor : UITypeEditor
     {
         public override bool GetPaintValueSupported(ITypeDescriptorContext context)
         {

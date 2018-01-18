@@ -1,5 +1,4 @@
-﻿using Robot.Assets;
-using RobotRuntime;
+﻿using RobotRuntime;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -39,7 +38,7 @@ namespace Robot
             Importer = EditorAssetImporter.FromPath(path);
             Name = Commons.GetName(path);
             Hash = GetHash(path);
-            GUID = new AssetGUID(Hash, Path);
+            GUID = new AssetGUID(Path, Hash);
         }
 
         static public Int64 GetHash(string filePath)
@@ -47,11 +46,6 @@ namespace Robot
             var bytes = File.Exists(filePath) ? File.ReadAllBytes(filePath) : Encoding.Unicode.GetBytes(filePath);
             byte[] hashBytes = MD5.Create().ComputeHash(bytes);
             return BitConverter.ToInt64(hashBytes, 0);
-        }
-
-        public AssetPointer ToAssetPointer()
-        {
-            return new AssetPointer(Path, Hash);
         }
 
         public bool HoldsTypeOf(Type type)

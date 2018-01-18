@@ -132,8 +132,8 @@
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
     <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />
-    <Compile Include="Settings\AssetPointerImageStringConverter.cs" />
-    <Compile Include="Settings\AssetPointerImageUITypeEditor.cs" />
+    <Compile Include="Settings\AssetGUIDImageStringConverter.cs" />
+    <Compile Include="Settings\AssetGUIDImageUITypeEditor.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />

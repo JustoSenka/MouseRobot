@@ -64,7 +64,7 @@ namespace RobotRuntime
             }
             else
             {
-                AssetPointer image;
+                AssetGUID image;
                 int timeout;
                 GetImageAndTimeout(node, out image, out timeout);
 
@@ -85,7 +85,7 @@ namespace RobotRuntime
             }
         }
 
-        private static Point[] GetCoordinates(TreeNode<Command> node, AssetPointer image, int timeout)
+        private static Point[] GetCoordinates(TreeNode<Command> node, AssetGUID image, int timeout)
         {
             var command = node.value;
 
@@ -109,7 +109,7 @@ namespace RobotRuntime
                 return null;
         }
 
-        private static void GetImageAndTimeout(TreeNode<Command> node, out AssetPointer image, out int timeout)
+        private static void GetImageAndTimeout(TreeNode<Command> node, out AssetGUID image, out int timeout)
         {
             var command = node.value;
             if (command is CommandForImage)
@@ -126,7 +126,7 @@ namespace RobotRuntime
             }
             else
             {
-                image = default(AssetPointer);
+                image = default(AssetGUID);
                 timeout = 0;
             }
         }
