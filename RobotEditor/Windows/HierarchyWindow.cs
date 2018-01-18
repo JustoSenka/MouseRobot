@@ -329,7 +329,7 @@ namespace RobotEditor
             saveDialog.FileName = script.Name + FileExtensions.ScriptD;
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                ScriptManager.Instance.SaveScript(ScriptManager.Instance.ActiveScript, saveDialog.FileName);
+                ScriptManager.Instance.SaveScript(script, saveDialog.FileName);
                 if (updateUI)
                     RefreshTreeListView();
             }

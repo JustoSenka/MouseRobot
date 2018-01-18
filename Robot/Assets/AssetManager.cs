@@ -1,4 +1,7 @@
-﻿using RobotRuntime;
+﻿using Robot.Assets;
+using Robot.Scripts;
+using RobotRuntime;
+using RobotRuntime.Perf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +22,9 @@ namespace Robot
             InitProject();
         }
 
-        public LinkedList<Asset> Assets { get; private set; } = new LinkedList<Asset>();
+        public Dictionary<AssetGUID, Asset> GuidAssetTable { get; private set; } = new Dictionary<AssetGUID, Asset>();
+        public Dictionary<AssetGUID, string> GuidPathTable { get; private set; } = new Dictionary<AssetGUID, string>();        
+        public Dictionary<AssetGUID, Int64> GuidHashTable { get; private set; } = new Dictionary<AssetGUID, Int64>();        
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -37,13 +42,46 @@ namespace Robot
         {
             // TODO: Keep reference to old assets if renamed
             // TODO: Do not calculate hash for known assets
-            Assets.Clear();
+            //Assets.Clear();
 
-            foreach (string fileName in Directory.GetFiles(k_ImagePath, "*.png").Select(Path.GetFileName))
-                Assets.AddLast(new Asset(ImageFolder + "\\" + fileName));
+            Profiler.Start("AssetManager_Refresh");
 
-            foreach (string fileName in Directory.GetFiles(k_ScriptPath, "*.mrb").Select(Path.GetFileName))
-                Assets.AddLast(new Asset(ScriptFolder + "\\" + fileName));
+            var paths = GetAllPathsInProjectDirectory();
+            var assetsOnDisk = paths.Select(path => new Asset(path));
+
+            // Rename
+            foreach(var assetInMemory in Assets)
+            {
+                if (!File.Exists(assetInMemory.Path))
+                {
+                    // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
+                    var assetWithSameHash = assetsOnDisk.FirstOrDefault(asset => asset.Hash == assetInMemory.Hash);
+                    if (assetWithSameHash != null && !GuidAssetTable.ContainsKey(assetWithSameHash.GUID))
+                        RenameAssetInternal(assetInMemory.Path, assetWithSameHash.Path);
+                    else
+                        DeleteAssetInternal(assetInMemory);
+                }
+            }
+
+            // Add new assets and detect modifications
+            foreach (var assetOnDisk in assetsOnDisk)
+            {
+                var isHashKnown = GuidHashTable.ContainsValue(assetOnDisk.Hash);
+                var isPathKnown = GuidPathTable.ContainsValue(assetOnDisk.Path); 
+
+                // We know the path, but hash has changed, must have been modified
+                if (!isHashKnown && isPathKnown)
+                {
+                    GetAsset(assetOnDisk.Path).Update();
+                }
+                // New file added
+                else if (!isPathKnown)
+                {
+                    AddAssetInternal(assetOnDisk);
+                }
+            }
+
+            Profiler.Stop("AssetManager_Refresh");
 
             RefreshFinished?.Invoke();
         }
@@ -63,23 +101,38 @@ namespace Robot
                 var importer = EditorAssetImporter.FromPath(path);
                 importer.Value = assetValue;
                 importer.SaveAsset();
-                Assets.AddLast(new Asset(path));
-                AssetCreated?.Invoke(path);
+                // This could be optimized, since importer is already created, and asset constructor creates the second one
+                AddAssetInternal(new Asset(path));
             }
         }
 
+        /// <summary>
+        /// Removes asset from memory and deletes its corresponding file from disk
+        /// </summary>
         public void DeleteAsset(string path)
         {
             path = Commons.GetProjectRelativePath(path);
-
             var asset = GetAsset(path);
-            Assets.Remove(asset);
 
             File.SetAttributes(path, FileAttributes.Normal);
             File.Delete(path);
-            AssetDeleted?.Invoke(path);
+
+            DeleteAssetInternal(asset);
         }
 
+        private void DeleteAssetInternal(Asset asset, bool silent = false)
+        {
+            GuidAssetTable.Remove(asset.GUID);
+            GuidPathTable.Remove(asset.GUID);
+            GuidHashTable.Remove(asset.GUID);
+
+            if (!silent)
+                AssetDeleted?.Invoke(asset.Path);
+        }
+
+        /// <summary>
+        /// Renames asset from memory and renames its corresponding file. Also will update all script references to that asset
+        /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
             var asset = GetAsset(sourcePath);
@@ -87,22 +140,40 @@ namespace Robot
             File.SetAttributes(sourcePath, FileAttributes.Normal);
             File.Move(sourcePath, destPath);
 
+            RenameAssetInternal(sourcePath, destPath);
+        }
+
+        private void RenameAssetInternal(string sourcePath, string destPath)
+        {
+            var asset = GetAsset(sourcePath);
+            var oldGuid = asset.GUID; // might be useful for ref in scripts
+
+            DeleteAssetInternal(asset, true);
+            asset.Update(destPath);
+            AddAssetInternal(asset, true);
+
             RenameAssetReferencesInAllScripts(asset.Path, destPath);
-            asset.Path = destPath;
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
         public Asset GetAsset(string path)
         {
             path = Commons.GetProjectRelativePath(path);
-            return Assets.FirstOrDefault((a) => 
-            Commons.AreRelativePathsEqual(a.Path, path));
+            return Assets.FirstOrDefault((a) => Commons.AreRelativePathsEqual(a.Path, path));
         }
 
         public Asset GetAsset(string folder, string name)
         {
             var path = folder + "\\" + name + "." + ExtensionFromFolder(folder);
             return GetAsset(path);
+        }
+
+        public IEnumerable<Asset> Assets
+        {
+            get
+            {
+                return GuidAssetTable.Select(pair => pair.Value).ToList(); // Converting to list so foreach could remove elements from hashtables while iterating
+            }
         }
 
         public static string ExtensionFromFolder(string folder)
@@ -129,9 +200,31 @@ namespace Robot
             return "";
         }
 
+        private void AddAssetInternal(Asset asset, bool silent = false)
+        {
+            GuidAssetTable.Add(asset.GUID, asset);
+            GuidPathTable.Add(asset.GUID, asset.Path);
+            GuidHashTable.Add(asset.GUID, asset.Hash);
+
+            if (!silent)
+                AssetCreated?.Invoke(asset.Path);
+        }
+
         private void RenameAssetReferencesInAllScripts(string path, string destPath)
         {
-            throw new NotImplementedException();
+            var scripts = Assets.Where(a => a.Importer.HoldsType() == typeof(Script));
+        }
+
+        private List<string> GetAllPathsInProjectDirectory()
+        {
+            var paths = new List<string>();
+
+            foreach (string fileName in Directory.GetFiles(k_ImagePath, "*.png").Select(Path.GetFileName))
+                paths.Add(ImageFolder + "\\" + fileName);
+
+            foreach (string fileName in Directory.GetFiles(k_ScriptPath, "*.mrb").Select(Path.GetFileName))
+                paths.Add(ScriptFolder + "\\" + fileName);
+            return paths;
         }
 
         private void InitProject()
