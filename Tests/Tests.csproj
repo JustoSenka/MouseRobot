@@ -104,6 +104,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PerformanceTests.cs" />
+    <Compile Include="AssetTests.cs" />
     <Compile Include="GraphicsTests.cs" />
     <Compile Include="LinkedTreeTests.cs" />
     <Compile Include="LimitedStackTests.cs" />

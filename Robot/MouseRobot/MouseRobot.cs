@@ -42,7 +42,7 @@ namespace Robot
 
         private MouseRobot()
         {
-            SetupProjectPath();
+            SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
             ScriptManager.Instance.NewScript();
             ScriptRunner.Instance.Finished += OnScriptFinished;
 
@@ -128,9 +128,9 @@ namespace Robot
             }
         }
 
-        private void SetupProjectPath()
+        public void SetupProjectPath(string path)
         {
-            ProjectPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject";
+            ProjectPath = path;
             if (!Directory.Exists(ProjectPath))
                 Directory.CreateDirectory(ProjectPath);
 

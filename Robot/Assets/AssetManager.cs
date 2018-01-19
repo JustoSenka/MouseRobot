@@ -67,7 +67,8 @@ namespace Robot
                 // We know the path, but hash has changed, must have been modified
                 if (!isHashKnown && isPathKnown)
                 {
-                    GetAsset(assetOnDisk.Path).Update();
+                    GetAsset(assetOnDisk.Path).UpdateValueFromDisk();
+                    AssetUpdated?.Invoke(assetOnDisk.Path);
                 }
                 // New file added
                 else if (!isPathKnown)
@@ -81,7 +82,7 @@ namespace Robot
             RefreshFinished?.Invoke();
         }
 
-        public void CreateAsset(object assetValue, string path)
+        public Asset CreateAsset(object assetValue, string path)
         {
             path = Commons.GetProjectRelativePath(path);
             var asset = GetAsset(path);
@@ -89,16 +90,18 @@ namespace Robot
             {
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
+                asset.Update();
                 AssetUpdated?.Invoke(path);
             }
             else
             {
-                var importer = EditorAssetImporter.FromPath(path);
-                importer.Value = assetValue;
-                importer.SaveAsset();
-                // This could be optimized, since importer is already created, and asset constructor creates the second one
-                AddAssetInternal(new Asset(path));
+                asset = new Asset(path);
+                asset.Importer.Value = assetValue;
+                asset.Importer.SaveAsset();
+                asset.Update();
+                AddAssetInternal(asset);
             }
+            return asset;
         }
 
         /// <summary>
@@ -141,10 +144,11 @@ namespace Robot
         private void RenameAssetInternal(string sourcePath, string destPath)
         {
             var asset = GetAsset(sourcePath);
+            var value = asset.Importer.Value;
             var oldGuid = asset.GUID; // might be useful for ref in scripts
 
             DeleteAssetInternal(asset, true);
-            asset.Update(destPath);
+            asset.UpdatePath(destPath);
             AddAssetInternal(asset, true);
 
             RenameAssetReferencesInAllScripts(asset.Path, destPath);

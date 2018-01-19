@@ -24,7 +24,7 @@ namespace RobotRuntime.Perf
         private const int m_StopwatchCount = 10;
 
         private Dictionary<string, LimitedStack<ProfilerNode>> m_Table = new Dictionary<string, LimitedStack<ProfilerNode>>();
-        public object m_TableLock = new object();
+        private object m_TableLock = new object();
 
         public Dictionary<string, ProfilerNode[]> CopyNodes()
         {
