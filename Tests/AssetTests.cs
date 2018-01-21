@@ -29,7 +29,7 @@ namespace Tests
             var asset2 = AssetManager.Instance.CreateAsset(new Script(), k_ScriptBPath);
 
             Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
-            Assert.AreNotEqual(asset.GUID, asset2.GUID, "Identical assets should have different GUIDs");
+            Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
         }
 
         [TestMethod]

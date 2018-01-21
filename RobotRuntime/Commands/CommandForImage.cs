@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Graphics;
+﻿using RobotRuntime.Assets;
+using RobotRuntime.Graphics;
 using RobotRuntime.Utils.Win32;
 using System;
 using System.Threading.Tasks;
@@ -8,10 +9,10 @@ namespace RobotRuntime.Commands
     [Serializable]
     public class CommandForImage : Command
     {
-        public AssetGUID Asset { get; set; }
+        public Guid Asset { get; set; }
         public int Timeout { get; set; }
 
-        public CommandForImage(AssetGUID asset, int timeOut)
+        public CommandForImage(Guid asset, int timeOut)
         {
             Asset = asset;
             Timeout = timeOut;
@@ -28,7 +29,8 @@ namespace RobotRuntime.Commands
             x1 = WinAPI.GetCursorPosition().X;
             y1 = WinAPI.GetCursorPosition().Y;
 
-            FeatureDetectionThread.Instace.StartNewImageSearch(Asset);
+            var path = AssetGuidManager.Instance.GetPath(Asset);
+            FeatureDetectionThread.Instace.StartNewImageSearch(path);
             while (Timeout > FeatureDetectionThread.Instace.TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
@@ -44,7 +46,8 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            var assetName = ((Asset.Path != "" && Asset.Path != null) ? Commons.GetName(Asset.Path) : "...");
+            var path = AssetGuidManager.Instance.GetPath(Asset);
+            var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
             return "For image '" + assetName + "':";
         }
 

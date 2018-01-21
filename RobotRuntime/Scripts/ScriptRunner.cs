@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Commands;
+﻿using RobotRuntime.Assets;
+using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
@@ -25,6 +26,8 @@ namespace RobotRuntime
         public void Start(LightScript lightScript)
         {
             m_Run = true;
+
+            AssetGuidManager.Instance.LoadMetaFiles();
 
             //RuntimeSettings.ApplySettings();
             ScreenStateThread.Instace.Start();
@@ -64,11 +67,12 @@ namespace RobotRuntime
             }
             else
             {
-                AssetGUID image;
+                Guid imageGuid;
                 int timeout;
-                GetImageAndTimeout(node, out image, out timeout);
+                GetImageAndTimeout(node, out imageGuid, out timeout);
 
-                var points = GetCoordinates(node, image, timeout);
+                var path = AssetGuidManager.Instance.GetPath(imageGuid);
+                var points = GetCoordinates(node, path, timeout);
                 if (points == null || points.Length == 0)
                     return;
 
@@ -85,7 +89,7 @@ namespace RobotRuntime
             }
         }
 
-        private static Point[] GetCoordinates(TreeNode<Command> node, AssetGUID image, int timeout)
+        private static Point[] GetCoordinates(TreeNode<Command> node, string imagePath, int timeout)
         {
             var command = node.value;
 
@@ -95,7 +99,7 @@ namespace RobotRuntime
             int x1 = WinAPI.GetCursorPosition().X;
             int y1 = WinAPI.GetCursorPosition().Y;
 
-            FeatureDetectionThread.Instace.StartNewImageSearch(image);
+            FeatureDetectionThread.Instace.StartNewImageSearch(imagePath);
             while (timeout > FeatureDetectionThread.Instace.TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
@@ -109,7 +113,7 @@ namespace RobotRuntime
                 return null;
         }
 
-        private static void GetImageAndTimeout(TreeNode<Command> node, out AssetGUID image, out int timeout)
+        private static void GetImageAndTimeout(TreeNode<Command> node, out Guid image, out int timeout)
         {
             var command = node.value;
             if (command is CommandForImage)
@@ -126,7 +130,7 @@ namespace RobotRuntime
             }
             else
             {
-                image = default(AssetGUID);
+                image = default(Guid);
                 timeout = 0;
             }
         }

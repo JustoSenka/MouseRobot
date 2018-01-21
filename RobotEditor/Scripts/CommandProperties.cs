@@ -3,6 +3,7 @@ using Robot.Scripts;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime;
+using RobotRuntime.Assets;
 using RobotRuntime.Commands;
 using System;
 using System.ComponentModel;
@@ -134,17 +135,15 @@ namespace RobotEditor.Scripts
         {
             get
             {
-                string path = DynamicCast(m_Command).Asset.Path;
-                if (path == null || path == "")
-                    return "...";
-                else
-                    return Commons.GetName(DynamicCast(m_Command).Asset.Path);
+                var guid = DynamicCast(m_Command).Asset;
+                var path = AssetGuidManager.Instance.GetPath(guid);
+                return (path == null || path == "") ? "..." : Commons.GetName(path);
             }
             set
             {
                 Asset asset = AssetManager.Instance.GetAsset(AssetManager.ImageFolder, value);
                 if (asset != null)
-                    DynamicCast(m_Command).Asset = asset.GUID;
+                    DynamicCast(m_Command).Asset = asset.Guid;
             }
         }
 

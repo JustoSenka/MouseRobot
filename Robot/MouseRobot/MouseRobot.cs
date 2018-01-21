@@ -7,6 +7,7 @@ using Robot.Settings;
 using RobotRuntime.Settings;
 using Robot.Recording;
 using System.IO;
+using RobotRuntime.Assets;
 
 namespace Robot
 {
@@ -43,6 +44,7 @@ namespace Robot
         private MouseRobot()
         {
             SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
+
             ScriptManager.Instance.NewScript();
             ScriptRunner.Instance.Finished += OnScriptFinished;
 
@@ -135,6 +137,9 @@ namespace Robot
                 Directory.CreateDirectory(ProjectPath);
 
             Environment.CurrentDirectory = ProjectPath;
+
+            AssetManager.Instance.InitProject();
+            AssetGuidManager.Instance.LoadMetaFiles();
         }
     }
 }

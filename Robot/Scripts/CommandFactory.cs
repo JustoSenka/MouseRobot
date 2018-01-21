@@ -29,9 +29,9 @@ namespace Robot.Scripts
                 case CommandType.Sleep:
                     return new CommandSleep(0);
                 case CommandType.ForImage:
-                    return new CommandForImage(default(AssetGUID), 2000);
+                    return new CommandForImage(default(Guid), 2000);
                 case CommandType.ForeachImage:
-                    return new CommandForeachImage(default(AssetGUID), 2000);
+                    return new CommandForeachImage(default(Guid), 2000);
                 default:
                     throw new ArgumentException("Not able to create Command with type of: " + commandType);
             }
@@ -61,6 +61,12 @@ namespace Robot.Scripts
             {
                 destProp.SetValue(dest, sourceProp.GetValue(source));
             }
+        }
+
+        public static void SetPropertyIfExist(ref Command dest, string name, object value)
+        {
+            var destProp = dest.GetType().GetProperty(name);
+            destProp?.SetValue(dest, value);
         }
     }
 }

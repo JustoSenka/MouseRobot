@@ -116,8 +116,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AssetGuidManager.cs" />
     <Compile Include="Assets\AssetImporter.cs" />
-    <Compile Include="Assets\AssetGUID.cs" />
     <Compile Include="Assets\ImageImporter.cs" />
     <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />

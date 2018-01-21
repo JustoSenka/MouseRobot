@@ -1,5 +1,6 @@
 ﻿using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Assets;
 using RobotRuntime.Perf;
 using System;
 using System.Collections.Generic;
@@ -13,17 +14,11 @@ namespace Robot
     {
         static private AssetManager m_Instance = new AssetManager();
         static public AssetManager Instance { get { return m_Instance; } }
-        private AssetManager()
-        {
-            k_ScriptPath = Path.Combine(MouseRobot.Instance.ProjectPath, ScriptFolder);
-            k_ImagePath = Path.Combine(MouseRobot.Instance.ProjectPath, ImageFolder);
+        private AssetManager() { }
 
-            InitProject();
-        }
-
-        public Dictionary<AssetGUID, Asset> GuidAssetTable { get; private set; } = new Dictionary<AssetGUID, Asset>();
-        public Dictionary<AssetGUID, string> GuidPathTable { get; private set; } = new Dictionary<AssetGUID, string>();        
-        public Dictionary<AssetGUID, Int64> GuidHashTable { get; private set; } = new Dictionary<AssetGUID, Int64>();        
+        public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
+        public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();        
+        public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();        
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -34,8 +29,8 @@ namespace Robot
         public const string ScriptFolder = "Scripts";
         public const string ImageFolder = "Images";
 
-        private readonly string k_ScriptPath;
-        private readonly string k_ImagePath;
+        private string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
+        private string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
 
         public void Refresh()
         {
@@ -51,7 +46,7 @@ namespace Robot
                 {
                     // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
                     var assetWithSameHash = assetsOnDisk.FirstOrDefault(asset => asset.Hash == assetInMemory.Hash);
-                    if (assetWithSameHash != null && !GuidAssetTable.ContainsKey(assetWithSameHash.GUID))
+                    if (assetWithSameHash != null && !GuidPathTable.ContainsValue(assetWithSameHash.Path))
                         RenameAssetInternal(assetInMemory.Path, assetWithSameHash.Path);
                     else
                         DeleteAssetInternal(assetInMemory);
@@ -101,6 +96,8 @@ namespace Robot
                 asset.Update();
                 AddAssetInternal(asset);
             }
+
+            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
             return asset;
         }
 
@@ -120,9 +117,10 @@ namespace Robot
 
         private void DeleteAssetInternal(Asset asset, bool silent = false)
         {
-            GuidAssetTable.Remove(asset.GUID);
-            GuidPathTable.Remove(asset.GUID);
-            GuidHashTable.Remove(asset.GUID);
+            GuidAssetTable.Remove(asset.Guid);
+            GuidPathTable.Remove(asset.Guid);
+            GuidHashTable.Remove(asset.Guid);
+            AssetGuidManager.Instance.RemoveGuid(asset.Guid);
 
             if (!silent)
                 AssetDeleted?.Invoke(asset.Path);
@@ -145,13 +143,12 @@ namespace Robot
         {
             var asset = GetAsset(sourcePath);
             var value = asset.Importer.Value;
-            var oldGuid = asset.GUID; // might be useful for ref in scripts
 
             DeleteAssetInternal(asset, true);
             asset.UpdatePath(destPath);
             AddAssetInternal(asset, true);
 
-            RenameAssetReferencesInAllScripts(asset.Path, destPath);
+            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
@@ -201,38 +198,37 @@ namespace Robot
 
         private void AddAssetInternal(Asset asset, bool silent = false)
         {
-            GuidAssetTable.Add(asset.GUID, asset);
-            GuidPathTable.Add(asset.GUID, asset.Path);
-            GuidHashTable.Add(asset.GUID, asset.Hash);
+            GuidAssetTable.Add(asset.Guid, asset);
+            GuidPathTable.Add(asset.Guid, asset.Path);
+            GuidHashTable.Add(asset.Guid, asset.Hash);
+            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);
-        }
-
-        private void RenameAssetReferencesInAllScripts(string path, string destPath)
-        {
-            var scripts = Assets.Where(a => a.Importer.HoldsType() == typeof(Script));
         }
 
         private List<string> GetAllPathsInProjectDirectory()
         {
             var paths = new List<string>();
 
-            foreach (string fileName in Directory.GetFiles(k_ImagePath, "*.png").Select(Path.GetFileName))
+            foreach (string fileName in Directory.GetFiles(ImagePath, "*.png").Select(Path.GetFileName))
                 paths.Add(ImageFolder + "\\" + fileName);
 
-            foreach (string fileName in Directory.GetFiles(k_ScriptPath, "*.mrb").Select(Path.GetFileName))
+            foreach (string fileName in Directory.GetFiles(ScriptPath, "*.mrb").Select(Path.GetFileName))
                 paths.Add(ScriptFolder + "\\" + fileName);
             return paths;
         }
 
-        private void InitProject()
+        public void InitProject()
         {
-            if (!Directory.Exists(k_ScriptPath))
-                Directory.CreateDirectory(k_ScriptPath);
+            if (!Directory.Exists(ScriptPath))
+                Directory.CreateDirectory(ScriptPath);
 
-            if (!Directory.Exists(k_ImagePath))
-                Directory.CreateDirectory(k_ImagePath);
+            if (!Directory.Exists(ImagePath))
+                Directory.CreateDirectory(ImagePath);
+
+            if (!Directory.Exists(AssetGuidManager.Instance.MetadataPath))
+                Directory.CreateDirectory(AssetGuidManager.Instance.MetadataPath);
         }
     }
 }

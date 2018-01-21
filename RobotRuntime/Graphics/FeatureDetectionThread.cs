@@ -90,13 +90,13 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name);
         }
 
-        public void StartNewImageSearch(AssetGUID asset)
+        public void StartNewImageSearch(string path)
         {
-            if (asset.Path.EndsWith(FileExtensions.Image))
+            if (path.EndsWith(FileExtensions.Image))
             {
                 lock (m_SampleImageLock)
                 {
-                    m_SampleImage = AssetImporter.FromPath(asset.Path).Load<Bitmap>();
+                    m_SampleImage = AssetImporter.FromPath(path).Load<Bitmap>();
                     WasLastCheckSuccess = false;
                     WasImageFound = false;
                     LastKnownPositions = null;

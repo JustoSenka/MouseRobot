@@ -115,7 +115,7 @@ namespace RobotEditor
         {
             m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
             if (MouseRobot.Instance.IsVisualizationOn)
-                FeatureDetectionThread.Instace.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().GUID);
+                FeatureDetectionThread.Instace.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
         }
 
         private void OnCommandDoubleClick(Command command)
