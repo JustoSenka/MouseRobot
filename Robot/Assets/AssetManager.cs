@@ -32,9 +32,12 @@ namespace Robot
         private string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         private string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
 
+        private bool m_ShouldSaveMetadata = true;
+
         public void Refresh()
         {
             Profiler.Start("AssetManager_Refresh");
+            BeginAssetEditing();
 
             var paths = GetAllPathsInProjectDirectory();
             var assetsOnDisk = paths.Select(path => new Asset(path));
@@ -56,9 +59,9 @@ namespace Robot
                         AssetGuidManager.Instance.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
                 }
             }
-
-            // Detect Rename for assets in memory
-            foreach(var assetInMemory in Assets)
+            
+            // Detect Rename for assets in memory (while keeping existing asset references)
+            foreach(var assetInMemory in Assets.ToList())
             {
                 if (!File.Exists(assetInMemory.Path))
                 {
@@ -78,7 +81,6 @@ namespace Robot
             {
                 var isHashKnown = GuidHashTable.ContainsValue(assetOnDisk.Hash);
                 var isPathKnown = GuidPathTable.ContainsValue(assetOnDisk.Path);
-                var isHashKnownInMetadata = AssetGuidManager.Instance.ContainsValue(assetOnDisk.Hash);
 
                 // We know the path, but hash has changed, must have been modified
                 if (!isHashKnown && isPathKnown)
@@ -91,13 +93,9 @@ namespace Robot
                 {
                     AddAssetInternal(assetOnDisk);
                 }
-
-                else if (isHashKnownInMetadata)
-                {
-
-                }
             }
 
+            EndAssetEditing();
             Profiler.Stop("AssetManager_Refresh");
 
             RefreshFinished?.Invoke();
@@ -124,6 +122,9 @@ namespace Robot
             }
 
             AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
+            if (m_ShouldSaveMetadata)
+                AssetGuidManager.Instance.Save();
+
             return asset;
         }
 
@@ -172,7 +173,11 @@ namespace Robot
 
             DeleteAssetInternal(asset, true);
             asset.UpdatePath(destPath);
+
             AssetGuidManager.Instance.AddNewGuid(guid, asset.Path, asset.Hash);
+            if (m_ShouldSaveMetadata)
+                AssetGuidManager.Instance.Save();
+
             AddAssetInternal(asset, true);
 
             AssetRenamed?.Invoke(sourcePath, destPath);
@@ -190,11 +195,29 @@ namespace Robot
             return GetAsset(path);
         }
 
+        public void BeginAssetEditing()
+        {
+            m_ShouldSaveMetadata = false;
+        }
+
+        public void EndAssetEditing()
+        {
+            m_ShouldSaveMetadata = true;
+            AssetGuidManager.Instance.Save();
+        }
+
+        public void EditAssets(Action ac)
+        {
+            BeginAssetEditing();
+            ac.Invoke();
+            EndAssetEditing();
+        }
+
         public IEnumerable<Asset> Assets
         {
             get
             {
-                return GuidAssetTable.Select(pair => pair.Value).ToList(); // Converting to list so foreach could remove elements from hashtables while iterating
+                return GuidAssetTable.Select(pair => pair.Value);
             }
         }
 
@@ -231,7 +254,10 @@ namespace Robot
             GuidAssetTable.Add(asset.Guid, asset);
             GuidPathTable.Add(asset.Guid, asset.Path);
             GuidHashTable.Add(asset.Guid, asset.Hash);
+
             AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
+            if (m_ShouldSaveMetadata)
+                AssetGuidManager.Instance.Save();
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);

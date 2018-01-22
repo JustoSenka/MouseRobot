@@ -29,13 +29,22 @@ namespace RobotRuntime.Assets
         private Dictionary<Guid, Int64> m_GuidHashMap = new Dictionary<Guid, Int64>();
 
         private ObjectIO m_Serializer;
+        private bool m_GuidPathMapDirty;
+        private bool m_GuidHashMapDirty;
 
         public void AddNewGuid(Guid guid, string path, Int64 hash)
         {
-            // TODO: optimize me
-            m_GuidPathMap[guid] = path;
+            var isHashTheSame = GetHash(guid) == hash;
+            var isPathTheSame = GetPath(guid) == path;
+
             m_GuidHashMap[guid] = hash;
-            Save(m_Serializer); // Super slow
+            m_GuidPathMap[guid] = path;
+
+            if (!isHashTheSame)
+                m_GuidHashMapDirty = true;
+
+            if (!isPathTheSame)
+                m_GuidPathMapDirty = true;
         }
 
         public string GetPath(Guid guid)
@@ -105,12 +114,20 @@ namespace RobotRuntime.Assets
             var newHashMap = m_Serializer.LoadObject<Dictionary<Guid, string>>(GuidPathMapFilePath);
             if (newHashMap != null)
                 m_GuidPathMap = newHashMap;
+
+            m_GuidHashMapDirty = false;
+            m_GuidPathMapDirty = false;
         }
 
-        private void Save(ObjectIO serializer)
+        public void Save()
         {
-            SavePathMap(serializer);
-            SaveHashMap(serializer);
+            if (m_GuidPathMapDirty)
+                SavePathMap(m_Serializer);
+            if (m_GuidHashMapDirty)
+                SaveHashMap(m_Serializer);
+
+            m_GuidHashMapDirty = false;
+            m_GuidPathMapDirty = false;
         }
 
         private void SavePathMap(ObjectIO serializer)
