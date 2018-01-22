@@ -28,6 +28,7 @@ namespace RobotEditor.Windows
             CreateColumns();
             AddToolstripButtons();
             ProfilerWindow_Resize(this, null);
+            OnRealTimeProfilingButton(this, null);
         }
 
         private void CreateNodeList()

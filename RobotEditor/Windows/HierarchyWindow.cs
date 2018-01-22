@@ -438,6 +438,27 @@ namespace RobotEditor
 
         #endregion
 
+        #region ToolStrip Buttons
+
+        private void ToolstripExpandAll_Click(object sender, EventArgs e)
+        {
+            treeListView.ExpandAll();
+        }
+
+        private void ToolstripExpandOne_Click(object sender, EventArgs e)
+        {
+            treeListView.CollapseAll();
+            foreach (var node in m_Nodes)
+                treeListView.Expand(node);
+        }
+
+        private void ToolstripCollapseAll_Click(object sender, EventArgs e)
+        {
+            treeListView.CollapseAll();
+        }
+
+        #endregion
+
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
             var node = treeListView.SelectedObject as HierarchyNode;

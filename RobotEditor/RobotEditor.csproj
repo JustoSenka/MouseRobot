@@ -278,9 +278,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Icons\CollapseAll_16.png" />
     <Content Include="Resources\Icons\ColourfulGear_ICO_32.ico" />
     <None Include="Resources\Icons\Eye_d_ICO_256.png" />
     <None Include="Resources\Icons\Eye_e_ICO_256.png" />
+    <None Include="Resources\Icons\ExpandAll_16.png" />
+    <None Include="Resources\Icons\ExpandOne_16.png" />
+    <None Include="Resources\Icons\ExpandOne_Text_16.png" />
     <Content Include="Resources\Icons\Folder_ICO_128.png" />
     <Content Include="Resources\Icons\gear_ICO_512.png" />
     <Content Include="Resources\Icons\Image_ICO_128.png" />

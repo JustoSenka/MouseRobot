@@ -170,6 +170,7 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
 
             visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.contextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_AssetsWindow.contextMenuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_PropertiesWindow.contextMenuStrip, version, theme);
 
