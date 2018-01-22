@@ -126,10 +126,10 @@ namespace RobotEditor
         {
             var node = new HierarchyNode(script);
             m_Nodes.Add(node);
-            treeListView.Expand(node);
             RefreshTreeListView();
 
             treeListView.SelectedObject = node;
+            treeListView.Expand(node);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -178,6 +178,9 @@ namespace RobotEditor
 
             var parentHierarchyNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentNode.value);
             AddCommandToParentRecursive(script, command, parentHierarchyNode);
+
+            if (scriptNode.Children.Count == 1)
+                treeListView.Expand(scriptNode);
 
             RefreshTreeListView();
         }
@@ -347,14 +350,16 @@ namespace RobotEditor
 
             if (targetNode == null || sourceNode == null ||
                 targetNode.Script == null && sourceNode.Command == null ||
-                targetNode.Command == null && sourceNode.Script == null ||
                 targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item)
             {
                 e.Effect = DragDropEffects.None;
                 return;
             }
 
-            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested();
+            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested() || targetNode.Script != null;
+
+            if (targetNode.Script != null && sourceNode.Command != null)
+                e.DropSink.CanDropBetween = false;
 
             if (sourceNode.GetAllNodes().Contains(targetNode))
             {
@@ -394,6 +399,15 @@ namespace RobotEditor
                     sourceScript.RemoveCommand(sourceNode.Command);
                     targetScript.AddCommandNode(node, targetNode.Command);
                 }
+            }
+
+            if (targetNode.Script != null && sourceNode.Command != null)
+            {
+                var sourceScript = ScriptManager.Instance.GetScriptFromCommand(sourceNode.Command);
+
+                var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
+                sourceScript.RemoveCommand(sourceNode.Command);
+                targetNode.Script.AddCommandNode(node);
             }
         }
 
