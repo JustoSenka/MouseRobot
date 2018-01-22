@@ -10,7 +10,7 @@ namespace Robot
     {
         public string Name { get; private set; }
         public Int64 Hash { get; private set; }
-        public readonly Guid Guid;
+        public Guid Guid { get; private set; }
 
         public string Path
         {
@@ -30,19 +30,28 @@ namespace Robot
         }
 
         /// <summary>
+        /// This should only be called from AssetManager when refreshing assets, creating new assets.
+        /// Manually editing guid from other parts of the code might result in unexpected behaviours
+        /// </summary>
+        internal void SetGuid(Guid guid)
+        {
+            Guid = guid;
+        }
+
+        /// <summary>
         /// Will reload asset from disk and update Hash
         /// </summary>
-        public void UpdateValueFromDisk() { UpdateInternal(Path, true); }
+        internal void UpdateValueFromDisk() { UpdateInternal(Path, true); }
 
         /// <summary>
         /// Will update Path and name of asset but references will still point to old value
         /// </summary>
-        public void UpdatePath(string path) { UpdateInternal(path, false); }
+        internal void UpdatePath(string path) { UpdateInternal(path, false); }
 
         /// <summary>
         /// Will update Hash (not from disk, only if asset value was modified by script). Will keep old references
         /// </summary>
-        public void Update() { UpdateInternal(Path, false); }
+        internal void Update() { UpdateInternal(Path, false); }
 
         private void UpdateInternal(string path, bool readDisk)
         {

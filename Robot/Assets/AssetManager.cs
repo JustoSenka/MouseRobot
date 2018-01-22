@@ -39,15 +39,35 @@ namespace Robot
             var paths = GetAllPathsInProjectDirectory();
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
-            // Detect Rename
+            // Detect renamed assets if application was closed, and assets were renamed via file system
+            foreach (var pair in AssetGuidManager.Instance.Paths.ToList())
+            {
+                var path = pair.Value;
+                if (!File.Exists(path))
+                {
+                    var guid = pair.Key;
+                    var hash = AssetGuidManager.Instance.GetHash(guid);
+
+                    var assetOnDiskWithSameHashButNotKnownPath = assetsOnDisk.FirstOrDefault(
+                        a => a.Hash == hash && !AssetGuidManager.Instance.ContainsValue(a.Path));
+
+                    // If this asset on disk is found, update old guid to new path, since best prediction is that it was renamed
+                    if (assetOnDiskWithSameHashButNotKnownPath != null)
+                        AssetGuidManager.Instance.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
+                }
+            }
+
+            // Detect Rename for assets in memory
             foreach(var assetInMemory in Assets)
             {
                 if (!File.Exists(assetInMemory.Path))
                 {
                     // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
-                    var assetWithSameHash = assetsOnDisk.FirstOrDefault(asset => asset.Hash == assetInMemory.Hash);
-                    if (assetWithSameHash != null && !GuidPathTable.ContainsValue(assetWithSameHash.Path))
-                        RenameAssetInternal(assetInMemory.Path, assetWithSameHash.Path);
+                    var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset => 
+                    asset.Hash == assetInMemory.Hash && !GuidPathTable.ContainsValue(asset.Path));
+
+                    if (assetWithSameHashAndNotInDbYet != null)
+                        RenameAssetInternal(assetInMemory.Path, assetWithSameHashAndNotInDbYet.Path);
                     else
                         DeleteAssetInternal(assetInMemory);
                 }
@@ -57,7 +77,8 @@ namespace Robot
             foreach (var assetOnDisk in assetsOnDisk)
             {
                 var isHashKnown = GuidHashTable.ContainsValue(assetOnDisk.Hash);
-                var isPathKnown = GuidPathTable.ContainsValue(assetOnDisk.Path); 
+                var isPathKnown = GuidPathTable.ContainsValue(assetOnDisk.Path);
+                var isHashKnownInMetadata = AssetGuidManager.Instance.ContainsValue(assetOnDisk.Hash);
 
                 // We know the path, but hash has changed, must have been modified
                 if (!isHashKnown && isPathKnown)
@@ -69,6 +90,11 @@ namespace Robot
                 else if (!isPathKnown)
                 {
                     AddAssetInternal(assetOnDisk);
+                }
+
+                else if (isHashKnownInMetadata)
+                {
+
                 }
             }
 
@@ -97,7 +123,7 @@ namespace Robot
                 AddAssetInternal(asset);
             }
 
-            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
+            AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
             return asset;
         }
 
@@ -120,7 +146,6 @@ namespace Robot
             GuidAssetTable.Remove(asset.Guid);
             GuidPathTable.Remove(asset.Guid);
             GuidHashTable.Remove(asset.Guid);
-            AssetGuidManager.Instance.RemoveGuid(asset.Guid);
 
             if (!silent)
                 AssetDeleted?.Invoke(asset.Path);
@@ -143,12 +168,13 @@ namespace Robot
         {
             var asset = GetAsset(sourcePath);
             var value = asset.Importer.Value;
+            var guid = asset.Guid;
 
             DeleteAssetInternal(asset, true);
             asset.UpdatePath(destPath);
+            AssetGuidManager.Instance.AddNewGuid(guid, asset.Path, asset.Hash);
             AddAssetInternal(asset, true);
 
-            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
@@ -198,10 +224,14 @@ namespace Robot
 
         private void AddAssetInternal(Asset asset, bool silent = false)
         {
+            var guid = AssetGuidManager.Instance.GetGuid(asset.Path);
+            if (guid != default(Guid))
+                asset.SetGuid(guid);
+
             GuidAssetTable.Add(asset.Guid, asset);
             GuidPathTable.Add(asset.Guid, asset.Path);
             GuidHashTable.Add(asset.Guid, asset.Hash);
-            AssetGuidManager.Instance.AddPathToGuid(asset.Guid, asset.Path);
+            AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);

@@ -120,5 +120,10 @@ namespace RobotRuntime
             var folderNode = treeView.FindChild(Commons.GetFolder(path));
             return folderNode.FindChild(Commons.GetName(path));
         }
+
+        public static bool IsDefault<T>(this T value) where T : struct
+        {
+            return value.Equals(default(T));
+        }
     }
 }
