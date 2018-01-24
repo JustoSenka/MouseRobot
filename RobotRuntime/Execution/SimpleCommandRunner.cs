@@ -3,6 +3,11 @@ using System;
 
 namespace RobotRuntime.Execution
 {
+    [SupportedType(typeof(CommandDown))]
+    [SupportedType(typeof(CommandMove))]
+    [SupportedType(typeof(CommandPress))]
+    [SupportedType(typeof(CommandRelease))]
+    [SupportedType(typeof(CommandSleep))]
     public class SimpleCommandRunner : IRunner
     {
         private CommandRunningCallback m_Callback;
@@ -14,23 +19,13 @@ namespace RobotRuntime.Execution
 
         public void Run(IRunnable runnable)
         {
-            if (!IsValidFor(runnable.GetType()))
+            if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
                 throw new ArgumentException("This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
 
             var command = runnable as Command;
 
             m_Callback.Invoke(command);
             command.Run();
-        }
-
-        bool IRunner.IsValidForType(Type type)
-        {
-            return IsValidFor(type);
-        }
-
-        public static bool IsValidFor(Type type)
-        {
-            return type == typeof(CommandDown) || type == typeof(CommandMove) || type == typeof(CommandPress) || type == typeof(CommandRelease) || type == typeof(CommandSleep);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 
 namespace RobotRuntime.Execution
 {
+    [SupportedType(typeof(LightScript))]
     public class ScriptRunner : IRunner
     {
         private CommandRunningCallback m_Callback;
@@ -13,7 +14,7 @@ namespace RobotRuntime.Execution
 
         public void Run(IRunnable runnable)
         {
-            if (!IsValidFor(runnable.GetType()))
+            if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
                 throw new ArgumentException("This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
 
             var script = runnable as LightScript;
@@ -27,16 +28,6 @@ namespace RobotRuntime.Execution
                 /*if (!m_Run)
                     break;*/
             }
-        }
-
-        bool IRunner.IsValidForType(Type type)
-        {
-            return IsValidFor(type);
-        }
-
-        public static bool IsValidFor(Type type)
-        {
-            return type == typeof(LightScript);
         }
     }
 }

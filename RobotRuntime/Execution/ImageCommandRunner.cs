@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace RobotRuntime.Execution
 {
+    [SupportedType(typeof(CommandForeachImage))]
+    [SupportedType(typeof(CommandForImage))]
     public class ImageCommandRunner : IRunner
     {
 
@@ -26,7 +28,7 @@ namespace RobotRuntime.Execution
 
         public void Run(IRunnable runnable)
         {
-            if (!IsValidFor(runnable.GetType()))
+            if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
                 throw new ArgumentException("This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
 
             var command = runnable as Command;
@@ -113,16 +115,6 @@ namespace RobotRuntime.Execution
 
             if (destProp != null)
                 destProp.SetValue(command, value);
-        }
-
-        bool IRunner.IsValidForType(Type type)
-        {
-            return IsValidFor(type);
-        }
-
-        public static bool IsValidFor(Type type)
-        {
-            return type == typeof(CommandForeachImage) || type == typeof(CommandForImage);
         }
     }
 }

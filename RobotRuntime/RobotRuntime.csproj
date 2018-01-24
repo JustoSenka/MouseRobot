@@ -134,6 +134,7 @@
     <Compile Include="Execution\RunnerFactory.cs" />
     <Compile Include="Execution\ScriptRunner.cs" />
     <Compile Include="Execution\SimpleCommandRunner.cs" />
+    <Compile Include="Execution\SupportedTypeAttribute.cs" />
     <Compile Include="Graphics\FeatureDetectorPP.cs" />
     <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
     <Compile Include="Graphics\FeatureDetectorSURF.cs" />

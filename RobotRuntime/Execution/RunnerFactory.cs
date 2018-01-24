@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RobotRuntime.Execution
 {
@@ -9,8 +10,24 @@ namespace RobotRuntime.Execution
 
         public static IRunner CreateFor(Type type)
         {
-            return SimpleCommandRunner.IsValidFor(type) ? (IRunner)new SimpleCommandRunner(Callback) :
-                ImageCommandRunner.IsValidFor(type) ? (IRunner)new ImageCommandRunner(ExecutingScript, Callback) : null;
+            if (DoesRunnerSupportType(typeof(SimpleCommandRunner), type))
+                return new SimpleCommandRunner(Callback);
+
+            else if (DoesRunnerSupportType(typeof(ImageCommandRunner), type))
+                return new ImageCommandRunner(ExecutingScript, Callback);
+
+            else if (DoesRunnerSupportType(typeof(ScriptRunner), type))
+                return new ScriptRunner(Callback);
+
+            else
+                throw new Exception("Threre is no Runner registered that would support type: " + type);
+
+        }
+
+        // TODO: currently runner is created for every single command, and this is executed quite often, might be slow. Consider caching everyhing in Dictionary
+        public static bool DoesRunnerSupportType(Type runnerType, Type supportedType)
+        {
+            return runnerType.GetCustomAttributes(false).OfType<SupportedTypeAttribute>().Where(a => a.type == supportedType).Count() > 0;
         }
     }
 }
