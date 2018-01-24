@@ -41,8 +41,8 @@ namespace RobotEditor
             ScriptManager.Instance.ScriptRemoved += OnScriptRemoved;
             ScriptManager.Instance.ScriptPositioningChanged += OnScriptPositioningChanged;
 
-            ScriptRunner.Instance.Finished += OnScriptsFinishedRunning;
-            ScriptRunner.Instance.RunningCommand += OnCommandRunning;
+            TestRunner.Instance.Finished += OnScriptsFinishedRunning;
+            TestRunner.Instance.RunningCommand += OnCommandRunning;
 
             CreateColumns();
             UpdateHierarchy();

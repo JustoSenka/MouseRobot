@@ -128,6 +128,12 @@
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
+    <Compile Include="Execution\IRunnable.cs" />
+    <Compile Include="Execution\IRunner.cs" />
+    <Compile Include="Execution\ImageCommandRunner.cs" />
+    <Compile Include="Execution\RunnerFactory.cs" />
+    <Compile Include="Execution\ScriptRunner.cs" />
+    <Compile Include="Execution\SimpleCommandRunner.cs" />
     <Compile Include="Graphics\FeatureDetectorPP.cs" />
     <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
     <Compile Include="Graphics\FeatureDetectorSURF.cs" />
@@ -152,7 +158,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\LightScript.cs" />
-    <Compile Include="Scripts\ScriptRunner.cs" />
+    <Compile Include="Scripts\TestRunner.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
     <Compile Include="Utils\Win32\WinAPI.cs" />
   </ItemGroup>

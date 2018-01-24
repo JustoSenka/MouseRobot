@@ -46,7 +46,7 @@ namespace Robot
             SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
 
             ScriptManager.Instance.NewScript();
-            ScriptRunner.Instance.Finished += OnScriptFinished;
+            TestRunner.Instance.Finished += OnScriptFinished;
 
             var a = RecordingManager.Instance; // Initializing, if nobody is referencing, sinlgeton is not created
         }
@@ -59,7 +59,7 @@ namespace Robot
             if (ScriptManager.Instance.ActiveScript == null)
                 return;
 
-            ScriptRunner.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
+            TestRunner.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
         }
 
         private void OnScriptFinished()
@@ -100,7 +100,7 @@ namespace Robot
                     if (m_IsPlaying)
                         StartScript();
                     else
-                        ScriptRunner.Instance.Stop();
+                        TestRunner.Instance.Stop();
                 }
             }
         }
