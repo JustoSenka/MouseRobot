@@ -54,7 +54,7 @@ namespace RobotEditor
             treeListView.ChildrenGetter = x => (x as HierarchyNode).Children;
 
             var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => (x as HierarchyNode).Value.ToString();
+            nameColumn.AspectGetter = x => (x as HierarchyNode).ToString();
 
             nameColumn.ImageGetter += delegate (object x)
             {

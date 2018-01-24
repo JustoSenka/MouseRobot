@@ -25,7 +25,7 @@ namespace RobotRuntime.Commands
 
         public override void Run()
         {
-            int x1, y1;
+            /*int x1, y1;
             x1 = WinAPI.GetCursorPosition().X;
             y1 = WinAPI.GetCursorPosition().Y;
 
@@ -41,7 +41,7 @@ namespace RobotRuntime.Commands
 
                     break;
                 }
-            }
+            }*/
         }
 
         public override string ToString()

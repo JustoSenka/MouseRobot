@@ -68,5 +68,11 @@ namespace Robot.Scripts
             var destProp = dest.GetType().GetProperty(name);
             destProp?.SetValue(dest, value);
         }
+
+        public static object GetPropertyIfExist(Command source, string name)
+        {
+            var prop = source.GetType().GetProperty(name);
+            return prop != null ? prop.GetValue(source) : null;
+        }
     }
 }

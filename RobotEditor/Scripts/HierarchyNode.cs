@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace RobotEditor.Scripts
 {
@@ -104,6 +105,11 @@ namespace RobotEditor.Scripts
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            return HierarchyNodeStringConverter.ToString(this);
         }
     }
 }
