@@ -19,11 +19,13 @@ namespace RobotRuntime.Execution
         // TODO: Or maybe it's fine to know just the script he command is on?
         private LightScript m_TestFixture;
         private CommandRunningCallback m_Callback;
+        private ValueWrapper<bool> m_ShouldCancelRun;
 
-        public ImageCommandRunner(LightScript testFixture, CommandRunningCallback callback)
+        public ImageCommandRunner(LightScript testFixture, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
         {
             m_TestFixture = testFixture;
             m_Callback = callback;
+            m_ShouldCancelRun = ShouldCancelRun;
         }
 
         public void Run(IRunnable runnable)
@@ -54,6 +56,9 @@ namespace RobotRuntime.Execution
 
                 foreach (var childNode in node)
                 {
+                    if (m_ShouldCancelRun.Value)
+                        return;
+
                     OverrideCommandPropertiesIfExist(childNode.value, p.X, "X");
                     OverrideCommandPropertiesIfExist(childNode.value, p.Y, "Y");
 

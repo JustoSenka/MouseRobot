@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Commands;
+using RobotRuntime.Utils;
 using System;
 
 namespace RobotRuntime.Execution
@@ -7,9 +8,12 @@ namespace RobotRuntime.Execution
     public class ScriptRunner : IRunner
     {
         private CommandRunningCallback m_Callback;
-        public ScriptRunner(CommandRunningCallback callback)
+        private ValueWrapper<bool> m_ShouldCancelRun;
+
+        public ScriptRunner(CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
         {
             m_Callback = callback;
+            m_ShouldCancelRun = ShouldCancelRun;
         }
 
         public void Run(IRunnable runnable)
@@ -22,6 +26,9 @@ namespace RobotRuntime.Execution
 
             foreach (var node in script.Commands)
             {
+                if (m_ShouldCancelRun.Value)
+                    return;
+
                 var runner = RunnerFactory.CreateFor(node.value.GetType());
                 runner.Run(node.value);
 

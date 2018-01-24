@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotRuntime.Utils;
+using System;
 using System.Linq;
 
 namespace RobotRuntime.Execution
@@ -7,6 +8,7 @@ namespace RobotRuntime.Execution
     {
         public static CommandRunningCallback Callback { get; set; }
         public static LightScript ExecutingScript { get; set; }
+        public static ValueWrapper<bool> CancellingPointerPlaceholder { get; set; }
 
         public static IRunner CreateFor(Type type)
         {
@@ -14,10 +16,10 @@ namespace RobotRuntime.Execution
                 return new SimpleCommandRunner(Callback);
 
             else if (DoesRunnerSupportType(typeof(ImageCommandRunner), type))
-                return new ImageCommandRunner(ExecutingScript, Callback);
+                return new ImageCommandRunner(ExecutingScript, Callback, CancellingPointerPlaceholder);
 
             else if (DoesRunnerSupportType(typeof(ScriptRunner), type))
-                return new ScriptRunner(Callback);
+                return new ScriptRunner(Callback, CancellingPointerPlaceholder);
 
             else
                 throw new Exception("Threre is no Runner registered that would support type: " + type);

@@ -21,12 +21,14 @@ namespace RobotRuntime
         public event Action Finished;
         public event CommandRunningCallback RunningCommand;
 
-        private bool m_Run;
+        private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
 
         public void Start(LightScript lightScript)
         {
-            m_Run = true;
             RunnerFactory.Callback = RunningCommand;
+
+            ShouldCancelRun.Value = false;
+            RunnerFactory.CancellingPointerPlaceholder = ShouldCancelRun;
 
             AssetGuidManager.Instance.LoadMetaFiles();
 
@@ -40,7 +42,7 @@ namespace RobotRuntime
             {
                 Console.WriteLine("Script start");
 
-                var runner = new ScriptRunner(RunningCommand);
+                var runner = RunnerFactory.CreateFor(lightScript.GetType());
                 runner.Run(lightScript);
 
                 ScreenStateThread.Instace.Stop();
@@ -53,7 +55,7 @@ namespace RobotRuntime
 
         public void Stop()
         {
-            m_Run = false;
+            ShouldCancelRun.Value = true;
         }
     }
 }
