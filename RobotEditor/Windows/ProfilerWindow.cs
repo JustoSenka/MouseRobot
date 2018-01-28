@@ -196,5 +196,7 @@ namespace RobotEditor.Windows
         {
             FrameSlider.Width = (int)(toolStrip.Width * 0.5f); // Does not help either. toolStrip.Update also did not help
         }
+
+        public ToolStrip ToolStrip { get { return toolStrip; } }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Robot;
+using System.Windows.Forms;
 
 namespace RobotEditor.Abstractions
 {

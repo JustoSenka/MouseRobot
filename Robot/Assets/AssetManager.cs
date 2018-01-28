@@ -16,8 +16,8 @@ namespace Robot
     public class AssetManager : IAssetManager
     {
         public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
-        public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();        
-        public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();        
+        public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();
+        public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -64,14 +64,14 @@ namespace Robot
                         AssetGuidManager.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
                 }
             }
-            
+
             // Detect Rename for assets in memory (while keeping existing asset references)
-            foreach(var assetInMemory in Assets.ToList())
+            foreach (var assetInMemory in Assets.ToList())
             {
                 if (!File.Exists(assetInMemory.Path))
                 {
                     // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
-                    var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset => 
+                    var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset =>
                     asset.Hash == assetInMemory.Hash && !GuidPathTable.ContainsValue(asset.Path));
 
                     if (assetWithSameHashAndNotInDbYet != null)
@@ -229,10 +229,10 @@ namespace Robot
         public string ExtensionFromFolder(string folder)
         {
             if (folder == ScriptFolder)
-                return FileExtensions.Script; 
+                return FileExtensions.Script;
             else if (folder == ImageFolder)
                 return FileExtensions.Image;
-            else 
+            else
                 return "";
         }
 
@@ -244,7 +244,8 @@ namespace Robot
                 return ImageFolder;
             else if (path.EndsWith(FileExtensions.Timeline))
                 return "Timeline";
-            return "";
+            else
+                return "";
         }
 
         private void AddAssetInternal(Asset asset, bool silent = false)

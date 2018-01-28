@@ -7,5 +7,7 @@ namespace RobotEditor.Abstractions
     {
         TrackBarToolStripItem FrameSlider { get; }
         ToolStripButton RealTimeProfilingButton { get; }
+
+        ToolStrip ToolStrip { get; }
     }
 }

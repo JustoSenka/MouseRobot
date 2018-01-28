@@ -29,5 +29,8 @@ namespace Robot.Abstractions
         void InitProject();
         void Refresh();
         void RenameAsset(string sourcePath, string destPath);
+
+        string ExtensionFromFolder(string folder);
+        string FolderFromExtension(string path);
     }
 }

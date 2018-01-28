@@ -1,46 +1,41 @@
-﻿using Robot;
-using Robot.Settings;
-using Robot.Utils.Win32;
+﻿using Robot.Utils.Win32;
 using RobotEditor.Editor;
-using RobotEditor.Utils;
-using RobotEditor.Windows;
 using RobotEditor.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Graphics;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using Robot.Abstractions;
+using RobotRuntime.Abstractions;
 
 namespace RobotEditor
 {
     public partial class MainForm : Form, IMainForm
     {
         private DockContent[] m_Windows;
-
-        // Solve this problem somehow
-        private HierarchyWindow m_HierarchyWindow;
-        private PropertiesWindow m_PropertiesWindow;
-        private ScreenPreviewWindow m_ScreenPreviewWindow;
-        private AssetsWindow m_AssetsWindow;
-        private ProfilerWindow m_ProfilerWindow;
-        private InspectorWindow m_InspectorWindow;
-
         private ThemeBase m_CurrentTheme;
+
+        private IHierarchyWindow m_HierarchyWindow;
+        private IPropertiesWindow m_PropertiesWindow;
+        private IScreenPreviewWindow m_ScreenPreviewWindow;
+        private IAssetsWindow m_AssetsWindow;
+        private IProfilerWindow m_ProfilerWindow;
+        private IInspectorWindow m_InspectorWindow;
 
         private FormWindowState m_DefaultWindowState;
 
-        private MouseRobot MouseRobot;
-        private ScreenDrawForm ScreenDrawForm;
-        private FeatureDetectionThread FeatureDetectionThread;
-        private SettingsManager SettingsManager;
-        private ScriptManager ScriptManager;
-        private AssetManager AssetManager;
-        public MainForm(MouseRobot MouseRobot, ScreenDrawForm ScreenDrawForm, FeatureDetectionThread FeatureDetectionThread, SettingsManager SettingsManager,
-            ScriptManager ScriptManager, AssetManager AssetManager, HierarchyWindow HierarchyWindow, PropertiesWindow PropertiesWindow, ScreenPreviewWindow ScreenPreviewWindow,
-            AssetsWindow AssetsWindow, ProfilerWindow ProfilerWindow, InspectorWindow InspectorWindow)
+        private IMouseRobot MouseRobot;
+        private IScreenDrawForm ScreenDrawForm;
+        private IFeatureDetectionThread FeatureDetectionThread;
+        private ISettingsManager SettingsManager;
+        private IScriptManager ScriptManager;
+        private IAssetManager AssetManager;
+        private IScreenStateThread ScreenStateThread;
+        public MainForm(IMouseRobot MouseRobot, IScreenDrawForm ScreenDrawForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
+            IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
+            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenDrawForm = ScreenDrawForm;
@@ -48,6 +43,7 @@ namespace RobotEditor
             this.SettingsManager = SettingsManager;
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
+            this.ScreenStateThread = ScreenStateThread;
 
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
@@ -55,7 +51,6 @@ namespace RobotEditor
             this.m_AssetsWindow = AssetsWindow;
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
-
             MouseRobot.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
 
             InitializeComponent();
@@ -63,7 +58,8 @@ namespace RobotEditor
             this.WindowState = FormWindowState.Maximized;
 
             //ShowSplashScreen(2000);
-            //InvisibleForm.Instace.Owner = this;
+
+            ((Form)ScreenDrawForm).Owner = this;
 
             CreateWindows();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
@@ -85,7 +81,7 @@ namespace RobotEditor
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
 
-            ScreenDrawForm.Show();
+            ((Form)ScreenDrawForm).Show();
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -157,12 +153,12 @@ namespace RobotEditor
             */
             m_Windows = new DockContent[]
             {
-                m_HierarchyWindow,
-                m_PropertiesWindow,
-                m_ScreenPreviewWindow,
-                m_AssetsWindow,
-                m_ProfilerWindow,
-                m_InspectorWindow,
+                (DockContent)m_HierarchyWindow,
+                (DockContent)m_PropertiesWindow,
+                (DockContent)m_ScreenPreviewWindow,
+                (DockContent)m_AssetsWindow,
+                (DockContent)m_ProfilerWindow,
+                (DockContent)m_InspectorWindow,
             };
         }
 
@@ -192,12 +188,12 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(toolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
 
-            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.contextMenuStrip, version, theme);
-            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.toolStrip, version, theme);
-            visualStudioToolStripExtender.SetStyle(m_AssetsWindow.contextMenuStrip, version, theme);
-            visualStudioToolStripExtender.SetStyle(m_PropertiesWindow.contextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(((Form)m_HierarchyWindow).ContextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.ToolStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(((Form)m_AssetsWindow).ContextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(((Form)m_PropertiesWindow).ContextMenuStrip, version, theme);
 
-            visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.toolStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.ToolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
         }
 
@@ -320,27 +316,27 @@ namespace RobotEditor
 
         private void hierarchyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.Show(m_DockPanel);
+            ((Form)m_HierarchyWindow).Show(m_DockPanel);
         }
 
         private void imagePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_ScreenPreviewWindow.Show(m_DockPanel);
+            ((Form)m_ScreenPreviewWindow).Show(m_DockPanel);
         }
 
         private void assetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_AssetsWindow.Show(m_DockPanel);
+            ((Form)m_AssetsWindow).Show(m_DockPanel);
         }
 
         private void profilerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_ProfilerWindow.Show(m_DockPanel);
+            ((Form)m_ProfilerWindow).Show(m_DockPanel);
         }
 
         private void inspectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_InspectorWindow.Show(m_DockPanel);
+            ((Form)m_InspectorWindow).Show(m_DockPanel);
         }
 
         #endregion
@@ -349,13 +345,13 @@ namespace RobotEditor
 
         private void recordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_PropertiesWindow.Show(m_DockPanel);
+            ((Form)m_PropertiesWindow).Show(m_DockPanel);
             m_PropertiesWindow.ShowSettings(SettingsManager.RecordingSettings);
         }
 
         private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_PropertiesWindow.Show(m_DockPanel);
+            ((Form)m_PropertiesWindow).Show(m_DockPanel);
             m_PropertiesWindow.ShowSettings(SettingsManager.FeatureDetectionSettings);
         }
 
@@ -416,7 +412,7 @@ namespace RobotEditor
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //ScreenStateThread.Stop();
+            ScreenStateThread.Stop();
             FeatureDetectionThread.Stop();
             Application.Exit();
         }

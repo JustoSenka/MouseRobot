@@ -1,6 +1,7 @@
 ﻿using System;
 using Robot.Scripts;
 using RobotRuntime;
+using System.Windows.Forms;
 
 namespace RobotEditor.Abstractions
 {
@@ -13,5 +14,7 @@ namespace RobotEditor.Abstractions
         void newScriptToolStripMenuItem1_Click(object sender, EventArgs e);
         void SaveAllScripts();
         void SaveSelectedScriptWithDialog(Script script, bool updateUI = true);
+
+        ToolStrip ToolStrip { get; }
     }
 }

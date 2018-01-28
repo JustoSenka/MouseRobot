@@ -118,6 +118,7 @@
     <Compile Include="Abstractions\IAssetManager.cs" />
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Abstractions\IMouseRobot.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Recording\CroppingManager.cs" />
     <Compile Include="Abstractions\ICroppingManager.cs" />
     <Compile Include="Abstractions\IRecordingManager.cs" />

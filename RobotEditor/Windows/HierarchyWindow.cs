@@ -469,6 +469,8 @@ namespace RobotEditor
 
         #endregion
 
+        public ToolStrip ToolStrip { get { return toolStrip; } }
+
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
             var node = treeListView.SelectedObject as HierarchyNode;
