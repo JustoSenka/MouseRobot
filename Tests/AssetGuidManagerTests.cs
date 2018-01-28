@@ -1,11 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Robot;
-using RobotRuntime.Commands;
 using Robot.Scripts;
 using System.IO;
-using RobotRuntime.Assets;
 using System;
+using Robot.Abstractions;
+using RobotRuntime.Abstractions;
+using Unity;
 
 namespace Tests
 {
@@ -23,6 +24,10 @@ namespace Tests
         private const string k_ScriptAPath = "Scripts\\A.mrb";
         private const string k_ScriptBPath = "Scripts\\B.mrb";
         private const string k_ScriptCPath = "Scripts\\C.mrb";
+
+        IMouseRobot MouseRobot;
+        IAssetManager AssetManager;
+        IAssetGuidManager AssetGuidManager;
 
         [TestMethod]
         public void NewAssets_UponRefresh_AreAddedToGuidTable()
@@ -189,6 +194,14 @@ namespace Tests
         [TestInitialize]
         public void Initialize()
         {
+            var container = new UnityContainer();
+            Robot.Program.RegisterInterfaces(container);
+            RobotRuntime.Program.RegisterInterfaces(container);
+
+            MouseRobot = container.Resolve<IMouseRobot>();
+            AssetManager = container.Resolve<IAssetManager>();
+            AssetGuidManager = container.Resolve<IAssetGuidManager>();
+
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();
 
@@ -208,9 +221,9 @@ namespace Tests
 
         private void CleanupMetaDataDirectory()
         {
-            if (Directory.Exists(TempProjectPath + "\\" + AssetGuidManager.MetadataFolder))
+            if (Directory.Exists(AssetGuidManager.MetadataPath))
             {
-                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + AssetGuidManager.MetadataFolder);
+                DirectoryInfo di = new DirectoryInfo(AssetGuidManager.MetadataPath);
                 foreach (FileInfo file in di.GetFiles())
                     file.Delete();
             }

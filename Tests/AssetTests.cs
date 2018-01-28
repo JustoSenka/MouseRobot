@@ -4,6 +4,8 @@ using Robot;
 using RobotRuntime.Commands;
 using Robot.Scripts;
 using System.IO;
+using Robot.Abstractions;
+using Unity;
 
 namespace Tests
 {
@@ -22,6 +24,10 @@ namespace Tests
         private const string k_ScriptBPath = "Scripts\\B.mrb";
         private const string k_ScriptCPath = "Scripts\\C.mrb";
         private const string k_ScriptDPath = "Scripts\\D.mrb";
+
+        IMouseRobot MouseRobot;
+        IAssetManager AssetManager;
+        IScriptManager ScriptManager;
 
         [TestMethod]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
@@ -173,6 +179,14 @@ namespace Tests
         [TestInitialize]
         public void Initialize()
         {
+            var container = new UnityContainer();
+            Robot.Program.RegisterInterfaces(container);
+            RobotRuntime.Program.RegisterInterfaces(container);
+
+            MouseRobot = container.Resolve<IMouseRobot>();
+            AssetManager = container.Resolve<IAssetManager>();
+            ScriptManager = container.Resolve<IScriptManager>();
+
             MouseRobot.SetupProjectPath(TempProjectPath);
         }
 

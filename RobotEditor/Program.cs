@@ -1,11 +1,7 @@
 ﻿using RobotEditor.Abstractions;
-using Robot.Abstractions;
 using System;
 using Unity;
 using Unity.Lifetime;
-using Robot;
-using Robot.Recording;
-using Robot.Settings;
 using RobotEditor.Windows;
 using System.Windows.Forms;
 

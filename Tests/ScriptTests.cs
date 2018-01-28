@@ -1,24 +1,25 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Robot;
 using RobotRuntime.Commands;
+using Unity;
+using Robot.Abstractions;
 
 namespace Tests
 {
     [TestClass]
     public class ScriptTests
     {
+        IScriptManager ScriptManager;
+
         [TestMethod]
         public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
         {
-            MouseRobot.ForceInit();
             Assert.AreEqual(1, ScriptManager.LoadedScripts.Count);
         }
 
         [TestMethod]
         public void Script_MoveCommandAfter_WorksWithinSameLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -30,15 +31,12 @@ namespace Tests
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c3, s.Commands.GetChild(1).value);
             Assert.AreEqual(c1, s.Commands.GetChild(2).value);
-
-            ResetScriptManager();
         }
 
 
         [TestMethod]
         public void Script_MoveCommandBefore_WorksWithinSameLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -50,14 +48,11 @@ namespace Tests
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
             Assert.AreEqual(c3, s.Commands.GetChild(2).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveCommand_MultipleTimes_WorksWithinSameLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -76,14 +71,11 @@ namespace Tests
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c3, s.Commands.GetChild(1).value);
             Assert.AreEqual(c1, s.Commands.GetChild(2).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveCommandAfter_WorksToUpperLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -99,14 +91,11 @@ namespace Tests
             Assert.AreEqual(2, n1.Count());
             Assert.AreEqual(c11, n1.GetChild(0).value);
             Assert.AreEqual(c3, n1.GetChild(1).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveCommandBefore_WorksToUpperLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -122,14 +111,11 @@ namespace Tests
             Assert.AreEqual(2, n1.Count());
             Assert.AreEqual(c3, n1.GetChild(0).value);
             Assert.AreEqual(c11, n1.GetChild(1).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveCommandAfter_WorksToLowerLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -144,14 +130,11 @@ namespace Tests
             Assert.AreEqual(1, n1.Count());
             Assert.AreEqual(c1, s.Commands.GetChild(0).value);
             Assert.AreEqual(c12, s.Commands.GetChild(1).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveCommandBefore_WorksToLowerLevel()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -166,14 +149,11 @@ namespace Tests
             Assert.AreEqual(1, n1.Count());
             Assert.AreEqual(c12, s.Commands.GetChild(0).value);
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_MoveNestedCommands_MovesAllChildCommandsAlso()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -189,14 +169,11 @@ namespace Tests
             Assert.AreEqual(1, n2.Count());
 
             Assert.AreEqual(c22, n2.GetChild(0).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_InsertCommand_InsertsCommandInCorrectPosition()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -215,14 +192,11 @@ namespace Tests
             Assert.AreEqual(c3, s.Commands.GetChild(2).value);
             Assert.AreEqual(c4, s.Commands.GetChild(3).value);
             Assert.AreEqual(c5, s.Commands.GetChild(4).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_AddCommandNode_AddAllCommandsWithIt()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -239,14 +213,11 @@ namespace Tests
             Assert.AreEqual(1, s.Commands.GetChild(0).GetChild(0).Count());
             Assert.AreEqual(c2, s.Commands.GetChild(0).GetChild(0).value);
             Assert.AreEqual(c22, s.Commands.GetChild(0).GetChild(0).GetChild(0).value);
-
-            ResetScriptManager();
         }
 
         [TestMethod]
         public void Script_RemoveCommand_RemovesItWithChildren()
         {
-            MouseRobot.ForceInit();
             var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
@@ -262,11 +233,21 @@ namespace Tests
 
             Assert.IsFalse(s.Select(n => n.value).Contains(c2));
             Assert.IsFalse(s.Select(n => n.value).Contains(c22));
-
-            ResetScriptManager();
         }
 
-        private void ResetScriptManager()
+        [TestInitialize]
+        public void Initialize()
+        {
+            var container = new UnityContainer();
+            Robot.Program.RegisterInterfaces(container);
+            RobotRuntime.Program.RegisterInterfaces(container);
+
+            var mr = container.Resolve<IMouseRobot>();
+            ScriptManager = container.Resolve<IScriptManager>();
+        }
+
+        [TestCleanup]
+        public void ResetScriptManager()
         {
             for (int i = ScriptManager.LoadedScripts.Count - 1; i >= 0; --i)
             {
