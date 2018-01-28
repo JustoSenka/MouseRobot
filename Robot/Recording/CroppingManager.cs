@@ -1,10 +1,11 @@
-﻿using RobotRuntime.Utils;
+﻿using Robot.Abstractions;
+using RobotRuntime.Utils;
 using System;
 using System.Drawing;
 
 namespace Robot.Recording
 {
-    public class CroppingManager
+    public class CroppingManager : ICroppingManager
     {
         public bool IsCropping { get; private set; }
         public Point StartPoint { get; private set; }
@@ -16,9 +17,11 @@ namespace Robot.Recording
 
         public int LastCropImageIndex = 0;
 
-        static private CroppingManager m_Instance = new CroppingManager();
-        static public CroppingManager Instance { get { return m_Instance; } }
-        private CroppingManager() { }
+        private IAssetManager AssetManager;
+        public CroppingManager(IAssetManager AssetManager)
+        {
+            this.AssetManager = AssetManager;
+        }
 
         public void StartCropImage(Point startPoint)
         {
@@ -57,7 +60,7 @@ namespace Robot.Recording
         {
             while (true)
             {
-                if (AssetManager.Instance.GetAsset(GetPathForID(LastCropImageIndex)) != null)
+                if (AssetManager.GetAsset(GetPathForID(LastCropImageIndex)) != null)
                 {
                     LastCropImageIndex++;
                     continue;
@@ -65,10 +68,10 @@ namespace Robot.Recording
                 break;
             }
 
-            AssetManager.Instance.CreateAsset(bmp, GetPathForID(LastCropImageIndex));
+            AssetManager.CreateAsset(bmp, GetPathForID(LastCropImageIndex));
         }
 
-        private static string GetPathForID(int imageIndex)
+        private string GetPathForID(int imageIndex)
         {
             var length = 2 - imageIndex.ToString().Length;
             var num = ((length == 1) ? "0" : "") + imageIndex;

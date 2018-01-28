@@ -1,4 +1,5 @@
 ﻿using Robot;
+using Robot.Abstractions;
 using Robot.Scripts;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
@@ -23,8 +24,13 @@ namespace RobotEditor.Scripts
         [Browsable(false)]
         public override string Title { get { return "Command Properties"; } }
 
-        public CommandProperties(T command)
+        private IAssetManager AssetManager;
+        private IScriptManager ScriptManager;
+        public CommandProperties(T command, IAssetManager AssetManager, IScriptManager ScriptManager)
         {
+            this.ScriptManager = ScriptManager;
+            this.AssetManager = AssetManager;
+
             m_Properties = TypeDescriptor.GetProperties(this);
             m_Command = command;
         }
@@ -68,7 +74,7 @@ namespace RobotEditor.Scripts
             set
             {
                 var newCommand = CommandFactory.Create(value, m_Command);
-                ScriptManager.Instance.GetScriptFromCommand(m_Command).ReplaceCommand(m_Command, newCommand);
+                ScriptManager.GetScriptFromCommand(m_Command).ReplaceCommand(m_Command, newCommand);
                 m_Command = newCommand;
             }
         }
@@ -136,12 +142,12 @@ namespace RobotEditor.Scripts
             get
             {
                 var guid = DynamicCast(m_Command).Asset;
-                var path = AssetGuidManager.Instance.GetPath(guid);
+                var path = "abvd";// AssetGuidManager.GetPath(guid);
                 return (path == null || path == "") ? "..." : Commons.GetName(path);
             }
             set
             {
-                Asset asset = AssetManager.Instance.GetAsset(AssetManager.ImageFolder, value);
+                Asset asset = AssetManager.GetAsset(AssetManager.ImageFolder, value);
                 if (asset != null)
                     DynamicCast(m_Command).Asset = asset.Guid;
             }

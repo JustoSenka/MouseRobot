@@ -6,6 +6,7 @@ using RobotRuntime.Utils;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using RobotEditor.Abstractions;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,27 +15,39 @@ using RobotEditor.Properties;
 using RobotRuntime;
 using RobotRuntime.Utils.Win32;
 using Robot.Recording;
+using RobotRuntime.Abstractions;
+using Robot.Abstractions;
 
 namespace RobotEditor.Windows
 {
-    public class ScreenDrawForm : InvisibleForm
+    public class ScreenDrawForm : InvisibleForm, IScreenDrawForm
     {
-        public static ScreenDrawForm Instace { get { return m_Instance; } }
-        private static ScreenDrawForm m_Instance = new ScreenDrawForm();
-        private ScreenDrawForm() : base()
+        private IFeatureDetectionThread FeatureDetectionThread;
+        private IScreenStateThread ScreenStateThread;
+        private IRecordingManager RecordingManager;
+        private ICroppingManager CroppingManager;
+        private IMouseRobot MouseRobot; // Is this really necessary?
+        public ScreenDrawForm(IFeatureDetectionThread FeatureDetectionThread, IScreenStateThread ScreenStateThread, IRecordingManager RecordingManager,
+            ICroppingManager CroppingManager, IMouseRobot MouseRobot) : base()
         {
+            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.ScreenStateThread = ScreenStateThread;
+            this.RecordingManager = RecordingManager;
+            this.CroppingManager = CroppingManager;
+            this.MouseRobot = MouseRobot;
+
             m_UpdateTimer.Interval = 30;
             m_UpdateTimer.Tick += CallInvalidate;
             m_UpdateTimer.Enabled = true;
 
-            FeatureDetectionThread.Instace.PositionFound += OnPositionFound;
-            ScreenStateThread.Instace.Update += OnUpdate;
+            FeatureDetectionThread.PositionFound += OnPositionFound;
+            ScreenStateThread.Update += OnUpdate;
 
-            RecordingManager.Instance.ImageFoundInAssets += OnImageFoundInAssets;
-            RecordingManager.Instance.ImageNotFoundInAssets += OnImageNotFoundInAssets;
+            RecordingManager.ImageFoundInAssets += OnImageFoundInAssets;
+            RecordingManager.ImageNotFoundInAssets += OnImageNotFoundInAssets;
 
-            CroppingManager.Instance.ImageCropStarted += OnImageCropStarted;
-            CroppingManager.Instance.ImageCropEnded += OnImageCropEnded;
+            CroppingManager.ImageCropStarted += OnImageCropStarted;
+            CroppingManager.ImageCropEnded += OnImageCropEnded;
 
             m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
 
@@ -62,7 +75,7 @@ namespace RobotEditor.Windows
 
             var g = e.Graphics;
 
-            if (MouseRobot.Instance.IsVisualizationOn)
+            if (MouseRobot.IsVisualizationOn)
             {
                 DrawSmallObservedScreenCopy(g);
                 DrawPolygonOfMatchedImageBoundaries(g);
@@ -74,7 +87,7 @@ namespace RobotEditor.Windows
                 DrawImageAssetTextUnderCursor(g, rect);
             }
 
-            if (CroppingManager.Instance.IsCropping)
+            if (CroppingManager.IsCropping)
             {
                 DrawCroppingRectangle(g);
             }
@@ -105,9 +118,9 @@ namespace RobotEditor.Windows
             {
                 lock (ImagePointsLock)
                 {
-                    Pen penToUse = FeatureDetectionThread.Instace.WasImageFound ? bluePen : redPen;
-                    penToUse = FeatureDetectionThread.Instace.WasLastCheckSuccess ? greenPen : penToUse;
-                    penToUse = FeatureDetectionThread.Instace.TimeSinceLastFind > 3000 ? redPen : penToUse;
+                    Pen penToUse = FeatureDetectionThread.WasImageFound ? bluePen : redPen;
+                    penToUse = FeatureDetectionThread.WasLastCheckSuccess ? greenPen : penToUse;
+                    penToUse = FeatureDetectionThread.TimeSinceLastFind > 3000 ? redPen : penToUse;
 
                     foreach (var p in ImagePoints)
                     {
@@ -131,10 +144,10 @@ namespace RobotEditor.Windows
         {
             if (m_ObservedScreen != null)
             {
-                lock (ScreenStateThread.Instace.ScreenBmpLock)
+                lock (ScreenStateThread.ScreenBmpLock)
                     lock (m_ObservedScreenLock)
                     {
-                        BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, m_ObservedScreen);
+                        BitmapUtility.Clone32BPPBitmap(ScreenStateThread.ScreenBmp, m_ObservedScreen);
                     }
             }
             Invalidate();
@@ -228,7 +241,7 @@ namespace RobotEditor.Windows
 
         private void DrawCroppingRectangle(Graphics g)
         {
-            var rect = BitmapUtility.GetRect(CroppingManager.Instance.StartPoint, WinAPI.GetCursorPosition());
+            var rect = BitmapUtility.GetRect(CroppingManager.StartPoint, WinAPI.GetCursorPosition());
 
             rect.Location = rect.Location.Sub(new Point(1, 1));
             rect.Width++;

@@ -1,4 +1,5 @@
-﻿using Robot.Scripts;
+﻿using Robot.Abstractions;
+using Robot.Scripts;
 using Robot.Settings;
 using Robot.Utils.Win32;
 using RobotRuntime;
@@ -14,8 +15,10 @@ using System.Drawing;
 
 namespace Robot.Recording
 {
-    public class RecordingManager
+    public class RecordingManager : IRecordingManager
     {
+        public bool IsRecording { get; set; }
+
         private Stopwatch m_SleepTimer = new Stopwatch();
         private Point m_LastClickPos = new Point(0, 0);
 
@@ -29,25 +32,32 @@ namespace Robot.Recording
 
         private readonly Size k_ImageForReferenceSearchUnderCursorSize = new Size(12, 12);
 
-        static private RecordingManager m_Instance = new RecordingManager();
-        static public RecordingManager Instance { get { return m_Instance; } }
-        private RecordingManager()
+        private IScriptManager ScriptManager;
+        private ISettingsManager SettingsManager;
+        private ICroppingManager CroppingManager;
+        private IAssetManager AssetManager;
+        public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager)
         {
+            this.ScriptManager = ScriptManager;
+            this.SettingsManager = SettingsManager;
+            this.CroppingManager = CroppingManager;
+            this.AssetManager = AssetManager;
+
             InputCallbacks.inputEvent += OnInputEvent;
         }
 
         private void OnInputEvent(KeyEvent e)
         {
-            if (!MouseRobot.Instance.IsRecording)
+            if (!IsRecording)
                 return;
 
-            if (ScriptManager.Instance.LoadedScripts.Count == 0)
+            if (ScriptManager.LoadedScripts.Count == 0)
                 return;
 
-            var activeScript = ScriptManager.Instance.ActiveScript;
-            var props = SettingsManager.Instance.RecordingSettings;
+            var activeScript = ScriptManager.ActiveScript;
+            var props = SettingsManager.RecordingSettings;
 
-            if (!CroppingManager.Instance.IsCropping)
+            if (!CroppingManager.IsCropping)
             {
                 if (ShouldStartCropImage(e, props))
                     return;
@@ -122,9 +132,9 @@ namespace Robot.Recording
         private void AddCommand(Command command)
         {
             if (m_ForImage || m_ForEachImage)
-                ScriptManager.Instance.ActiveScript.AddCommand(command, m_ParentCommand);
+                ScriptManager.ActiveScript.AddCommand(command, m_ParentCommand);
             else
-                ScriptManager.Instance.ActiveScript.AddCommand(command);
+                ScriptManager.ActiveScript.AddCommand(command);
         }
 
         private void ImageFindOperations(KeyEvent e, Script activeScript, RecordingSettings props)
@@ -139,7 +149,7 @@ namespace Robot.Recording
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.Guid, timeOut);
-                        ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
+                        ScriptManager.ActiveScript.AddCommand(m_ParentCommand);
                         m_ForImage = true;
                     }
                 }
@@ -150,7 +160,7 @@ namespace Robot.Recording
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut);
-                        ScriptManager.Instance.ActiveScript.AddCommand(m_ParentCommand);
+                        ScriptManager.ActiveScript.AddCommand(m_ParentCommand);
                         m_ForEachImage = true;
                     }
                 }
@@ -183,7 +193,7 @@ namespace Robot.Recording
             // TODO: FeatureDetector.Get will fail to find proper match if another thread already used/is using it
             var detector = FeatureDetector.Create(DetectionMode.PixelPerfect);
             Asset retAsset = null;
-            foreach (var asset in AssetManager.Instance.Assets)
+            foreach (var asset in AssetManager.Assets)
             {
                 if (asset.HoldsTypeOf(typeof(Bitmap)))
                 {
@@ -209,7 +219,7 @@ namespace Robot.Recording
         {
             if (e.IsKeyDown() && e.keyCode == props.CropImage)
             {
-                CroppingManager.Instance.StartCropImage(e.Point);
+                CroppingManager.StartCropImage(e.Point);
                 return true;
             }
             return false;
@@ -220,9 +230,9 @@ namespace Robot.Recording
             if (e.IsKeyDown())
             {
                 if (e.keyCode == props.CropImage)
-                    CroppingManager.Instance.EndCropImage(e.Point);
+                    CroppingManager.EndCropImage(e.Point);
                 else
-                    CroppingManager.Instance.CancelCropImage();
+                    CroppingManager.CancelCropImage();
 
                 return true;
             }

@@ -1,8 +1,8 @@
-﻿using RobotRuntime.Perf;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Perf;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -10,10 +10,12 @@ using System.Linq;
 
 namespace RobotRuntime.Graphics
 {
-    public class FeatureDetectionThread : StableRepeatingThread
+    public class FeatureDetectionThread : StableRepeatingThread, IFeatureDetectionThread
     {
         public Bitmap ObservedImage { get; private set; }
-        public object ObservedImageLock = new object();
+
+        public object ObservedImageLock { get { return m_ObservedImageLock; } }
+        private object m_ObservedImageLock = new object();
 
         private Bitmap m_SampleImage;
         private object m_SampleImageLock = new object();
@@ -31,9 +33,11 @@ namespace RobotRuntime.Graphics
 
         public event Action<Point[][]> PositionFound;
 
-        public static FeatureDetectionThread Instace { get { return m_Instance; } }
-        private static FeatureDetectionThread m_Instance = new FeatureDetectionThread();
-        private FeatureDetectionThread() { }
+        private IScreenStateThread ScreenStateThread;
+        public FeatureDetectionThread(IScreenStateThread ScreenStateThread)
+        {
+            this.ScreenStateThread = ScreenStateThread;
+        }
 
         protected override string Name { get { return "FeatureDetectionThread"; } }
 
@@ -41,13 +45,13 @@ namespace RobotRuntime.Graphics
         {
             base.Init();
 
-            ObservedImage = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
-            ScreenStateThread.Instace.Initialized += ScreenStateThreadInitialized;
+            ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
+            ScreenStateThread.Initialized += ScreenStateThreadInitialized;
         }
 
         private void ScreenStateThreadInitialized()
         {
-            ObservedImage = new Bitmap(ScreenStateThread.Instace.Width, ScreenStateThread.Instace.Height, PixelFormat.Format32bppArgb);
+            ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
         }
 
         protected override void ThreadAction()
@@ -61,9 +65,9 @@ namespace RobotRuntime.Graphics
             Profiler.Start(Name);
 
             Profiler.Start(Name + "_CloneScreen");
-            lock (ScreenStateThread.Instace.ScreenBmpLock)
+            lock (ScreenStateThread.ScreenBmpLock)
             {
-                BitmapUtility.Clone32BPPBitmap(ScreenStateThread.Instace.ScreenBmp, ObservedImage);
+                BitmapUtility.Clone32BPPBitmap(ScreenStateThread.ScreenBmp, ObservedImage);
             }
             Profiler.Stop(Name + "_CloneScreen");
 

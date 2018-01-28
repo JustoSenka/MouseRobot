@@ -1,21 +1,14 @@
-﻿using System;
+﻿using Robot.Abstractions;
+using System;
 using Robot.Utils.Win32;
-using RobotRuntime;
-using RobotRuntime.Graphics;
 using System.ComponentModel;
-using Robot.Settings;
-using RobotRuntime.Settings;
-using Robot.Recording;
 using System.IO;
-using RobotRuntime.Assets;
+using RobotRuntime.Abstractions;
 
 namespace Robot
 {
-    public class MouseRobot
+    public class MouseRobot : IMouseRobot
     {
-        static private MouseRobot m_Instance = new MouseRobot();
-        static public MouseRobot Instance { get { return m_Instance; } }
-
         public event Action<bool> RecordingStateChanged;
         public event Action<bool> PlayingStateChanged;
         public event Action<bool> VisualizationStateChanged;
@@ -23,7 +16,6 @@ namespace Robot
         private bool m_IsRecording;
         private bool m_IsPlaying;
         private bool m_IsVisualizationOn;
-
 
         /// <summary>
         /// Post messages to async operation in order to run them on UI thread
@@ -41,25 +33,40 @@ namespace Robot
 
         public string ProjectPath { get; private set; }
 
-        private MouseRobot()
+        private IScriptManager ScriptManager;
+        private IAssetGuidManager AssetGuidManager;
+        private ITestRunner TestRunner;
+        private IRecordingManager RecordingManager;
+        private IRuntimeSettings RuntimeSettings;
+        private IScreenStateThread ScreenStateThread;
+        private IFeatureDetectionThread FeatureDetectionThread;
+        private IAssetManager AssetManager;
+        private ISettingsManager SettingsManager;
+        public MouseRobot(IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
+            IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IAssetManager AssetManager, ISettingsManager SettingsManager)
         {
+            this.ScriptManager = ScriptManager;
+            this.AssetGuidManager = AssetGuidManager;
+            this.TestRunner = TestRunner;
+            this.RecordingManager = RecordingManager;
+            this.RuntimeSettings = RuntimeSettings;
+            this.ScreenStateThread = ScreenStateThread;
+            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.AssetManager = AssetManager;
+            this.SettingsManager = SettingsManager;
+
             SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
 
-            ScriptManager.Instance.NewScript();
-            TestRunner.Instance.Finished += OnScriptFinished;
-
-            var a = RecordingManager.Instance; // Initializing, if nobody is referencing, sinlgeton is not created
+            ScriptManager.NewScript();
+            TestRunner.Finished += OnScriptFinished;
         }
-
-        public void ForceInit() { } // This is to make sure that mouse robot singleton is created
-       
 
         public void StartScript()
         {
-            if (ScriptManager.Instance.ActiveScript == null)
+            if (ScriptManager.ActiveScript == null)
                 return;
 
-            TestRunner.Instance.Start(ScriptManager.Instance.ActiveScript.ToLightScript());
+            TestRunner.Start(ScriptManager.ActiveScript.ToLightScript());
         }
 
         private void OnScriptFinished()
@@ -79,6 +86,7 @@ namespace Robot
 
                     InputCallbacks.Init();
                     m_IsRecording = value;
+                    RecordingManager.IsRecording = value;
                     RecordingStateChanged?.Invoke(value);
                 }
             }
@@ -100,7 +108,7 @@ namespace Robot
                     if (m_IsPlaying)
                         StartScript();
                     else
-                        TestRunner.Instance.Stop();
+                        TestRunner.Stop();
                 }
             }
         }
@@ -117,14 +125,14 @@ namespace Robot
 
                     if (m_IsVisualizationOn)
                     {
-                        RuntimeSettings.ApplySettings(SettingsManager.Instance.FeatureDetectionSettings);
-                        ScreenStateThread.Instace.Start();
-                        FeatureDetectionThread.Instace.Start();
+                        RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
+                        ScreenStateThread.Start();
+                        FeatureDetectionThread.Start();
                     }
                     else
                     {
-                        ScreenStateThread.Instace.Stop();
-                        FeatureDetectionThread.Instace.Stop();
+                        ScreenStateThread.Stop();
+                        FeatureDetectionThread.Stop();
                     }
                 }
             }
@@ -138,8 +146,8 @@ namespace Robot
 
             Environment.CurrentDirectory = ProjectPath;
 
-            AssetManager.Instance.InitProject();
-            AssetGuidManager.Instance.LoadMetaFiles();
+            AssetManager.InitProject();
+            AssetGuidManager.LoadMetaFiles();
         }
     }
 }

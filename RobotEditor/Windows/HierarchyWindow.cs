@@ -1,6 +1,7 @@
 ﻿#define ENABLE_UI_TESTING
 
 using System;
+using RobotEditor.Abstractions;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using RobotRuntime;
@@ -13,36 +14,45 @@ using System.Diagnostics;
 using Robot.Scripts;
 using RobotRuntime.Utils;
 using System.Drawing;
+using Robot.Abstractions;
+using RobotRuntime.Abstractions;
 
 namespace RobotEditor
 {
-    public partial class HierarchyWindow : DockContent
+    public partial class HierarchyWindow : DockContent, IHierarchyWindow
     {
         public event Action<Command> OnCommandSelected;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
 
-        public HierarchyWindow()
+        private IScriptManager ScriptManager;
+        private ITestRunner TestRunner;
+        private IAssetManager AssetManager;
+        public HierarchyWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager)
         {
+            this.ScriptManager = ScriptManager;
+            this.TestRunner = TestRunner;
+            this.AssetManager = AssetManager;
+
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
             //treeView.NodeMouseClick += (sender, args) => treeView.SelectedNode = args.Node;
 
             treeListView.Font = Fonts.Default;
 
-            ScriptManager.Instance.CommandAddedToScript += OnCommandAddedToScript;
-            ScriptManager.Instance.CommandRemovedFromScript += OnCommandRemovedFromScript;
-            ScriptManager.Instance.CommandModifiedOnScript += OnCommandModifiedOnScript;
-            ScriptManager.Instance.CommandInsertedInScript += OnCommandInsertedInScript;
+            ScriptManager.CommandAddedToScript += OnCommandAddedToScript;
+            ScriptManager.CommandRemovedFromScript += OnCommandRemovedFromScript;
+            ScriptManager.CommandModifiedOnScript += OnCommandModifiedOnScript;
+            ScriptManager.CommandInsertedInScript += OnCommandInsertedInScript;
 
-            ScriptManager.Instance.ScriptLoaded += OnScriptLoaded;
-            ScriptManager.Instance.ScriptModified += OnScriptModified;
-            ScriptManager.Instance.ScriptRemoved += OnScriptRemoved;
-            ScriptManager.Instance.ScriptPositioningChanged += OnScriptPositioningChanged;
+            ScriptManager.ScriptLoaded += OnScriptLoaded;
+            ScriptManager.ScriptModified += OnScriptModified;
+            ScriptManager.ScriptRemoved += OnScriptRemoved;
+            ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;
 
-            TestRunner.Instance.Finished += OnScriptsFinishedRunning;
-            TestRunner.Instance.RunningCommand += OnCommandRunning;
+            TestRunner.Finished += OnScriptsFinishedRunning;
+            TestRunner.RunningCommand += OnCommandRunning;
 
             CreateColumns();
             UpdateHierarchy();
@@ -80,9 +90,9 @@ namespace RobotEditor
 
             if (node.Script != null)
             {
-                if (node.Script == ScriptManager.Instance.ActiveScript && node.Script.IsDirty)
+                if (node.Script == ScriptManager.ActiveScript && node.Script.IsDirty)
                     e.SubItem.Font = Fonts.ActiveAndDirtyScript;//.AddFont(Fonts.ActiveScript);
-                else if (node.Script == ScriptManager.Instance.ActiveScript)
+                else if (node.Script == ScriptManager.ActiveScript)
                     e.SubItem.Font = Fonts.ActiveScript;
                 else if (node.Script.IsDirty)
                     e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
@@ -101,7 +111,7 @@ namespace RobotEditor
         {
             m_Nodes.Clear();
 
-            foreach (var s in ScriptManager.Instance.LoadedScripts)
+            foreach (var s in ScriptManager.LoadedScripts)
                 m_Nodes.Add(new HierarchyNode(s));
 
             RefreshTreeListView();
@@ -159,7 +169,7 @@ namespace RobotEditor
 
         private void OnScriptPositioningChanged()
         {
-            foreach (var script in ScriptManager.Instance.LoadedScripts)
+            foreach (var script in ScriptManager.LoadedScripts)
             {
                 var index = m_Nodes.FindIndex(n => n.Script == script);
                 m_Nodes.MoveBefore(index, script.Index);
@@ -240,13 +250,13 @@ namespace RobotEditor
             if (selectedNode == null || selectedNode.Script == null)
                 return;
 
-            ScriptManager.Instance.ActiveScript = selectedNode.Script;
+            ScriptManager.ActiveScript = selectedNode.Script;
             RefreshTreeListView();
         }
 
         public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ScriptManager.Instance.NewScript();
+            ScriptManager.NewScript();
             RefreshTreeListView();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
@@ -269,8 +279,8 @@ namespace RobotEditor
 
             if (selectedNode.Script != null)
             {
-                ScriptManager.Instance.NewScript(selectedNode.Script);
-                ScriptManager.Instance.MoveScriptAfter(ScriptManager.Instance.LoadedScripts.Count - 1, selectedNode.Script.Index);
+                ScriptManager.NewScript(selectedNode.Script);
+                ScriptManager.MoveScriptAfter(ScriptManager.LoadedScripts.Count - 1, selectedNode.Script.Index);
             }
             else if (selectedNode.Command != null)
             {
@@ -296,9 +306,9 @@ namespace RobotEditor
                 return;
 
             if (selectedNode.Script != null)
-                ScriptManager.Instance.RemoveScript(selectedNode.Script);
+                ScriptManager.RemoveScript(selectedNode.Script);
             else if (selectedNode.Command != null)
-                ScriptManager.Instance.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+                ScriptManager.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
             RefreshTreeListView();
 
@@ -309,13 +319,13 @@ namespace RobotEditor
         #region Menu Items (save scripts from MainForm)
         public void SaveAllScripts()
         {
-            foreach (var script in ScriptManager.Instance)
+            foreach (var script in ScriptManager)
             {
                 if (!script.IsDirty)
                     continue;
 
                 if (script.Path != "")
-                    ScriptManager.Instance.SaveScript(script, script.Path);
+                    ScriptManager.SaveScript(script, script.Path);
                 else
                     SaveSelectedScriptWithDialog(script, updateUI: false);
             }
@@ -326,13 +336,13 @@ namespace RobotEditor
         public void SaveSelectedScriptWithDialog(Script script, bool updateUI = true)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.InitialDirectory = MouseRobot.Instance.ProjectPath + "\\" + AssetManager.ScriptFolder;
+            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + AssetManager.ScriptFolder;
             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
             saveDialog.Title = "Select a path for script to save.";
             saveDialog.FileName = script.Name + FileExtensions.ScriptD;
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                ScriptManager.Instance.SaveScript(script, saveDialog.FileName);
+                ScriptManager.SaveScript(script, saveDialog.FileName);
                 if (updateUI)
                     RefreshTreeListView();
             }
@@ -378,20 +388,20 @@ namespace RobotEditor
             if (targetNode.Script != null && sourceNode.Script != null)
             {
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.Instance.MoveScriptBefore(sourceNode.Script.Index, targetNode.Script.Index);
+                    ScriptManager.MoveScriptBefore(sourceNode.Script.Index, targetNode.Script.Index);
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.Instance.MoveScriptAfter(sourceNode.Script.Index, targetNode.Script.Index);
+                    ScriptManager.MoveScriptAfter(sourceNode.Script.Index, targetNode.Script.Index);
             }
 
             if (targetNode.Command != null && sourceNode.Command != null)
             {
-                var targetScript = ScriptManager.Instance.GetScriptFromCommand(targetNode.Command);
-                var sourceScript = ScriptManager.Instance.GetScriptFromCommand(sourceNode.Command);
+                var targetScript = ScriptManager.GetScriptFromCommand(targetNode.Command);
+                var sourceScript = ScriptManager.GetScriptFromCommand(sourceNode.Command);
 
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.Instance.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
+                    ScriptManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.Instance.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
+                    ScriptManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
 
                 if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested())
                 {
@@ -403,7 +413,7 @@ namespace RobotEditor
 
             if (targetNode.Script != null && sourceNode.Command != null)
             {
-                var sourceScript = ScriptManager.Instance.GetScriptFromCommand(sourceNode.Command);
+                var sourceScript = ScriptManager.GetScriptFromCommand(sourceNode.Command);
 
                 var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
                 sourceScript.RemoveCommand(sourceNode.Command);
@@ -417,7 +427,7 @@ namespace RobotEditor
 
         private void OnCommandRunning(Command command)
         {
-            var script = ScriptManager.Instance.GetScriptFromCommand(command);
+            var script = ScriptManager.GetScriptFromCommand(command);
             if (script == null)
                 return;
 
@@ -478,13 +488,13 @@ namespace RobotEditor
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].Script == ScriptManager.Instance.LoadedScripts[i],
+                Debug.Assert(m_Nodes[i].Script == ScriptManager.LoadedScripts[i],
                     string.Format("Hierarchy script missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
 
                 // Will not work in nested scenarios
                 for (int j = 0; j < m_Nodes[i].Script.Commands.Count(); j++)
                 {
-                    Debug.Assert(m_Nodes[i].Children[j].Command == ScriptManager.Instance.LoadedScripts[i].Commands.GetChild(j).value,
+                    Debug.Assert(m_Nodes[i].Children[j].Command == ScriptManager.LoadedScripts[i].Commands.GetChild(j).value,
                         string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
                         i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Script.Commands.GetChild(j).value.ToString()));
                 }

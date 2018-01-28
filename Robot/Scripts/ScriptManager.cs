@@ -1,4 +1,5 @@
-﻿using Robot.Scripts;
+﻿using Robot.Abstractions;
+using Robot.Scripts;
 using RobotRuntime;
 using System;
 using System.Collections;
@@ -7,11 +8,8 @@ using System.Linq;
 
 namespace Robot
 {
-    public class ScriptManager : IEnumerable<Script>
+    public class ScriptManager : IEnumerable<Script>, IScriptManager
     {
-        static private ScriptManager m_Instance = new ScriptManager();
-        static public ScriptManager Instance { get { return m_Instance; } }
-
         private readonly IList<Script> m_LoadedScripts;
         public IReadOnlyList<Script> LoadedScripts { get { return m_LoadedScripts.ToList().AsReadOnly(); } }
 
@@ -41,8 +39,10 @@ namespace Robot
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
-        private ScriptManager()
+        private IAssetManager AssetManager;
+        public ScriptManager(IAssetManager AssetManager)
         {
+            this.AssetManager = AssetManager;
             m_LoadedScripts = new List<Script>();
         }
 
@@ -75,6 +75,8 @@ namespace Robot
             else
                 script = (Script)clone.Clone();
 
+            script.ScriptManager = this;
+
             m_LoadedScripts.Add(script);
             script.IsDirty = true;
 
@@ -104,7 +106,7 @@ namespace Robot
 
         public Script LoadScript(string path)
         {
-            var asset = AssetManager.Instance.GetAsset(path);
+            var asset = AssetManager.GetAsset(path);
             if (asset == null)
                 throw new ArgumentException("No such asset at path: " + path);
 
@@ -113,6 +115,7 @@ namespace Robot
                 RemoveScript(0);
 
             Script newScript = asset.Importer.ReloadAsset<Script>();
+            newScript.ScriptManager = this;
             newScript.Path = asset.Path;
 
             // If script was already loaded, reload it to last saved state
@@ -139,7 +142,7 @@ namespace Robot
 
         public void SaveScript(Script script, string path)
         {
-            AssetManager.Instance.CreateAsset(script, path);
+            AssetManager.CreateAsset(script, path);
             script.Path = Commons.GetProjectRelativePath(path);
 
             ScriptSaved?.Invoke(script);
@@ -164,7 +167,7 @@ namespace Robot
                 destParentNode.Join(sourceNode);
                 destScript.Commands.MoveAfter(source, after);
 
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex());
+                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex(this));
 
                 destScript.IsDirty = true;
             }
@@ -190,7 +193,7 @@ namespace Robot
                 destParentNode.Join(sourceNode);
                 destScript.Commands.MoveBefore(source, before);
 
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex());
+                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex(this));
 
                 destScript.IsDirty = true;
             }

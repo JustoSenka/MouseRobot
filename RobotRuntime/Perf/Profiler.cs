@@ -12,7 +12,7 @@ namespace RobotRuntime.Perf
 {
     public class Profiler
     {
-        public static Profiler Instace { get { return m_Instance; } }
+        public static Profiler Instance { get { return m_Instance; } }
         private static Profiler m_Instance = new Profiler();
         private Profiler()
         {
@@ -122,14 +122,14 @@ namespace RobotRuntime.Perf
         public static void Start(string name)
         {
 #if ENABLE_PROFILER
-            Profiler.Instace.InstanceStart(name);
+            Profiler.Instance.InstanceStart(name);
 #endif
         }
 
         public static void Stop(string name)
         {
 #if ENABLE_PROFILER
-            Profiler.Instace.InstanceStop(name);
+            Profiler.Instance.InstanceStop(name);
 #endif
         }
 

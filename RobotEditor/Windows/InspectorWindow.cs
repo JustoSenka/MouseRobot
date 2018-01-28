@@ -1,22 +1,25 @@
 ﻿using Robot;
 using RobotEditor.Scripts;
-using RobotEditor.Settings;
+using RobotEditor.Abstractions;
 using RobotEditor.Utils;
 using RobotRuntime;
-using RobotRuntime.Commands;
-using System;
-using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using Robot.Abstractions;
 
 namespace RobotEditor.Windows
 {
-    public partial class InspectorWindow : DockContent
+    public partial class InspectorWindow : DockContent, IInspectorWindow
     {
         private CommandProperties<Command> m_CurrentObject;
 
-        public InspectorWindow()
+        private IScriptManager ScriptManager;
+        private IAssetManager AssetManager;
+        public InspectorWindow(IScriptManager ScriptManager, IAssetManager AssetManager)
         {
+            this.ScriptManager = ScriptManager;
+            this.AssetManager = AssetManager;
+
             InitializeComponent();
             propertyGrid.SelectedObject = null;
         }
@@ -29,14 +32,14 @@ namespace RobotEditor.Windows
                 return;
             }
 
-            m_CurrentObject = new CommandProperties<Command>(command);
+            m_CurrentObject = new CommandProperties<Command>(command, AssetManager, ScriptManager);
             ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             var command = m_CurrentObject.m_Command;
-            ScriptManager.Instance.GetScriptFromCommand(command).ApplyCommandModifications(command);
+            ScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
             ApplyDynamicTypeDescriptorToPropertyView();
         }

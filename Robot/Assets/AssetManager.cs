@@ -1,5 +1,7 @@
-﻿using Robot.Scripts;
+﻿using Robot.Abstractions;
+using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Assets;
 using RobotRuntime.Perf;
 using System;
@@ -7,15 +9,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Unity;
 
 namespace Robot
 {
-    public class AssetManager
+    public class AssetManager : IAssetManager
     {
-        static private AssetManager m_Instance = new AssetManager();
-        static public AssetManager Instance { get { return m_Instance; } }
-        private AssetManager() { }
-
         public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
         public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();        
         public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();        
@@ -26,13 +25,19 @@ namespace Robot
         public event Action<string> AssetCreated;
         public event Action<string> AssetUpdated;
 
-        public const string ScriptFolder = "Scripts";
-        public const string ImageFolder = "Images";
+        public string ScriptFolder { get { return "Scripts"; } }
+        public string ImageFolder { get { return "Images"; } }
 
         private string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         private string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
 
         private bool m_ShouldSaveMetadata = true;
+
+        private IAssetGuidManager AssetGuidManager;
+        public AssetManager(IAssetGuidManager AssetGuidManager)
+        {
+            this.AssetGuidManager = AssetGuidManager;
+        }
 
         public void Refresh()
         {
@@ -43,20 +48,20 @@ namespace Robot
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
             // Detect renamed assets if application was closed, and assets were renamed via file system
-            foreach (var pair in AssetGuidManager.Instance.Paths.ToList())
+            foreach (var pair in AssetGuidManager.Paths.ToList())
             {
                 var path = pair.Value;
                 if (!File.Exists(path))
                 {
                     var guid = pair.Key;
-                    var hash = AssetGuidManager.Instance.GetHash(guid);
+                    var hash = AssetGuidManager.GetHash(guid);
 
                     var assetOnDiskWithSameHashButNotKnownPath = assetsOnDisk.FirstOrDefault(
-                        a => a.Hash == hash && !AssetGuidManager.Instance.ContainsValue(a.Path));
+                        a => a.Hash == hash && !AssetGuidManager.ContainsValue(a.Path));
 
                     // If this asset on disk is found, update old guid to new path, since best prediction is that it was renamed
                     if (assetOnDiskWithSameHashButNotKnownPath != null)
-                        AssetGuidManager.Instance.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
+                        AssetGuidManager.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
                 }
             }
             
@@ -121,9 +126,9 @@ namespace Robot
                 AddAssetInternal(asset);
             }
 
-            AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
+            AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
             if (m_ShouldSaveMetadata)
-                AssetGuidManager.Instance.Save();
+                AssetGuidManager.Save();
 
             return asset;
         }
@@ -153,7 +158,7 @@ namespace Robot
         }
 
         /// <summary>
-        /// Renames asset from memory and renames its corresponding file. Also will update all script references to that asset
+        /// Renames asset from memory and renames its corresponding file. Asset will keep the same guid and GuidMap will be updated
         /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
@@ -174,9 +179,9 @@ namespace Robot
             DeleteAssetInternal(asset, true);
             asset.UpdatePath(destPath);
 
-            AssetGuidManager.Instance.AddNewGuid(guid, asset.Path, asset.Hash);
+            AssetGuidManager.AddNewGuid(guid, asset.Path, asset.Hash);
             if (m_ShouldSaveMetadata)
-                AssetGuidManager.Instance.Save();
+                AssetGuidManager.Save();
 
             AddAssetInternal(asset, true);
 
@@ -203,7 +208,7 @@ namespace Robot
         public void EndAssetEditing()
         {
             m_ShouldSaveMetadata = true;
-            AssetGuidManager.Instance.Save();
+            AssetGuidManager.Save();
         }
 
         public void EditAssets(Action ac)
@@ -221,20 +226,17 @@ namespace Robot
             }
         }
 
-        public static string ExtensionFromFolder(string folder)
+        public string ExtensionFromFolder(string folder)
         {
-            switch (folder)
-            {
-                case ScriptFolder:
-                    return FileExtensions.Script;
-                case ImageFolder:
-                    return FileExtensions.Image;
-                default:
-                    return "";
-            }
+            if (folder == ScriptFolder)
+                return FileExtensions.Script; 
+            else if (folder == ImageFolder)
+                return FileExtensions.Image;
+            else 
+                return "";
         }
 
-        public static string FolderFromExtension(string path)
+        public string FolderFromExtension(string path)
         {
             if (path.EndsWith(FileExtensions.Script))
                 return ScriptFolder;
@@ -247,7 +249,7 @@ namespace Robot
 
         private void AddAssetInternal(Asset asset, bool silent = false)
         {
-            var guid = AssetGuidManager.Instance.GetGuid(asset.Path);
+            var guid = AssetGuidManager.GetGuid(asset.Path);
             if (guid != default(Guid))
                 asset.SetGuid(guid);
 
@@ -255,9 +257,9 @@ namespace Robot
             GuidPathTable.Add(asset.Guid, asset.Path);
             GuidHashTable.Add(asset.Guid, asset.Hash);
 
-            AssetGuidManager.Instance.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
+            AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
             if (m_ShouldSaveMetadata)
-                AssetGuidManager.Instance.Save();
+                AssetGuidManager.Save();
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);
@@ -283,8 +285,8 @@ namespace Robot
             if (!Directory.Exists(ImagePath))
                 Directory.CreateDirectory(ImagePath);
 
-            if (!Directory.Exists(AssetGuidManager.Instance.MetadataPath))
-                Directory.CreateDirectory(AssetGuidManager.Instance.MetadataPath);
+            if (!Directory.Exists(AssetGuidManager.MetadataPath))
+                Directory.CreateDirectory(AssetGuidManager.MetadataPath);
         }
     }
 }

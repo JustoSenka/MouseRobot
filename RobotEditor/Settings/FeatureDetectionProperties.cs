@@ -26,7 +26,7 @@ namespace RobotEditor.Settings
 
         public override void OnPropertiesModified()
         {
-            RuntimeSettings.ApplySettings(SettingsManager.Instance.FeatureDetectionSettings);
+            //RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
         }
 
         private const int NumOfCategories = 2;

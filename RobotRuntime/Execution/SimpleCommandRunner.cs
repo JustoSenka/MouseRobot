@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Commands;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using System;
 
 namespace RobotRuntime.Execution
@@ -12,9 +13,11 @@ namespace RobotRuntime.Execution
     {
         private CommandRunningCallback m_Callback;
 
-        public SimpleCommandRunner(CommandRunningCallback callback)
+        private IRunnerFactory RunnerFactory;
+        public SimpleCommandRunner(IRunnerFactory RunnerFactory, CommandRunningCallback callback)
         {
             m_Callback = callback;
+            this.RunnerFactory = RunnerFactory;
         }
 
         public void Run(IRunnable runnable)

@@ -2,6 +2,8 @@
 using System.Linq;
 using Robot;
 using System.Drawing;
+using Unity;
+using Robot.Abstractions;
 
 namespace RobotEditor.Settings
 {
@@ -11,7 +13,8 @@ namespace RobotEditor.Settings
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(AssetManager.Instance.Assets.Where(a => a.HoldsTypeOf(typeof(Bitmap))).Select(a => a.Name).ToList());
+            var AssetManager = RobotRuntime.Unity.Container.Resolve<IAssetManager>();
+            return new StandardValuesCollection(AssetManager.Assets.Where(a => a.HoldsTypeOf(typeof(Bitmap))).Select(a => a.Name).ToList());
         }
     }
 }

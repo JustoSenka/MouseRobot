@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Assets;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
 using RobotRuntime.Utils;
@@ -7,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace RobotRuntime.Execution
 {
@@ -21,11 +23,20 @@ namespace RobotRuntime.Execution
         private CommandRunningCallback m_Callback;
         private ValueWrapper<bool> m_ShouldCancelRun;
 
-        public ImageCommandRunner(LightScript testFixture, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
+        private IRunnerFactory RunnerFactory;
+        private IAssetGuidManager AssetGuidManager;
+        private IFeatureDetectionThread FeatureDetectionThread;
+
+        public ImageCommandRunner(IRunnerFactory RunnerFactory, IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager, 
+            LightScript testFixture, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
         {
             m_TestFixture = testFixture;
             m_Callback = callback;
             m_ShouldCancelRun = ShouldCancelRun;
+
+            this.RunnerFactory = RunnerFactory;
+            this.AssetGuidManager = AssetGuidManager;
+            this.FeatureDetectionThread = FeatureDetectionThread;
         }
 
         public void Run(IRunnable runnable)
@@ -44,7 +55,7 @@ namespace RobotRuntime.Execution
             int timeout;
             GetImageAndTimeout(node, out imageGuid, out timeout);
 
-            var path = AssetGuidManager.Instance.GetPath(imageGuid);
+            var path = AssetGuidManager.GetPath(imageGuid);
             var points = GetCoordinates(node, path, timeout);
             if (points == null || points.Length == 0)
                 return;
@@ -68,7 +79,7 @@ namespace RobotRuntime.Execution
             }
         }
 
-        private static Point[] GetCoordinates(TreeNode<Command> node, string imagePath, int timeout)
+        private Point[] GetCoordinates(TreeNode<Command> node, string imagePath, int timeout)
         {
             var command = node.value;
 
@@ -78,16 +89,16 @@ namespace RobotRuntime.Execution
             int x1 = WinAPI.GetCursorPosition().X;
             int y1 = WinAPI.GetCursorPosition().Y;
 
-            FeatureDetectionThread.Instace.StartNewImageSearch(imagePath);
-            while (timeout > FeatureDetectionThread.Instace.TimeSinceLastFind)
+            FeatureDetectionThread.StartNewImageSearch(imagePath);
+            while (timeout > FeatureDetectionThread.TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
-                if (FeatureDetectionThread.Instace.WasImageFound)
+                if (FeatureDetectionThread.WasImageFound)
                     break;
             }
 
-            if (FeatureDetectionThread.Instace.WasImageFound)
-                return FeatureDetectionThread.Instace.LastKnownPositions.Select(p => p.FindCenter()).ToArray();
+            if (FeatureDetectionThread.WasImageFound)
+                return FeatureDetectionThread.LastKnownPositions.Select(p => p.FindCenter()).ToArray();
             else
                 return null;
         }

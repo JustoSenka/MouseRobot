@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Perf;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using SharpDX;
 using SharpDX.Direct3D11;
@@ -12,9 +13,10 @@ using MapFlags = SharpDX.Direct3D11.MapFlags;
 
 namespace RobotRuntime.Graphics
 {
-    public class ScreenStateThread : StableRepeatingThread
+    public class ScreenStateThread : StableRepeatingThread, IScreenStateThread
     {
-        public object ScreenBmpLock = new object();
+        public object ScreenBmpLock { get { return m_ScreenBmpLock;  } }
+        private object m_ScreenBmpLock = new object();
         /// <summary>
         /// Lock before using it, since data is constantly being written to this bitmap
         /// </summary>
@@ -47,9 +49,7 @@ namespace RobotRuntime.Graphics
 
         protected override string Name { get { return "ScreenStateThread"; } }
 
-        public static ScreenStateThread Instace { get { return m_Instance; } }
-        private static ScreenStateThread m_Instance = new ScreenStateThread();
-        private ScreenStateThread() { }
+        public ScreenStateThread() { }
 
         public override void Init()
         {

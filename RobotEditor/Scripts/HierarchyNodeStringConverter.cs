@@ -1,9 +1,11 @@
 ﻿using Robot;
 using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Assets;
 using System;
 using System.Text.RegularExpressions;
+using Unity;
 
 namespace RobotEditor.Scripts
 {
@@ -36,7 +38,8 @@ namespace RobotEditor.Scripts
                     if (assetGuidObj != null)
                     {
                         var guid = (Guid)assetGuidObj;
-                        var path = AssetGuidManager.Instance.GetPath(guid);
+                        var AssetGuidManager = RobotRuntime.Unity.Container.Resolve<IAssetGuidManager>();
+                        var path = AssetGuidManager.GetPath(guid);
                         var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
 
                         s = Regex.Replace(s, RegexCoordinateRecognizeRules, "<" + assetName + ">");

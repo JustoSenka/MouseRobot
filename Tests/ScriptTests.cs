@@ -11,15 +11,15 @@ namespace Tests
         [TestMethod]
         public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
         {
-            MouseRobot.Instance.ForceInit();
-            Assert.AreEqual(1, ScriptManager.Instance.LoadedScripts.Count);
+            MouseRobot.ForceInit();
+            Assert.AreEqual(1, ScriptManager.LoadedScripts.Count);
         }
 
         [TestMethod]
         public void Script_MoveCommandAfter_WorksWithinSameLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -38,8 +38,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommandBefore_WorksWithinSameLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -57,8 +57,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommand_MultipleTimes_WorksWithinSameLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -83,8 +83,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommandAfter_WorksToUpperLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -106,8 +106,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommandBefore_WorksToUpperLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -129,8 +129,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommandAfter_WorksToLowerLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
 
@@ -151,8 +151,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveCommandBefore_WorksToLowerLevel()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
 
@@ -173,8 +173,8 @@ namespace Tests
         [TestMethod]
         public void Script_MoveNestedCommands_MovesAllChildCommandsAlso()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c11 = s.AddCommand(new CommandSleep(2), c1);
@@ -196,8 +196,8 @@ namespace Tests
         [TestMethod]
         public void Script_InsertCommand_InsertsCommandInCorrectPosition()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c2 = s.AddCommand(new CommandSleep(2));
             var c4 = s.AddCommand(new CommandSleep(4));
@@ -222,8 +222,8 @@ namespace Tests
         [TestMethod]
         public void Script_AddCommandNode_AddAllCommandsWithIt()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(3));
@@ -246,8 +246,8 @@ namespace Tests
         [TestMethod]
         public void Script_RemoveCommand_RemovesItWithChildren()
         {
-            MouseRobot.Instance.ForceInit();
-            var s = ScriptManager.Instance.LoadedScripts[0];
+            MouseRobot.ForceInit();
+            var s = ScriptManager.LoadedScripts[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -268,11 +268,11 @@ namespace Tests
 
         private void ResetScriptManager()
         {
-            for (int i = ScriptManager.Instance.LoadedScripts.Count - 1; i >= 0; --i)
+            for (int i = ScriptManager.LoadedScripts.Count - 1; i >= 0; --i)
             {
-                ScriptManager.Instance.RemoveScript(ScriptManager.Instance.LoadedScripts[i]);
+                ScriptManager.RemoveScript(ScriptManager.LoadedScripts[i]);
             }
-            ScriptManager.Instance.NewScript();
+            ScriptManager.NewScript();
         }
     }
 }

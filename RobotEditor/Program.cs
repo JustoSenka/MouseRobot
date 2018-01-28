@@ -1,5 +1,7 @@
 ﻿using Robot;
+using RobotEditor.Abstractions;
 using System;
+using Unity;
 using System.Windows.Forms;
 
 namespace RobotEditor
@@ -15,9 +17,11 @@ namespace RobotEditor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            MouseRobot.Instance.ForceInit();
-            //Application.Run(new Form1());
-            Application.Run(new MainForm());
+            RobotRuntime.Unity.Init();
+
+            var mainForm = RobotRuntime.Unity.Container.Resolve<IMainForm>();
+
+            Application.Run(mainForm as Form);
         }
     }
 }

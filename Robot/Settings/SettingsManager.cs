@@ -1,4 +1,5 @@
-﻿using RobotRuntime.IO;
+﻿using Robot.Abstractions;
+using RobotRuntime.IO;
 using RobotRuntime.Settings;
 using System;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace Robot.Settings
 {
-    public class SettingsManager
+    public class SettingsManager : ISettingsManager
     {
         public RecordingSettings RecordingSettings { get; private set; }
         public FeatureDetectionSettings FeatureDetectionSettings { get; private set; }
@@ -15,10 +16,7 @@ namespace Robot.Settings
         private readonly string k_RoamingAppdataPath;
         private readonly string k_LocalAppdataPath;
 
-
-        static private SettingsManager m_Instance = new SettingsManager();
-        static public SettingsManager Instance { get { return m_Instance; } }
-        private SettingsManager()
+        public SettingsManager()
         {
             k_RoamingAppdataPath = Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData) + k_AppName;
             k_LocalAppdataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + k_AppName;

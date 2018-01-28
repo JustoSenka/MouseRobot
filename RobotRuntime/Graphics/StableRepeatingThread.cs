@@ -1,10 +1,11 @@
-﻿using System;
+﻿using RobotRuntime.Abstractions;
+using System;
 using System.Diagnostics;
 using System.Threading;
 
 namespace RobotRuntime.Graphics
 {
-    public abstract class StableRepeatingThread
+    public abstract class StableRepeatingThread : IStableRepeatingThread
     {
         public event Action Update;
 

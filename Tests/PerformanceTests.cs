@@ -33,12 +33,12 @@ namespace Tests
                 CreateDummyScriptWithImporter("Scripts\\A" + i + ".mrb");
 
             Profiler.Start(name);
-            AssetManager.Instance.Refresh();
+            AssetManager.Refresh();
             Profiler.Stop(name);
 
-            Assert.AreEqual(count, AssetManager.Instance.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            var timeTaken = Profiler.Instace.CopyNodes()[name][0].Time;
+            var timeTaken = Profiler.CopyNodes()[name][0].Time;
             System.Diagnostics.Debug.WriteLine("Asset Refresh on 100 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 80, "This test took 40% longer than usual");
@@ -54,12 +54,12 @@ namespace Tests
                 CreateDummyScriptWithImporter("Scripts\\A" + i + ".mrb");
 
             Profiler.Start(name);
-            AssetManager.Instance.Refresh();
+            AssetManager.Refresh();
             Profiler.Stop(name);
 
-            Assert.AreEqual(count, AssetManager.Instance.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            var timeTaken = Profiler.Instace.CopyNodes()[name][0].Time;
+            var timeTaken = Profiler.CopyNodes()[name][0].Time;
             System.Diagnostics.Debug.WriteLine("Asset Refresh on 1000 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 250, "This test took 40% longer than usual");
@@ -78,8 +78,8 @@ namespace Tests
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();
 
-            MouseRobot.Instance.SetupProjectPath(TempProjectPath);
-            AssetManager.Instance.Refresh();
+            MouseRobot.SetupProjectPath(TempProjectPath);
+            AssetManager.Refresh();
         }
 
         [TestCleanup]
@@ -88,8 +88,8 @@ namespace Tests
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();
 
-            AssetGuidManager.Instance.LoadMetaFiles();
-            AssetManager.Instance.Refresh();
+            AssetGuidManager.LoadMetaFiles();
+            AssetManager.Refresh();
         }
 
         private void CleanupMetaDataDirectory()

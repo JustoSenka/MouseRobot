@@ -1,27 +1,32 @@
-﻿using RobotRuntime.Assets;
-using RobotRuntime.Commands;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Execution;
 using RobotRuntime.Graphics;
 using RobotRuntime.Utils;
-using RobotRuntime.Utils.Win32;
 using System;
-using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace RobotRuntime
 {
-    public class TestRunner
+    public class TestRunner : ITestRunner
     {
-        static private TestRunner m_Instance = new TestRunner();
-        static public TestRunner Instance { get { return m_Instance; } }
-        private TestRunner() { }
-
         public event Action Finished;
         public event CommandRunningCallback RunningCommand;
 
         private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
+
+        private IAssetGuidManager AssetGuidManager;
+        private IScreenStateThread ScreenStateThread;
+        private IFeatureDetectionThread FeatureDetectionThread;
+        private IRunnerFactory RunnerFactory;
+        public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IRunnerFactory RunnerFactory)
+        {
+            this.AssetGuidManager = AssetGuidManager;
+            this.ScreenStateThread = ScreenStateThread;
+            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.RunnerFactory = RunnerFactory;
+        }
 
         public void Start(LightScript lightScript)
         {
@@ -30,11 +35,11 @@ namespace RobotRuntime
             ShouldCancelRun.Value = false;
             RunnerFactory.CancellingPointerPlaceholder = ShouldCancelRun;
 
-            AssetGuidManager.Instance.LoadMetaFiles();
+            AssetGuidManager.LoadMetaFiles();
 
             //RuntimeSettings.ApplySettings();
-            ScreenStateThread.Instace.Start();
-            FeatureDetectionThread.Instace.Start();
+            ScreenStateThread.Start();
+            FeatureDetectionThread.Start();
             Task.Delay(80).Wait(); // make sure first screenshot is taken before starting running commands
 
 
@@ -45,8 +50,8 @@ namespace RobotRuntime
                 var runner = RunnerFactory.CreateFor(lightScript.GetType());
                 runner.Run(lightScript);
 
-                ScreenStateThread.Instace.Stop();
-                FeatureDetectionThread.Instace.Stop();
+                ScreenStateThread.Stop();
+                FeatureDetectionThread.Stop();
 
                 Finished?.Invoke();
                 Console.WriteLine("End script.");

@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Commands;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Utils;
 using System;
 
@@ -10,10 +11,13 @@ namespace RobotRuntime.Execution
         private CommandRunningCallback m_Callback;
         private ValueWrapper<bool> m_ShouldCancelRun;
 
-        public ScriptRunner(CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
+        private IRunnerFactory RunnerFactory;
+        public ScriptRunner(IRunnerFactory RunnerFactory, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
         {
             m_Callback = callback;
             m_ShouldCancelRun = ShouldCancelRun;
+
+            this.RunnerFactory = RunnerFactory;
         }
 
         public void Run(IRunnable runnable)

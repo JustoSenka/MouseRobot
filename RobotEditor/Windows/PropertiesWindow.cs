@@ -1,22 +1,26 @@
-﻿using Robot.Settings;
+﻿using RobotEditor.Abstractions;
+using Robot.Settings;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using Robot.Abstractions;
 
 namespace RobotEditor
 {
-    public partial class PropertiesWindow : DockContent
+    public partial class PropertiesWindow : DockContent, IPropertiesWindow
     {
         private BaseProperties m_CurrentObject;
         private Type m_CurrentObjectType;
 
-        public PropertiesWindow()
+        private ISettingsManager SettingsManager;
+        public PropertiesWindow(ISettingsManager SettingsManager)
         {
+            this.SettingsManager = SettingsManager;
             InitializeComponent();
-            ShowSettings(SettingsManager.Instance.RecordingSettings);
+            ShowSettings(SettingsManager.RecordingSettings);
         }
 
         public void ShowProperties<T>(T properties) where T : BaseProperties
@@ -64,12 +68,12 @@ namespace RobotEditor
 
         private void recordingSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSettings(SettingsManager.Instance.RecordingSettings);
+            ShowSettings(SettingsManager.RecordingSettings);
         }
 
         private void imageDetectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSettings(SettingsManager.Instance.FeatureDetectionSettings);
+            ShowSettings(SettingsManager.FeatureDetectionSettings);
         }
 
         #endregion

@@ -12,11 +12,11 @@ namespace Tests
         public void FindImageInsideAnotherImage()
         {
             /*
-            MouseRobot.Instance.ForceInit();
-            AssetManager.Instance.Refresh();
+            MouseRobot.ForceInit();
+            AssetManager.Refresh();
 
-            var modelImage = new Mat(AssetManager.Instance.GetAsset("Images", "UnityButton").Path);
-            var observedImage = new Mat(AssetManager.Instance.GetAsset("Images", "UnityCollab").Path);
+            var modelImage = new Mat(AssetManager.GetAsset("Images", "UnityButton").Path);
+            var observedImage = new Mat(AssetManager.GetAsset("Images", "UnityCollab").Path);
             */
             //var avgPos = FeatureDetector.Get().FindImageRect(modelImage.Bitmap, observedImage.Bitmap);
 

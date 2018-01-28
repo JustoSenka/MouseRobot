@@ -4,6 +4,7 @@ using Robot.Utils.Win32;
 using RobotEditor.Editor;
 using RobotEditor.Utils;
 using RobotEditor.Windows;
+using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Graphics;
 using System;
@@ -15,7 +16,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IMainForm
     {
         private DockContent[] m_Windows;
 
@@ -31,9 +32,31 @@ namespace RobotEditor
 
         private FormWindowState m_DefaultWindowState;
 
-        public MainForm()
+        private MouseRobot MouseRobot;
+        private ScreenDrawForm ScreenDrawForm;
+        private FeatureDetectionThread FeatureDetectionThread;
+        private SettingsManager SettingsManager;
+        private ScriptManager ScriptManager;
+        private AssetManager AssetManager;
+        public MainForm(MouseRobot MouseRobot, ScreenDrawForm ScreenDrawForm, FeatureDetectionThread FeatureDetectionThread, SettingsManager SettingsManager,
+            ScriptManager ScriptManager, AssetManager AssetManager, HierarchyWindow HierarchyWindow, PropertiesWindow PropertiesWindow, ScreenPreviewWindow ScreenPreviewWindow,
+            AssetsWindow AssetsWindow, ProfilerWindow ProfilerWindow, InspectorWindow InspectorWindow)
         {
-            MouseRobot.Instance.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
+            this.MouseRobot = MouseRobot;
+            this.ScreenDrawForm = ScreenDrawForm;
+            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.SettingsManager = SettingsManager;
+            this.ScriptManager = ScriptManager;
+            this.AssetManager = AssetManager;
+
+            this.m_HierarchyWindow = HierarchyWindow;
+            this.m_PropertiesWindow = PropertiesWindow;
+            this.m_ScreenPreviewWindow = ScreenPreviewWindow;
+            this.m_AssetsWindow = AssetsWindow;
+            this.m_ProfilerWindow = ProfilerWindow;
+            this.m_InspectorWindow = InspectorWindow;
+
+            MouseRobot.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -58,11 +81,11 @@ namespace RobotEditor
             m_AssetsWindow.AssetSelected += OnAssetSelected;
             m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick;
 
-            MouseRobot.Instance.RecordingStateChanged += OnRecordingStateChanged;
-            MouseRobot.Instance.PlayingStateChanged += OnPlayingStateChanged;
-            MouseRobot.Instance.VisualizationStateChanged += OnVisualizationStateChanged;
+            MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
+            MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
+            MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
 
-            ScreenDrawForm.Instace.Show();
+            ScreenDrawForm.Show();
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -114,8 +137,8 @@ namespace RobotEditor
         private void OnAssetSelected()
         {
             m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
-            if (MouseRobot.Instance.IsVisualizationOn)
-                FeatureDetectionThread.Instace.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
+            if (MouseRobot.IsVisualizationOn)
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
         }
 
         private void OnCommandDoubleClick(Command command)
@@ -124,14 +147,14 @@ namespace RobotEditor
         }
 
         private void CreateWindows()
-        {
+        {/*
             m_HierarchyWindow = new HierarchyWindow();
             m_PropertiesWindow = new PropertiesWindow();
             m_ScreenPreviewWindow = new ScreenPreviewWindow();
             m_AssetsWindow = new AssetsWindow();
             m_ProfilerWindow = new ProfilerWindow();
             m_InspectorWindow = new InspectorWindow();
-
+            */
             m_Windows = new DockContent[]
             {
                 m_HierarchyWindow,
@@ -207,7 +230,7 @@ namespace RobotEditor
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.Instance.ActiveScript, true);
+            m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -258,7 +281,7 @@ namespace RobotEditor
                         unimportedPaths += "\nUnsupported format: " + path;
                 }
 
-                AssetManager.Instance.Refresh();
+                AssetManager.Refresh();
                 if (unimportedPaths != "")
                     MessageBox.Show("These files cannot be imported: " + unimportedPaths);
             }
@@ -327,13 +350,13 @@ namespace RobotEditor
         private void recordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_PropertiesWindow.Show(m_DockPanel);
-            m_PropertiesWindow.ShowSettings(SettingsManager.Instance.RecordingSettings);
+            m_PropertiesWindow.ShowSettings(SettingsManager.RecordingSettings);
         }
 
         private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             m_PropertiesWindow.Show(m_DockPanel);
-            m_PropertiesWindow.ShowSettings(SettingsManager.Instance.FeatureDetectionSettings);
+            m_PropertiesWindow.ShowSettings(SettingsManager.FeatureDetectionSettings);
         }
 
         #endregion
@@ -341,26 +364,26 @@ namespace RobotEditor
         #region Toolstrip item clicks
         private void playButton_Click(object sender, EventArgs e)
         {
-            if (MouseRobot.Instance.IsRecording)
+            if (MouseRobot.IsRecording)
                 return;
 
-            MouseRobot.Instance.IsPlaying ^= true;
+            MouseRobot.IsPlaying ^= true;
         }
 
         private void recordButton_Click(object sender, EventArgs e)
         {
-            if (MouseRobot.Instance.IsPlaying)
+            if (MouseRobot.IsPlaying)
                 return;
 
-            MouseRobot.Instance.IsRecording ^= true;
+            MouseRobot.IsRecording ^= true;
         }
 
 
         private void enableVizualization_Click(object sender, EventArgs e)
         {
-            MouseRobot.Instance.IsVisualizationOn ^= true;
+            MouseRobot.IsVisualizationOn ^= true;
             /*  now it is always shown. Might cause performance issues, maybe fix will come in future if it's a problem
-            if (MouseRobot.Instance.IsVisualizationOn)
+            if (MouseRobot.IsVisualizationOn)
                 ScreenDrawForm.Instace.Show();
             else
                 ScreenDrawForm.Instace.Hide();*/
@@ -370,39 +393,39 @@ namespace RobotEditor
         private void UpdateToolstripButtonStates()
         {
             // Change images
-            playButton.Image = (MouseRobot.Instance.IsPlaying) ?
+            playButton.Image = (MouseRobot.IsPlaying) ?
                 RobotEditor.Properties.Resources.ToolButton_Stop_32 : RobotEditor.Properties.Resources.ToolButton_Play_32;
 
-            recordButton.Image = (MouseRobot.Instance.IsRecording) ?
+            recordButton.Image = (MouseRobot.IsRecording) ?
                 RobotEditor.Properties.Resources.ToolButton_RecordStop_32 : RobotEditor.Properties.Resources.ToolButton_Record_32;
 
-            visualizationButton.Image = (MouseRobot.Instance.IsVisualizationOn) ?
+            visualizationButton.Image = (MouseRobot.IsVisualizationOn) ?
                 RobotEditor.Properties.Resources.Eye_e_ICO_256 : RobotEditor.Properties.Resources.Eye_d_ICO_256;
 
             // Disable/Enable buttons
-            playButton.Enabled = !MouseRobot.Instance.IsRecording;
-            recordButton.Enabled = !MouseRobot.Instance.IsPlaying;
+            playButton.Enabled = !MouseRobot.IsRecording;
+            recordButton.Enabled = !MouseRobot.IsPlaying;
 
             // Change tooltip text
-            playButton.ToolTipText = (MouseRobot.Instance.IsPlaying) ?
+            playButton.ToolTipText = (MouseRobot.IsPlaying) ?
                 RobotEditor.Properties.Settings.Default.S_Stop : RobotEditor.Properties.Settings.Default.S_Play;
 
-            recordButton.ToolTipText = (MouseRobot.Instance.IsRecording) ?
+            recordButton.ToolTipText = (MouseRobot.IsRecording) ?
                 RobotEditor.Properties.Settings.Default.S_StopRecording : RobotEditor.Properties.Settings.Default.S_StartRecording;
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            ScreenStateThread.Instace.Stop();
-            FeatureDetectionThread.Instace.Stop();
+            //ScreenStateThread.Stop();
+            FeatureDetectionThread.Stop();
             Application.Exit();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DockLayout.Save(m_DockPanel);
-            MouseRobot.Instance.IsRecording = false;
-            MouseRobot.Instance.IsPlaying = false;
+            MouseRobot.IsRecording = false;
+            MouseRobot.IsPlaying = false;
         }
     }
 }

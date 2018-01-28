@@ -1,7 +1,9 @@
 ﻿using Robot;
+using Robot.Abstractions;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
+using Unity;
 
 namespace RobotEditor.Settings
 {
@@ -14,7 +16,8 @@ namespace RobotEditor.Settings
 
         public override void PaintValue(PaintValueEventArgs e)
         {
-            var asset = AssetManager.Instance.GetAsset(AssetManager.ImageFolder, e.Value.ToString());
+            var AssetManager = RobotRuntime.Unity.Container.Resolve<IAssetManager>();
+            var asset = AssetManager.GetAsset(AssetManager.ImageFolder, e.Value.ToString());
             if (asset == null)
                 return;
 

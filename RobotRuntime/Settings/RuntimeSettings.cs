@@ -1,17 +1,26 @@
-﻿using RobotRuntime.Graphics;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Graphics;
 
 namespace RobotRuntime.Settings
 {
-    public static class RuntimeSettings
+    public class RuntimeSettings : IRuntimeSettings
     {
+        IScreenStateThread ScreenStateThread;
+        IFeatureDetectionThread FeatureDetectionThread;
+        public RuntimeSettings(IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread)
+        {
+            this.ScreenStateThread = ScreenStateThread;
+            this.FeatureDetectionThread = FeatureDetectionThread;
+        }
+
+
         // TODO: Probably add read here, since runtime also needs to read settings from file somehow imo
         // Probably settings should be per command, maybe diff commands should have diff settings
-
-        public static void ApplySettings(FeatureDetectionSettings settings)
+        public void ApplySettings(FeatureDetectionSettings settings)
         {
-            ScreenStateThread.Instace.FPS = settings.ScreenImageUpdateFPS;
-            FeatureDetectionThread.Instace.FPS = settings.ImageDetectionFPS;
-            FeatureDetectionThread.Instace.DetectionMode = settings.DetectionMode;
+            //ScreenStateThread.FPS = settings.ScreenImageUpdateFPS;  // TODO: Fix stable repeating thread
+            //FeatureDetectionThread.FPS = settings.ImageDetectionFPS;
+            FeatureDetectionThread.DetectionMode = settings.DetectionMode;
         }
     }
 }

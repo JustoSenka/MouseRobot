@@ -1,3 +1,4 @@
+using RobotEditor.Abstractions;
 using BrightIdeasSoftware;
 using RobotEditor.CustomControls;
 using RobotRuntime.Perf;
@@ -8,7 +9,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows
 {
-    public partial class ProfilerWindow : DockContent
+    public partial class ProfilerWindow : DockContent, IProfilerWindow
     {
         private Dictionary<string, ProfilerNode[]> m_NodeDict;
         private List<ProfilerNode>[] m_NodesArray;
@@ -84,7 +85,7 @@ namespace RobotEditor.Windows
 
         private void TakeSnapshot(object sender, EventArgs e)
         {
-            m_NodeDict = Profiler.Instace.CopyNodes();
+            m_NodeDict = Profiler.Instance.CopyNodes();
             //ParentNodesWithUnderscores();
             OnFrameValueChange(this, null);
         }

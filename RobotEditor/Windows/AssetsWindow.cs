@@ -1,4 +1,6 @@
 ﻿using Robot;
+using Robot.Abstractions;
+using RobotEditor.Abstractions;
 using RobotRuntime;
 using System;
 using System.Linq;
@@ -7,12 +9,17 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
-    public partial class AssetsWindow : DockContent
+    public partial class AssetsWindow : DockContent, IAssetsWindow
     {
         public event Action AssetSelected;
 
-        public AssetsWindow()
+        private IAssetManager AssetManager;
+        private IScriptManager ScriptManager;
+        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager)
         {
+            this.AssetManager = AssetManager;
+            this.ScriptManager = ScriptManager;
+
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
             treeView.Font = Fonts.Default;
@@ -20,23 +27,23 @@ namespace RobotEditor
 
             treeView.AfterRename += OnAfterRenameNode;
 
-            AssetManager.Instance.RefreshFinished += OnRefreshFinished;
-            AssetManager.Instance.AssetCreated += OnAssetCreated;
-            AssetManager.Instance.AssetDeleted += OnAssetDeleted;
+            AssetManager.RefreshFinished += OnRefreshFinished;
+            AssetManager.AssetCreated += OnAssetCreated;
+            AssetManager.AssetDeleted += OnAssetDeleted;
 
-            AssetManager.Instance.Refresh();
+            AssetManager.Refresh();
         }
 
         public Asset GetSelectedAsset()
         {
-            return AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            return AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
         }
 
         private void OnAfterRenameNode(NodeLabelEditEventArgs e)
         {
-            var asset = AssetManager.Instance.GetAsset(e.Node.Parent.Text, e.Node.Text);
+            var asset = AssetManager.GetAsset(e.Node.Parent.Text, e.Node.Text);
             var newPath = asset.Path.Replace("\\" + Commons.GetName(asset.Path), "\\" + e.Label);
-            AssetManager.Instance.RenameAsset(asset.Path, newPath);
+            AssetManager.RenameAsset(asset.Path, newPath);
         }
 
         private void OnAssetDeleted(string path)
@@ -62,7 +69,7 @@ namespace RobotEditor
             treeView.Nodes.Add(scriptNode);
             treeView.Nodes.Add(imageNode);
 
-            foreach (var asset in AssetManager.Instance.Assets)
+            foreach (var asset in AssetManager.Assets)
             {
                 TreeNode assetNode = new TreeNode(asset.Name);
                 assetNode.ImageIndex = 0;
@@ -104,9 +111,9 @@ namespace RobotEditor
             if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
                 return;
 
-            var asset = AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
-            if (!ScriptManager.Instance.LoadedScripts.Any(s => s.Name == asset.Name))
-                ScriptManager.Instance.LoadScript(asset.Path);
+            var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            if (!ScriptManager.LoadedScripts.Any(s => s.Name == asset.Name))
+                ScriptManager.LoadScript(asset.Path);
         }
 
         private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -114,8 +121,8 @@ namespace RobotEditor
             if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
                 return;
 
-            var asset = AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
-            ScriptManager.Instance.LoadScript(asset.Path);
+            var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            ScriptManager.LoadScript(asset.Path);
         }
 
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -128,7 +135,7 @@ namespace RobotEditor
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AssetManager.Instance.Refresh();
+            AssetManager.Refresh();
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -136,14 +143,14 @@ namespace RobotEditor
             if (treeView.SelectedNode == null)
                 return;
 
-            var path = MouseRobot.Instance.ProjectPath + "\\";
+            var path = Environment.CurrentDirectory + "\\";
             if (treeView.SelectedNode.Level == 0)
             {
                 path += treeView.SelectedNode.Text;
             }
             else if (treeView.SelectedNode.Level == 1)
             {
-                path += AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text).Path;
+                path += AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text).Path;
             }
 
             System.Diagnostics.Process.Start("explorer.exe", "/select, " + path);
@@ -153,8 +160,8 @@ namespace RobotEditor
         {
             if (treeView.SelectedNode.Level == 1)
             {
-                var asset = AssetManager.Instance.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
-                AssetManager.Instance.DeleteAsset(asset.Path);
+                var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+                AssetManager.DeleteAsset(asset.Path);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using RobotRuntime;
+﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Utils;
 using System;
 using System.Collections;
@@ -28,10 +29,11 @@ namespace Robot.Scripts
         {
             get
             {
-                return ScriptManager.Instance.LoadedScripts.IndexOf(this);
+                return ScriptManager.LoadedScripts.IndexOf(this);
             }
         }
 
+        public IScriptManager ScriptManager { get; set; }
         public Script()
         {
             Commands = new TreeNode<Command>();
@@ -40,7 +42,7 @@ namespace Robot.Scripts
         public void ApplyCommandModifications(Command command)
         {
             m_IsDirty = true;
-            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, command, command);
+            ScriptManager.InvokeCommandModifiedOnScript(this, command, command);
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace Robot.Scripts
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.AddChild(command);
-            ScriptManager.Instance.InvokeCommandAddedToScript(this, parentCommand, command);
+            ScriptManager.InvokeCommandAddedToScript(this, parentCommand, command);
             return command;
         }
 
@@ -72,7 +74,7 @@ namespace Robot.Scripts
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.Join(commandNode);
-            ScriptManager.Instance.InvokeCommandAddedToScript(this, parentCommand, commandNode.value);
+            ScriptManager.InvokeCommandAddedToScript(this, parentCommand, commandNode.value);
             return commandNode.value;
         }
 
@@ -90,7 +92,7 @@ namespace Robot.Scripts
             var node = Commands.GetNodeFromValue(originalCommand);
             node.value = newCommand;
 
-            ScriptManager.Instance.InvokeCommandModifiedOnScript(this, originalCommand, newCommand);
+            ScriptManager.InvokeCommandModifiedOnScript(this, originalCommand, newCommand);
             return newCommand;
         }
 
@@ -105,7 +107,7 @@ namespace Robot.Scripts
             treeNodeToInsert.Insert(position, command);
 
             m_IsDirty = true;
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, parentCommand, command, position);
+            ScriptManager.InvokeCommandInsertedInScript(this, parentCommand, command, position);
             return command;
         }
 
@@ -135,14 +137,14 @@ namespace Robot.Scripts
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on script");
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(after), "Destination Command should exist on script");
 
-            var oldIndex = source.GetIndex();
+            var oldIndex = source.GetIndex(ScriptManager);
             var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
             var destParentCommand = Commands.GetNodeFromValue(after).parent.value;
 
             Commands.MoveAfter(source, after);
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex());
+            ScriptManager.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
+            ScriptManager.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex(ScriptManager));
             m_IsDirty = true;
         }
 
@@ -155,14 +157,14 @@ namespace Robot.Scripts
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on script");
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(before), "Destination Command should exist on script");
 
-            var oldIndex = source.GetIndex();
+            var oldIndex = source.GetIndex(ScriptManager);
             var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
             var destParentCommand = Commands.GetNodeFromValue(before).parent.value;
 
             Commands.MoveBefore(source, before);
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
-            ScriptManager.Instance.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex());
+            ScriptManager.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
+            ScriptManager.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex(ScriptManager));
             m_IsDirty = true;
         }
 
@@ -170,18 +172,19 @@ namespace Robot.Scripts
         {
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should exist on script");
 
-            var oldIndex = command.GetIndex();
+            var oldIndex = command.GetIndex(ScriptManager);
             var parentCommand = Commands.GetNodeFromValue(command).parent.value;
 
             Commands.Remove(command);
 
-            ScriptManager.Instance.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
+            ScriptManager.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
             m_IsDirty = true;
         }
 
         public object Clone()
         {
             var script = new Script();
+            script.ScriptManager = ScriptManager;
 
             script.Commands = (TreeNode<Command>)Commands.Clone();
 
@@ -202,8 +205,8 @@ namespace Robot.Scripts
         {
             set
             {
-                Debug.Assert(ScriptManager.Instance.IsTheCaller(),
-                    "Only ScriptManager can change script path value. It should not be accessed from somewhere else");
+                /*Debug.Assert(ScriptManager.IsTheCaller(),
+                    "Only ScriptManager can change script path value. It should not be accessed from somewhere else");*/
                 m_Path = value;
                 IsDirty = false;
             }
@@ -214,8 +217,8 @@ namespace Robot.Scripts
         {
             set
             {
-                Debug.Assert(ScriptManager.Instance.IsTheCaller(),
-                    "Only ScriptManager can change script dirty value. It should not be accessed from somewhere else");
+                /*Debug.Assert(ScriptManager.IsTheCaller(),
+                    "Only ScriptManager can change script dirty value. It should not be accessed from somewhere else");*/
 
                 if (m_IsDirty != value)
                     DirtyChanged?.Invoke(this);

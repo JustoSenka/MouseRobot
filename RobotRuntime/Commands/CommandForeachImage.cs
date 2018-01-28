@@ -29,7 +29,7 @@ namespace RobotRuntime.Commands
             x1 = WinAPI.GetCursorPosition().X;
             y1 = WinAPI.GetCursorPosition().Y;
 
-            var path = AssetGuidManager.Instance.GetPath(Asset);
+            var path = AssetGuidManager.GetPath(Asset);
             FeatureDetectionThread.Instace.StartNewImageSearch(path);
             while (Timeout > FeatureDetectionThread.Instace.TimeSinceLastFind)
             {
@@ -46,7 +46,7 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            var path = AssetGuidManager.Instance.GetPath(Asset);
+            var path = "a"; //AssetGuidManager.GetPath(Asset);
             var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
             return "For Each image '" + assetName + "':";
         }

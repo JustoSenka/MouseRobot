@@ -1,22 +1,14 @@
-﻿using RobotRuntime.IO;
+﻿using RobotRuntime.Abstractions;
+using RobotRuntime.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotRuntime.Assets
 {
-    public class AssetGuidManager
+    public class AssetGuidManager : IAssetGuidManager
     {
-        static private AssetGuidManager m_Instance = new AssetGuidManager();
-        static public AssetGuidManager Instance { get { return m_Instance; } }
-        private AssetGuidManager()
-        {
-            m_Serializer = new YamlObjectIO();
-        }
-
         public const string MetadataFolder = "Metadata";
         public const string GuidPathMapFileName = "AssetGuidsTable.meta";
         public const string GuidHashMapFileName = "AssetHashTable.meta";
@@ -31,6 +23,11 @@ namespace RobotRuntime.Assets
         private ObjectIO m_Serializer;
         private bool m_GuidPathMapDirty;
         private bool m_GuidHashMapDirty;
+
+        public AssetGuidManager()
+        {
+            m_Serializer = new YamlObjectIO();
+        }
 
         public void AddNewGuid(Guid guid, string path, Int64 hash)
         {
