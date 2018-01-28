@@ -104,6 +104,7 @@ namespace Robot
 
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
+                    RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
 
                     if (m_IsPlaying)
                         StartScript();

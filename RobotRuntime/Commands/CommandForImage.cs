@@ -46,9 +46,7 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            var path = "a"; //AssetGuidManager.GetPath(Asset);
-            var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
-            return "For image '" + assetName + "':";
+            return "For Each image: <" + Asset.ToString() + ">";
         }
 
         public override CommandType CommandType { get { return CommandType.ForImage; } }

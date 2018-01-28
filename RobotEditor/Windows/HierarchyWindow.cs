@@ -29,15 +29,16 @@ namespace RobotEditor
         private IScriptManager ScriptManager;
         private ITestRunner TestRunner;
         private IAssetManager AssetManager;
-        public HierarchyWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager)
+        private IHierarchyNodeStringConverter HierarchyNodeStringConverter;
+        public HierarchyWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager, IHierarchyNodeStringConverter HierarchyNodeStringConverter)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
+            this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-            //treeView.NodeMouseClick += (sender, args) => treeView.SelectedNode = args.Node;
 
             treeListView.Font = Fonts.Default;
 
@@ -64,7 +65,7 @@ namespace RobotEditor
             treeListView.ChildrenGetter = x => (x as HierarchyNode).Children;
 
             var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => (x as HierarchyNode).ToString();
+            nameColumn.AspectGetter = x => HierarchyNodeStringConverter.ToString(x as HierarchyNode);
 
             nameColumn.ImageGetter += delegate (object x)
             {

@@ -20,7 +20,7 @@ namespace RobotEditor.Settings
             var asset = AssetManager.GetAsset(AssetManager.ImageFolder, e.Value.ToString());
             if (asset == null)
                 return;
-
+            
             var bmp = asset.Importer.Load<Bitmap>();
 
             RemoveImageRectangleBounds(e);

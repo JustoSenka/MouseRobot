@@ -1,11 +1,11 @@
-﻿using Robot;
-using RobotEditor.Scripts;
+﻿using RobotEditor.Scripts;
 using RobotEditor.Abstractions;
 using RobotEditor.Utils;
 using RobotRuntime;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using Robot.Abstractions;
+using RobotRuntime.Abstractions;
 
 namespace RobotEditor.Windows
 {
@@ -15,10 +15,12 @@ namespace RobotEditor.Windows
 
         private IScriptManager ScriptManager;
         private IAssetManager AssetManager;
-        public InspectorWindow(IScriptManager ScriptManager, IAssetManager AssetManager)
+        private IAssetGuidManager AssetGuidManager;
+        public InspectorWindow(IScriptManager ScriptManager, IAssetManager AssetManager, IAssetGuidManager AssetGuidManager)
         {
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
+            this.AssetGuidManager = AssetGuidManager;
 
             InitializeComponent();
             propertyGrid.SelectedObject = null;
@@ -32,7 +34,7 @@ namespace RobotEditor.Windows
                 return;
             }
 
-            m_CurrentObject = new CommandProperties<Command>(command, AssetManager, ScriptManager);
+            m_CurrentObject = new CommandProperties<Command>(command, AssetManager, ScriptManager, AssetGuidManager);
             ApplyDynamicTypeDescriptorToPropertyView();
         }
 

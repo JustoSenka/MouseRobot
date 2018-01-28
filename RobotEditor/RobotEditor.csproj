@@ -165,6 +165,7 @@
     <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />
+    <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
     <Compile Include="Settings\AssetGUIDImageStringConverter.cs" />
     <Compile Include="Settings\AssetGUIDImageUITypeEditor.cs" />
     <Compile Include="Settings\BaseProperties.cs" />

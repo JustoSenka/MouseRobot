@@ -4,6 +4,7 @@ using Unity;
 using Unity.Lifetime;
 using RobotEditor.Windows;
 using System.Windows.Forms;
+using RobotEditor.Scripts;
 
 namespace RobotEditor
 {
@@ -40,6 +41,7 @@ namespace RobotEditor
             Container.RegisterType<IPropertiesWindow, PropertiesWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenDrawForm, ScreenDrawForm>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenPreviewWindow, ScreenPreviewWindow>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IHierarchyNodeStringConverter, HierarchyNodeStringConverter>(new ContainerControlledLifetimeManager());
         }
     }
 }

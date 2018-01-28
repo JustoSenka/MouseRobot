@@ -2,33 +2,32 @@
 using Robot.Scripts;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Assets;
 using System;
 using System.Text.RegularExpressions;
-using Unity;
+using RobotEditor.Abstractions;
 
 namespace RobotEditor.Scripts
 {
-    internal class HierarchyNodeStringConverter
+    public class HierarchyNodeStringConverter : IHierarchyNodeStringConverter
     {
-        private HierarchyNode m_Node;
         private const string RegexCoordinateRecognizeRules = @"\(\d+[, ]+\d+\)";
+        private const string RegexGuidRecognizeRules = @"[\d\D]{8}-[\d\D]{4}-[\d\D]{4}-[\d\D]{4}-[\d\D]{12}";
 
-        internal HierarchyNodeStringConverter(HierarchyNode node)
+        private IAssetGuidManager AssetGuidManager;
+        public HierarchyNodeStringConverter(IAssetGuidManager AssetGuidManager)
         {
-            m_Node = node;
+            this.AssetGuidManager = AssetGuidManager;
         }
-
-        internal string Str { get { return ToString(m_Node); } }
-
-        internal static string ToString(HierarchyNode node)
+        
+        public string ToString(HierarchyNode node)
         {
             var s = node.Value.ToString();
             s = ReplaceCoordinatesIfTheyAreOverridenByParentNestedCommand(node, s);
+            s = ReplaceImagePlaceholderToAnActualImageName(node, s);
             return s;
         }
 
-        private static string ReplaceCoordinatesIfTheyAreOverridenByParentNestedCommand(HierarchyNode node, string s)
+        private string ReplaceCoordinatesIfTheyAreOverridenByParentNestedCommand(HierarchyNode node, string s)
         {
             if (node.Command != null && Regex.IsMatch(s, RegexCoordinateRecognizeRules))
             {
@@ -38,12 +37,28 @@ namespace RobotEditor.Scripts
                     if (assetGuidObj != null)
                     {
                         var guid = (Guid)assetGuidObj;
-                        var AssetGuidManager = RobotRuntime.Unity.Container.Resolve<IAssetGuidManager>();
                         var path = AssetGuidManager.GetPath(guid);
                         var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
 
                         s = Regex.Replace(s, RegexCoordinateRecognizeRules, "<" + assetName + ">");
                     }
+                }
+            }
+
+            return s;
+        }
+
+        private string ReplaceImagePlaceholderToAnActualImageName(HierarchyNode node, string s)
+        {
+            if (node.Command != null && Regex.IsMatch(s, RegexGuidRecognizeRules))
+            {
+                var assetGuidObj = CommandFactory.GetPropertyIfExist(node.Command, CommandFactory.k_Asset);
+                if (assetGuidObj != null)
+                {
+                    var guid = (Guid)assetGuidObj;
+                    var path = AssetGuidManager.GetPath(guid);
+                    var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
+                    s = Regex.Replace(s, RegexGuidRecognizeRules, assetName);
                 }
             }
 

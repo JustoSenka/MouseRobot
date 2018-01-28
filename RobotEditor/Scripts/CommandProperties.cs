@@ -4,7 +4,7 @@ using Robot.Scripts;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime;
-using RobotRuntime.Assets;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using System;
 using System.ComponentModel;
@@ -26,10 +26,12 @@ namespace RobotEditor.Scripts
 
         private IAssetManager AssetManager;
         private IScriptManager ScriptManager;
-        public CommandProperties(T command, IAssetManager AssetManager, IScriptManager ScriptManager)
+        private IAssetGuidManager AssetGuidManager;
+        public CommandProperties(T command, IAssetManager AssetManager, IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager)
         {
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
+            this.AssetGuidManager = AssetGuidManager;
 
             m_Properties = TypeDescriptor.GetProperties(this);
             m_Command = command;
@@ -142,7 +144,7 @@ namespace RobotEditor.Scripts
             get
             {
                 var guid = DynamicCast(m_Command).Asset;
-                var path = "abvd";// AssetGuidManager.GetPath(guid);
+                var path = AssetGuidManager.GetPath(guid);
                 return (path == null || path == "") ? "..." : Commons.GetName(path);
             }
             set
