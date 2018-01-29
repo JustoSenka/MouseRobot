@@ -42,8 +42,9 @@ namespace Robot
         private IFeatureDetectionThread FeatureDetectionThread;
         private IAssetManager AssetManager;
         private ISettingsManager SettingsManager;
+        private IInputCallbacks InputCallbacks;
         public MouseRobot(IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
-            IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IAssetManager AssetManager, ISettingsManager SettingsManager)
+            IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IAssetManager AssetManager, ISettingsManager SettingsManager, IInputCallbacks InputCallbacks)
         {
             this.ScriptManager = ScriptManager;
             this.AssetGuidManager = AssetGuidManager;
@@ -54,6 +55,7 @@ namespace Robot
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.AssetManager = AssetManager;
             this.SettingsManager = SettingsManager;
+            this.InputCallbacks =InputCallbacks;
 
             SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
 

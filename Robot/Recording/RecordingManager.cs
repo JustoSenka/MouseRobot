@@ -38,8 +38,9 @@ namespace Robot.Recording
         private IAssetManager AssetManager;
         private IProfiler Profiler;
         private IFeatureDetectorFactory FeatureDetectorFactory;
+        private IInputCallbacks InputCallbacks;
         public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler,
-            IFeatureDetectorFactory FeatureDetectorFactory)
+            IFeatureDetectorFactory FeatureDetectorFactory, IInputCallbacks InputCallbacks)
         {
             this.ScriptManager = ScriptManager;
             this.SettingsManager = SettingsManager;
@@ -47,8 +48,9 @@ namespace Robot.Recording
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;
             this.FeatureDetectorFactory = FeatureDetectorFactory;
+            this.InputCallbacks = InputCallbacks;
 
-            InputCallbacks.inputEvent += OnInputEvent;
+            InputCallbacks.InputEvent += OnInputEvent;
         }
 
         private void OnInputEvent(KeyEvent e)

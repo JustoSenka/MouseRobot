@@ -33,9 +33,10 @@ namespace RobotEditor
         private IScriptManager ScriptManager;
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
+        private IInputCallbacks InputCallbacks;
         public MainForm(IMouseRobot MouseRobot, IScreenDrawForm ScreenDrawForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
-            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread)
+            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenDrawForm = ScreenDrawForm;
@@ -44,6 +45,7 @@ namespace RobotEditor
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
             this.ScreenStateThread = ScreenStateThread;
+            this.InputCallbacks = InputCallbacks;
 
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
@@ -72,7 +74,7 @@ namespace RobotEditor
             actionOnRec.SelectedIndex = 2;
             actionOnPlay.SelectedIndex = 2;
 
-            InputCallbacks.inputEvent += OnInputEvent;
+            InputCallbacks.InputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
             m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick;

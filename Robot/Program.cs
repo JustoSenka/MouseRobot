@@ -3,6 +3,7 @@ using Unity;
 using Unity.Lifetime;
 using Robot.Recording;
 using Robot.Settings;
+using Robot.Utils.Win32;
 
 namespace Robot
 {
@@ -16,6 +17,7 @@ namespace Robot
             Container.RegisterType<IRecordingManager, RecordingManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScriptManager, ScriptManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
         }
     }
 }
