@@ -27,19 +27,19 @@ namespace RobotEditor
         private FormWindowState m_DefaultWindowState;
 
         private IMouseRobot MouseRobot;
-        private IScreenDrawForm ScreenDrawForm;
+        private IScreenPaintForm ScreenPaintForm;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
         private IScriptManager ScriptManager;
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
-        public MainForm(IMouseRobot MouseRobot, IScreenDrawForm ScreenDrawForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
+        public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks)
         {
             this.MouseRobot = MouseRobot;
-            this.ScreenDrawForm = ScreenDrawForm;
+            this.ScreenPaintForm = ScreenPaintForm;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.SettingsManager = SettingsManager;
             this.ScriptManager = ScriptManager;
@@ -61,7 +61,7 @@ namespace RobotEditor
 
             //ShowSplashScreen(2000);
 
-            ((Form)ScreenDrawForm).Owner = this;
+            ((Form)ScreenPaintForm).Owner = this;
 
             CreateWindows();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
@@ -83,7 +83,7 @@ namespace RobotEditor
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
 
-            ((Form)ScreenDrawForm).Show();
+            ((Form)ScreenPaintForm).Show();
         }
 
         private void OnPlayingStateChanged(bool isPlaying)

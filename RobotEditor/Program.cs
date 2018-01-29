@@ -5,6 +5,9 @@ using Unity.Lifetime;
 using RobotEditor.Windows;
 using System.Windows.Forms;
 using RobotEditor.Scripts;
+using RobotEditor.Windows.Base;
+using RobotEditor.Drawing;
+using Unity.Injection;
 
 namespace RobotEditor
 {
@@ -26,20 +29,23 @@ namespace RobotEditor
 
             var mainForm = container.Resolve<IMainForm>();
 
+            var a = container.Resolve<VisualizationPainter>();
+
             Application.Run(mainForm as Form);
         }
 
         public static void RegisterInterfaces(UnityContainer Container)
         {
+            Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IMainForm, MainForm>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetsWindow, AssetsWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHierarchyWindow, HierarchyWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInspectorWindow, InspectorWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfilerWindow, ProfilerWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPropertiesWindow, PropertiesWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScreenDrawForm, ScreenDrawForm>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenPreviewWindow, ScreenPreviewWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHierarchyNodeStringConverter, HierarchyNodeStringConverter>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());
         }
     }
 }

@@ -192,6 +192,7 @@
     <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
     <Compile Include="Settings\RuntimeSettings.cs" />
+    <Compile Include="Utils\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />

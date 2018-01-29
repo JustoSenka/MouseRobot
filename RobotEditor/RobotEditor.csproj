@@ -162,6 +162,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
+    <Compile Include="Drawing\CroppingManagerPainter.cs" />
+    <Compile Include="Drawing\RecordingManagerPainter.cs" />
+    <Compile Include="Drawing\VisualizationPainter.cs" />
     <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />
@@ -184,6 +187,7 @@
     <Compile Include="Windows\AssetsWindow.Designer.cs">
       <DependentUpon>AssetsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Drawing\IPaintOnScreen.cs" />
     <Compile Include="Windows\Base\InvisibleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -201,6 +205,7 @@
     <Compile Include="Abstractions\IPropertiesWindow.cs" />
     <Compile Include="Abstractions\IScreenDrawForm.cs" />
     <Compile Include="Abstractions\IScreenPreviewWindow.cs" />
+    <Compile Include="Windows\IScreenPaintForm.cs" />
     <Compile Include="Windows\PropertiesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,7 +216,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Editor\DockLayout.cs" />
-    <Compile Include="Windows\ScreenDrawForm.cs">
+    <Compile Include="Abstractions\ScreenPaintForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Windows\MainForm.cs">

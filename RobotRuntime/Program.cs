@@ -16,11 +16,13 @@ namespace RobotRuntime
             //if (args[0])
 
             var container = new UnityContainer();
+            container.RegisterInstance(typeof(IUnityContainer), container, new ContainerControlledLifetimeManager());
             RegisterInterfaces(container);
         }
 
         public static void RegisterInterfaces(UnityContainer Container)
         {
+            Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetGuidManager, AssetGuidManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectionThread, FeatureDetectionThread>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRuntimeSettings, RuntimeSettings>(new ContainerControlledLifetimeManager());
