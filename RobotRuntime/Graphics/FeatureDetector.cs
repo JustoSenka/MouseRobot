@@ -43,40 +43,5 @@ namespace RobotRuntime.Graphics
 
             return scaleB;
         }
-
-
-        private static FeatureDetector s_CurrentDetector;
-        private static DetectionMode s_CurrentDetectionMode;
-        /// <summary>
-        /// Not Thread Safe
-        /// </summary>
-        public static FeatureDetector Get(DetectionMode detectionMode)
-        {
-            if (s_CurrentDetector != null && detectionMode == s_CurrentDetectionMode)
-                return s_CurrentDetector;
-            else
-            {
-                s_CurrentDetectionMode = detectionMode;
-                return s_CurrentDetector = Create(detectionMode);
-            }
-        }
-
-        /// <summary>
-        /// Thread Sade but creates garbage
-        /// </summary>
-        public static FeatureDetector Create(DetectionMode detectionMode)
-        {
-            switch (detectionMode)
-            {
-                case DetectionMode.FeatureSURF:
-                    return new FeatureDetectorSURF();
-                case DetectionMode.PixelPerfect:
-                    return new FeatureDetectorPP();
-                case DetectionMode.Template:
-                    return new FeatureDetectorTemplate();
-                default:
-                    return null;
-            }
-        }
     }
 }

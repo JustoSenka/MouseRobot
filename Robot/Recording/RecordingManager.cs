@@ -37,13 +37,16 @@ namespace Robot.Recording
         private ICroppingManager CroppingManager;
         private IAssetManager AssetManager;
         private IProfiler Profiler;
-        public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler)
+        private IFeatureDetectorFactory FeatureDetectorFactory;
+        public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler,
+            IFeatureDetectorFactory FeatureDetectorFactory)
         {
             this.ScriptManager = ScriptManager;
             this.SettingsManager = SettingsManager;
             this.CroppingManager = CroppingManager;
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;
+            this.FeatureDetectorFactory = FeatureDetectorFactory;
 
             InputCallbacks.inputEvent += OnInputEvent;
         }
@@ -193,7 +196,7 @@ namespace Robot.Recording
             Profiler.Start("RecordingManager_FindAssetReference");
 
             // TODO: FeatureDetector.Get will fail to find proper match if another thread already used/is using it
-            var detector = FeatureDetector.Create(DetectionMode.PixelPerfect);
+            var detector = FeatureDetectorFactory.Create(DetectionMode.PixelPerfect);
             Asset retAsset = null;
             foreach (var asset in AssetManager.Assets)
             {

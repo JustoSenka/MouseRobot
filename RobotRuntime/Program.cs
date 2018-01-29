@@ -28,6 +28,7 @@ namespace RobotRuntime
             Container.RegisterType<ITestRunner, TestRunner>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
         }
     }
 }

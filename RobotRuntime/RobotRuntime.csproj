@@ -169,6 +169,7 @@
     <Compile Include="Execution\ScriptRunner.cs" />
     <Compile Include="Execution\SimpleCommandRunner.cs" />
     <Compile Include="Execution\SupportedTypeAttribute.cs" />
+    <Compile Include="Graphics\FeatureDetectorFactory.cs" />
     <Compile Include="Graphics\FeatureDetectorPP.cs" />
     <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
     <Compile Include="Graphics\FeatureDetectorSURF.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Abstractions\IFeatureDetectionThread.cs" />
     <Compile Include="Abstractions\IScreenStateThread.cs" />
     <Compile Include="Abstractions\IStableRepeatingThread.cs" />
+    <Compile Include="Abstractions\IFeatureDetectorFactory.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
     <Compile Include="Graphics\FeatureDetectionThread.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />

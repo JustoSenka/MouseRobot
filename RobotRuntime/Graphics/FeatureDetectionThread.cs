@@ -35,10 +35,12 @@ namespace RobotRuntime.Graphics
 
         private IScreenStateThread ScreenStateThread;
         private IProfiler Profiler;
-        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler)
+        private IFeatureDetectorFactory FeatureDetectorFactory;
+        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory)
         {
             this.ScreenStateThread = ScreenStateThread;
             this.Profiler = Profiler;
+            this.FeatureDetectorFactory = FeatureDetectorFactory;
         }
 
         protected override string Name { get { return "FeatureDetectionThread"; } }
@@ -116,10 +118,10 @@ namespace RobotRuntime.Graphics
         {
             lock (m_SampleImageLock)
             {
-                if (FeatureDetector.Get(DetectionMode).SupportsMultipleMatches)
-                    return FeatureDetector.Get(DetectionMode).FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
+                if (FeatureDetectorFactory.GetFromCache(DetectionMode).SupportsMultipleMatches)
+                    return FeatureDetectorFactory.GetFromCache(DetectionMode).FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
                 else
-                    return new[] { FeatureDetector.Get(DetectionMode).FindImagePos(m_SampleImage, ObservedImage) };
+                    return new[] { FeatureDetectorFactory.GetFromCache(DetectionMode).FindImagePos(m_SampleImage, ObservedImage) };
             }
         }
 
