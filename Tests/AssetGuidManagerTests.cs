@@ -202,10 +202,12 @@ namespace Tests
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
 
+            MouseRobot.SetupProjectPath(TempProjectPath);
+
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();
 
-            MouseRobot.SetupProjectPath(TempProjectPath);
+            AssetGuidManager.LoadMetaFiles();
             AssetManager.Refresh();
         }
 
