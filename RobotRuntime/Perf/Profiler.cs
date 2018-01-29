@@ -1,26 +1,23 @@
 ﻿#define ENABLE_PROFILER
 #define ENABLE_PROFILER_DEBUGGING
 
+using RobotRuntime.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RobotRuntime.Perf
 {
-    public class Profiler
+    public class Profiler : IProfiler
     {
-        public static Profiler Instance { get { return m_Instance; } }
-        private static Profiler m_Instance = new Profiler();
-        private Profiler()
+        public Profiler()
         {
             for (int i = 0; i < m_StopwatchCount; i++)
                 m_FreeWatches.Add(new Stopwatch());
         }
 
-        public const int NodeLimit = 50;
+        public int NodeLimit { get { return 50; } }
         private const int m_StopwatchCount = 10;
 
         private Dictionary<string, LimitedStack<ProfilerNode>> m_Table = new Dictionary<string, LimitedStack<ProfilerNode>>();
@@ -45,7 +42,7 @@ namespace RobotRuntime.Perf
         private object FreeWatchesLock = new object();
         private object TakenWatchesLock = new object();
 
-        private void InstanceStart(string name)
+        private void InternalStart(string name)
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (m_TakenWatches.ContainsKey(name))
@@ -84,7 +81,7 @@ namespace RobotRuntime.Perf
             watch.Start();
         }
 
-        private void InstanceStop(string name)
+        private void InternalStop(string name)
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (!m_TakenWatches.ContainsKey(name))
@@ -119,21 +116,21 @@ namespace RobotRuntime.Perf
             }
         }
 
-        public static void Start(string name)
+        public void Start(string name)
         {
 #if ENABLE_PROFILER
-            Profiler.Instance.InstanceStart(name);
+            InternalStart(name);
 #endif
         }
 
-        public static void Stop(string name)
+        public void Stop(string name)
         {
 #if ENABLE_PROFILER
-            Profiler.Instance.InstanceStop(name);
+            InternalStop(name);
 #endif
         }
 
-        public static void Begin(string name, Action action)
+        public void Begin(string name, Action action)
         {
             Start(name);
             action.Invoke();

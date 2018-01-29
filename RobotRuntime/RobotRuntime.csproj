@@ -181,6 +181,7 @@
     <Compile Include="Graphics\FeatureDetectionThread.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />
+    <Compile Include="Abstractions\IProfiler.cs" />
     <Compile Include="Perf\LimitedStack.cs" />
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />

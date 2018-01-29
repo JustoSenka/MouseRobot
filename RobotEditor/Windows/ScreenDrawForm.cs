@@ -27,14 +27,16 @@ namespace RobotEditor.Windows
         private IRecordingManager RecordingManager;
         private ICroppingManager CroppingManager;
         private IMouseRobot MouseRobot; // Is this really necessary?
+        private IProfiler Profiler;
         public ScreenDrawForm(IFeatureDetectionThread FeatureDetectionThread, IScreenStateThread ScreenStateThread, IRecordingManager RecordingManager,
-            ICroppingManager CroppingManager, IMouseRobot MouseRobot) : base()
+            ICroppingManager CroppingManager, IMouseRobot MouseRobot, IProfiler Profiler) : base()
         {
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.ScreenStateThread = ScreenStateThread;
             this.RecordingManager = RecordingManager;
             this.CroppingManager = CroppingManager;
             this.MouseRobot = MouseRobot;
+            this.Profiler = Profiler;
 
             m_UpdateTimer.Interval = 30;
             m_UpdateTimer.Tick += CallInvalidate;

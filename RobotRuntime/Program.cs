@@ -5,6 +5,7 @@ using Unity.Lifetime;
 using RobotRuntime.Graphics;
 using RobotRuntime.Settings;
 using RobotRuntime.Execution;
+using RobotRuntime.Perf;
 
 namespace RobotRuntime
 {
@@ -26,6 +27,7 @@ namespace RobotRuntime
             Container.RegisterType<IScreenStateThread, ScreenStateThread>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestRunner, TestRunner>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
         }
     }
 }

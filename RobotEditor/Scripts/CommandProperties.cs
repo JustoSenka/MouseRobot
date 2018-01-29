@@ -34,6 +34,11 @@ namespace RobotEditor.Scripts
             this.AssetGuidManager = AssetGuidManager;
 
             m_Properties = TypeDescriptor.GetProperties(this);
+
+            // Workaround to set Dependencies, sadly.. static.. non-static version did not work
+            typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
+            typeof(AssetGUIDImageUITypeEditor).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
+
             m_Command = command;
         }
 
@@ -57,11 +62,25 @@ namespace RobotEditor.Scripts
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
+                ProvideDependenciesToAssetProperty(dt, AssetManager);
             }
             else if (m_Command is CommandSleep)
             {
                 AddProperty(dt, "Time");
             }
+        }
+
+        private void ProvideDependenciesToAssetProperty(DynamicTypeDescriptor dt, IAssetManager AssetManager)
+        {
+            /* Does not seem to work, in the editor/converter code, non-static AssetManager is still null
+            var assetProp = dt.Properties.Find("Asset", false);
+            var assetProp2 = TypeDescriptor.GetProperties(this).Find("Asset", false);
+            
+            ((AssetGUIDImageStringConverter)assetProp.Converter).AssetManager = AssetManager;
+            ((AssetGUIDImageUITypeEditor)assetProp.GetEditor(typeof(UITypeEditor))).AssetManager = AssetManager;
+
+            ((AssetGUIDImageStringConverter)assetProp2.Converter).AssetManager = AssetManager;
+            ((AssetGUIDImageUITypeEditor)assetProp2.GetEditor(typeof(UITypeEditor))).AssetManager = AssetManager;*/
         }
 
         private const int NumOfCategories = 1;

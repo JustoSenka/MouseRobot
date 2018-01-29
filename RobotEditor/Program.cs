@@ -24,8 +24,6 @@ namespace RobotEditor
             Robot.Program.RegisterInterfaces(container);
             RobotRuntime.Program.RegisterInterfaces(container);
 
-            RobotRuntime.Unity.Container = container;
-
             var mainForm = container.Resolve<IMainForm>();
 
             Application.Run(mainForm as Form);

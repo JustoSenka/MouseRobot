@@ -34,9 +34,11 @@ namespace RobotRuntime.Graphics
         public event Action<Point[][]> PositionFound;
 
         private IScreenStateThread ScreenStateThread;
-        public FeatureDetectionThread(IScreenStateThread ScreenStateThread)
+        private IProfiler Profiler;
+        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler)
         {
             this.ScreenStateThread = ScreenStateThread;
+            this.Profiler = Profiler;
         }
 
         protected override string Name { get { return "FeatureDetectionThread"; } }

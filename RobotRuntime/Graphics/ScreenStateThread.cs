@@ -15,7 +15,7 @@ namespace RobotRuntime.Graphics
 {
     public class ScreenStateThread : StableRepeatingThread, IScreenStateThread
     {
-        public object ScreenBmpLock { get { return m_ScreenBmpLock;  } }
+        public object ScreenBmpLock { get { return m_ScreenBmpLock; } }
         private object m_ScreenBmpLock = new object();
         /// <summary>
         /// Lock before using it, since data is constantly being written to this bitmap
@@ -49,7 +49,11 @@ namespace RobotRuntime.Graphics
 
         protected override string Name { get { return "ScreenStateThread"; } }
 
-        public ScreenStateThread() { }
+        private IProfiler Profiler;
+        public ScreenStateThread(IProfiler Profiler)
+        {
+            this.Profiler = Profiler;
+        }
 
         public override void Init()
         {

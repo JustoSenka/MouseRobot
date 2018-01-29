@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using RobotRuntime.Abstractions;
 
 namespace RobotEditor.Windows
 {
@@ -22,8 +23,11 @@ namespace RobotEditor.Windows
 
         public TrackBarToolStripItem FrameSlider { get; private set; }
 
-        public ProfilerWindow()
+        private IProfiler Profiler;
+        public ProfilerWindow(IProfiler Profiler)
         {
+            this.Profiler = Profiler;
+
             InitializeComponent();
             CreateNodeList();
             CreateColumns();
@@ -85,7 +89,7 @@ namespace RobotEditor.Windows
 
         private void TakeSnapshot(object sender, EventArgs e)
         {
-            m_NodeDict = Profiler.Instance.CopyNodes();
+            m_NodeDict = Profiler.CopyNodes();
             //ParentNodesWithUnderscores();
             OnFrameValueChange(this, null);
         }

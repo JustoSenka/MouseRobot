@@ -3,9 +3,9 @@ using Robot.Scripts;
 using Robot.Settings;
 using Robot.Utils.Win32;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
-using RobotRuntime.Perf;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
@@ -36,12 +36,14 @@ namespace Robot.Recording
         private ISettingsManager SettingsManager;
         private ICroppingManager CroppingManager;
         private IAssetManager AssetManager;
-        public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager)
+        private IProfiler Profiler;
+        public RecordingManager(IScriptManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler)
         {
             this.ScriptManager = ScriptManager;
             this.SettingsManager = SettingsManager;
             this.CroppingManager = CroppingManager;
             this.AssetManager = AssetManager;
+            this.Profiler = Profiler;
 
             InputCallbacks.inputEvent += OnInputEvent;
         }

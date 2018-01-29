@@ -3,8 +3,6 @@ using System.Linq;
 using Robot;
 using Robot.Scripts;
 using System.IO;
-using RobotRuntime.Perf;
-using RobotRuntime.Assets;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using Unity;
@@ -29,6 +27,7 @@ namespace Tests
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IAssetGuidManager AssetGuidManager;
+        IProfiler Profiler;
 
         [TestMethod]
         public void AssetRefreshTime_100_ScriptAssets() // 22 ms - 50 (guid)
@@ -45,7 +44,7 @@ namespace Tests
 
             Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            var timeTaken = Profiler.Instance.CopyNodes()[name][0].Time;
+            var timeTaken = Profiler.CopyNodes()[name][0].Time;
             System.Diagnostics.Debug.WriteLine("Asset Refresh on 100 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 80, "This test took 40% longer than usual");
@@ -66,7 +65,7 @@ namespace Tests
 
             Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            var timeTaken = Profiler.Instance.CopyNodes()[name][0].Time;
+            var timeTaken = Profiler.CopyNodes()[name][0].Time;
             System.Diagnostics.Debug.WriteLine("Asset Refresh on 1000 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 250, "This test took 40% longer than usual");
@@ -89,6 +88,7 @@ namespace Tests
             MouseRobot = container.Resolve<IMouseRobot>();
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
+            Profiler = container.Resolve<IProfiler>();
 
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();

@@ -1,15 +1,10 @@
 ﻿using Robot.Abstractions;
-using Robot.Scripts;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Assets;
-using RobotRuntime.Perf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Unity;
 
 namespace Robot
 {
@@ -34,9 +29,11 @@ namespace Robot
         private bool m_ShouldSaveMetadata = true;
 
         private IAssetGuidManager AssetGuidManager;
-        public AssetManager(IAssetGuidManager AssetGuidManager)
+        private IProfiler Profiler;
+        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler)
         {
             this.AssetGuidManager = AssetGuidManager;
+            this.Profiler = Profiler;
         }
 
         public void Refresh()

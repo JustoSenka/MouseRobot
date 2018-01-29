@@ -7,8 +7,13 @@ using Unity;
 
 namespace RobotEditor.Settings
 {
-    class AssetGUIDImageUITypeEditor : UITypeEditor
+    /// <summary>
+    /// This will paint a small rect image near the Asset name in property View
+    /// </summary>
+    public class AssetGUIDImageUITypeEditor : UITypeEditor
     {
+        private static IAssetManager AssetManager { get; set; }
+
         public override bool GetPaintValueSupported(ITypeDescriptorContext context)
         {
             return true;
@@ -16,12 +21,13 @@ namespace RobotEditor.Settings
 
         public override void PaintValue(PaintValueEventArgs e)
         {
-            var AssetManager = RobotRuntime.Unity.Container.Resolve<IAssetManager>();
             var asset = AssetManager.GetAsset(AssetManager.ImageFolder, e.Value.ToString());
             if (asset == null)
                 return;
             
             var bmp = asset.Importer.Load<Bitmap>();
+            if (bmp == null)
+                return;
 
             RemoveImageRectangleBounds(e);
             Rectangle destRect = e.Bounds;
