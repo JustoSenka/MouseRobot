@@ -66,10 +66,13 @@
             this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.profilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.inspectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.inspectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -186,6 +189,9 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newProjectToolStripMenuItem,
+            this.openProjectToolStripMenuItem,
+            this.toolStripMenuItem2,
             this.newScriptToolStripMenuItem,
             this.saveAllScriptsToolStripMenuItem,
             this.saveScriptToolStripMenuItem,
@@ -286,21 +292,21 @@
             // darkThemeToolStripMenuItem
             // 
             this.darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.darkThemeToolStripMenuItem.Text = "Dark Theme";
             this.darkThemeToolStripMenuItem.Click += new System.EventHandler(this.darkThemeToolStripMenuItem_Click);
             // 
             // blueThemeToolStripMenuItem
             // 
             this.blueThemeToolStripMenuItem.Name = "blueThemeToolStripMenuItem";
-            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.blueThemeToolStripMenuItem.Text = "Blue Theme";
             this.blueThemeToolStripMenuItem.Click += new System.EventHandler(this.blueThemeToolStripMenuItem_Click);
             // 
             // whiteThemeToolStripMenuItem
             // 
             this.whiteThemeToolStripMenuItem.Name = "whiteThemeToolStripMenuItem";
-            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.whiteThemeToolStripMenuItem.Text = "Light Theme";
             this.whiteThemeToolStripMenuItem.Click += new System.EventHandler(this.lightThemeToolStripMenuItem_Click);
             // 
@@ -368,6 +374,13 @@
             this.profilerToolStripMenuItem.Text = "Profiler";
             this.profilerToolStripMenuItem.Click += new System.EventHandler(this.profilerToolStripMenuItem_Click);
             // 
+            // inspectorToolStripMenuItem
+            // 
+            this.inspectorToolStripMenuItem.Name = "inspectorToolStripMenuItem";
+            this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.inspectorToolStripMenuItem.Text = "Inspector";
+            this.inspectorToolStripMenuItem.Click += new System.EventHandler(this.inspectorToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -383,12 +396,22 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // inspectorToolStripMenuItem
+            // newProjectToolStripMenuItem
             // 
-            this.inspectorToolStripMenuItem.Name = "inspectorToolStripMenuItem";
-            this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.inspectorToolStripMenuItem.Text = "Inspector";
-            this.inspectorToolStripMenuItem.Click += new System.EventHandler(this.inspectorToolStripMenuItem_Click);
+            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.newProjectToolStripMenuItem.Text = "New Project";
+            // 
+            // openProjectToolStripMenuItem
+            // 
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(219, 22);
+            this.openProjectToolStripMenuItem.Text = "Open Project";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(216, 6);
             // 
             // MainForm
             // 
@@ -456,5 +479,8 @@
         private System.Windows.Forms.ToolStripMenuItem recordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageDetectionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem inspectorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     }
 }
