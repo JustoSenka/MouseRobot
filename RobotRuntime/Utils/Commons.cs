@@ -3,52 +3,16 @@ using System.Text.RegularExpressions;
 
 namespace RobotRuntime
 {
-    public static class Commons
-    {
-        public static string GetName(string path)
-        {
-            var name = Regex.Match(path, @"[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value.
-                TrimStart('/', '\\').
-                TrimEnd(FileExtensions.Script.ToCharArray()).
-                TrimEnd(FileExtensions.Timeline.ToCharArray()).
-                TrimEnd(FileExtensions.Image.ToCharArray()).
-                TrimEnd('.');
-
-            return name;
-        }
-
-        public static string GetNameWithExtension(string path)
-        {
-            var extension = Regex.Match(path, @"\.\w{2,8}$").Value;
-            return GetName(path) + extension;
-        }
-
-        public static string GetFolder(string path)
-        {
-            return GetProjectRelativePath(path).Split('\\', '/')[0];
-        }
-
-        public static string GetProjectRelativePath(string path)
-        {
-            return Regex.Match(path, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
-        }
-
-        public static bool AreRelativePathsEqual(string s, string d)
-        {
-            s = s.ToLower();
-            d = d.ToLower();
-            return s == d;
-        }
-    }
-
     public static class FileExtensions
     {
         public const string Script = "mrb";
         public const string ScriptD = ".mrb";
 
-        // TODO: Obiously need to improve on this side
         public const string Image = "png";
         public const string ImageD = ".png";
+
+        public const string Plugin = "cs";
+        public const string PluginD = ".cs";
 
         public const string Timeline = "mrt";
         public const string TimelineD = ".mrt";
@@ -56,9 +20,11 @@ namespace RobotRuntime
 
     public static class RegexExpression
     {
-        public const string GetScriptNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Script;
-        public const string GetImageNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Image;
-        public const string GetTimelineNameFromPath = @"[/\\]{1}[\w\d ]+\." + FileExtensions.Timeline;
+        public const string GetNameWithDot = @"[/\\]{1}[\w\d ]+\.";
+        public const string GetScriptNameFromPath = GetNameWithDot + FileExtensions.Script;
+        public const string GetImageNameFromPath = GetNameWithDot + FileExtensions.Image;
+        public const string GetPluginNameFromPath = GetNameWithDot + FileExtensions.Plugin;
+        public const string GetTimelineNameFromPath = GetNameWithDot + FileExtensions.Timeline;
     }
 
     public static class Fonts

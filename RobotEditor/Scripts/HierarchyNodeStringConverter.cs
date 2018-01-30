@@ -5,6 +5,7 @@ using RobotRuntime.Abstractions;
 using System;
 using System.Text.RegularExpressions;
 using RobotEditor.Abstractions;
+using RobotRuntime.Utils;
 
 namespace RobotEditor.Scripts
 {
@@ -38,7 +39,7 @@ namespace RobotEditor.Scripts
                     {
                         var guid = (Guid)assetGuidObj;
                         var path = AssetGuidManager.GetPath(guid);
-                        var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
+                        var assetName = ((path != "" && path != null) ? Paths.GetName(path) : "...");
 
                         s = Regex.Replace(s, RegexCoordinateRecognizeRules, "<" + assetName + ">");
                     }
@@ -57,7 +58,7 @@ namespace RobotEditor.Scripts
                 {
                     var guid = (Guid)assetGuidObj;
                     var path = AssetGuidManager.GetPath(guid);
-                    var assetName = ((path != "" && path != null) ? Commons.GetName(path) : "...");
+                    var assetName = ((path != "" && path != null) ? Paths.GetName(path) : "...");
                     s = Regex.Replace(s, RegexGuidRecognizeRules, assetName);
                 }
             }

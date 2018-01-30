@@ -29,8 +29,6 @@ namespace RobotEditor
 
             var mainForm = container.Resolve<IMainForm>();
 
-            var a = container.Resolve<VisualizationPainter>();
-
             Application.Run(mainForm as Form);
         }
 

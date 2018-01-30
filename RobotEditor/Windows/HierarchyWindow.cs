@@ -337,7 +337,7 @@ namespace RobotEditor
         public void SaveSelectedScriptWithDialog(Script script, bool updateUI = true)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + AssetManager.ScriptFolder;
+            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.ScriptFolder;
             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
             saveDialog.Title = "Select a path for script to save.";
             saveDialog.FileName = script.Name + FileExtensions.ScriptD;

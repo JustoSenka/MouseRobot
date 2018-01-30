@@ -7,6 +7,7 @@ using System;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using Unity;
+using RobotRuntime.Utils;
 
 namespace Tests
 {
@@ -199,10 +200,11 @@ namespace Tests
             RobotRuntime.Program.RegisterInterfaces(container);
 
             MouseRobot = container.Resolve<IMouseRobot>();
+            var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
 
-            MouseRobot.SetupProjectPath(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath);
 
             CleanupScriptsDirectory();
             CleanupMetaDataDirectory();
@@ -223,9 +225,9 @@ namespace Tests
 
         private void CleanupMetaDataDirectory()
         {
-            if (Directory.Exists(AssetGuidManager.MetadataPath))
+            if (Directory.Exists(Paths.MetadataPath))
             {
-                DirectoryInfo di = new DirectoryInfo(AssetGuidManager.MetadataPath);
+                DirectoryInfo di = new DirectoryInfo(Paths.MetadataPath);
                 foreach (FileInfo file in di.GetFiles())
                     file.Delete();
             }
@@ -233,9 +235,9 @@ namespace Tests
 
         private void CleanupScriptsDirectory()
         {
-            if (Directory.Exists(TempProjectPath + "\\" + AssetManager.ScriptFolder))
+            if (Directory.Exists(TempProjectPath + "\\" + Paths.ScriptFolder))
             {
-                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + AssetManager.ScriptFolder);
+                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.ScriptFolder);
                 foreach (FileInfo file in di.GetFiles())
                     file.Delete();
             }

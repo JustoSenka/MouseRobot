@@ -1,4 +1,5 @@
 ﻿using RobotRuntime;
+using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -18,7 +19,7 @@ namespace Robot
             internal set
             {
                 Importer.Path = value;
-                Name = Commons.GetName(value);
+                Name = Paths.GetName(value);
             }
         }
 
@@ -57,7 +58,7 @@ namespace Robot
         {
             Importer = Importer == null || readDisk ? EditorAssetImporter.FromPath(path) : Importer;
             Importer.Path = path;
-            Name = Commons.GetName(path);
+            Name = Paths.GetName(path);
             Hash = GetHash(path);
         }
 

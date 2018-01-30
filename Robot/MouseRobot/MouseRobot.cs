@@ -34,30 +34,29 @@ namespace Robot
         public string ProjectPath { get; private set; }
 
         private IScriptManager ScriptManager;
-        private IAssetGuidManager AssetGuidManager;
         private ITestRunner TestRunner;
         private IRecordingManager RecordingManager;
         private IRuntimeSettings RuntimeSettings;
         private IScreenStateThread ScreenStateThread;
         private IFeatureDetectionThread FeatureDetectionThread;
-        private IAssetManager AssetManager;
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
-        public MouseRobot(IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
-            IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IAssetManager AssetManager, ISettingsManager SettingsManager, IInputCallbacks InputCallbacks)
+        private IProjectManager ProjectManager;
+        public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
+            IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
+            IInputCallbacks InputCallbacks, IProjectManager ProjectManager)
         {
             this.ScriptManager = ScriptManager;
-            this.AssetGuidManager = AssetGuidManager;
             this.TestRunner = TestRunner;
             this.RecordingManager = RecordingManager;
             this.RuntimeSettings = RuntimeSettings;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
-            this.AssetManager = AssetManager;
             this.SettingsManager = SettingsManager;
-            this.InputCallbacks =InputCallbacks;
+            this.InputCallbacks = InputCallbacks;
+            this.ProjectManager = ProjectManager;
 
-            SetupProjectPath(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
+            ProjectManager.InitProject(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
 
             ScriptManager.NewScript();
             TestRunner.Finished += OnScriptFinished;
@@ -139,18 +138,6 @@ namespace Robot
                     }
                 }
             }
-        }
-
-        public void SetupProjectPath(string path)
-        {
-            ProjectPath = path;
-            if (!Directory.Exists(ProjectPath))
-                Directory.CreateDirectory(ProjectPath);
-
-            Environment.CurrentDirectory = ProjectPath;
-
-            AssetManager.InitProject();
-            AssetGuidManager.LoadMetaFiles();
         }
     }
 }

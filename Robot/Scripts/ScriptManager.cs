@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -143,7 +144,7 @@ namespace Robot
         public void SaveScript(Script script, string path)
         {
             AssetManager.CreateAsset(script, path);
-            script.Path = Commons.GetProjectRelativePath(path);
+            script.Path = Paths.GetProjectRelativePath(path);
 
             ScriptSaved?.Invoke(script);
             Console.WriteLine("Script saved: " + path);

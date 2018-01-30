@@ -204,6 +204,7 @@
     <Compile Include="Scripts\LightScript.cs" />
     <Compile Include="Scripts\TestRunner.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
+    <Compile Include="Utils\Paths.cs" />
     <Compile Include="Utils\ValueWrapper.cs" />
     <Compile Include="Utils\Win32\WinAPI.cs" />
   </ItemGroup>

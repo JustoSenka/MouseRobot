@@ -15,7 +15,6 @@ namespace Robot.Abstractions
         event Action<bool> RecordingStateChanged;
         event Action<bool> VisualizationStateChanged;
 
-        void SetupProjectPath(string path);
         void StartScript();
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using RobotRuntime.Utils;
 
 namespace RobotRuntime
 {
@@ -117,8 +118,8 @@ namespace RobotRuntime
 
         public static TreeNode FindNode(this TreeView treeView, string path)
         {
-            var folderNode = treeView.FindChild(Commons.GetFolder(path));
-            return folderNode.FindChild(Commons.GetName(path));
+            var folderNode = treeView.FindChild(Paths.GetFolder(path));
+            return folderNode.FindChild(Paths.GetName(path));
         }
 
         public static bool IsDefault<T>(this T value) where T : struct

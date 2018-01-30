@@ -9,13 +9,11 @@ namespace RobotRuntime.Assets
 {
     public class AssetGuidManager : IAssetGuidManager
     {
-        public const string MetadataFolder = "Metadata";
         public const string GuidPathMapFileName = "AssetGuidsTable.meta";
         public const string GuidHashMapFileName = "AssetHashTable.meta";
-
-        public string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
-        private string GuidPathMapFilePath { get { return Path.Combine(MetadataFolder, GuidPathMapFileName); } }
-        private string GuidHashMapFilePath { get { return Path.Combine(MetadataFolder, GuidHashMapFileName); } }
+        
+        private string GuidPathMapFilePath { get { return Path.Combine(RobotRuntime.Utils.Paths.MetadataFolder, GuidPathMapFileName); } }
+        private string GuidHashMapFilePath { get { return Path.Combine(RobotRuntime.Utils.Paths.MetadataFolder, GuidHashMapFileName); } }
 
         private Dictionary<Guid, string> m_GuidPathMap = new Dictionary<Guid, string>();
         private Dictionary<Guid, Int64> m_GuidHashMap = new Dictionary<Guid, Int64>();

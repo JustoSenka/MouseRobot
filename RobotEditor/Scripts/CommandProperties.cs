@@ -6,6 +6,7 @@ using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
+using RobotRuntime.Utils;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -164,11 +165,11 @@ namespace RobotEditor.Scripts
             {
                 var guid = DynamicCast(m_Command).Asset;
                 var path = AssetGuidManager.GetPath(guid);
-                return (path == null || path == "") ? "..." : Commons.GetName(path);
+                return (path == null || path == "") ? "..." : Paths.GetName(path);
             }
             set
             {
-                Asset asset = AssetManager.GetAsset(AssetManager.ImageFolder, value);
+                Asset asset = AssetManager.GetAsset(Paths.ImageFolder, value);
                 if (asset != null)
                     DynamicCast(m_Command).Asset = asset.Guid;
             }

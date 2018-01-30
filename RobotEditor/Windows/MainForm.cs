@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Utils;
 
 namespace RobotEditor
 {
@@ -262,10 +263,10 @@ namespace RobotEditor
                 string unimportedPaths = "";
                 foreach (var path in openDialog.FileNames)
                 {
-                    var folder = AssetManager.FolderFromExtension(path);
+                    var folder = Paths.GetFolderFromExtension(path);
                     if (folder != "")
                     {
-                        var newPath = folder + "\\" + Commons.GetNameWithExtension(path);
+                        var newPath = folder + "\\" + Paths.GetNameWithExtension(path);
                         try
                         {
                             File.Copy(path, newPath);

@@ -1,6 +1,6 @@
 ﻿using Robot.Abstractions;
-using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,12 +20,6 @@ namespace Robot
         public event Action<string> AssetCreated;
         public event Action<string> AssetUpdated;
 
-        public string ScriptFolder { get { return "Scripts"; } }
-        public string ImageFolder { get { return "Images"; } }
-
-        private string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
-        private string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
-
         private bool m_ShouldSaveMetadata = true;
 
         private IAssetGuidManager AssetGuidManager;
@@ -41,7 +35,7 @@ namespace Robot
             Profiler.Start("AssetManager_Refresh");
             BeginAssetEditing();
 
-            var paths = GetAllPathsInProjectDirectory();
+            var paths = Paths.GetAllFilePaths();
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
             // Detect renamed assets if application was closed, and assets were renamed via file system
@@ -105,7 +99,7 @@ namespace Robot
 
         public Asset CreateAsset(object assetValue, string path)
         {
-            path = Commons.GetProjectRelativePath(path);
+            path = Paths.GetProjectRelativePath(path);
             var asset = GetAsset(path);
             if (asset != null)
             {
@@ -135,7 +129,7 @@ namespace Robot
         /// </summary>
         public void DeleteAsset(string path)
         {
-            path = Commons.GetProjectRelativePath(path);
+            path = Paths.GetProjectRelativePath(path);
             var asset = GetAsset(path);
 
             File.SetAttributes(path, FileAttributes.Normal);
@@ -187,13 +181,13 @@ namespace Robot
 
         public Asset GetAsset(string path)
         {
-            path = Commons.GetProjectRelativePath(path);
-            return Assets.FirstOrDefault((a) => Commons.AreRelativePathsEqual(a.Path, path));
+            path = Paths.GetProjectRelativePath(path);
+            return Assets.FirstOrDefault((a) => Paths.AreRelativePathsEqual(a.Path, path));
         }
 
         public Asset GetAsset(string folder, string name)
         {
-            var path = folder + "\\" + name + "." + ExtensionFromFolder(folder);
+            var path = folder + "\\" + name + "." + Paths.GetExtensionFromFolder(folder);
             return GetAsset(path);
         }
 
@@ -223,28 +217,6 @@ namespace Robot
             }
         }
 
-        public string ExtensionFromFolder(string folder)
-        {
-            if (folder == ScriptFolder)
-                return FileExtensions.Script;
-            else if (folder == ImageFolder)
-                return FileExtensions.Image;
-            else
-                return "";
-        }
-
-        public string FolderFromExtension(string path)
-        {
-            if (path.EndsWith(FileExtensions.Script))
-                return ScriptFolder;
-            else if (path.EndsWith(FileExtensions.Image))
-                return ImageFolder;
-            else if (path.EndsWith(FileExtensions.Timeline))
-                return "Timeline";
-            else
-                return "";
-        }
-
         private void AddAssetInternal(Asset asset, bool silent = false)
         {
             var guid = AssetGuidManager.GetGuid(asset.Path);
@@ -261,30 +233,6 @@ namespace Robot
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);
-        }
-
-        private List<string> GetAllPathsInProjectDirectory()
-        {
-            var paths = new List<string>();
-
-            foreach (string fileName in Directory.GetFiles(ImagePath, "*.png").Select(Path.GetFileName))
-                paths.Add(ImageFolder + "\\" + fileName);
-
-            foreach (string fileName in Directory.GetFiles(ScriptPath, "*.mrb").Select(Path.GetFileName))
-                paths.Add(ScriptFolder + "\\" + fileName);
-            return paths;
-        }
-
-        public void InitProject()
-        {
-            if (!Directory.Exists(ScriptPath))
-                Directory.CreateDirectory(ScriptPath);
-
-            if (!Directory.Exists(ImagePath))
-                Directory.CreateDirectory(ImagePath);
-
-            if (!Directory.Exists(AssetGuidManager.MetadataPath))
-                Directory.CreateDirectory(AssetGuidManager.MetadataPath);
         }
     }
 }

@@ -5,9 +5,6 @@ namespace Robot.Abstractions
 {
     public interface IAssetManager
     {
-        string ImageFolder { get; }
-        string ScriptFolder { get; }
-
         IEnumerable<Asset> Assets { get; }
         Dictionary<Guid, Asset> GuidAssetTable { get; }
         Dictionary<Guid, long> GuidHashTable { get; }
@@ -26,11 +23,7 @@ namespace Robot.Abstractions
         void EndAssetEditing();
         Asset GetAsset(string path);
         Asset GetAsset(string folder, string name);
-        void InitProject();
         void Refresh();
         void RenameAsset(string sourcePath, string destPath);
-
-        string ExtensionFromFolder(string folder);
-        string FolderFromExtension(string path);
     }
 }

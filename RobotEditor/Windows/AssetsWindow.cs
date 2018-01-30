@@ -2,6 +2,7 @@
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Utils;
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -42,7 +43,7 @@ namespace RobotEditor
         private void OnAfterRenameNode(NodeLabelEditEventArgs e)
         {
             var asset = AssetManager.GetAsset(e.Node.Parent.Text, e.Node.Text);
-            var newPath = asset.Path.Replace("\\" + Commons.GetName(asset.Path), "\\" + e.Label);
+            var newPath = asset.Path.Replace("\\" + Paths.GetName(asset.Path), "\\" + e.Label);
             AssetManager.RenameAsset(asset.Path, newPath);
         }
 
@@ -53,8 +54,8 @@ namespace RobotEditor
 
         private void OnAssetCreated(string path)
         {
-            var folderNode = treeView.FindChild(Commons.GetFolder(path));
-            var node = new TreeNode(Commons.GetName(path));
+            var folderNode = treeView.FindChild(Paths.GetFolder(path));
+            var node = new TreeNode(Paths.GetName(path));
             folderNode.Nodes.Add(node);
             UpdateIcons();
         }
@@ -63,8 +64,8 @@ namespace RobotEditor
         {
             treeView.Nodes.Clear();
 
-            var scriptNode = new TreeNode(AssetManager.ScriptFolder);
-            var imageNode = new TreeNode(AssetManager.ImageFolder);
+            var scriptNode = new TreeNode(Paths.ScriptFolder);
+            var imageNode = new TreeNode(Paths.ImageFolder);
 
             treeView.Nodes.Add(scriptNode);
             treeView.Nodes.Add(imageNode);
@@ -92,8 +93,8 @@ namespace RobotEditor
         private void UpdateIcons()
         {
             UpdateIconForFolder("", 0);
-            UpdateIconForFolder(AssetManager.ScriptFolder, 1);
-            UpdateIconForFolder(AssetManager.ImageFolder, 2);
+            UpdateIconForFolder(Paths.ScriptFolder, 1);
+            UpdateIconForFolder(Paths.ImageFolder, 2);
         }
 
         private void UpdateIconForFolder(string folder, int iconIndex)
@@ -108,7 +109,7 @@ namespace RobotEditor
 
         private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != Paths.ScriptFolder)
                 return;
 
             var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
@@ -118,7 +119,7 @@ namespace RobotEditor
 
         private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != AssetManager.ScriptFolder)
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != Paths.ScriptFolder)
                 return;
 
             var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);

@@ -6,6 +6,7 @@ using Robot.Scripts;
 using System.IO;
 using Robot.Abstractions;
 using Unity;
+using RobotRuntime.Utils;
 
 namespace Tests
 {
@@ -184,16 +185,17 @@ namespace Tests
             RobotRuntime.Program.RegisterInterfaces(container);
 
             MouseRobot = container.Resolve<IMouseRobot>();
+            var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
             ScriptManager = container.Resolve<IScriptManager>();
 
-            MouseRobot.SetupProjectPath(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath);
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + AssetManager.ScriptFolder);
+            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.ScriptFolder);
             foreach (FileInfo file in di.GetFiles())
                 file.Delete();
 

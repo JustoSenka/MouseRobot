@@ -5,7 +5,6 @@ namespace RobotRuntime.Abstractions
 {
     public interface IAssetGuidManager
     {
-        string MetadataPath { get; }
         IEnumerable<KeyValuePair<Guid, long>> Hashes { get; }
         IEnumerable<KeyValuePair<Guid, string>> Paths { get; }
 

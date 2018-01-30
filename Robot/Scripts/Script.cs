@@ -21,7 +21,7 @@ namespace Robot.Scripts
         {
             get
             {
-                return (Path == "") ? DefaultScriptName : Commons.GetName(Path);
+                return (Path == "") ? DefaultScriptName : Paths.GetName(Path);
             }
         }
 
