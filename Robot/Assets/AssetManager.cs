@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
@@ -52,7 +53,10 @@ namespace Robot
 
                     // If this asset on disk is found, update old guid to new path, since best prediction is that it was renamed
                     if (assetOnDiskWithSameHashButNotKnownPath != null)
+                    {
                         AssetGuidManager.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
+                        Logger.Log(LogType.Log, "Asset '" + assetOnDiskWithSameHashButNotKnownPath.Name + "' was recognized as renamed asset");
+                    }
                 }
             }
 
@@ -66,9 +70,15 @@ namespace Robot
                     asset.Hash == assetInMemory.Hash && !GuidPathTable.ContainsValue(asset.Path));
 
                     if (assetWithSameHashAndNotInDbYet != null)
+                    {
                         RenameAssetInternal(assetInMemory.Path, assetWithSameHashAndNotInDbYet.Path);
+                        Logger.Log(LogType.Log, "Asset '" + assetInMemory.Name + "' was renamed to '" + assetWithSameHashAndNotInDbYet.Name + "'");
+                    }
                     else
+                    {
                         DeleteAssetInternal(assetInMemory);
+                        Logger.Log(LogType.Log, "Asset was deleted: '" + assetInMemory.Name + "'");
+                    }
                 }
             }
 
@@ -83,11 +93,13 @@ namespace Robot
                 {
                     GetAsset(assetOnDisk.Path).UpdateValueFromDisk();
                     AssetUpdated?.Invoke(assetOnDisk.Path);
+                    Logger.Log(LogType.Log, "Asset was modified: '" + assetOnDisk.Name + "'");
                 }
                 // New file added
                 else if (!isPathKnown)
                 {
                     AddAssetInternal(assetOnDisk);
+                    Logger.Log(LogType.Log, "Asset was added: '" + assetOnDisk.Name + "'");
                 }
             }
 

@@ -132,7 +132,7 @@ namespace Robot.Recording
             }
             else
             {
-                throw new Exception("Key event was fired but neither KeyUp or KeyDown was true");
+                Logger.Log(LogType.Warning, "Key event was fired but neither KeyUp or KeyDown was true");
             }
         }
 

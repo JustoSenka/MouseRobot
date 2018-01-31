@@ -15,9 +15,9 @@ namespace RobotRuntime.IO
                 {
                     return (T)new BinaryFormatter().Deserialize(stream);
                 }
-                catch (SerializationException)
+                catch (SerializationException e)
                 {
-                    Console.WriteLine("Failed to read from file: " + fileName);
+                    Logger.Log(LogType.Error, "Failed to read from file: " + fileName, e.Message);
                     return default(T);
                 }
             }
@@ -31,9 +31,9 @@ namespace RobotRuntime.IO
                 {
                     new BinaryFormatter().Serialize(stream, objToWrite);
                 }   
-                catch(SerializationException)
+                catch(SerializationException e)
                 {
-                    Console.WriteLine("Failed to write to file: " + fileName);
+                    Logger.Log(LogType.Error, "Failed to write to file: " + fileName, e.Message);
                 }
             }
         }

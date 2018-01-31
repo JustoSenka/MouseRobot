@@ -31,8 +31,8 @@ namespace RobotEditor.Drawing
         }
 
         public event Action Invalidate;
-        public event Action<IPaintOnScreen> StartInvalidateOnTimer;
-        public event Action<IPaintOnScreen> StopInvalidateOnTimer;
+        public event Action<IPaintOnScreen> StartInvalidateOnTimer = delegate { };
+        public event Action<IPaintOnScreen> StopInvalidateOnTimer = delegate { };
 
         public void OnPaint(PaintEventArgs e)
         {

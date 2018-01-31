@@ -45,7 +45,7 @@ namespace RobotRuntime
 
             new Thread(delegate ()
             {
-                Console.WriteLine("Script start");
+                Logger.Log(LogType.Debug, "Script start");
 
                 var runner = RunnerFactory.CreateFor(lightScript.GetType());
                 runner.Run(lightScript);
@@ -54,7 +54,7 @@ namespace RobotRuntime
                 FeatureDetectionThread.Stop();
 
                 Finished?.Invoke();
-                Console.WriteLine("End script.");
+                Logger.Log(LogType.Debug, "Script end");
             }).Start();
         }
 

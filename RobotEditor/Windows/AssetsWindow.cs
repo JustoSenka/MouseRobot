@@ -83,7 +83,7 @@ namespace RobotEditor
                     scriptNode.Nodes.Add(assetNode);
 
                 else
-                    throw new Exception("Unknown item appeared in asset database.");
+                    Logger.Log(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
             }
 
             treeView.ExpandAll();

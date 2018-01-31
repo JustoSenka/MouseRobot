@@ -14,9 +14,9 @@ namespace RobotRuntime.IO
                 var deserializer = new DeserializerBuilder().Build();
                 return deserializer.Deserialize<T>(text);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Failed to read or deserialize file: " + path);
+                Logger.Log(LogType.Error, "Failed to read from file: " + path, e.Message);
             }
             return default(T);
         }
@@ -29,9 +29,9 @@ namespace RobotRuntime.IO
                 var text = serializer.Serialize(objToWrite);
                 File.WriteAllText(path, text);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Failed to serialize and write file: " + path);
+                Logger.Log(LogType.Error, "Failed to write to file: " + path, e.Message);
             }
         }
     }

@@ -4,6 +4,8 @@ using Unity.Lifetime;
 using Robot.Recording;
 using Robot.Settings;
 using Robot.Utils.Win32;
+using RobotRuntime.Abstractions;
+using RobotRuntime;
 
 namespace Robot
 {
@@ -20,6 +22,8 @@ namespace Robot
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
+            Logger.Instance = Container.Resolve<ILogger>();
         }
     }
 }

@@ -33,7 +33,8 @@ namespace Robot.Scripts
                 case CommandType.ForeachImage:
                     return new CommandForeachImage(default(Guid), 2000);
                 default:
-                    throw new ArgumentException("Not able to create Command with type of: " + commandType);
+                    Logger.Log(LogType.Error, "Not able to create Command with type of: " + commandType);
+                    return new CommandSleep(0);
             }
         }
 

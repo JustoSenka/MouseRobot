@@ -86,8 +86,7 @@ namespace RobotRuntime.Graphics
                     Thread.Sleep(FrameTimeMax - elapsed);
 
                 m_Stopwatch.Reset();
-
-                //System.Diagnostics.Debug.WriteLine(Name + " took " + elapsed + " ms. to complete");
+                
                 Update?.Invoke();
             }
         }

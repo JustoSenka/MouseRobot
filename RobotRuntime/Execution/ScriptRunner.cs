@@ -23,7 +23,10 @@ namespace RobotRuntime.Execution
         public void Run(IRunnable runnable)
         {
             if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
-                throw new ArgumentException("This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
+            {
+                Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
+                return;
+            }
 
             var script = runnable as LightScript;
             RunnerFactory.ExecutingScript = script;
@@ -31,13 +34,13 @@ namespace RobotRuntime.Execution
             foreach (var node in script.Commands)
             {
                 if (m_ShouldCancelRun.Value)
+                {
+                    Logger.Log(LogType.Log, "Script run was cancelled.");
                     return;
+                }
 
                 var runner = RunnerFactory.CreateFor(node.value.GetType());
                 runner.Run(node.value);
-
-                /*if (!m_Run)
-                    break;*/
             }
         }
     }

@@ -109,7 +109,10 @@ namespace Robot
         {
             var asset = AssetManager.GetAsset(path);
             if (asset == null)
-                throw new ArgumentException("No such asset at path: " + path);
+            {
+                Logger.Log(LogType.Error, "Cannot load script. No such asset at path: " + path);
+                return null;
+            }
 
             // if hierarchy contains empty untitled script, remove it
             if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
@@ -136,8 +139,7 @@ namespace Robot
                 MakeSureActiveScriptExist();
                 ScriptLoaded?.Invoke(newScript);
             }
-
-            System.Diagnostics.Debug.WriteLine("Script loaded: " + path);
+            
             return newScript;
         }
 
@@ -147,7 +149,6 @@ namespace Robot
             script.Path = Paths.GetProjectRelativePath(path);
 
             ScriptSaved?.Invoke(script);
-            Console.WriteLine("Script saved: " + path);
         }
 
         public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed

@@ -148,6 +148,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\ILogger.cs" />
     <Compile Include="Assets\AssetGuidManager.cs" />
     <Compile Include="Assets\AssetImporter.cs" />
     <Compile Include="Abstractions\IAssetGuidManager.cs" />
@@ -184,6 +185,9 @@
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />
     <Compile Include="Abstractions\IProfiler.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\StaticLogger.cs" />
     <Compile Include="Perf\LimitedStack.cs" />
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />

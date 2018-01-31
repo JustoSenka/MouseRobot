@@ -46,7 +46,7 @@ namespace RobotRuntime.Perf
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (m_TakenWatches.ContainsKey(name))
-                throw new InvalidOperationException("No Stop was called for name: " + name);
+                Logger.Log(LogType.Error, "No Stop was called for name: " + name);
 #endif
 
             LimitedStack<ProfilerNode> stack;
@@ -64,7 +64,7 @@ namespace RobotRuntime.Perf
 
 #if ENABLE_PROFILER_DEBUGGING
             if (m_FreeWatches.Count() == 0)
-                throw new Exception("No free watches left, maybe try increasing watch count?");
+                Logger.Log(LogType.Error, "No free watches left, maybe try increasing watch count?");
 #endif
 
             Stopwatch watch;
@@ -85,7 +85,7 @@ namespace RobotRuntime.Perf
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (!m_TakenWatches.ContainsKey(name))
-                throw new InvalidOperationException("No start was called for this name: " + name);
+                Logger.Log(LogType.Error, "No start was called for this name: " + name);
 #endif
 
             Stopwatch watch;
@@ -97,7 +97,7 @@ namespace RobotRuntime.Perf
 
 #if ENABLE_PROFILER_DEBUGGING
             if (m_TakenWatches.ContainsKey(name))
-                throw new Exception("Watch should be removed for name: " + name);
+                Logger.Log(LogType.Error, "Watch should be removed for name: " + name);
 #endif
 
             watch.Stop();

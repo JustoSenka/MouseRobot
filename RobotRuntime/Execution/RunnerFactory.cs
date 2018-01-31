@@ -32,8 +32,10 @@ namespace RobotRuntime.Execution
                 return new ScriptRunner(this, Callback, CancellingPointerPlaceholder);
 
             else
-                throw new Exception("Threre is no Runner registered that would support type: " + type);
-
+            {
+                Logger.Log(LogType.Error, "Threre is no Runner registered that would support type: " + type);
+                return new SimpleCommandRunner(this, Callback);
+            }
         }
 
         // TODO: currently runner is created for every single command, and this is executed quite often, might be slow. Consider caching everyhing in Dictionary

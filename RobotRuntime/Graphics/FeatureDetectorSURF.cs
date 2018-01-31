@@ -84,14 +84,14 @@ namespace RobotRuntime.Graphics
                 UMat modelDescriptors;
                 if (!FindDescriptors(surfCPU, modelKeyPoints, uModelImage, out modelDescriptors))
                 {
-                    Debug.WriteLine("Feature Descriptor for Model image is empty. Is the image too small?");
+                    Logger.Log(LogType.Error, "Feature Descriptor for Model image is empty. Is the image too small?");
                     return mask = null;
                 }
 
                 UMat observedDescriptors;
                 if (!FindDescriptors(surfCPU, observedKeyPoints, uObservedImage, out observedDescriptors))
                 {
-                    Debug.WriteLine("Feature Descriptor for Observed image is empty. Is the image too small?");
+                    Logger.Log(LogType.Error, "Feature Descriptor for Observed image is empty. Is the image too small?");
                     return mask = null;
                 }
 

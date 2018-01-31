@@ -4,6 +4,7 @@ using Robot.Utils.Win32;
 using System.ComponentModel;
 using System.IO;
 using RobotRuntime.Abstractions;
+using RobotRuntime;
 
 namespace Robot
 {
@@ -79,7 +80,10 @@ namespace Robot
                 if (value != m_IsRecording)
                 {
                     if (m_IsPlaying)
-                        throw new InvalidOperationException("Cannot record while playing script.");
+                    {
+                        Logger.Log(LogType.Error, "Cannot record while playing script.");
+                        return;
+                    }
 
                     InputCallbacks.Init();
                     m_IsRecording = value;
@@ -97,7 +101,10 @@ namespace Robot
                 if (value != m_IsPlaying)
                 {
                     if (m_IsRecording)
-                        throw new InvalidOperationException("Cannot play a script while is recording.");
+                    {
+                        Logger.Log(LogType.Error, "Cannot play a script while is recording.");
+                        return;
+                    }
 
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);

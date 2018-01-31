@@ -23,7 +23,10 @@ namespace RobotRuntime.Execution
         public void Run(IRunnable runnable)
         {
             if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
-                throw new ArgumentException("This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
+            {
+                Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
+                return;
+            }
 
             var command = runnable as Command;
 

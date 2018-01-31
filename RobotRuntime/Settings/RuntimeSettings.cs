@@ -1,5 +1,4 @@
 ﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Graphics;
 
 namespace RobotRuntime.Settings
 {
@@ -18,8 +17,8 @@ namespace RobotRuntime.Settings
         // Probably settings should be per command, maybe diff commands should have diff settings
         public void ApplySettings(FeatureDetectionSettings settings)
         {
-            //ScreenStateThread.FPS = settings.ScreenImageUpdateFPS;  // TODO: Fix stable repeating thread
-            //FeatureDetectionThread.FPS = settings.ImageDetectionFPS;
+            ScreenStateThread.FPS = settings.ScreenImageUpdateFPS;
+            FeatureDetectionThread.FPS = settings.ImageDetectionFPS;
             FeatureDetectionThread.DetectionMode = settings.DetectionMode;
         }
     }
