@@ -18,14 +18,14 @@ namespace RobotEditor
         private DockContent[] m_Windows;
         private ThemeBase m_CurrentTheme;
 
+        private FormWindowState m_DefaultWindowState;
+
         private IHierarchyWindow m_HierarchyWindow;
         private IPropertiesWindow m_PropertiesWindow;
         private IScreenPreviewWindow m_ScreenPreviewWindow;
         private IAssetsWindow m_AssetsWindow;
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
-
-        private FormWindowState m_DefaultWindowState;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -35,9 +35,12 @@ namespace RobotEditor
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
+
+        private IProjectSelectionDialog ProjectSelectionDialog;
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
-            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks)
+            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
+            IProjectSelectionDialog ProjectSelectionDialog)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -54,6 +57,9 @@ namespace RobotEditor
             this.m_AssetsWindow = AssetsWindow;
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
+
+            this.ProjectSelectionDialog = ProjectSelectionDialog;
+
             MouseRobot.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
 
             InitializeComponent();
@@ -425,6 +431,16 @@ namespace RobotEditor
             DockLayout.Save(m_DockPanel);
             MouseRobot.IsRecording = false;
             MouseRobot.IsPlaying = false;
+        }
+
+        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProjectSelectionDialog.InitProjectWithDialog();
+        }
+
+        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProjectSelectionDialog.InitProjectWithDialog();
         }
     }
 }

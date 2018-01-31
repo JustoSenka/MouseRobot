@@ -1,26 +1,47 @@
 ﻿using Robot;
-using RobotRuntime;
-using RobotRuntime.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using RobotEditor.Abstractions;
 
 namespace RobotEditor.Editor
 {
-    public class ProjectSelectionDialog
+    public class ProjectSelectionDialog : IProjectSelectionDialog
     {
-        public ProjectSelectionDialog()
+        private const string k_Title = "Select Project Directory";
+
+        private IProjectManager ProjectManager;
+        public ProjectSelectionDialog(IProjectManager ProjectManager)
         {
-            var openDialog = new OpenFileDialog();
-            openDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.ScriptFolder;
-            openDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
-            openDialog.Title = "Select a path for script to save.";
-            if (openDialog.ShowDialog() == DialogResult.OK)
+            this.ProjectManager = ProjectManager;
+        }
+
+        public bool InitProjectWithDialog()
+        {
+            if (CommonFileDialog.IsPlatformSupported)
             {
+                var dialog = new CommonOpenFileDialog();
+                dialog.IsFolderPicker = true;
+                dialog.Title = k_Title;
+                dialog.AddToMostRecentlyUsedList = true;
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                {
+                    ProjectManager.InitProject(dialog.FileName);
+                    return true;
+                }
             }
+            else
+            {
+                var dialog = new FolderBrowserDialog();
+                dialog.Description = k_Title;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    ProjectManager.InitProject(dialog.SelectedPath);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
+

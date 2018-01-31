@@ -102,7 +102,13 @@
       <HintPath>..\packages\Unity.5.5.6\lib\net45\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.2, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.WindowsAPICodePack">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
       <Private>True</Private>
@@ -166,6 +172,8 @@
     <Compile Include="Drawing\CroppingManagerPainter.cs" />
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
     <Compile Include="Drawing\VisualizationPainter.cs" />
+    <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
+    <Compile Include="Editor\ProjectSelectionDialog.cs" />
     <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />

@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime.IO;
 using RobotRuntime.Settings;
+using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,17 +13,10 @@ namespace Robot.Settings
         public RecordingSettings RecordingSettings { get; private set; }
         public FeatureDetectionSettings FeatureDetectionSettings { get; private set; }
 
-        private readonly string k_AppName = "\\MouseRobot\\";
-        private readonly string k_RoamingAppdataPath;
-        private readonly string k_LocalAppdataPath;
-
         public SettingsManager()
         {
-            k_RoamingAppdataPath = Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData) + k_AppName;
-            k_LocalAppdataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + k_AppName;
-
-            CreateIfNotExist(k_RoamingAppdataPath);
-            CreateIfNotExist(k_LocalAppdataPath);
+            CreateIfNotExist(Paths.RoamingAppdataPath);
+            CreateIfNotExist(Paths.LocalAppdataPath);
 
             RestoreDefaults();
             RestoreSettings();
@@ -72,7 +66,7 @@ namespace Robot.Settings
         private string RoamingAppdataPathFromType<T>(T settings) where T : BaseSettings
         {
             string fileName = FileNameFromType(settings);
-            var filePath = k_RoamingAppdataPath + fileName;
+            var filePath = Path.Combine(Paths.RoamingAppdataPath, fileName);
             return filePath;
         }
 

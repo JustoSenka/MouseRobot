@@ -17,7 +17,11 @@ namespace RobotRuntime.Utils
         public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
 
-        public static string[] PathArray
+        public static string AppName { get { return "MouseRobot"; } }
+        public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
+        public static string LocalAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName); } }
+
+        public static string[] ProjectPathArray
         {
             get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath }; }
         }
@@ -36,7 +40,7 @@ namespace RobotRuntime.Utils
 
         public static IEnumerable<string> GetAllFilePaths()
         {
-            foreach (var path in PathArray)
+            foreach (var path in ProjectPathArray)
             {
                 foreach (string filePath in Directory.GetFiles(path))
                 {

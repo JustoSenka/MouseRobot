@@ -41,10 +41,9 @@ namespace Robot
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
-        private IProjectManager ProjectManager;
         public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IInputCallbacks InputCallbacks, IProjectManager ProjectManager)
+            IInputCallbacks InputCallbacks)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
@@ -54,9 +53,6 @@ namespace Robot
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
-            this.ProjectManager = ProjectManager;
-
-            ProjectManager.InitProject(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\MProject");
 
             ScriptManager.NewScript();
             TestRunner.Finished += OnScriptFinished;
