@@ -75,6 +75,8 @@ namespace RobotEditor.Windows
             treeListView.CanExpandGetter = x => (x as ProfilerNode).Children.Count > 0;
             treeListView.ChildrenGetter = x => (x as ProfilerNode).Children;
 
+            treeListView.FullRowSelect = true;
+
             var nameColumn = new OLVColumn("Name", "Name");
             nameColumn.AspectGetter = x => (x as ProfilerNode).Name;
 
@@ -189,8 +191,8 @@ namespace RobotEditor.Windows
 
         private void ProfilerWindow_Resize(object sender, EventArgs e)
         {
-            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.8f);
-            treeListView.Columns[1].Width = (int)(treeListView.Width * 0.2f);
+            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.78f);
+            treeListView.Columns[1].Width = (int)(treeListView.Width * 0.20f);
 
             FrameSlider.Width = (int)(toolStrip.Width * 0.5f);
             //FrameSlider.Invalidate(); // When resizing, sometimes FrameSlider thinks that it will not fit

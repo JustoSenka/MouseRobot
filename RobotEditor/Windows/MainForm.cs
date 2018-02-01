@@ -10,6 +10,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
+using RobotEditor.Windows;
 
 namespace RobotEditor
 {
@@ -26,6 +27,7 @@ namespace RobotEditor
         private IAssetsWindow m_AssetsWindow;
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
+        private IConsoleWindow m_ConsoleWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -40,7 +42,7 @@ namespace RobotEditor
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -57,6 +59,7 @@ namespace RobotEditor
             this.m_AssetsWindow = AssetsWindow;
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
+            this.m_ConsoleWindow = ConsoleWindow;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -70,7 +73,7 @@ namespace RobotEditor
 
             ((Form)ScreenPaintForm).Owner = this;
 
-            CreateWindows();
+            PutLayoutWindowsInArray();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
 
             DockLayout.Windows = m_Windows;
@@ -151,15 +154,8 @@ namespace RobotEditor
             m_InspectorWindow.ShowCommand(command);
         }
 
-        private void CreateWindows()
-        {/*
-            m_HierarchyWindow = new HierarchyWindow();
-            m_PropertiesWindow = new PropertiesWindow();
-            m_ScreenPreviewWindow = new ScreenPreviewWindow();
-            m_AssetsWindow = new AssetsWindow();
-            m_ProfilerWindow = new ProfilerWindow();
-            m_InspectorWindow = new InspectorWindow();
-            */
+        private void PutLayoutWindowsInArray()
+        {
             m_Windows = new DockContent[]
             {
                 (DockContent)m_HierarchyWindow,
@@ -168,6 +164,7 @@ namespace RobotEditor
                 (DockContent)m_AssetsWindow,
                 (DockContent)m_ProfilerWindow,
                 (DockContent)m_InspectorWindow,
+                (DockContent)m_ConsoleWindow,
             };
         }
 
@@ -198,11 +195,13 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(statusStrip, version, theme);
 
             visualStudioToolStripExtender.SetStyle(((Form)m_HierarchyWindow).ContextMenuStrip, version, theme);
-            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(((Form)m_AssetsWindow).ContextMenuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(((Form)m_PropertiesWindow).ContextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(((Form)m_ConsoleWindow).ContextMenuStrip, version, theme);
 
+            visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.ToolStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_ConsoleWindow.ToolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
         }
 
@@ -325,27 +324,32 @@ namespace RobotEditor
 
         private void hierarchyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_HierarchyWindow).Show(m_DockPanel);
+            ((HierarchyWindow)m_HierarchyWindow).Show(m_DockPanel);
         }
 
         private void imagePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_ScreenPreviewWindow).Show(m_DockPanel);
+            ((ScreenPreviewWindow)m_ScreenPreviewWindow).Show(m_DockPanel);
         }
 
         private void assetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_AssetsWindow).Show(m_DockPanel);
+            ((AssetsWindow)m_AssetsWindow).Show(m_DockPanel);
         }
 
         private void profilerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_ProfilerWindow).Show(m_DockPanel);
+            ((ProfilerWindow)m_ProfilerWindow).Show(m_DockPanel);
         }
 
         private void inspectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_InspectorWindow).Show(m_DockPanel);
+            ((InspectorWindow)m_InspectorWindow).Show(m_DockPanel);
+        }
+
+        private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((ConsoleWindow)m_ConsoleWindow).Show(m_DockPanel);
         }
 
         #endregion

@@ -23,6 +23,6 @@ namespace RobotRuntime
 {
     public enum LogType
     {
-        Error, Warning, Log, Debug
+        None = 0, Error, Warning, Log, Debug
     }
 }
