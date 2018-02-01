@@ -102,7 +102,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConsoleWindow";
             this.Text = "Console";
-            this.Activated += new System.EventHandler(this.ConsoleWindow_Activated);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);

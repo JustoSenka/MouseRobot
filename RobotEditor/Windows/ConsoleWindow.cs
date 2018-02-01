@@ -9,13 +9,15 @@ using RobotEditor.Abstractions;
 using System.Collections;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RobotEditor.Windows
 {
     public partial class ConsoleWindow : DockContent, IConsoleWindow
     {
-        private Tuple<Log, IList<string>> m_CachedLogEntries = new Tuple<Log, IList<string>>(default(Log), null);
-        
+        private bool m_ControlCreated;
+        private object m_CachedSelectedObject;
+
         private ILogger Logger;
         public ConsoleWindow(ILogger Logger)
         {
@@ -26,17 +28,26 @@ namespace RobotEditor.Windows
             AddIconsToImageList();
             AutoScaleMode = AutoScaleMode.Dpi;
 
-            Logger.Logi(LogType.Debug, "some debug", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Error, "some error");
-            Logger.Logi(LogType.Log, "log", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Warning, "warning type", "somethibng\nsomethibng");
+            AddTestLogs(Logger);
 
             treeListView.Font = Fonts.Default;
 
             Logger.OnLogReceived += OnLogReceived;
             Logger.LogCleared += OnLogCleared;
 
+            this.Shown += OnFormShown;
             CreateColumns();
+        }
+
+        private static void AddTestLogs(ILogger Logger)
+        {
+            Logger.Logi(LogType.Debug, "some debug", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Error, "some error");
+            Logger.Logi(LogType.Log, "log", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Warning, "warning type", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Log, "log", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Warning, "warning type", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Error, "some error"); 
         }
 
         private void AddToolstripButtons()
@@ -61,6 +72,9 @@ namespace RobotEditor.Windows
 
         private void UpdateHierarchy()
         {
+            if (!m_ControlCreated)
+                return;
+
             this.BeginInvoke(new MethodInvoker(delegate
             {
                 treeListView.Roots = Logger.LogList;
@@ -101,24 +115,24 @@ namespace RobotEditor.Windows
             };
 
             var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => ((Log)x).Header;
+            nameColumn.AspectGetter = x =>
+            {
+                var log = ((Log)x);
+                return log.HasDescription() ? log.Header + " ..." : log.Header;
+            };
 
             treeListView.UseCellFormatEvents = true;
             treeListView.FormatCell += UpdateFontsTreeListView;
 
             treeListView.FullRowSelect = true;
+            treeListView.TreeColumnRenderer.IsShowLines = false;
+            treeListView.TreeColumnRenderer.IsShowGlyphs = false;
+
+            treeListView.ShowFilterMenuOnRightClick = true; // ContextMenu is overriden now, so no work
 
             treeListView.Columns.Add(imageColumn);
             treeListView.Columns.Add(typeColumn);
             treeListView.Columns.Add(nameColumn);
-            //treeListView.Columns.Add(stackColumn);
-        }
-
-        private IEnumerable GetCachedOrGenerateDescriptionItemsFromLog(Log x)
-        {
-            throw new NotImplementedException();
-            /*var cachedLog = m_CachedLogEntries.Item1;
-            if (cachedLog.IsDefault())*/
         }
 
         private IEnumerable GenerateDescriptionItemsFromLog(Log x)
@@ -139,9 +153,9 @@ namespace RobotEditor.Windows
 
         private void treeListView_Resize(object sender, EventArgs e)
         {
-            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.03f);
-            treeListView.Columns[1].Width = (int)(treeListView.Width * 0.04f);
-            treeListView.Columns[2].Width = (int)(treeListView.Width * 0.91f);
+            treeListView.Columns[0].Width = 50;
+            treeListView.Columns[1].Width = 70;
+            treeListView.Columns[2].Width = (int)(treeListView.Width * 0.98f) - 120;
         }
 
         private void showStacktraceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -164,17 +178,22 @@ namespace RobotEditor.Windows
             if (treeListView.SelectedObject == null)
                 return;
 
+            if (m_CachedSelectedObject == treeListView.SelectedObject)
+                return;
+
             var log = (Log)treeListView.SelectedObject;
 
             if (log.IsDefault() || log.LogType == LogType.None)
                 return;
 
+            m_CachedSelectedObject = treeListView.SelectedObject;
             treeListView.CollapseAll();
             treeListView.Expand(log);
         }
 
-        private void ConsoleWindow_Activated(object sender, EventArgs e)
+        private void OnFormShown(object sender, EventArgs e)
         {
+            m_ControlCreated = true;
             UpdateHierarchy();
         }
     }
