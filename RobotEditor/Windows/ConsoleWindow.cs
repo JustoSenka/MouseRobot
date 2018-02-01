@@ -7,11 +7,15 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using RobotEditor.Abstractions;
 using System.Collections;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace RobotEditor.Windows
 {
     public partial class ConsoleWindow : DockContent, IConsoleWindow
     {
+        private Tuple<Log, IList<string>> m_CachedLogEntries = new Tuple<Log, IList<string>>(default(Log), null);
+        
         private ILogger Logger;
         public ConsoleWindow(ILogger Logger)
         {
@@ -19,7 +23,13 @@ namespace RobotEditor.Windows
 
             InitializeComponent();
             AddToolstripButtons();
+            AddIconsToImageList();
             AutoScaleMode = AutoScaleMode.Dpi;
+
+            Logger.Logi(LogType.Debug, "some debug", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Error, "some error");
+            Logger.Logi(LogType.Log, "log", "somethibng\nsomethibng");
+            Logger.Logi(LogType.Warning, "warning type", "somethibng\nsomethibng");
 
             treeListView.Font = Fonts.Default;
 
@@ -27,7 +37,6 @@ namespace RobotEditor.Windows
             Logger.LogCleared += OnLogCleared;
 
             CreateColumns();
-            UpdateHierarchy();
         }
 
         private void AddToolstripButtons()
@@ -38,6 +47,13 @@ namespace RobotEditor.Windows
             toolStrip.Items.Add(snapshotButton);
         }
 
+        private void AddIconsToImageList()
+        {
+            imageList.Images.Add(SystemIcons.Information);
+            imageList.Images.Add(SystemIcons.Warning);
+            imageList.Images.Add(SystemIcons.Error);
+        }
+
         private void ClearLog(object sender, EventArgs e)
         {
             Logger.Clear();
@@ -45,8 +61,11 @@ namespace RobotEditor.Windows
 
         private void UpdateHierarchy()
         {
-            treeListView.Roots = Logger.LogList;
-            treeListView.Refresh();
+            this.BeginInvoke(new MethodInvoker(delegate
+            {
+                treeListView.Roots = Logger.LogList;
+                treeListView.Refresh();
+            }));
         }
 
         private void OnLogReceived(Log obj)
@@ -61,8 +80,18 @@ namespace RobotEditor.Windows
 
         private void CreateColumns()
         {
-            treeListView.CanExpandGetter = x => ((Log)x).Description != null;
+            treeListView.CanExpandGetter = x => ((Log)x).HasDescription();
             treeListView.ChildrenGetter = x => GenerateDescriptionItemsFromLog(((Log)x));
+
+            var imageColumn = new OLVColumn("", "Image");
+            imageColumn.ImageGetter += delegate (object x)
+            {
+                var index = (int)((Log)x).LogType - 1;
+                if (index > 2)
+                    index = 0;
+
+                return index;
+            };
 
             var typeColumn = new OLVColumn("Type", "Type");
             typeColumn.AspectGetter = x =>
@@ -74,25 +103,28 @@ namespace RobotEditor.Windows
             var nameColumn = new OLVColumn("Name", "Name");
             nameColumn.AspectGetter = x => ((Log)x).Header;
 
-            /*var stackColumn = new OLVColumn("Stacktrace", "Stacktrace");
-            stackColumn.AspectGetter = x => ((Log)x).Stacktrace;
-            stackColumn.WordWrap = true;*/
-
             treeListView.UseCellFormatEvents = true;
             treeListView.FormatCell += UpdateFontsTreeListView;
 
             treeListView.FullRowSelect = true;
 
-
+            treeListView.Columns.Add(imageColumn);
             treeListView.Columns.Add(typeColumn);
             treeListView.Columns.Add(nameColumn);
             //treeListView.Columns.Add(stackColumn);
         }
 
+        private IEnumerable GetCachedOrGenerateDescriptionItemsFromLog(Log x)
+        {
+            throw new NotImplementedException();
+            /*var cachedLog = m_CachedLogEntries.Item1;
+            if (cachedLog.IsDefault())*/
+        }
+
         private IEnumerable GenerateDescriptionItemsFromLog(Log x)
         {
             var sentences = x.Description.Split('\n');
-            foreach(var str in sentences)
+            foreach (var str in sentences)
             {
                 yield return new Log(LogType.None, str, "", null);
             }
@@ -107,8 +139,9 @@ namespace RobotEditor.Windows
 
         private void treeListView_Resize(object sender, EventArgs e)
         {
-            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.10f);
-            treeListView.Columns[1].Width = (int)(treeListView.Width * 0.88f);
+            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.03f);
+            treeListView.Columns[1].Width = (int)(treeListView.Width * 0.04f);
+            treeListView.Columns[2].Width = (int)(treeListView.Width * 0.91f);
         }
 
         private void showStacktraceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -121,8 +154,28 @@ namespace RobotEditor.Windows
             if (log.IsDefault())
                 return;
 
+            var descAddition = log.HasDescription() ? log.Description + "\n\n" : "";
             if (log.Stacktrace != null)
-                FlexibleMessageBox.Show(log.Header + "\n\n" + log.Stacktrace, "Stacktrace", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                FlexibleMessageBox.Show(log.Header + "\n\n" + descAddition + log.Stacktrace, "Stacktrace", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void treeListView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (treeListView.SelectedObject == null)
+                return;
+
+            var log = (Log)treeListView.SelectedObject;
+
+            if (log.IsDefault() || log.LogType == LogType.None)
+                return;
+
+            treeListView.CollapseAll();
+            treeListView.Expand(log);
+        }
+
+        private void ConsoleWindow_Activated(object sender, EventArgs e)
+        {
+            UpdateHierarchy();
         }
     }
 }

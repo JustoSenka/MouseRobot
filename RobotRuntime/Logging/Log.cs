@@ -16,6 +16,16 @@ namespace RobotRuntime.Logging
             this.Stacktrace = Stacktrace;
             this.LogType = LogType;
         }
+
+        public bool HasDescription()
+        {
+            return Description != null && Description != "";
+        }
+
+        public bool CanBeExpanded()
+        {
+            return HasDescription() && LogType != LogType.None;
+        }
     }
 }
 
@@ -23,6 +33,6 @@ namespace RobotRuntime
 {
     public enum LogType
     {
-        None = 0, Error, Warning, Log, Debug
+        None = 0, Log, Warning, Error, Debug
     }
 }

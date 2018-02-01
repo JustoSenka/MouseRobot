@@ -32,19 +32,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConsoleWindow));
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showStacktraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // imageList
             // 
-            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "script_ICO_256.png");
-            this.imageList.Images.SetKeyName(1, "gear_ICO_512.png");
             // 
             // treeListView
             // 
@@ -64,17 +63,8 @@
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
+            this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             this.treeListView.Resize += new System.EventHandler(this.treeListView_Resize);
-            // 
-            // toolStrip
-            // 
-            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(469, 25);
-            this.toolStrip.TabIndex = 2;
-            this.toolStrip.Text = "toolStrip";
             // 
             // contextMenuStrip1
             // 
@@ -90,6 +80,16 @@
             this.showStacktraceToolStripMenuItem.Text = "Show Stacktrace";
             this.showStacktraceToolStripMenuItem.Click += new System.EventHandler(this.showStacktraceToolStripMenuItem_Click);
             // 
+            // toolStrip
+            // 
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+            this.toolStrip.Size = new System.Drawing.Size(469, 25);
+            this.toolStrip.TabIndex = 2;
+            this.toolStrip.Text = "toolStrip";
+            // 
             // ConsoleWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -102,6 +102,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ConsoleWindow";
             this.Text = "Console";
+            this.Activated += new System.EventHandler(this.ConsoleWindow_Activated);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);

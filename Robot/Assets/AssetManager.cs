@@ -99,7 +99,6 @@ namespace Robot
                 else if (!isPathKnown)
                 {
                     AddAssetInternal(assetOnDisk);
-                    Logger.Log(LogType.Log, "Asset was added: '" + assetOnDisk.Name + "'");
                 }
             }
 
