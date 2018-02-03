@@ -161,7 +161,8 @@
             this.ToolstripExpandAll.Image = global::RobotEditor.Properties.Resources.ExpandAll_16;
             this.ToolstripExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripExpandAll.Name = "ToolstripExpandAll";
-            this.ToolstripExpandAll.Size = new System.Drawing.Size(23, 22);
+            this.ToolstripExpandAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripExpandAll.Size = new System.Drawing.Size(40, 22);
             this.ToolstripExpandAll.Text = "toolStripButton1";
             this.ToolstripExpandAll.ToolTipText = "Expand All Items";
             this.ToolstripExpandAll.Click += new System.EventHandler(this.ToolstripExpandAll_Click);
@@ -172,7 +173,8 @@
             this.ToolstripExpandOne.Image = global::RobotEditor.Properties.Resources.ExpandOne_16;
             this.ToolstripExpandOne.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripExpandOne.Name = "ToolstripExpandOne";
-            this.ToolstripExpandOne.Size = new System.Drawing.Size(23, 22);
+            this.ToolstripExpandOne.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripExpandOne.Size = new System.Drawing.Size(40, 22);
             this.ToolstripExpandOne.Text = "toolStripButton2";
             this.ToolstripExpandOne.ToolTipText = "Expand First Level";
             this.ToolstripExpandOne.Click += new System.EventHandler(this.ToolstripExpandOne_Click);
@@ -183,7 +185,8 @@
             this.ToolstripCollapseAll.Image = global::RobotEditor.Properties.Resources.CollapseAll_16;
             this.ToolstripCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripCollapseAll.Name = "ToolstripCollapseAll";
-            this.ToolstripCollapseAll.Size = new System.Drawing.Size(23, 22);
+            this.ToolstripCollapseAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripCollapseAll.Size = new System.Drawing.Size(40, 22);
             this.ToolstripCollapseAll.Text = "toolStripButton3";
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);

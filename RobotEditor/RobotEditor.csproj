@@ -168,6 +168,9 @@
     <Compile Include="CustomControls\EditableTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\ToolStripToggleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
     <Compile Include="Drawing\CroppingManagerPainter.cs" />
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
@@ -353,11 +356,20 @@
     <Content Include="Resources\Icons\Folder_ICO_128.png" />
     <Content Include="Resources\Icons\gear_ICO_512.png" />
     <Content Include="Resources\Icons\Image_ICO_128.png" />
+    <Content Include="Resources\Icons\LogDebug_32.png" />
+    <Content Include="Resources\Icons\LogDebug_d_32.png" />
+    <Content Include="Resources\Icons\LogError_32.png" />
+    <None Include="Resources\Icons\LogError_d_32.png" />
+    <Content Include="Resources\Icons\LogInfo_32.png" />
+    <None Include="Resources\Icons\LogInfo_d_32.png" />
+    <Content Include="Resources\Icons\LogWarning_32.png" />
+    <None Include="Resources\Icons\LogWarning_d_32.png" />
     <Content Include="Resources\Icons\script_ICO_256.png" />
     <None Include="Resources\Icons\ToolButton_Record_32.png" />
     <None Include="Resources\Icons\ToolButton_RecordStop_32.png" />
     <None Include="Resources\Icons\ToolButton_Play_32.png" />
     <None Include="Resources\Icons\ToolButton_Stop_32.png" />
+    <Content Include="Resources\Icons\ToolButton_Pause_32.png" />
     <Content Include="Resources\Icons\X_ICO_256.png" />
     <Content Include="Resources\Images\LogoWhite.png" />
     <Content Include="Resources\Images\SplashLogo.jpg" />

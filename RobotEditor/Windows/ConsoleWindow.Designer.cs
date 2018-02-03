@@ -41,9 +41,12 @@
             // 
             // imageList
             // 
-            this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "LogInfo_32.png");
+            this.imageList.Images.SetKeyName(1, "LogWarning_32.png");
+            this.imageList.Images.SetKeyName(2, "LogError_32.png");
+            this.imageList.Images.SetKeyName(3, "LogDebug_32.png");
             // 
             // treeListView
             // 
@@ -54,7 +57,7 @@
             this.treeListView.LargeImageList = this.imageList;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
-            this.treeListView.RowHeight = 20;
+            this.treeListView.RowHeight = 28;
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
             this.treeListView.Size = new System.Drawing.Size(469, 407);
