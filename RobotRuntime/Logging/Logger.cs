@@ -1,8 +1,10 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
+using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace RobotRuntime
 {
@@ -11,11 +13,17 @@ namespace RobotRuntime
         public event Action<Log> OnLogReceived;
         public event Action LogCleared;
 
+        private string LogName { get { return "Log.txt"; } }
+        private string LogPath { get { return Path.Combine(Paths.RoamingAppdataPath, LogName); } }
+
         public IList<Log> LogList { get; private set; } = new List<Log>();
 
         public Logger()
         {
+            if (File.Exists(LogPath))
+                File.Delete(LogPath);
 
+            File.Create(LogPath);
         }
 
         public void Clear()
@@ -26,7 +34,7 @@ namespace RobotRuntime
 
         public void Logi(LogType logType, string str)
         {
-            var i = this.IsTheCaller() ? 1 : 0; 
+            var i = this.IsTheCaller() ? 1 : 0;
             InternalLog(logType, str, null, i + 2);
         }
 
@@ -45,6 +53,11 @@ namespace RobotRuntime
             Debug.WriteLine(str);
 
             LogList.Add(log);
+
+            var strToFile = log.HasDescription() ? str + Environment.NewLine + description : str;
+            var multilineStr = new string[] { strToFile, log.Stacktrace.ToString() + Environment.NewLine};
+            File.AppendAllLines(LogPath, multilineStr);
+
             OnLogReceived?.Invoke(log);
         }
     }
