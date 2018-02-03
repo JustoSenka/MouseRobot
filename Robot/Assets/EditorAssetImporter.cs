@@ -14,6 +14,9 @@ namespace Robot
             else if (path.EndsWith(FileExtensions.Script))
                 return new ScriptImporter(path);
 
+            else if (path.EndsWith(FileExtensions.Plugin))
+                return new PluginImporter(path);
+
             else
                 return null;
         }

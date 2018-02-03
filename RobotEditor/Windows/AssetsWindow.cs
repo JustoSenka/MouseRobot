@@ -66,9 +66,11 @@ namespace RobotEditor
 
             var scriptNode = new TreeNode(Paths.ScriptFolder);
             var imageNode = new TreeNode(Paths.ImageFolder);
+            var pluginNode = new TreeNode(Paths.PluginFolder);
 
             treeView.Nodes.Add(scriptNode);
             treeView.Nodes.Add(imageNode);
+            treeView.Nodes.Add(pluginNode);
 
             foreach (var asset in AssetManager.Assets)
             {
@@ -81,6 +83,9 @@ namespace RobotEditor
 
                 else if (asset.Path.EndsWith(FileExtensions.Script))
                     scriptNode.Nodes.Add(assetNode);
+
+                else if (asset.Path.EndsWith(FileExtensions.Plugin))
+                    pluginNode.Nodes.Add(assetNode);
 
                 else
                     Logger.Log(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
@@ -95,6 +100,7 @@ namespace RobotEditor
             UpdateIconForFolder("", 0);
             UpdateIconForFolder(Paths.ScriptFolder, 1);
             UpdateIconForFolder(Paths.ImageFolder, 2);
+            UpdateIconForFolder(Paths.PluginFolder, 3);
         }
 
         private void UpdateIconForFolder(string folder, int iconIndex)

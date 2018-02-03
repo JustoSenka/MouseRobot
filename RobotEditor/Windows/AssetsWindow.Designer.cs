@@ -111,8 +111,9 @@
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "Folder_ICO_128.png");
-            this.imageList1.Images.SetKeyName(1, "script_ICO_256.png");
+            this.imageList1.Images.SetKeyName(1, "Script_ICO_16.png");
             this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
+            this.imageList1.Images.SetKeyName(3, "Plugin_ICO_256.png");
             // 
             // treeView
             // 
