@@ -1,9 +1,5 @@
-﻿using Robot;
-using Robot.Abstractions;
-using RobotEditor.Properties;
+﻿using Robot.Abstractions;
 using RobotEditor.Windows.Base;
-using RobotRuntime;
-using RobotRuntime.Abstractions;
 using RobotRuntime.Graphics;
 using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;

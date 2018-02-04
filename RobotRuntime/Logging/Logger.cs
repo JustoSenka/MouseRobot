@@ -13,23 +13,31 @@ namespace RobotRuntime
         public event Action<Log> OnLogReceived;
         public event Action LogCleared;
 
+        public IList<Log> LogList { get; private set; } = new List<Log>();
+
         private string LogName { get { return "Log.txt"; } }
         private string LogPath { get { return Path.Combine(Paths.RoamingAppdataPath, LogName); } }
 
-        public IList<Log> LogList { get; private set; } = new List<Log>();
+        private object m_LogLock = new object();
 
         public Logger()
         {
-            if (File.Exists(LogPath))
-                File.Delete(LogPath);
+            lock (m_LogLock)
+            {
+                if (File.Exists(LogPath))
+                    File.Delete(LogPath);
 
-            File.Create(LogPath);
+                File.Create(LogPath);
+            }
         }
 
         public void Clear()
         {
-            LogList = new List<Log>();
-            LogCleared?.Invoke();
+            lock (m_LogLock)
+            {
+                LogList = new List<Log>();
+                LogCleared?.Invoke();
+            }
         }
 
         public void Logi(LogType logType, string str)
@@ -46,19 +54,27 @@ namespace RobotRuntime
 
         private void InternalLog(LogType logType, string obj, string description, int skipFrames)
         {
-            var log = new Log(logType, obj, description, new StackTrace(skipFrames));
+            lock (m_LogLock)
+            {
+                var log = new Log(logType, obj, description, new StackTrace(skipFrames));
 
-            var str = "[" + logType + "] " + log.Header;
-            Console.WriteLine(str);
-            Debug.WriteLine(str);
+                var str = "[" + logType + "] " + log.Header;
+                Console.WriteLine(str);
+                Debug.WriteLine(str);
 
-            LogList.Add(log);
+                LogList.Add(log);
 
-            var strToFile = log.HasDescription() ? str + Environment.NewLine + description : str;
-            var multilineStr = new string[] { strToFile, log.Stacktrace.ToString() + Environment.NewLine};
-            File.AppendAllLines(LogPath, multilineStr);
+                var strToFile = log.HasDescription() ? str + Environment.NewLine + description : str;
+                var multilineStr = new string[] { strToFile, log.Stacktrace.ToString() + Environment.NewLine };
 
-            OnLogReceived?.Invoke(log);
+                try
+                {
+                    File.AppendAllLines(LogPath, multilineStr);
+                }
+                catch (IOException) { }
+
+                OnLogReceived?.Invoke(log);
+            }
         }
     }
 }

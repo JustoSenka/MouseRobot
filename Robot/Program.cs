@@ -6,6 +6,7 @@ using Robot.Settings;
 using Robot.Utils.Win32;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
+using Robot.Plugins;
 
 namespace Robot
 {
@@ -23,7 +24,6 @@ namespace Robot
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = Container.Resolve<ILogger>();
         }
     }
 }

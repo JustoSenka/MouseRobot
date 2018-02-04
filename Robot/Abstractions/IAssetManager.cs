@@ -10,6 +10,8 @@ namespace Robot.Abstractions
         Dictionary<Guid, long> GuidHashTable { get; }
         Dictionary<Guid, string> GuidPathTable { get; }
 
+        bool IsEditingAssets { get; }
+
         event Action<string> AssetCreated;
         event Action<string> AssetDeleted;
         event Action<string, string> AssetRenamed;

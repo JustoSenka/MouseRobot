@@ -31,6 +31,8 @@ namespace RobotRuntime
             Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
+
+            Logger.Instance = Container.Resolve<ILogger>();
         }
     }
 }

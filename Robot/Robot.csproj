@@ -120,6 +120,7 @@
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
     <Compile Include="MouseRobot\ProjectManager.cs" />
+    <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Recording\CroppingManager.cs" />
     <Compile Include="Abstractions\ICroppingManager.cs" />

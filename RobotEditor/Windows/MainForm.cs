@@ -93,6 +93,8 @@ namespace RobotEditor
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
 
+            this.Activated += (x, y) => AssetManager.Refresh();
+
             ((Form)ScreenPaintForm).Show();
         }
 

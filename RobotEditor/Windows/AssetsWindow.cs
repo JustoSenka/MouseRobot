@@ -31,8 +31,6 @@ namespace RobotEditor
             AssetManager.RefreshFinished += OnRefreshFinished;
             AssetManager.AssetCreated += OnAssetCreated;
             AssetManager.AssetDeleted += OnAssetDeleted;
-
-            AssetManager.Refresh();
         }
 
         public Asset GetSelectedAsset()

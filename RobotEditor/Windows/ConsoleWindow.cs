@@ -32,8 +32,6 @@ namespace RobotEditor.Windows
             AddToolstripButtons();
             AutoScaleMode = AutoScaleMode.Dpi;
 
-            AddTestLogs(Logger);
-
             treeListView.Font = Fonts.Default;
 
             Logger.OnLogReceived += OnLogReceived;
@@ -41,21 +39,6 @@ namespace RobotEditor.Windows
 
             this.Shown += OnFormShown;
             CreateColumns();
-        }
-
-        private static void AddTestLogs(ILogger Logger)
-        {
-            Logger.Logi(LogType.Debug, "1 some debug", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Error, "2 some error");
-            Logger.Logi(LogType.Log, "3 log", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Warning, "4 warning type", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Log, "5 log", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Log, "6 log", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Log, "7 log", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Log, "8 log");
-            Logger.Logi(LogType.Warning, "9 warning type", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Warning, "10 warning type", "somethibng\nsomethibng");
-            Logger.Logi(LogType.Error, "11 some error");
         }
 
         private void AddToolstripButtons()

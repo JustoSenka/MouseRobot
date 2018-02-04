@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using RobotEditor.Scripts;
 using Robot;
 using RobotEditor.Editor;
+using Robot.Plugins;
 
 namespace RobotEditor
 {
@@ -25,6 +26,8 @@ namespace RobotEditor
             RegisterInterfaces(container);
             Robot.Program.RegisterInterfaces(container);
             RobotRuntime.Program.RegisterInterfaces(container);
+
+            container.Resolve<PluginManager>(); // Create PluginManager, since nobody uses it, runs on callbacks from AssetManager
 
             var projectIsCreated = SetupProjectPath(container);
 

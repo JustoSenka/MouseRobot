@@ -21,7 +21,7 @@ namespace Robot
         public event Action<string> AssetCreated;
         public event Action<string> AssetUpdated;
 
-        private bool m_ShouldSaveMetadata = true;
+        public bool IsEditingAssets { get; private set; }
 
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
@@ -91,8 +91,7 @@ namespace Robot
                 // We know the path, but hash has changed, must have been modified
                 if (!isHashKnown && isPathKnown)
                 {
-                    GetAsset(assetOnDisk.Path).UpdateValueFromDisk();
-                    AssetUpdated?.Invoke(assetOnDisk.Path);
+                    UpdateAssetInternal(GetAsset(assetOnDisk.Path));
                     Logger.Log(LogType.Log, "Asset was modified: '" + assetOnDisk.Name + "'");
                 }
                 // New file added
@@ -104,6 +103,8 @@ namespace Robot
 
             EndAssetEditing();
             Profiler.Stop("AssetManager_Refresh");
+
+            Logger.Log(LogType.Log, "Asset refresh finished");
 
             RefreshFinished?.Invoke();
         }
@@ -129,7 +130,7 @@ namespace Robot
             }
 
             AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
-            if (m_ShouldSaveMetadata)
+            if (!IsEditingAssets)
                 AssetGuidManager.Save();
 
             return asset;
@@ -182,7 +183,7 @@ namespace Robot
             asset.UpdatePath(destPath);
 
             AssetGuidManager.AddNewGuid(guid, asset.Path, asset.Hash);
-            if (m_ShouldSaveMetadata)
+            if (!IsEditingAssets)
                 AssetGuidManager.Save();
 
             AddAssetInternal(asset, true);
@@ -204,12 +205,12 @@ namespace Robot
 
         public void BeginAssetEditing()
         {
-            m_ShouldSaveMetadata = false;
+            IsEditingAssets = true;
         }
 
         public void EndAssetEditing()
         {
-            m_ShouldSaveMetadata = true;
+            IsEditingAssets = false;
             AssetGuidManager.Save();
         }
 
@@ -239,11 +240,24 @@ namespace Robot
             GuidHashTable.Add(asset.Guid, asset.Hash);
 
             AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
-            if (m_ShouldSaveMetadata)
+            if (!IsEditingAssets)
                 AssetGuidManager.Save();
 
             if (!silent)
                 AssetCreated?.Invoke(asset.Path);
+        }
+
+        /// <summary>
+        /// This should be called whenever asset value was modified on disk. Updates hashes and asset value while keeping the reference
+        /// </summary>
+        private void UpdateAssetInternal(Asset oldAsset)
+        {
+            oldAsset.UpdateValueFromDisk();
+
+            GuidHashTable[oldAsset.Guid] = oldAsset.Hash;
+            AssetGuidManager.AddNewGuid(oldAsset.Guid, oldAsset.Path, oldAsset.Hash);
+
+            AssetUpdated?.Invoke(oldAsset.Path);
         }
     }
 }
