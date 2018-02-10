@@ -193,6 +193,7 @@
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />
     <Compile Include="Abstractions\ITestRunner.cs" />
+    <Compile Include="Plugins\PluginDomainManager.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
     <Compile Include="Settings\FeatureDetectionSettings.cs" />

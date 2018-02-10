@@ -14,9 +14,6 @@ namespace Robot.Plugins
 {
     public class PluginManager
     {
-        private CSharpCodeProvider m_CodeProvider = new CSharpCodeProvider();
-        private CompilerParameters m_CompilerParams = new CompilerParameters();
-
         private IList<string> m_ModifiedFilesSinceLastRecompilation = new List<string>();
 
         private string DomainName { get { return "UserScripts"; } }
@@ -26,6 +23,7 @@ namespace Robot.Plugins
 
         public AppDomain PluginDomain { get; private set; }
 
+        private PluginCompiler PluginCompiler;
         private IAssetManager AssetManager;
         private IProfiler Profiler;
         public PluginManager(IAssetManager AssetManager, IProfiler Profiler)
@@ -38,25 +36,25 @@ namespace Robot.Plugins
             AssetManager.AssetDeleted += AddPathToList;
             AssetManager.RefreshFinished += RecompileScripts;
 
-            m_CompilerParams.GenerateExecutable = false;
-            m_CompilerParams.GenerateInMemory = false;
+            var AppDomainSetup = new AppDomainSetup() { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
+            PluginDomain = AppDomain.CreateDomain(DomainName, AppDomain.CurrentDomain.Evidence, AppDomainSetup);
 
-            //PluginDomain = AppDomain.CreateDomain(DomainName);
+            var proxy = (Proxy) PluginDomain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, "Proxy");
+            proxy.LoadAssemblies(GetAllAssembliesInCurrentDomainDirectory().ToArray());
 
-            AddReferencesForCompilerParameter();
+            this.PluginCompiler = (PluginCompiler)PluginDomain.CreateInstanceAndUnwrap(typeof(PluginCompiler).Assembly.FullName, "PluginCompiler");
+            PluginCompiler.Logger = Logger.Instance;
+
+            AddReferencesForCompilerParameter(PluginCompiler);
         }
-
-        private void AddReferencesForCompilerParameter()
+        
+        private void AddReferencesForCompilerParameter(PluginCompiler PluginCompiler)
         {
-            var assemblies = GetAllAssembliesInDomainDirectory();
-            m_CompilerParams.ReferencedAssemblies.AddRange(assemblies.Distinct().ToArray());
-
-            m_CompilerParams.ReferencedAssemblies.Add("System.dll");
-            m_CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
-            m_CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+            var assemblies = GetAllAssembliesInCurrentDomainDirectory();
+            PluginCompiler.AddReferencedAssemblies(assemblies.Distinct().ToArray());
         }
 
-        private IEnumerable<string> GetAllAssembliesInDomainDirectory()
+        private IEnumerable<string> GetAllAssembliesInCurrentDomainDirectory()
         {
             foreach (var path in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory))
             {
@@ -76,39 +74,22 @@ namespace Robot.Plugins
             if (m_ModifiedFilesSinceLastRecompilation.Count == 0)
                 return;
 
-            m_CompilerParams.OutputAssembly = CustomAssemblyPath;
+            PluginCompiler.SetOutputDirectory(CustomAssemblyPath);
 
             Profiler.Start("PluginManager_RecompileScripts");
 
             var scriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));
             var scriptValues = scriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-            foreach (var s in scriptValues)
+            foreach (var script in scriptValues)
             {
-                CompileCode(s);
+                PluginCompiler.CompileCode(script);
             }
 
             Profiler.Stop("PluginManager_RecompileScripts");
             Logger.Log(LogType.Log, "Scripts successfully recompiled");
 
             m_ModifiedFilesSinceLastRecompilation.Clear();
-        }
-
-        private Assembly CompileCode(string code)
-        {
-            var results = m_CodeProvider.CompileAssemblyFromSource(m_CompilerParams, code);
-            
-            if (results.Errors.HasErrors)
-            {
-                foreach (CompilerError error in results.Errors)
-                    Logger.Log(LogType.Error, 
-                        string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText), 
-                        string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
-
-                return null;
-            }
-
-            return results.CompiledAssembly;
         }
     }
 }

@@ -8,7 +8,7 @@ using System.IO;
 
 namespace RobotRuntime
 {
-    public partial class Logger : ILogger
+    public partial class Logger : MarshalByRefObject, ILogger
     {
         public event Action<Log> OnLogReceived;
         public event Action LogCleared;
