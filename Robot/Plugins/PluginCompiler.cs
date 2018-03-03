@@ -1,73 +1,52 @@
-﻿using System;
-using Microsoft.CSharp;
+﻿using Microsoft.CSharp;
+using Robot.Abstractions;
 using RobotRuntime;
 using System.CodeDom.Compiler;
-using System.Reflection;
-using RobotRuntime.Abstractions;
 
-public class PluginCompiler : MarshalByRefObject
+namespace Robot.Plugins
 {
-    public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
-    public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
-
-
-    public Assembly LoadedAssembly;
-
-    public ILogger Logger;
-    public PluginCompiler()
+    public class PluginCompiler : IPluginCompiler
     {
-        CompilerParams.GenerateExecutable = false;
-        CompilerParams.GenerateInMemory = false;
-    }
+        public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
+        public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
-    public void AddReferencedAssemblies(params string[] paths)
-    {
-        CompilerParams.ReferencedAssemblies.AddRange(paths);
-        CompilerParams.ReferencedAssemblies.Add("System.dll");
-        CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
-        CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
-    }
-
-    public string CompileCode(string code)
-    {
-        var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, code);
-
-        if (results.Errors.HasErrors)
+        public PluginCompiler()
         {
-            foreach (CompilerError error in results.Errors)
-                Logger.Logi(LogType.Error,
-                    string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
-                    string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
+            CompilerParams.GenerateExecutable = false;
+            CompilerParams.GenerateInMemory = false;
 
-            return null;
+            CompilerParams.ReferencedAssemblies.Add("System.dll");
+            CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
+            CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
         }
-        
-        LoadedAssembly = results.CompiledAssembly;
-        Logger.Logi(LogType.Log, "Script compiled and loaded in UserScripts Domain");
 
-        return results.PathToAssembly;
-    }
-
-    public void SetOutputDirectory(string customAssemblyPath)
-    {
-        CompilerParams.OutputAssembly = customAssemblyPath;
-    }
-}
-
-public class Proxy : MarshalByRefObject
-{
-    public void LoadAssemblies(string[] paths)
-    {
-        foreach (var path in paths)
+        public void AddReferencedAssemblies(params string[] paths)
         {
-            try
+            CompilerParams.ReferencedAssemblies.AddRange(paths);
+        }
+
+        public bool CompileCode(string code)
+        {
+            var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, code);
+
+            if (results.Errors.HasErrors)
             {
-                Assembly.LoadFrom(path);
+                foreach (CompilerError error in results.Errors)
+                    Logger.Log(LogType.Error,
+                        string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
+                        string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
+
+                Logger.Log(LogType.Log, "Scripts have compilation errors.");
+                return false;
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Assembly could not be loaded: " + path);
-            }
+
+            Logger.Log(LogType.Log, "Script successfully compiled.");
+            return true;
+        }
+
+        public void SetOutputPath(string customAssemblyPath)
+        {
+            CompilerParams.OutputAssembly = customAssemblyPath;
         }
     }
 }

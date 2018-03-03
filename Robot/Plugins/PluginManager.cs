@@ -1,33 +1,28 @@
-﻿using Microsoft.CSharp;
-using Robot.Abstractions;
+﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Robot.Plugins
 {
-    public class PluginManager
+    public class PluginManager : IPluginManager
     {
         private IList<string> m_ModifiedFilesSinceLastRecompilation = new List<string>();
-
-        private string DomainName { get { return "UserScripts"; } }
 
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
-        public AppDomain PluginDomain { get; private set; }
-
         private PluginCompiler PluginCompiler;
+        private IPluginLoader PluginLoader;
         private IAssetManager AssetManager;
         private IProfiler Profiler;
-        public PluginManager(IAssetManager AssetManager, IProfiler Profiler)
+        public PluginManager(IPluginLoader PluginLoader, IAssetManager AssetManager, IProfiler Profiler)
         {
+            this.PluginLoader = PluginLoader;
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;
 
@@ -36,14 +31,7 @@ namespace Robot.Plugins
             AssetManager.AssetDeleted += AddPathToList;
             AssetManager.RefreshFinished += RecompileScripts;
 
-            var AppDomainSetup = new AppDomainSetup() { ApplicationBase = AppDomain.CurrentDomain.BaseDirectory };
-            PluginDomain = AppDomain.CreateDomain(DomainName, AppDomain.CurrentDomain.Evidence, AppDomainSetup);
-
-            var proxy = (Proxy) PluginDomain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, "Proxy");
-            proxy.LoadAssemblies(GetAllAssembliesInCurrentDomainDirectory().ToArray());
-
-            this.PluginCompiler = (PluginCompiler)PluginDomain.CreateInstanceAndUnwrap(typeof(PluginCompiler).Assembly.FullName, "PluginCompiler");
-            PluginCompiler.Logger = Logger.Instance;
+            this.PluginCompiler = new PluginCompiler();
 
             AddReferencesForCompilerParameter(PluginCompiler);
         }
@@ -74,7 +62,9 @@ namespace Robot.Plugins
             if (m_ModifiedFilesSinceLastRecompilation.Count == 0)
                 return;
 
-            PluginCompiler.SetOutputDirectory(CustomAssemblyPath);
+            PluginCompiler.SetOutputPath(CustomAssemblyPath);
+            PluginLoader.SetInputPath(CustomAssemblyPath);
+            PluginLoader.DestroyUserAppDomain();
 
             Profiler.Start("PluginManager_RecompileScripts");
 
@@ -85,6 +75,9 @@ namespace Robot.Plugins
             {
                 PluginCompiler.CompileCode(script);
             }
+
+            PluginLoader.CreateUserAppDomain();
+            PluginLoader.LoadUserAssemblies();
 
             Profiler.Stop("PluginManager_RecompileScripts");
             Logger.Log(LogType.Log, "Scripts successfully recompiled");

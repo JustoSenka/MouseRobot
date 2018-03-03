@@ -120,6 +120,8 @@
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
     <Compile Include="MouseRobot\ProjectManager.cs" />
+    <Compile Include="Abstractions\IPluginCompiler.cs" />
+    <Compile Include="Abstractions\IPluginManager.cs" />
     <Compile Include="Plugins\PluginCompiler.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Program.cs" />
