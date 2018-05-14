@@ -9,6 +9,11 @@ using System.Linq;
 
 namespace Robot.Plugins
 {
+    /// <summary>
+    /// PluginManager lives in base robot assemblies. Its purpose is to communicate with asset manager and plugin compiler to issue the compilation process
+    /// and to issue plugin loading.
+    /// Directly communicates with PluginCompiler and PluginLoader from runtime.
+    /// </summary>
     public class PluginManager : IPluginManager
     {
         private IList<string> m_ModifiedFilesSinceLastRecompilation = new List<string>();
@@ -16,32 +21,32 @@ namespace Robot.Plugins
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
-        private PluginCompiler PluginCompiler;
+        private IPluginCompiler PluginCompiler;
         private IPluginLoader PluginLoader;
         private IAssetManager AssetManager;
-        private IProfiler Profiler;
-        public PluginManager(IPluginLoader PluginLoader, IAssetManager AssetManager, IProfiler Profiler)
+        public PluginManager(IPluginCompiler PluginCompiler, IPluginLoader PluginLoader, IAssetManager AssetManager)
         {
+            this.PluginCompiler = PluginCompiler;
             this.PluginLoader = PluginLoader;
             this.AssetManager = AssetManager;
-            this.Profiler = Profiler;
 
             AssetManager.AssetCreated += AddPathToList;
             AssetManager.AssetUpdated += AddPathToList;
             AssetManager.AssetDeleted += AddPathToList;
-            AssetManager.RefreshFinished += RecompileScripts;
+            AssetManager.RefreshFinished += OnAssetRefreshFinished;
 
-            this.PluginCompiler = new PluginCompiler();
+            PluginCompiler.ScriptsRecompiled += OnScriptsRecompiled;
 
-            AddReferencesForCompilerParameter(PluginCompiler);
+            AddReferencesForCompilerParameter();
         }
-        
-        private void AddReferencesForCompilerParameter(PluginCompiler PluginCompiler)
+
+        private void AddReferencesForCompilerParameter()
         {
             var assemblies = GetAllAssembliesInCurrentDomainDirectory();
             PluginCompiler.AddReferencedAssemblies(assemblies.Distinct().ToArray());
         }
 
+        // TODO: Duplicated in PluginLoader
         private IEnumerable<string> GetAllAssembliesInCurrentDomainDirectory()
         {
             foreach (var path in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory))
@@ -57,30 +62,32 @@ namespace Robot.Plugins
                 m_ModifiedFilesSinceLastRecompilation.Add(assetPath);
         }
 
-        private void RecompileScripts()
+        private void OnAssetRefreshFinished()
         {
             if (m_ModifiedFilesSinceLastRecompilation.Count == 0)
                 return;
 
-            PluginCompiler.SetOutputPath(CustomAssemblyPath);
-            PluginLoader.SetInputPath(CustomAssemblyPath);
-            PluginLoader.DestroyUserAppDomain();
+            RecompileScripts();
+        }
 
-            Profiler.Start("PluginManager_RecompileScripts");
+        private void RecompileScripts()
+        {
+            PluginCompiler.SetOutputPath(CustomAssemblyPath);
+
+            PluginLoader.UserAssemblyPath = CustomAssemblyPath;
+            PluginLoader.UserAssemblyName= CustomAssemblyName;
+            PluginLoader.DestroyUserAppDomain();
 
             var scriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));
             var scriptValues = scriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-            foreach (var script in scriptValues)
-            {
-                PluginCompiler.CompileCode(script);
-            }
+            PluginCompiler.CompileCode(scriptValues.ToArray());
+        }
 
+        private void OnScriptsRecompiled()
+        {
             PluginLoader.CreateUserAppDomain();
-            PluginLoader.LoadUserAssemblies();
-
-            Profiler.Stop("PluginManager_RecompileScripts");
-            Logger.Log(LogType.Log, "Scripts successfully recompiled");
+            //PluginLoader.LoadUserAssemblies();
 
             m_ModifiedFilesSinceLastRecompilation.Clear();
         }

@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using Unity;
 namespace RobotRuntime.Plugins
 {
     /// <summary>
-    /// This class is supposed to be in UserDomain and its purpose is to load dependencies, user assemblies and instantiate objects
+    /// This class is supposed to be in UserDomain and its purpose is to load dependencies, user assemblies
     /// </summary>
     public class PluginDomainManager : MarshalByRefObject, IPluginDomainManager
     {
@@ -19,15 +20,26 @@ namespace RobotRuntime.Plugins
 
         }
 
-        // Might not work due to UnityContainer being un-marshable
-        public T ResolveInterface<T>(UnityContainer Container)
+        public string[] GetAllTypeNamesWhichImplementInterface(Type type)
         {
-            return Container.Resolve<T>();
+            var types = Assemblies.GetAllTypesWhichImplementInterface(type);
+            return types.Select(t => t.FullName).ToArray();
         }
 
-        public object Instantiate(string className)
+        /// <summary>
+        /// This will not work if called from different app domain.
+        /// </summary>
+        public Type[] GetAllTypesWhichImplementInterface(Type type)
         {
-            var type = Assemblies.SelectMany(a => a.GetTypes()).First(t => t.FullName == className);
+            var types = Assemblies.GetAllTypesWhichImplementInterface(type);
+            return types.ToArray();
+        }
+
+        public object Instantiate(string FullTypeName)
+        {
+            var type = Assemblies.SelectMany(a => a.GetTypes()).First(t => t.FullName == FullTypeName);
+
+            //var handle = Activator.CreateInstanceFrom(Assemblies[0].Location, FullTypeName);
             return Activator.CreateInstance(type);
         }
 

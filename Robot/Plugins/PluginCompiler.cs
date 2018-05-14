@@ -1,17 +1,29 @@
 ﻿using Microsoft.CSharp;
 using Robot.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
+using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 
 namespace Robot.Plugins
 {
+    /// <summary>
+    /// PluginCompiler lives in base robot assemblies. Its purpose is to compile files in project folder into user dlls.
+    /// Used by PLuginManager
+    /// </summary>
     public class PluginCompiler : IPluginCompiler
     {
         public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
-        public PluginCompiler()
+        public event Action ScriptsRecompiled;
+
+        private IProfiler Profiler;
+        public PluginCompiler(IProfiler Profiler)
         {
+            this.Profiler = Profiler;
+
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
 
@@ -25,9 +37,11 @@ namespace Robot.Plugins
             CompilerParams.ReferencedAssemblies.AddRange(paths);
         }
 
-        public bool CompileCode(string code)
+        public bool CompileCode(params string[] sources)
         {
-            var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, code);
+            Profiler.Start("PluginCompiler_CompileCode");
+            var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
+            Profiler.Stop("PluginCompiler_CompileCode");
 
             if (results.Errors.HasErrors)
             {
@@ -36,12 +50,16 @@ namespace Robot.Plugins
                         string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
                         string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
 
-                Logger.Log(LogType.Log, "Scripts have compilation errors.");
+                Logger.Log(LogType.Error, "Scripts have compilation errors.");
+                ScriptsRecompiled?.Invoke();
                 return false;
             }
-
-            Logger.Log(LogType.Log, "Script successfully compiled.");
-            return true;
+            else
+            {
+                ScriptsRecompiled?.Invoke();
+                Logger.Log(LogType.Log, "Scripts successfully compiled.");
+                return true;
+            }
         }
 
         public void SetOutputPath(string customAssemblyPath)

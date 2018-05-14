@@ -54,6 +54,8 @@ namespace RobotRuntime.Utils.Win32
         public static void PerformAction(MouseEventFlags value)
         {
             Point position = GetCursorPosition();
+            MouseMoveTo(position.X, position.Y);
+
             mouse_event((int)value, position.X, position.Y, 0, 0);
             Thread.Sleep(TimeBetweenActions);
         }

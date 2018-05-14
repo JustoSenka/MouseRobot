@@ -1,5 +1,6 @@
 ﻿using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using System;
 
 namespace Robot.Abstractions
 {
@@ -9,7 +10,9 @@ namespace Robot.Abstractions
         CompilerParameters CompilerParams { get; }
 
         void AddReferencedAssemblies(params string[] paths);
-        bool CompileCode(string code);
+        bool CompileCode(params string[] sources);
         void SetOutputPath(string customAssemblyPath);
+
+        event Action ScriptsRecompiled;
     }
 }

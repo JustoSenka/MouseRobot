@@ -1,4 +1,5 @@
-﻿using Unity;
+﻿using RobotRuntime.Utils;
+using Unity;
 
 namespace RobotRuntime.Abstractions
 {
@@ -6,6 +7,5 @@ namespace RobotRuntime.Abstractions
     {
         object Instantiate(string className);
         void LoadAssemblies(string[] paths, bool userAssemblies = false);
-        T ResolveInterface<T>(UnityContainer Container);
     }
 }
