@@ -1,5 +1,7 @@
 ﻿using RobotRuntime.Plugins;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace RobotRuntime.Abstractions
 {
@@ -8,11 +10,11 @@ namespace RobotRuntime.Abstractions
         string UserAssemblyName { get; set; }
         string UserAssemblyPath { get; set; }
 
-        PluginDomainManager PluginDomainManager { get; }
-        
         void DestroyUserAppDomain();
         void CreateUserAppDomain();
         void LoadUserAssemblies();
+
+        IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func);
 
         event Action UserDomainReloaded;
     }

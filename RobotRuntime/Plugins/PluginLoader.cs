@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace RobotRuntime.Plugins
 {
@@ -21,7 +22,7 @@ namespace RobotRuntime.Plugins
 
         public event Action UserDomainReloaded;
 
-        public PluginDomainManager PluginDomainManager { get; private set; }
+        private PluginDomainManager PluginDomainManager;
         public PluginLoader()
         {
             // TODO: runtime on its own should create domain and load assemblies
@@ -51,7 +52,7 @@ namespace RobotRuntime.Plugins
             PluginDomainManager = (PluginDomainManager)m_PluginDomain.CreateInstanceAndUnwrap(
                 typeof(PluginDomainManager).Assembly.FullName, "RobotRuntime.Plugins.PluginDomainManager");
 
-            var assemblyNames = GetAllAssembliesInCurrentDomainDirectory().ToArray();
+            var assemblyNames = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory().ToArray();
             PluginDomainManager.LoadAssemblies(assemblyNames);
 
             LoadUserAssemblies(); // User assemblies must be loaded before UserDomainReloaded event fires
@@ -64,14 +65,9 @@ namespace RobotRuntime.Plugins
             PluginDomainManager.LoadAssemblies(new[] { UserAssemblyPath }, true);
         }
 
-        // TODO: Duplicated in PluginManager
-        private IEnumerable<string> GetAllAssembliesInCurrentDomainDirectory()
+        public IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func)
         {
-            foreach (var path in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory))
-            {
-                if (path.EndsWith(".dll") || path.EndsWith(".exe"))
-                    yield return path;
-            }
+            throw new NotImplementedException();
         }
     }
 }

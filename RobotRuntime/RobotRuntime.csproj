@@ -197,6 +197,7 @@
     <Compile Include="Abstractions\IPluginLoader.cs" />
     <Compile Include="Plugins\PluginDomainManager.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
+    <Compile Include="Plugins\PluginLoaderNoDomain.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
     <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Scripts\LightScript.cs" />
     <Compile Include="Scripts\TestRunner.cs" />
     <Compile Include="Utils\LinkedTree.cs" />
+    <Compile Include="Utils\ObjectCreationExtension.cs" />
     <Compile Include="Utils\Paths.cs" />
     <Compile Include="Utils\ValueWrapper.cs" />
     <Compile Include="Utils\Win32\WinAPI.cs" />

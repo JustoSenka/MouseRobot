@@ -32,7 +32,7 @@ namespace RobotRuntime
             Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IPluginLoader, PluginLoader>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IPluginLoader, PluginLoaderNoDomain>(new ContainerControlledLifetimeManager());
             
             // Container.RegisterType<IPluginDomainManager, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
 

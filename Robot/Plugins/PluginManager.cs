@@ -42,20 +42,10 @@ namespace Robot.Plugins
 
         private void AddReferencesForCompilerParameter()
         {
-            var assemblies = GetAllAssembliesInCurrentDomainDirectory();
+            var assemblies = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory();
             PluginCompiler.AddReferencedAssemblies(assemblies.Distinct().ToArray());
         }
-
-        // TODO: Duplicated in PluginLoader
-        private IEnumerable<string> GetAllAssembliesInCurrentDomainDirectory()
-        {
-            foreach (var path in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory))
-            {
-                if (path.EndsWith(".dll") || path.EndsWith(".exe"))
-                    yield return path;
-            }
-        }
-
+        
         private void AddPathToList(string assetPath)
         {
             if (assetPath.EndsWith(FileExtensions.PluginD))
