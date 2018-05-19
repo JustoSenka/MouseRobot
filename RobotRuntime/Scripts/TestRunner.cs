@@ -23,14 +23,16 @@ namespace RobotRuntime
         private IFeatureDetectionThread FeatureDetectionThread;
         private IRunnerFactory RunnerFactory;
         private IPluginLoader PluginLoader;
+        private IRuntimeSettings RuntimeSettings;
         public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
-            IRunnerFactory RunnerFactory, IPluginLoader PluginLoader)
+            IRunnerFactory RunnerFactory, IPluginLoader PluginLoader, IRuntimeSettings RuntimeSettings)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.RunnerFactory = RunnerFactory;
             this.PluginLoader = PluginLoader;
+            this.RuntimeSettings = RuntimeSettings;
         }
 
         public void Start(string projectPath, string scriptName)
@@ -39,9 +41,9 @@ namespace RobotRuntime
             PluginLoader.UserAssemblyPath = Path.Combine(Paths.MetadataPath, PluginLoader.UserAssemblyName);
             PluginLoader.CreateUserAppDomain();
 
-            //RuntimeSettings.ApplySettings(); // Need to get some sort of settings (appdata has them)
+            RuntimeSettings.LoadSettingsHardcoded();
 
-            var importer = AssetImporter.FromPath(Path.Combine(projectPath, scriptName) + FileExtensions.ScriptD);
+            var importer = AssetImporter.FromPath(Path.Combine(Paths.ScriptPath, scriptName) + FileExtensions.ScriptD);
             Start(importer.Load<LightScript>());
         }
 

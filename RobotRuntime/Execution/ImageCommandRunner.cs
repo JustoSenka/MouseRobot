@@ -65,7 +65,7 @@ namespace RobotRuntime.Execution
 
             foreach (var p in points)
             {
-                m_Callback.Invoke(node.value);
+                m_Callback?.Invoke(node.value);
                 node.value.Run();
 
                 foreach (var childNode in node)

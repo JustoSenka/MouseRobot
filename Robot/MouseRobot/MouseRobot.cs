@@ -33,8 +33,6 @@ namespace Robot
         }
         private AsyncOperation m_AsyncOperationOnUI;
 
-        public string ProjectPath { get; private set; }
-
         private IScriptManager ScriptManager;
         private ITestRunner TestRunner;
         private IRecordingManager RecordingManager;
@@ -65,7 +63,8 @@ namespace Robot
             if (ScriptManager.ActiveScript == null)
                 return;
 
-            TestRunner.Start(ScriptManager.ActiveScript.ToLightScript());
+            //TestRunner.Start(ScriptManager.ActiveScript.ToLightScript());
+            TestRunner.Start(Environment.CurrentDirectory, "aaa");
         }
 
         private void OnScriptFinished()

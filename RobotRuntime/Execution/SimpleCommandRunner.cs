@@ -30,7 +30,7 @@ namespace RobotRuntime.Execution
 
             var command = runnable as Command;
 
-            m_Callback.Invoke(command);
+            m_Callback?.Invoke(command);
             command.Run();
         }
     }

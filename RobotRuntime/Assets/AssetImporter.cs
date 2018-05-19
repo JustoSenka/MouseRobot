@@ -20,7 +20,11 @@ namespace RobotRuntime
             {
                 if (m_AssetValue == null && !LoadingFailed)
                     try { m_AssetValue = LoadAsset(); }
-                    catch (Exception) { LoadingFailed = true; }
+                    catch (Exception e)
+                    {
+                        LoadingFailed = true;
+                        Logger.Log(LogType.Error, "Failed to load asset: " + Path, e.Message);
+                    }
 
                 return m_AssetValue;
             }
