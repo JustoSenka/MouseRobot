@@ -11,6 +11,8 @@ using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using RobotEditor.Windows;
+using Robot.Settings;
+using RobotRuntime.Settings;
 
 namespace RobotEditor
 {
@@ -361,13 +363,13 @@ namespace RobotEditor
         private void recordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((Form)m_PropertiesWindow).Show(m_DockPanel);
-            m_PropertiesWindow.ShowSettings(SettingsManager.RecordingSettings);
+            m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
         private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((Form)m_PropertiesWindow).Show(m_DockPanel);
-            m_PropertiesWindow.ShowSettings(SettingsManager.FeatureDetectionSettings);
+            m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
         }
 
         #endregion

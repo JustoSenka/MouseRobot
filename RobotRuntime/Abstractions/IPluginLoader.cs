@@ -17,5 +17,6 @@ namespace RobotRuntime.Abstractions
         IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func);
 
         event Action UserDomainReloaded;
+        event Action UserDomainReloading;
     }
 }

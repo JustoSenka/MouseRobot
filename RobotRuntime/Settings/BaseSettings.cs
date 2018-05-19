@@ -1,6 +1,6 @@
 ﻿namespace RobotRuntime.Settings
 {
-    public class BaseSettings
+    public abstract class BaseSettings
     {
     }
 }

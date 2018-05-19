@@ -7,6 +7,7 @@ using RobotRuntime.Settings;
 using RobotRuntime.Execution;
 using RobotRuntime.Perf;
 using RobotRuntime.Plugins;
+using System;
 
 namespace RobotRuntime
 {
@@ -14,12 +15,19 @@ namespace RobotRuntime
     {
         static void Main(string[] args)
         {
-            //if (args[0])
+            if (args.Length < 2)
+                return;
+
+            Environment.CurrentDirectory = args[0];
 
             var container = new UnityContainer();
             container.RegisterInstance(typeof(IUnityContainer), container, new ContainerControlledLifetimeManager());
             RegisterInterfaces(container);
+
+            var testRunner = container.Resolve<ITestRunner>();
+            testRunner.Start(args[0], args[1]);
         }
+
 
         public static void RegisterInterfaces(UnityContainer Container)
         {
@@ -33,7 +41,8 @@ namespace RobotRuntime
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginLoader, PluginLoaderNoDomain>(new ContainerControlledLifetimeManager());
-            
+            Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
+
             // Container.RegisterType<IPluginDomainManager, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
 
             Logger.Instance = Container.Resolve<ILogger>();

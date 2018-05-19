@@ -1,12 +1,17 @@
 ﻿using Robot.Settings;
 using RobotRuntime.Settings;
+using System;
+using System.Collections.Generic;
 
 namespace Robot.Abstractions
 {
     public interface ISettingsManager
     {
-        FeatureDetectionSettings FeatureDetectionSettings { get; }
-        RecordingSettings RecordingSettings { get; }
+        IEnumerable<BaseSettings> Settings { get; }
+
+        T GetSettings<T>() where T : BaseSettings;
+        BaseSettings GetSettingsFromType(Type type);
+        BaseSettings GetSettingsFromName(string fullTypeName);
 
         void RestoreDefaults();
         void RestoreSettings();

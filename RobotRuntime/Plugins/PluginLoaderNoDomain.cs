@@ -13,6 +13,7 @@ namespace RobotRuntime.Plugins
         public string UserAssemblyPath { get; set; }
 
         public event Action UserDomainReloaded;
+        public event Action UserDomainReloading;
 
         private Assembly[] Assemblies;
         public PluginLoaderNoDomain()
@@ -22,6 +23,7 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
+            UserDomainReloading?.Invoke();
             Assemblies = null;
         }
 

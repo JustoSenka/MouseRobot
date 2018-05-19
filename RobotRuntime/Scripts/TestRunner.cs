@@ -2,8 +2,10 @@
 using RobotRuntime.Assets;
 using RobotRuntime.Execution;
 using RobotRuntime.Graphics;
+using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,12 +22,27 @@ namespace RobotRuntime
         private IScreenStateThread ScreenStateThread;
         private IFeatureDetectionThread FeatureDetectionThread;
         private IRunnerFactory RunnerFactory;
-        public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, IRunnerFactory RunnerFactory)
+        private IPluginLoader PluginLoader;
+        public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
+            IRunnerFactory RunnerFactory, IPluginLoader PluginLoader)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.RunnerFactory = RunnerFactory;
+            this.PluginLoader = PluginLoader;
+        }
+
+        public void Start(string projectPath, string scriptName)
+        {
+            PluginLoader.UserAssemblyName = "CustomAssembly.dll";
+            PluginLoader.UserAssemblyPath = Path.Combine(Paths.MetadataPath, PluginLoader.UserAssemblyName);
+            PluginLoader.CreateUserAppDomain();
+
+            //RuntimeSettings.ApplySettings(); // Need to get some sort of settings (appdata has them)
+
+            var importer = AssetImporter.FromPath(Path.Combine(projectPath, scriptName) + FileExtensions.ScriptD);
+            Start(importer.Load<LightScript>());
         }
 
         public void Start(LightScript lightScript)

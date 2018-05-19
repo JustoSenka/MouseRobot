@@ -23,7 +23,6 @@ namespace Robot
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<IPluginManager, PluginManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginCompiler, PluginCompiler>(new ContainerControlledLifetimeManager());

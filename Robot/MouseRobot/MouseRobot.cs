@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Settings;
 
 namespace Robot
 {
@@ -108,7 +109,7 @@ namespace Robot
 
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
-                    RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
+                    RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
 
                     if (m_IsPlaying)
                         StartScript();
@@ -130,7 +131,7 @@ namespace Robot
 
                     if (m_IsVisualizationOn)
                     {
-                        RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
+                        RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
                         ScreenStateThread.Start();
                         FeatureDetectionThread.Start();
                     }

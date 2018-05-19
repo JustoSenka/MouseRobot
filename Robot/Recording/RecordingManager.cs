@@ -62,7 +62,7 @@ namespace Robot.Recording
                 return;
 
             var activeScript = ScriptManager.ActiveScript;
-            var props = SettingsManager.RecordingSettings;
+            var props = SettingsManager.GetSettings<RecordingSettings>();
 
             if (!CroppingManager.IsCropping)
             {

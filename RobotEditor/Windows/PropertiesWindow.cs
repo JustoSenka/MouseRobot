@@ -20,7 +20,7 @@ namespace RobotEditor
         {
             this.SettingsManager = SettingsManager;
             InitializeComponent();
-            ShowSettings(SettingsManager.RecordingSettings);
+            ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
         public void ShowProperties<T>(T properties) where T : BaseProperties
@@ -68,12 +68,12 @@ namespace RobotEditor
 
         private void recordingSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSettings(SettingsManager.RecordingSettings);
+            ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
         private void imageDetectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSettings(SettingsManager.FeatureDetectionSettings);
+            ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
         }
 
         #endregion
