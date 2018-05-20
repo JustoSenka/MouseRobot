@@ -1,8 +1,5 @@
 ﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Assets;
 using RobotRuntime.Execution;
-using RobotRuntime.Graphics;
-using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
 using System.IO;
@@ -56,12 +53,13 @@ namespace RobotRuntime
 
             AssetGuidManager.LoadMetaFiles();
 
-            RuntimeSettings.LoadSettingsHardcoded();
+            if (!ScreenStateThread.IsAlive)
+                ScreenStateThread.Start();
 
-            ScreenStateThread.Start();
-            FeatureDetectionThread.Start();
+            if (!FeatureDetectionThread.IsAlive)
+                FeatureDetectionThread.Start();
+
             Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
-
 
             new Thread(delegate ()
             {

@@ -130,8 +130,11 @@ namespace Robot
                     if (m_IsVisualizationOn)
                     {
                         RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
-                        ScreenStateThread.Start();
-                        FeatureDetectionThread.Start();
+                        if (!ScreenStateThread.IsAlive)
+                            ScreenStateThread.Start();
+
+                        if (!FeatureDetectionThread.IsAlive)
+                            FeatureDetectionThread.Start();
                     }
                     else
                     {
