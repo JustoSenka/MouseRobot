@@ -8,6 +8,7 @@ using RobotEditor.Scripts;
 using Robot;
 using RobotEditor.Editor;
 using Robot.Plugins;
+using RobotEditor.Settings;
 
 namespace RobotEditor
 {
@@ -28,6 +29,8 @@ namespace RobotEditor
             RobotRuntime.Program.RegisterInterfaces(container);
 
             container.Resolve<PluginManager>(); // Create PluginManager, since nobody uses it, runs on callbacks from AssetManager
+
+            container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
 
             var projectIsCreated = SetupProjectPath(container);
 
@@ -69,6 +72,8 @@ namespace RobotEditor
 
             Container.RegisterType<IHierarchyNodeStringConverter, HierarchyNodeStringConverter>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());
+
+            Container.RegisterType<PropertyDependencyProvider, PropertyDependencyProvider>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<IProjectSelectionDialog, ProjectSelectionDialog>(new ContainerControlledLifetimeManager());
         }

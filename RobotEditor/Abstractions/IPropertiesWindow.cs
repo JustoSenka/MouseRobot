@@ -1,4 +1,4 @@
-﻿using RobotEditor.Settings;
+﻿using RobotEditor.Scripts;
 using RobotRuntime.Settings;
 using System.Windows.Forms;
 

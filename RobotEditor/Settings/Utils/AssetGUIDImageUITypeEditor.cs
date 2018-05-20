@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Drawing.Design;
 using Unity;
 
-namespace RobotEditor.Settings
+namespace RobotEditor.Scripts.Utils
 {
     /// <summary>
     /// This will paint a small rect image near the Asset name in property View

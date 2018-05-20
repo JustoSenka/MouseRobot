@@ -182,9 +182,11 @@
     <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />
     <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
-    <Compile Include="Settings\AssetGUIDImageStringConverter.cs" />
-    <Compile Include="Settings\AssetGUIDImageUITypeEditor.cs" />
+    <Compile Include="Settings\PropertyDependencyProvider.cs" />
+    <Compile Include="Settings\Utils\AssetGUIDImageStringConverter.cs" />
+    <Compile Include="Settings\Utils\AssetGUIDImageUITypeEditor.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
+    <Compile Include="Settings\Utils\DetectorNameStringConverter.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />

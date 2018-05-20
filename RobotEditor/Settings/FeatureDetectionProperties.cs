@@ -1,10 +1,10 @@
-﻿using Robot.Settings;
+﻿using RobotEditor.Scripts.Utils;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
 using System.ComponentModel;
 
-namespace RobotEditor.Settings
+namespace RobotEditor.Scripts
 {
     public class FeatureDetectionProperties : BaseProperties
     {
@@ -36,6 +36,7 @@ namespace RobotEditor.Settings
         [SortedCategory("Detection Mode", DetectionModeCategoryPosition, NumOfCategories)]
         [DefaultValue("SURF")]
         [DisplayName("DetectionMode")]
+        [TypeConverter(typeof(DetectorNameStringConverter))]
         public string DetectionMode
         {
             get { return m_Settings.DetectionMode; }

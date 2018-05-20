@@ -5,7 +5,7 @@ using System.Drawing;
 using Unity;
 using Robot.Abstractions;
 
-namespace RobotEditor.Settings
+namespace RobotEditor.Scripts.Utils
 {
     /// <summary>
     /// This will add a selection dropdown for Asset in property view

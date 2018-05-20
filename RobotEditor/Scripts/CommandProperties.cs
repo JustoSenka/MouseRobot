@@ -1,7 +1,7 @@
 ﻿using Robot;
 using Robot.Abstractions;
 using Robot.Scripts;
-using RobotEditor.Settings;
+using RobotEditor.Scripts.Utils;
 using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
@@ -36,10 +36,6 @@ namespace RobotEditor.Scripts
 
             m_Properties = TypeDescriptor.GetProperties(this);
 
-            // Workaround to set Dependencies, sadly.. static.. non-static version did not work
-            typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
-            typeof(AssetGUIDImageUITypeEditor).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
-
             m_Command = command;
         }
 
@@ -63,7 +59,7 @@ namespace RobotEditor.Scripts
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                ProvideDependenciesToAssetProperty(dt, AssetManager);
+                //ProvideDependenciesToAssetProperty(dt, AssetManager);
             }
             else if (m_Command is CommandSleep)
             {

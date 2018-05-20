@@ -9,6 +9,7 @@ namespace RobotRuntime.Graphics
     public class FeatureDetectorFactory : IFeatureDetectorFactory
     {
         public IEnumerable<FeatureDetector> Detectors { get { return m_Detectors; } }
+        public IEnumerable<string> DetectorNames { get { return m_DetectorNames; } }
 
         private Type[] m_NativeDetectorTypes;
         private Type[] m_UserDetectorTypes;

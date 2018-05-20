@@ -1,6 +1,6 @@
 ﻿using RobotEditor.Abstractions;
 using Robot.Settings;
-using RobotEditor.Settings;
+using RobotEditor.Scripts;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
