@@ -8,7 +8,8 @@ namespace RobotRuntime.Abstractions
     {
         object ObservedImageLock { get; }
 
-        DetectionMode DetectionMode { get; set; }
+        string DetectorName { get; set; }
+
         Point[][] LastKnownPositions { get; }
         Bitmap ObservedImage { get; }
         int TimeSinceLastFind { get; }

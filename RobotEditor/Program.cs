@@ -57,7 +57,7 @@ namespace RobotEditor
 
         public static void RegisterInterfaces(IUnityContainer Container)
         {
-            Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
+            //Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IMainForm, MainForm>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetsWindow, AssetsWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHierarchyWindow, HierarchyWindow>(new ContainerControlledLifetimeManager());

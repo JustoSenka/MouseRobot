@@ -34,9 +34,9 @@ namespace RobotEditor.Settings
         private const int ThreadFramerateCategoryPosition = 2;
 
         [SortedCategory("Detection Mode", DetectionModeCategoryPosition, NumOfCategories)]
-        [DefaultValue(RobotRuntime.Settings.DetectionMode.FeatureSURF)]
+        [DefaultValue("SURF")]
         [DisplayName("DetectionMode")]
-        public DetectionMode DetectionMode
+        public string DetectionMode
         {
             get { return m_Settings.DetectionMode; }
             set { m_Settings.DetectionMode = value; }

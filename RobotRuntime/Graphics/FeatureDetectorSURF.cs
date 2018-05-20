@@ -15,6 +15,8 @@ namespace RobotRuntime.Graphics
 {
     public class FeatureDetectorSURF : FeatureDetector
     {
+        public override string Name { get { return "SURF"; } }
+
         protected override float MaxScaleDownFactor { get { return 0.4f; } }
         protected override int MinimumImageScaleSize { get { return 130; } }
 

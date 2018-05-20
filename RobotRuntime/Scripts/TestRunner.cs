@@ -56,10 +56,11 @@ namespace RobotRuntime
 
             AssetGuidManager.LoadMetaFiles();
 
-            //RuntimeSettings.ApplySettings();
+            RuntimeSettings.LoadSettingsHardcoded();
+
             ScreenStateThread.Start();
             FeatureDetectionThread.Start();
-            Task.Delay(80).Wait(); // make sure first screenshot is taken before starting running commands
+            Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
 
 
             new Thread(delegate ()

@@ -5,7 +5,6 @@ using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -25,7 +24,7 @@ namespace RobotEditor.Drawing
             FeatureDetectionThread.PositionFound += OnPositionFound;
             ScreenStateThread.Update += OnUpdate;
 
-            m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height, PixelFormat.Format32bppArgb);
+            m_ObservedScreen = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
             Invalidate?.Invoke();
         }

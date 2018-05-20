@@ -14,6 +14,8 @@ namespace RobotRuntime.Graphics
     /// </summary>
     public class FeatureDetectorPP : FeatureDetector
     {
+        public override string Name { get { return "PixelPerfect"; } }
+
         private const float Threshold = 0.99f;
 
         public override bool SupportsMultipleMatches { get { return true; } }

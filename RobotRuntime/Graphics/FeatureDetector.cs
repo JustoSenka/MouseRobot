@@ -1,8 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using RobotRuntime.Settings;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -10,6 +8,8 @@ namespace RobotRuntime.Graphics
 {
     public abstract class FeatureDetector
     {
+        public abstract string Name { get; }
+
         public abstract Point[] FindImagePos(Bitmap sampleImage, Bitmap observedImage);
         public abstract IEnumerable<Point[]> FindImageMultiplePos(Bitmap sampleImage, Bitmap observedImage);
 

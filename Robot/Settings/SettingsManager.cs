@@ -64,8 +64,7 @@ namespace Robot.Settings
         private void CollectDefaultNativeSettings()
         {
             var types = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(BaseSettings));
-            var a = types.Select(t => Container.Resolve(t));
-            m_NativeSettings = a.Cast<BaseSettings>().ToArray();
+            m_NativeSettings = types.Select(t => Container.Resolve(t)).Cast<BaseSettings>().ToArray();
         }
 
         private void CollectDefaultUserSettings()

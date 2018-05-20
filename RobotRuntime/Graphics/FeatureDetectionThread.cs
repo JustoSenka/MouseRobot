@@ -24,7 +24,7 @@ namespace RobotRuntime.Graphics
         public bool WasLastCheckSuccess { get; private set; }
         public int TimeSinceLastFind { get; private set; }
 
-        public DetectionMode DetectionMode { get; set; } = DetectionMode.FeatureSURF;
+        public string DetectorName { get; set; } = DetectorNamesHardcoded.SURF;
 
         private Stopwatch m_Watch = new Stopwatch();
 
@@ -115,12 +115,14 @@ namespace RobotRuntime.Graphics
 
         private Point[][] FindImagePositions()
         {
+            var detector = FeatureDetectorFactory.GetFromCache(DetectorName);
+
             lock (m_SampleImageLock)
             {
-                if (FeatureDetectorFactory.GetFromCache(DetectionMode).SupportsMultipleMatches)
-                    return FeatureDetectorFactory.GetFromCache(DetectionMode).FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
+                if (detector.SupportsMultipleMatches)
+                    return detector.FindImageMultiplePos(m_SampleImage, ObservedImage).ToArray();
                 else
-                    return new[] { FeatureDetectorFactory.GetFromCache(DetectionMode).FindImagePos(m_SampleImage, ObservedImage) };
+                    return new[] { detector.FindImagePos(m_SampleImage, ObservedImage) };
             }
         }
 

@@ -5,15 +5,16 @@ namespace RobotRuntime.Settings
     [Serializable]
     public class FeatureDetectionSettings : BaseSettings
     {
-        public DetectionMode DetectionMode { get; set; } = DetectionMode.FeatureSURF;
+        public string DetectionMode { get; set; } = DetectorNamesHardcoded.SURF;
 
         public int ScreenImageUpdateFPS { get; set; } = 10;
         public int ImageDetectionFPS { get; set; } = 10;
     }
 
-    [Serializable]
-    public enum DetectionMode
+    public static class DetectorNamesHardcoded
     {
-        PixelPerfect, Template, FeatureSURF, FeatureFAST
+        public static string PixelPerfect { get { return "PixelPerfect"; } }
+        public static string SURF { get { return "SURF"; } }
+        public static string Template { get { return "Template"; } }
     }
 }

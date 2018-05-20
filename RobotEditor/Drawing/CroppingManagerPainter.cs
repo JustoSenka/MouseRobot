@@ -38,13 +38,13 @@ namespace RobotEditor.Drawing
         private void OnImageCropStarted(Point p)
         {
             StartInvalidateOnTimer?.Invoke(this);
-            Invalidate();
+            Invalidate?.Invoke();
         }
 
         private void OnImageCropEnded(Point p)
         {
             StopInvalidateOnTimer?.Invoke(this);
-            Invalidate();
+            Invalidate?.Invoke();
         }
 
         private void DrawCroppingRectangle(Graphics g)

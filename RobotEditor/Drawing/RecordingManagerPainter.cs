@@ -59,7 +59,7 @@ namespace RobotEditor.Drawing
             m_FindImageTimer.Enabled = true;
             m_LastScreeBmpAtPos = null;
             StartInvalidateOnTimer?.Invoke(this);
-            Invalidate();
+            Invalidate?.Invoke();
         }
 
         private void OnImageNotFoundInAssets(Point point)
@@ -70,7 +70,7 @@ namespace RobotEditor.Drawing
             m_FindImageTimer.Enabled = true;
             m_LastScreeBmpAtPos = null;
             StartInvalidateOnTimer?.Invoke(this);
-            Invalidate();
+            Invalidate?.Invoke();
         }
 
         private Rectangle DrawFoundImageUnderCursor(Graphics g)

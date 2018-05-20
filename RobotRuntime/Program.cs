@@ -43,8 +43,6 @@ namespace RobotRuntime
             Container.RegisterType<IPluginLoader, PluginLoaderNoDomain>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
-            // Container.RegisterType<IPluginDomainManager, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
-
             Logger.Instance = Container.Resolve<ILogger>();
         }
     }

@@ -16,8 +16,11 @@ namespace RobotRuntime.Plugins
         public event Action UserDomainReloading;
 
         private Assembly[] Assemblies;
-        public PluginLoaderNoDomain()
+
+        private IProfiler Profiler;
+        public PluginLoaderNoDomain(IProfiler Profiler)
         {
+            this.Profiler = Profiler;
             // TODO: Runtime
         }
 
@@ -29,9 +32,13 @@ namespace RobotRuntime.Plugins
 
         public void CreateUserAppDomain()
         {
+            Profiler.Start("PluginLoader.ReloadAppDomain");
+
             DestroyUserAppDomain();
             LoadUserAssemblies();
             UserDomainReloaded?.Invoke();
+
+            Profiler.Stop("PluginLoader.ReloadAppDomain");
         }
 
         public void LoadUserAssemblies()

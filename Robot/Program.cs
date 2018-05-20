@@ -14,7 +14,7 @@ namespace Robot
     {
         public static void RegisterInterfaces(UnityContainer Container)
         {
-            Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
+            //Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetManager, AssetManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ICroppingManager, CroppingManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMouseRobot, MouseRobot>(new ContainerControlledLifetimeManager());

@@ -9,6 +9,8 @@ namespace RobotRuntime.Graphics
 {
     public class FeatureDetectorTemplate : FeatureDetector
     {
+        public override string Name { get { return "Template"; } }
+
         private const float Threshold = 0.9f;
 
         public override IEnumerable<Point[]> FindImageMultiplePos(Bitmap sampleImage, Bitmap observedImage)

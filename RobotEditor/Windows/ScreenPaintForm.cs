@@ -12,9 +12,9 @@ namespace RobotEditor.Windows
 {
     public class ScreenPaintForm : InvisibleForm, IScreenPaintForm
     {
-        private IEnumerable<IPaintOnScreen> m_NativePainters;
-        private IEnumerable<IPaintOnScreen> m_UserPainters;
-        private IEnumerable<IPaintOnScreen> m_Painters;
+        private IPaintOnScreen[] m_NativePainters;
+        private IPaintOnScreen[] m_UserPainters;
+        private IPaintOnScreen[] m_Painters;
 
         private IList<IPaintOnScreen> m_RegisteredPainters = new List<IPaintOnScreen>();
 
@@ -41,19 +41,19 @@ namespace RobotEditor.Windows
         private void CollectNativePainters()
         {
             var types = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
-            m_NativePainters = types.Select(t => Container.Resolve(t)).Cast<IPaintOnScreen>();
+            m_NativePainters = types.Select(t => Container.Resolve(t)).Cast<IPaintOnScreen>().ToArray();
         }
 
         private void CollectUserPainters()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
             var types = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
-            m_UserPainters = types.TryResolveTypes(Container, Logger).Cast<IPaintOnScreen>();
+            m_UserPainters = types.TryResolveTypes(Container, Logger).Cast<IPaintOnScreen>().ToArray();
         }
 
         public void SubscribeToAllPainters()
         {
-            var newPainters = m_NativePainters.Concat(m_UserPainters);
+            var newPainters = m_NativePainters.Concat(m_UserPainters).ToArray();
 
             if (m_Painters != null)
             {
