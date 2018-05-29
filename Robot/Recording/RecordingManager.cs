@@ -198,7 +198,7 @@ namespace Robot.Recording
             Profiler.Start("RecordingManager_FindAssetReference");
 
             // TODO: FeatureDetector.Get will fail to find proper match if another thread already used/is using it
-            var detector = FeatureDetectorFactory.GetFromCache(DetectorNamesHardcoded.PixelPerfect);
+            var detector = FeatureDetectorFactory.Create(DetectorNamesHardcoded.PixelPerfect);
             Asset retAsset = null;
             foreach (var asset in AssetManager.Assets)
             {

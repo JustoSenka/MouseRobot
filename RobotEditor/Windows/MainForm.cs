@@ -30,6 +30,7 @@ namespace RobotEditor
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
         private IConsoleWindow m_ConsoleWindow;
+        private TestRunnerWindow m_TestRunnerWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -44,7 +45,7 @@ namespace RobotEditor
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestRunnerWindow TestRunnerWindow)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -62,6 +63,7 @@ namespace RobotEditor
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
             this.m_ConsoleWindow = ConsoleWindow;
+            this.m_TestRunnerWindow = TestRunnerWindow;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -169,6 +171,7 @@ namespace RobotEditor
                 (DockContent)m_ProfilerWindow,
                 (DockContent)m_InspectorWindow,
                 (DockContent)m_ConsoleWindow,
+                (DockContent)m_TestRunnerWindow,
             };
         }
 
@@ -354,6 +357,11 @@ namespace RobotEditor
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((ConsoleWindow)m_ConsoleWindow).Show(m_DockPanel);
+        }
+
+        private void testRunnerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((TestRunnerWindow)m_TestRunnerWindow).Show(m_DockPanel);
         }
 
         #endregion

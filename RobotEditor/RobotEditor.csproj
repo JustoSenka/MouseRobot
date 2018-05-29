@@ -173,6 +173,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
+    <Compile Include="Drawing\ImageOutlinePainter.cs" />
     <Compile Include="Drawing\CroppingManagerPainter.cs" />
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
     <Compile Include="Drawing\VisualizationPainter.cs" />
@@ -218,6 +219,12 @@
     </Compile>
     <Compile Include="Abstractions\IConsoleWindow.cs" />
     <Compile Include="Editor\FlexibleMessageBox.cs" />
+    <Compile Include="Windows\TestRunnerWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\TestRunnerWindow.Designer.cs">
+      <DependentUpon>TestRunnerWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Windows\InspectorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -282,6 +289,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\ConsoleWindow.resx">
       <DependentUpon>ConsoleWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\TestRunnerWindow.resx">
+      <DependentUpon>TestRunnerWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\InspectorWindow.resx">
       <DependentUpon>InspectorWindow.cs</DependentUpon>
