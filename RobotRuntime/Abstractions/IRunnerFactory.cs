@@ -6,11 +6,9 @@ namespace RobotRuntime.Abstractions
 {
     public interface IRunnerFactory
     {
-        CommandRunningCallback Callback { get; set; }
-        ValueWrapper<bool> CancellingPointerPlaceholder { get; set; }
-        LightScript ExecutingScript { get; set; }
+        void PassDependencies(LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun);
 
-        IRunner CreateFor(Type type);
+        IRunner GetFor(Type type);
         bool DoesRunnerSupportType(Type runnerType, Type supportedType);
     }
 }

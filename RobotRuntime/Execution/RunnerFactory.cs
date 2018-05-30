@@ -9,11 +9,10 @@ namespace RobotRuntime.Execution
 {
     public class RunnerFactory : IRunnerFactory
     {
-        public IEnumerable<IRunner> Runners { get { return m_Runners; } }
-
-        public CommandRunningCallback Callback { get; set; }
-        public LightScript ExecutingScript { get; set; }
-        public ValueWrapper<bool> CancellingPointerPlaceholder { get; set; }
+        //public IEnumerable<IRunner> Runners { get { return m_Runners.AsEnumerable().Select(pair => pair.Value); } }
+        private LightScript m_TestFixture;
+        private CommandRunningCallback m_Callback;
+        private ValueWrapper<bool> m_ShouldCancelRun;
 
         private Type[] m_NativeRunnerTypes;
         private Type[] m_UserRunnerTypes;
@@ -21,7 +20,7 @@ namespace RobotRuntime.Execution
 
         private IRunner[] m_NativeRunners;
         private IRunner[] m_UserRunners;
-        private IRunner[] m_Runners;
+        private Dictionary<Type, IRunner> m_Runners;
 
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
@@ -39,51 +38,63 @@ namespace RobotRuntime.Execution
 
             PluginLoader.UserDomainReloaded += OnDomainReloaded;
 
-            CollectNativeDetectors();
-            CollectUserDetectors();
+            CollectNativeRunners();
+            CollectUserRunners();
+        }
+        
+        public void PassDependencies(LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
+        {
+            m_TestFixture = TestFixture;
+            m_Callback = Callback;
+            m_ShouldCancelRun = ShouldCancelRun;
+
+            foreach (var pair in m_Runners)
+                pair.Value.PassDependencies(this, TestFixture, Callback, ShouldCancelRun);
         }
 
         private void OnDomainReloaded()
         {
-            CollectUserDetectors();
+            CollectUserRunners();
         }
 
-        private void CollectNativeDetectors()
+        private void CollectNativeRunners()
         {
             m_NativeRunnerTypes = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(IRunner)).ToArray();
-            // m_NativeRunners = m_NativeRunnerTypes.Select(t => Container.Resolve(t)).Cast<IRunner>().ToArray();
-            m_NativeRunners = m_NativeRunnerTypes.Select(t => CreateFor(t)).Cast<IRunner>().ToArray();
+            m_NativeRunners = m_NativeRunnerTypes.Select(t => Container.Resolve(t)).Cast<IRunner>().ToArray();
+
+            foreach (var runner in m_NativeRunners)
+                runner.PassDependencies(this, m_TestFixture, m_Callback, m_ShouldCancelRun);
         }
 
-        private void CollectUserDetectors()
+        private void CollectUserRunners()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
             m_UserRunnerTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IRunner)).ToArray();
             m_UserRunners = m_UserRunnerTypes.TryResolveTypes(Container, Logger).Cast<IRunner>().ToArray();
 
+            foreach (var runner in m_UserRunners)
+                runner.PassDependencies(this, m_TestFixture, m_Callback, m_ShouldCancelRun);
+
             m_RunnerTypes = m_NativeRunnerTypes.Concat(m_UserRunnerTypes).ToArray();
-            m_Runners = m_NativeRunners.Concat(m_UserRunners).ToArray();
+
+            m_Runners = new Dictionary<Type, IRunner>();
+            foreach (var runner in m_NativeRunners.Concat(m_UserRunners))
+                m_Runners.Add(runner.GetType(), runner);
         }
 
-        public IRunner CreateFor(Type type)
+        public IRunner GetFor(Type type)
         {
-            if (DoesRunnerSupportType(typeof(SimpleCommandRunner), type))
-                return new SimpleCommandRunner(this, Callback);
+            var runner = m_Runners.FirstOrDefault(pair => DoesRunnerSupportType(pair.Value.GetType(), type)).Value;
 
-            else if (DoesRunnerSupportType(typeof(ImageCommandRunner), type))
-                return new ImageCommandRunner(this, FeatureDetectionThread, AssetGuidManager, ExecutingScript, Callback, CancellingPointerPlaceholder);
-
-            else if (DoesRunnerSupportType(typeof(ScriptRunner), type))
-                return new ScriptRunner(this, Callback, CancellingPointerPlaceholder);
-
+            if (runner != null)
+                return runner;
             else
             {
                 Logger.Logi(LogType.Error, "Threre is no Runner registered that would support type: " + type);
-                return new SimpleCommandRunner(this, Callback);
+                return m_Runners[typeof(SimpleCommandRunner)];
             }
         }
 
-        // TODO: currently runner is created for every single command, and this is executed quite often, might be slow. Consider caching everyhing in Dictionary
         public bool DoesRunnerSupportType(Type runnerType, Type supportedType)
         {
             return runnerType.GetCustomAttributes(false).OfType<SupportedTypeAttribute>().Where(a => a.type == supportedType).Count() > 0;

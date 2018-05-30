@@ -53,7 +53,7 @@ namespace RobotEditor
             ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;
 
             TestRunner.Finished += OnScriptsFinishedRunning;
-            TestRunner.RunningCommand += OnCommandRunning;
+            TestRunner.RunningCommandCallback += OnCommandRunning;
 
             CreateColumns();
             UpdateHierarchy();
@@ -438,13 +438,17 @@ namespace RobotEditor
 
             var commandNode = scriptNode.GetNodeFromValue(command);
             m_HighlightedNode = commandNode;
-            treeListView.Invoke(new Action(() => treeListView.Refresh()));
+
+            if (treeListView.Created)
+                treeListView.Invoke(new Action(() => treeListView.Refresh()));
         }
 
         private void OnScriptsFinishedRunning()
         {
             m_HighlightedNode = null;
-            treeListView.Invoke(new Action(() => treeListView.Refresh()));
+
+            if (treeListView.Created)
+                treeListView.Invoke(new Action(() => treeListView.Refresh()));
         }
 
         #endregion

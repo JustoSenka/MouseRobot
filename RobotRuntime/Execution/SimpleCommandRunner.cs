@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
+using RobotRuntime.Utils;
 using System;
 
 namespace RobotRuntime.Execution
@@ -14,10 +15,15 @@ namespace RobotRuntime.Execution
         private CommandRunningCallback m_Callback;
 
         private IRunnerFactory RunnerFactory;
-        public SimpleCommandRunner(IRunnerFactory RunnerFactory, CommandRunningCallback callback)
+        public SimpleCommandRunner()
         {
-            m_Callback = callback;
+            
+        }
+
+        public void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
+        {
             this.RunnerFactory = RunnerFactory;
+            m_Callback = Callback;
         }
 
         public void Run(IRunnable runnable)

@@ -26,17 +26,18 @@ namespace RobotRuntime.Execution
         private IRunnerFactory RunnerFactory;
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
-
-        public ImageCommandRunner(IRunnerFactory RunnerFactory, IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager, 
-            LightScript testFixture, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
+        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
         {
-            m_TestFixture = testFixture;
-            m_Callback = callback;
-            m_ShouldCancelRun = ShouldCancelRun;
-
-            this.RunnerFactory = RunnerFactory;
             this.AssetGuidManager = AssetGuidManager;
             this.FeatureDetectionThread = FeatureDetectionThread;
+        }
+
+        public void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
+        {
+            this.RunnerFactory = RunnerFactory;
+            m_TestFixture = TestFixture;
+            m_Callback = Callback;
+            m_ShouldCancelRun = ShouldCancelRun;
         }
 
         public void Run(IRunnable runnable)
@@ -76,7 +77,7 @@ namespace RobotRuntime.Execution
                     OverrideCommandPropertiesIfExist(childNode.value, p.X, "X");
                     OverrideCommandPropertiesIfExist(childNode.value, p.Y, "Y");
 
-                    var runner = RunnerFactory.CreateFor(childNode.value.GetType());
+                    var runner = RunnerFactory.GetFor(childNode.value.GetType());
                     runner.Run(childNode.value);
                 }
             }

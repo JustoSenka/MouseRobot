@@ -53,7 +53,7 @@ namespace RobotEditor
             ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;
 
             TestRunner.Finished += OnScriptsFinishedRunning;
-            TestRunner.RunningCommand += OnCommandRunning;
+            TestRunner.RunningCommandCallback += OnCommandRunning;
 
             CreateColumns();
             UpdateHierarchy();
@@ -116,7 +116,9 @@ namespace RobotEditor
                 m_Nodes.Add(new HierarchyNode(s));
 
             RefreshTreeListView();
-            treeListView.ExpandAll();
+
+            if (treeListView.Created)
+                treeListView.ExpandAll();
         }
 
         private void RefreshTreeListView()
@@ -127,7 +129,9 @@ namespace RobotEditor
             {
                 treeListView.Items[i].ImageIndex = 0;
             }
-            treeListView.Refresh();
+
+            if (treeListView.Created)
+                treeListView.Refresh();
         }
 
 
@@ -438,13 +442,17 @@ namespace RobotEditor
 
             var commandNode = scriptNode.GetNodeFromValue(command);
             m_HighlightedNode = commandNode;
-            treeListView.Invoke(new Action(() => treeListView.Refresh()));
+
+            if (treeListView.Created)
+                treeListView.Invoke(new Action(() => treeListView.Refresh()));
         }
 
         private void OnScriptsFinishedRunning()
         {
             m_HighlightedNode = null;
-            treeListView.Invoke(new Action(() => treeListView.Refresh()));
+
+            if (treeListView.Created)
+                treeListView.Invoke(new Action(() => treeListView.Refresh()));
         }
 
         #endregion

@@ -105,7 +105,7 @@ namespace RobotEditor.Windows
                 activeLogTypeBits = (m_WarningFilter.Active) ? activeLogTypeBits | LogType.Warning : activeLogTypeBits;
                 activeLogTypeBits = (m_DebugFilter.Active) ? activeLogTypeBits | LogType.Debug : activeLogTypeBits;
 
-                treeListView.Roots = Logger.LogList.Where(log => activeLogTypeBits.HasFlag(log.LogType));
+                treeListView.Roots = Logger.LogList.Where(log => activeLogTypeBits.HasFlag(log.LogType)).ToArray();
                 treeListView.Refresh();
 
                 m_ErrorFilter.Text = Logger.LogList.Count(log => log.LogType == LogType.Error) + "";

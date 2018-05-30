@@ -12,12 +12,16 @@ namespace RobotRuntime.Execution
         private ValueWrapper<bool> m_ShouldCancelRun;
 
         private IRunnerFactory RunnerFactory;
-        public ScriptRunner(IRunnerFactory RunnerFactory, CommandRunningCallback callback, ValueWrapper<bool> ShouldCancelRun)
+        public ScriptRunner()
         {
-            m_Callback = callback;
-            m_ShouldCancelRun = ShouldCancelRun;
 
+        }
+
+        public void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
+        {
             this.RunnerFactory = RunnerFactory;
+            m_Callback = Callback;
+            m_ShouldCancelRun = ShouldCancelRun;
         }
 
         public void Run(IRunnable runnable)
@@ -29,7 +33,7 @@ namespace RobotRuntime.Execution
             }
 
             var script = runnable as LightScript;
-            RunnerFactory.ExecutingScript = script;
+            RunnerFactory.PassDependencies(script, m_Callback, m_ShouldCancelRun);
 
             foreach (var node in script.Commands)
             {
@@ -39,7 +43,7 @@ namespace RobotRuntime.Execution
                     return;
                 }
 
-                var runner = RunnerFactory.CreateFor(node.value.GetType());
+                var runner = RunnerFactory.GetFor(node.value.GetType());
                 runner.Run(node.value);
             }
         }
