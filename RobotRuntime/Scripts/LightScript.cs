@@ -4,6 +4,7 @@ using System;
 namespace RobotRuntime
 {
     [Serializable]
+    [RunnerType(typeof(ScriptRunner))] 
     public class LightScript : IRunnable
     {
         public LightScript() { }

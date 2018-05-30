@@ -12,8 +12,6 @@ using Unity;
 
 namespace RobotRuntime.Execution
 {
-    [SupportedType(typeof(CommandForeachImage))]
-    [SupportedType(typeof(CommandForImage))]
     public class ImageCommandRunner : IRunner
     {
 

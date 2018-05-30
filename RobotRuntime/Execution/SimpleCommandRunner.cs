@@ -5,11 +5,6 @@ using System;
 
 namespace RobotRuntime.Execution
 {
-    [SupportedType(typeof(CommandDown))]
-    [SupportedType(typeof(CommandMove))]
-    [SupportedType(typeof(CommandPress))]
-    [SupportedType(typeof(CommandRelease))]
-    [SupportedType(typeof(CommandSleep))]
     public class SimpleCommandRunner : IRunner
     {
         private CommandRunningCallback m_Callback;

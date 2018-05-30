@@ -9,7 +9,6 @@ namespace RobotRuntime.Execution
 {
     public class RunnerFactory : IRunnerFactory
     {
-        //public IEnumerable<IRunner> Runners { get { return m_Runners.AsEnumerable().Select(pair => pair.Value); } }
         private LightScript m_TestFixture;
         private CommandRunningCallback m_Callback;
         private ValueWrapper<bool> m_ShouldCancelRun;
@@ -27,7 +26,7 @@ namespace RobotRuntime.Execution
         private ILogger Logger;
         private IPluginLoader PluginLoader;
         private IUnityContainer Container;
-        public RunnerFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger, 
+        public RunnerFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger,
             IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
         {
             this.Container = Container;
@@ -41,7 +40,7 @@ namespace RobotRuntime.Execution
             CollectNativeRunners();
             CollectUserRunners();
         }
-        
+
         public void PassDependencies(LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
         {
             m_TestFixture = TestFixture;
@@ -82,22 +81,29 @@ namespace RobotRuntime.Execution
                 m_Runners.Add(runner.GetType(), runner);
         }
 
-        public IRunner GetFor(Type type)
+        public IRunner GetFor(Type commandType)
         {
-            var runner = m_Runners.FirstOrDefault(pair => DoesRunnerSupportType(pair.Value.GetType(), type)).Value;
-
-            if (runner != null)
-                return runner;
+            var runnerType = GetRunnerTypeForCommand(commandType);
+            if (runnerType != null)
+            {
+                return m_Runners[runnerType];
+            }
             else
             {
-                Logger.Logi(LogType.Error, "Threre is no Runner registered that would support type: " + type);
+                Logger.Logi(LogType.Error, "Threre is no Runner registered that would support type: " + commandType);
                 return m_Runners[typeof(SimpleCommandRunner)];
             }
         }
 
-        public bool DoesRunnerSupportType(Type runnerType, Type supportedType)
+        public bool DoesRunnerSupportType(Type runnerType, Type commandType)
         {
-            return runnerType.GetCustomAttributes(false).OfType<SupportedTypeAttribute>().Where(a => a.type == supportedType).Count() > 0;
+            return GetRunnerTypeForCommand(commandType) != null;
+        }
+
+        private Type GetRunnerTypeForCommand(Type commandType)
+        {
+            var attribute = commandType.GetCustomAttributes(false).OfType<RunnerTypeAttribute>().FirstOrDefault();
+            return attribute != null ? attribute.type : null;
         }
     }
 }

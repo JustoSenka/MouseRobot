@@ -1,9 +1,11 @@
-﻿using System;
+﻿using RobotRuntime.Execution;
+using System;
 using System.Threading.Tasks;
 
 namespace RobotRuntime.Commands
 {
     [Serializable]
+    [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandSleep : Command
     {
         public int Time { get; set; }

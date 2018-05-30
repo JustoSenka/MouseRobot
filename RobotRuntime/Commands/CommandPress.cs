@@ -1,9 +1,11 @@
-﻿using RobotRuntime.Utils.Win32;
+﻿using RobotRuntime.Execution;
+using RobotRuntime.Utils.Win32;
 using System;
 
 namespace RobotRuntime.Commands
 {
     [Serializable]
+    [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandPress : Command
     {
         public int X { get; set; }

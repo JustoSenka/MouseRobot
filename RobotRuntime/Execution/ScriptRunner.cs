@@ -5,7 +5,6 @@ using System;
 
 namespace RobotRuntime.Execution
 {
-    [SupportedType(typeof(LightScript))]
     public class ScriptRunner : IRunner
     {
         private CommandRunningCallback m_Callback;
