@@ -9,6 +9,8 @@ using Robot;
 using RobotEditor.Editor;
 using Robot.Plugins;
 using RobotEditor.Settings;
+using RobotRuntime.Abstractions;
+using RobotRuntime;
 
 namespace RobotEditor
 {
@@ -24,13 +26,15 @@ namespace RobotEditor
             Application.SetCompatibleTextRenderingDefault(false);
 
             var container = new UnityContainer();
-            RegisterInterfaces(container);
-            Robot.Program.RegisterInterfaces(container);
             RobotRuntime.Program.RegisterInterfaces(container);
+            Robot.Program.RegisterInterfaces(container);
+            RegisterInterfaces(container);
 
             container.Resolve<PluginManager>(); // Create PluginManager, since nobody uses it, runs on callbacks from AssetManager
 
             container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
+
+            Logger.Instance = container.Resolve<ILogger>();
 
             var projectIsCreated = SetupProjectPath(container);
 

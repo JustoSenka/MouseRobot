@@ -24,6 +24,8 @@ namespace RobotRuntime
             container.RegisterInstance(typeof(IUnityContainer), container, new ContainerControlledLifetimeManager());
             RegisterInterfaces(container);
 
+            Logger.Instance = container.Resolve<ILogger>();
+
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.Start(args[0], args[1]);
         }
@@ -42,8 +44,6 @@ namespace RobotRuntime
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginLoader, PluginLoaderNoDomain>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
-
-            Logger.Instance = Container.Resolve<ILogger>();
         }
     }
 }

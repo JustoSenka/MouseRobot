@@ -3,6 +3,9 @@ using System.Linq;
 using RobotRuntime.Commands;
 using Unity;
 using Robot.Abstractions;
+using Unity.Lifetime;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
 
 namespace Tests
 {
@@ -239,8 +242,11 @@ namespace Tests
         public void Initialize()
         {
             var container = new UnityContainer();
-            Robot.Program.RegisterInterfaces(container);
             RobotRuntime.Program.RegisterInterfaces(container);
+            Robot.Program.RegisterInterfaces(container);
+
+            container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
+            Logger.Instance = container.Resolve<ILogger>();
 
             var mr = container.Resolve<IMouseRobot>();
             ScriptManager = container.Resolve<IScriptManager>();
