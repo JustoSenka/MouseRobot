@@ -371,7 +371,7 @@ namespace RobotEditor
                 return;
             }
 
-            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested() || targetNode.Script != null;
+            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested || targetNode.Script != null;
 
             if (targetNode.Script != null && sourceNode.Command != null)
                 e.DropSink.CanDropBetween = false;
@@ -408,7 +408,7 @@ namespace RobotEditor
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
                     ScriptManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
 
-                if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested())
+                if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
                 {
                     var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
                     sourceScript.RemoveCommand(sourceNode.Command);

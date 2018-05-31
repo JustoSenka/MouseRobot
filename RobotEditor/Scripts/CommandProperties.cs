@@ -28,11 +28,13 @@ namespace RobotEditor.Scripts
         private IAssetManager AssetManager;
         private IScriptManager ScriptManager;
         private IAssetGuidManager AssetGuidManager;
-        public CommandProperties(T command, IAssetManager AssetManager, IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager)
+        private ICommandFactory CommandFactory;
+        public CommandProperties(T command, IAssetManager AssetManager, IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager, ICommandFactory CommandFactory)
         {
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
+            this.CommandFactory = CommandFactory;
 
             m_Properties = TypeDescriptor.GetProperties(this);
 
@@ -59,7 +61,6 @@ namespace RobotEditor.Scripts
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                //ProvideDependenciesToAssetProperty(dt, AssetManager);
             }
             else if (m_Command is CommandSleep)
             {
@@ -67,28 +68,16 @@ namespace RobotEditor.Scripts
             }
         }
 
-        private void ProvideDependenciesToAssetProperty(DynamicTypeDescriptor dt, IAssetManager AssetManager)
-        {
-            /* Does not seem to work, in the editor/converter code, non-static AssetManager is still null
-            var assetProp = dt.Properties.Find("Asset", false);
-            var assetProp2 = TypeDescriptor.GetProperties(this).Find("Asset", false);
-            
-            ((AssetGUIDImageStringConverter)assetProp.Converter).AssetManager = AssetManager;
-            ((AssetGUIDImageUITypeEditor)assetProp.GetEditor(typeof(UITypeEditor))).AssetManager = AssetManager;
-
-            ((AssetGUIDImageStringConverter)assetProp2.Converter).AssetManager = AssetManager;
-            ((AssetGUIDImageUITypeEditor)assetProp2.GetEditor(typeof(UITypeEditor))).AssetManager = AssetManager;*/
-        }
-
         private const int NumOfCategories = 1;
         private const int CommandPropertiesCategoryPosition = 1;
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
-        [DefaultValue(0)]
+        [DefaultValue("Move")]
         [DisplayName("Command Type")]
-        public CommandType CommandType
+        [TypeConverter(typeof(CommandNameStringConverter))]
+        public string CommandType
         {
-            get { return m_Command.CommandType; }
+            get { return m_Command.Name; }
             set
             {
                 var newCommand = CommandFactory.Create(value, m_Command);

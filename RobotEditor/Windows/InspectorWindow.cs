@@ -16,11 +16,13 @@ namespace RobotEditor.Windows
         private IScriptManager ScriptManager;
         private IAssetManager AssetManager;
         private IAssetGuidManager AssetGuidManager;
-        public InspectorWindow(IScriptManager ScriptManager, IAssetManager AssetManager, IAssetGuidManager AssetGuidManager)
+        private ICommandFactory CommandFactory;
+        public InspectorWindow(IScriptManager ScriptManager, IAssetManager AssetManager, IAssetGuidManager AssetGuidManager, ICommandFactory CommandFactory)
         {
             this.ScriptManager = ScriptManager;
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
+            this.CommandFactory = CommandFactory;
 
             InitializeComponent();
             propertyGrid.SelectedObject = null;
@@ -34,7 +36,7 @@ namespace RobotEditor.Windows
                 return;
             }
 
-            m_CurrentObject = new CommandProperties<Command>(command, AssetManager, ScriptManager, AssetGuidManager);
+            m_CurrentObject = new CommandProperties<Command>(command, AssetManager, ScriptManager, AssetGuidManager, CommandFactory);
             ApplyDynamicTypeDescriptorToPropertyView();
         }
 

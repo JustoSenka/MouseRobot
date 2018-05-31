@@ -8,10 +8,14 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandPress : Command
     {
+        public override string Name { get { return "Press"; } }
+        public override bool CanBeNested { get { return false; } }
+
         public int X { get; set; }
         public int Y { get; set; }
         public bool DontMove { get; set; }
 
+        public CommandPress() { }
         public CommandPress(int x, int y, bool DontMove)
         {
             X = x;
@@ -39,7 +43,5 @@ namespace RobotRuntime.Commands
             else
                 return "Click on: (" + X + ", " + Y + ")";
         }
-
-        public override CommandType CommandType { get { return CommandType.Press; } }
     }
 }

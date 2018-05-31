@@ -1,6 +1,4 @@
-﻿using RobotRuntime.Assets;
-using RobotRuntime.Execution;
-using RobotRuntime.Graphics;
+﻿using RobotRuntime.Execution;
 using System;
 
 namespace RobotRuntime.Commands
@@ -9,9 +7,13 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(ImageCommandRunner))]
     public class CommandForeachImage : Command
     {
+        public override string Name { get { return "For Each Image"; } }
+        public override bool CanBeNested { get { return true; } }
+
         public Guid Asset { get; set; }
         public int Timeout { get; set; }
 
+        public CommandForeachImage() { }
         public CommandForeachImage(Guid asset, int timeOut)
         {
             Asset = asset;
@@ -32,7 +34,5 @@ namespace RobotRuntime.Commands
         {
             return "For Each image: <" + Asset.ToString() + ">";
         }
-
-        public override CommandType CommandType { get { return CommandType.ForeachImage; } }
     }
 }

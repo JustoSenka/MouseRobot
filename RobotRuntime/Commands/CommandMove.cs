@@ -8,9 +8,13 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandMove : Command
     {
+        public override string Name { get { return "Move"; } }
+        public override bool CanBeNested { get { return false; } }
+
         public int X { get; set; }
         public int Y { get; set; }
 
+        public CommandMove() { }
         public CommandMove(int x, int y)
         {
             X = x;
@@ -38,7 +42,5 @@ namespace RobotRuntime.Commands
         {
             return "Move to: (" + X + ", " + Y + ")";
         }
-
-        public override CommandType CommandType { get { return CommandType.Move; } }
     }
 }

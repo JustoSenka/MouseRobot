@@ -8,8 +8,12 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandSleep : Command
     {
+        public override string Name { get { return "Sleep"; } }
+        public override bool CanBeNested { get { return false; } }
+
         public int Time { get; set; }
 
+        public CommandSleep() { }
         public CommandSleep(int millis)
         {
             Time = millis;
@@ -29,7 +33,5 @@ namespace RobotRuntime.Commands
         {
             return "Sleep for " + Time + " ms.";
         }
-
-        public override CommandType CommandType { get { return CommandType.Sleep; } }
     }
 }

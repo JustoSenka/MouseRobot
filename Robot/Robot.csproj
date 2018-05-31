@@ -133,6 +133,7 @@
     <Compile Include="Scripts\CommandFactory.cs" />
     <Compile Include="Abstractions\IScriptManager.cs" />
     <Compile Include="Abstractions\ISettingsManager.cs" />
+    <Compile Include="Abstractions\ICommandFactory.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -8,10 +8,14 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(SimpleCommandRunner))]
     public class CommandDown : Command
     {
+        public override string Name { get { return "Down"; } }
+        public override bool CanBeNested { get { return false; } }
+
         public int X { get; set; }
         public int Y { get; set; }
         public bool DontMove { get; set; }
 
+        public CommandDown() { }
         public CommandDown(int x, int y, bool DontMove)
         {
             X = x;
@@ -38,7 +42,5 @@ namespace RobotRuntime.Commands
             else
                 return "Down on: (" + X + ", " + Y + ")";
         }
-
-        public override CommandType CommandType { get { return CommandType.Down; } }
     }
 }

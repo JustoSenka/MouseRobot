@@ -4,9 +4,8 @@ using Unity.Lifetime;
 using Robot.Recording;
 using Robot.Settings;
 using Robot.Utils.Win32;
-using RobotRuntime.Abstractions;
-using RobotRuntime;
 using Robot.Plugins;
+using Robot.Scripts;
 
 namespace Robot
 {
@@ -26,6 +25,7 @@ namespace Robot
 
             Container.RegisterType<IPluginManager, PluginManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginCompiler, PluginCompiler>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ICommandFactory, CommandFactory>(new ContainerControlledLifetimeManager());
         }
     }
 }

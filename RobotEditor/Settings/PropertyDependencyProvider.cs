@@ -12,12 +12,14 @@ namespace RobotEditor.Settings
     /// </summary>
     public class PropertyDependencyProvider
     {
-        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, IFeatureDetectorFactory FeatureDetectorFactory)
+        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, IFeatureDetectorFactory FeatureDetectorFactory, ICommandFactory CommandFactory)
         {
             typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
             typeof(AssetGUIDImageUITypeEditor).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
 
             typeof(DetectorNameStringConverter).GetProperty("FeatureDetectorFactory", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, FeatureDetectorFactory);
+
+            typeof(CommandNameStringConverter).GetProperty("CommandFactory", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, CommandFactory);
         }
     }
 }

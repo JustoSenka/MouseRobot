@@ -187,6 +187,7 @@
     <Compile Include="Settings\Utils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="Settings\Utils\AssetGUIDImageUITypeEditor.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
+    <Compile Include="Settings\Utils\CommandNameStringConverter.cs" />
     <Compile Include="Settings\Utils\DetectorNameStringConverter.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />

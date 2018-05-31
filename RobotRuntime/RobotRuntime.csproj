@@ -204,6 +204,7 @@
     <Compile Include="Settings\RuntimeSettings.cs" />
     <Compile Include="Utils\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
+    <Compile Include="Utils\CommandExtension.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />
     <Compile Include="IO\BinaryObjectIO.cs" />

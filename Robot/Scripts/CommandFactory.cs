@@ -1,10 +1,16 @@
-﻿using RobotRuntime;
+﻿using Robot.Abstractions;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
+using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Unity;
 
 namespace Robot.Scripts
 {
-    public static class CommandFactory
+    public class CommandFactory : ICommandFactory
     {
         public const string k_X = "X";
         public const string k_Y = "Y";
@@ -14,66 +20,82 @@ namespace Robot.Scripts
         public const string k_Time = "Time";
         public const string k_Timeout = "Timeout";
 
-        public static Command Create(CommandType commandType)
+
+        public IEnumerable<string> CommandNames { get { return m_CommandNames; } }
+
+        private Type[] m_NativeCommandTypes;
+        private Type[] m_UserCommandTypes;
+
+        private string[] m_CommandNames;
+        private Dictionary<string, Type> m_CommandTypes;
+
+        private ILogger Logger;
+        private IPluginLoader PluginLoader;
+        private IUnityContainer Container;
+        public CommandFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
         {
-            switch (commandType)
+            this.Container = Container;
+            this.PluginLoader = PluginLoader;
+            this.Logger = Logger;
+
+            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+
+            CollectNativeCommands();
+            CollectUserCommands();
+        }
+
+        private void OnDomainReloaded()
+        {
+            CollectUserCommands();
+        }
+
+        private void CollectNativeCommands()
+        {
+            m_NativeCommandTypes = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
+        }
+
+        private void CollectUserCommands()
+        {
+            // DO-DOMAIN: This will not work if assemblies are in different domain
+            m_UserCommandTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
+
+            var commandTypeArray = m_NativeCommandTypes.Concat(m_UserCommandTypes).ToArray();
+
+            var dummyCommands = commandTypeArray.Select(type => ((Command)Activator.CreateInstance(type)));
+            m_CommandNames = dummyCommands.Select(c => c.Name).ToArray();
+
+            m_CommandTypes = new Dictionary<string, Type>();
+            foreach (var command in dummyCommands)
+                m_CommandTypes.Add(command.Name, command.GetType());
+        }
+
+        public Command Create(string commandName)
+        {
+            if (m_CommandTypes.ContainsKey(commandName))
             {
-                case CommandType.Down:
-                    return new CommandDown(0, 0, false);
-                case CommandType.Move:
-                    return new CommandMove(0, 0);
-                case CommandType.Press:
-                    return new CommandPress(0, 0, false);
-                case CommandType.Release:
-                    return new CommandRelease(0, 0, false);
-                case CommandType.Sleep:
-                    return new CommandSleep(0);
-                case CommandType.ForImage:
-                    return new CommandForImage(default(Guid), 2000);
-                case CommandType.ForeachImage:
-                    return new CommandForeachImage(default(Guid), 2000);
-                default:
-                    Logger.Log(LogType.Error, "Not able to create Command with type of: " + commandType);
-                    return new CommandSleep(0);
+                var type = m_CommandTypes[commandName];
+                return (Command)Activator.CreateInstance(type);
+            }
+            else
+            {
+                Logger.Logi(LogType.Error, "Command with name '" + commandName + "' not found.", "Returning first command on the list.");
+                return (Command)Activator.CreateInstance(typeof(CommandMove));
             }
         }
 
-        public static Command Create(CommandType commandType, Command oldCommand)
+        public Command Create(string commandName, Command oldCommand)
         {
-            var command = Create(commandType);
+            var command = Create(commandName);
 
-            CopyPropertiesIfExist(ref command, oldCommand, k_X);
-            CopyPropertiesIfExist(ref command, oldCommand, k_Y);
-            CopyPropertiesIfExist(ref command, oldCommand, k_DontMove);
-            CopyPropertiesIfExist(ref command, oldCommand, k_Smooth);
-            CopyPropertiesIfExist(ref command, oldCommand, k_Asset);
-            CopyPropertiesIfExist(ref command, oldCommand, k_Time);
-            CopyPropertiesIfExist(ref command, oldCommand, k_Timeout);
+            command.CopyPropertyFromIfExist(oldCommand, k_X);
+            command.CopyPropertyFromIfExist(oldCommand, k_Y);
+            command.CopyPropertyFromIfExist(oldCommand, k_DontMove);
+            command.CopyPropertyFromIfExist(oldCommand, k_Smooth);
+            command.CopyPropertyFromIfExist(oldCommand, k_Asset);
+            command.CopyPropertyFromIfExist(oldCommand, k_Time);
+            command.CopyPropertyFromIfExist(oldCommand, k_Timeout);
 
             return command;
-        }
-
-        private static void CopyPropertiesIfExist(ref Command dest, Command source, string name)
-        {
-            var destProp = dest.GetType().GetProperty(name);
-            var sourceProp = source.GetType().GetProperty(name);
-
-            if (destProp != null && sourceProp != null)
-            {
-                destProp.SetValue(dest, sourceProp.GetValue(source));
-            }
-        }
-
-        public static void SetPropertyIfExist(ref Command dest, string name, object value)
-        {
-            var destProp = dest.GetType().GetProperty(name);
-            destProp?.SetValue(dest, value);
-        }
-
-        public static object GetPropertyIfExist(Command source, string name)
-        {
-            var prop = source.GetType().GetProperty(name);
-            return prop != null ? prop.GetValue(source) : null;
         }
     }
 }

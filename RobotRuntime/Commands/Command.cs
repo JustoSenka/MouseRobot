@@ -6,6 +6,9 @@ namespace RobotRuntime
     [Serializable]
     public abstract class Command : IRunnable, ICloneable
     {
+        public abstract string Name { get; }
+        public abstract bool CanBeNested { get; }
+
         public abstract void Run();
         public abstract object Clone();
 
@@ -13,12 +16,5 @@ namespace RobotRuntime
         {
             runner.Run(this);
         }
-
-        public abstract CommandType CommandType { get; }
-    }
-
-    public enum CommandType
-    {
-        Down, Move, Press, Release, Sleep, ForImage, ForeachImage
     }
 }

@@ -32,9 +32,9 @@ namespace RobotEditor.Scripts
         {
             if (node.Command != null && Regex.IsMatch(s, RegexCoordinateRecognizeRules))
             {
-                if (node.Parent != null && node.Parent.Command != null && node.Parent.Command.CanBeNested())
+                if (node.Parent != null && node.Parent.Command != null && node.Parent.Command.CanBeNested)
                 {
-                    var assetGuidObj = CommandFactory.GetPropertyIfExist(node.Parent.Command, CommandFactory.k_Asset);
+                    var assetGuidObj = node.Parent.Command.GetPropertyIfExist(CommandFactory.k_Asset);
                     if (assetGuidObj != null)
                     {
                         var guid = (Guid)assetGuidObj;
@@ -53,7 +53,7 @@ namespace RobotEditor.Scripts
         {
             if (node.Command != null && Regex.IsMatch(s, RegexGuidRecognizeRules))
             {
-                var assetGuidObj = CommandFactory.GetPropertyIfExist(node.Command, CommandFactory.k_Asset);
+                var assetGuidObj = node.Command.GetPropertyIfExist(CommandFactory.k_Asset);
                 if (assetGuidObj != null)
                 {
                     var guid = (Guid)assetGuidObj;

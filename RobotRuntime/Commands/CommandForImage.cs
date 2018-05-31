@@ -7,9 +7,13 @@ namespace RobotRuntime.Commands
     [RunnerType(typeof(ImageCommandRunner))] 
     public class CommandForImage : Command
     {
+        public override string Name { get { return "For Image"; } }
+        public override bool CanBeNested { get { return true; } }
+
         public Guid Asset { get; set; }
         public int Timeout { get; set; }
 
+        public CommandForImage() { }
         public CommandForImage(Guid asset, int timeOut)
         {
             Asset = asset;
@@ -30,7 +34,5 @@ namespace RobotRuntime.Commands
         {
             return "For Each image: <" + Asset.ToString() + ">";
         }
-
-        public override CommandType CommandType { get { return CommandType.ForImage; } }
     }
 }

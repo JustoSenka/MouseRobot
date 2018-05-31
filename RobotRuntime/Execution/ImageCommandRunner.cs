@@ -85,7 +85,8 @@ namespace RobotRuntime.Execution
         {
             var command = node.value;
 
-            if (node.value.CommandType != CommandType.ForeachImage && node.value.CommandType != CommandType.ForImage)
+            //if (node.value.CommandType != CommandType.ForeachImage && node.value.CommandType != CommandType.ForImage)
+            if (!command.CanBeNested)
                 return null;
 
             int x1 = WinAPI.GetCursorPosition().X;
