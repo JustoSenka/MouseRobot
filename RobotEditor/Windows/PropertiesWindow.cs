@@ -59,7 +59,7 @@ namespace RobotEditor
         {
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
 
-            m_CurrentObject.HideProperties(dt);
+            m_CurrentObject.HideProperties(ref dt);
             m_CurrentObject.OnPropertiesModified();
             propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
         }

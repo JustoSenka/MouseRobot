@@ -19,7 +19,7 @@ namespace RobotEditor.Scripts
             this.m_Settings = (FeatureDetectionSettings)settings;
         }
 
-        public override void HideProperties(DynamicTypeDescriptor dt)
+        public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
 
         }

@@ -5,6 +5,7 @@ namespace RobotRuntime.Commands
 {
     [Serializable]
     [RunnerType(typeof(ImageCommandRunner))]
+    [PropertyDesignerType("NativeCommandProperties")]
     public class CommandForeachImage : Command
     {
         public override string Name { get { return "For Each Image"; } }

@@ -1,10 +1,10 @@
-﻿using Microsoft.CSharp;
-using Robot.Abstractions;
+﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using System;
-using System.CodeDom;
 using System.CodeDom.Compiler;
+using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
+using System.Reflection;
 
 namespace Robot.Plugins
 {
@@ -23,13 +23,14 @@ namespace Robot.Plugins
         public PluginCompiler(IProfiler Profiler)
         {
             this.Profiler = Profiler;
-
+            
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
 
             CompilerParams.ReferencedAssemblies.Add("System.dll");
             CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
             CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+            //CompilerParams.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
         }
 
         public void AddReferencedAssemblies(params string[] paths)

@@ -21,7 +21,7 @@ namespace RobotEditor.Scripts
             this.m_Settings = (RecordingSettings)settings;
         }
 
-        public override void HideProperties(DynamicTypeDescriptor dt)
+        public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
             if (TreatMouseDownAsMouseClick)
                 dt.RemoveProperty("ThresholdBetweenMouseDownAndMouseUp");

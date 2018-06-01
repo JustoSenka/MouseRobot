@@ -27,6 +27,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -179,6 +181,8 @@
     <Compile Include="Drawing\VisualizationPainter.cs" />
     <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
     <Compile Include="Editor\ProjectSelectionDialog.cs" />
+    <Compile Include="Scripts\DefaultCommandProperties.cs" />
+    <Compile Include="Scripts\NativeCommandProperties.cs" />
     <Compile Include="Scripts\CommandProperties.cs" />
     <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
     <Compile Include="Scripts\HierarchyNode.cs" />

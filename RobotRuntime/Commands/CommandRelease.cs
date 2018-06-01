@@ -6,6 +6,7 @@ namespace RobotRuntime.Commands
 {
     [Serializable]
     [RunnerType(typeof(SimpleCommandRunner))]
+    [PropertyDesignerType("NativeCommandProperties")]
     public class CommandRelease : Command
     {
         public override string Name { get { return "Relese"; } }

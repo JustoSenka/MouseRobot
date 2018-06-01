@@ -10,7 +10,7 @@ namespace RobotEditor.Scripts
         [Browsable(false)]
         public virtual string Title { get { return "Properties"; } }
 
-        public virtual void HideProperties(DynamicTypeDescriptor dt)
+        public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {
 
         }
