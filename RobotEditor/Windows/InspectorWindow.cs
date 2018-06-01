@@ -16,6 +16,7 @@ namespace RobotEditor.Windows
     public partial class InspectorWindow : DockContent, IInspectorWindow
     {
         private CommandProperties m_CurrentObject;
+        private Command m_OldCommand;
 
         private Type[] m_NativeDesignerTypes;
         private Type[] m_UserDesignerTypes;
@@ -44,6 +45,9 @@ namespace RobotEditor.Windows
         private void OnDomainReloaded()
         {
             CollectUserCommands();
+
+            if (m_CurrentObject != null && m_CurrentObject.Command != null)
+                ShowCommand(m_CurrentObject.Command);
         }
 
         private void CollectNativeCommands()
@@ -69,6 +73,7 @@ namespace RobotEditor.Windows
             var designerType = GetDesignerTypeForCommand(command.GetType());
             m_CurrentObject = (CommandProperties)Container.Resolve(designerType);
 
+            m_OldCommand = command;
             m_CurrentObject.Command = command;
             ApplyDynamicTypeDescriptorToPropertyView();
         }
@@ -78,7 +83,12 @@ namespace RobotEditor.Windows
             var command = m_CurrentObject.Command;
             ScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
-            ApplyDynamicTypeDescriptorToPropertyView();
+            // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
+            if (m_OldCommand.GetType() != command.GetType())
+                ShowCommand(command);
+            // If not, updating type descriptor is enough
+            else
+                ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void ApplyDynamicTypeDescriptorToPropertyView()

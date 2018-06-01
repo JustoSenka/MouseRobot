@@ -4,7 +4,6 @@ using RobotRuntime.Abstractions;
 using System;
 using System.CodeDom.Compiler;
 using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
-using System.Reflection;
 
 namespace Robot.Plugins
 {
