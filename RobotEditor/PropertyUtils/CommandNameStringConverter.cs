@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 
-namespace RobotEditor.Scripts.Utils
+namespace RobotEditor.PropertyUtils
 {
     public class CommandNameStringConverter : StringConverter
     {

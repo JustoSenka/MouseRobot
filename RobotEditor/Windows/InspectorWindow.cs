@@ -1,4 +1,4 @@
-﻿using RobotEditor.Scripts;
+﻿using RobotEditor.Inspector;
 using RobotEditor.Abstractions;
 using RobotEditor.Utils;
 using RobotRuntime;

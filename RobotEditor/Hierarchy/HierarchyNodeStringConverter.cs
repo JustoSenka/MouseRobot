@@ -1,13 +1,11 @@
-﻿using Robot;
-using Robot.Scripts;
-using RobotRuntime;
+﻿using Robot.Scripts;
 using RobotRuntime.Abstractions;
 using System;
 using System.Text.RegularExpressions;
 using RobotEditor.Abstractions;
 using RobotRuntime.Utils;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Hierarchy
 {
     public class HierarchyNodeStringConverter : IHierarchyNodeStringConverter
     {

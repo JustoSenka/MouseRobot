@@ -1,9 +1,7 @@
 ﻿using RobotEditor.Utils;
-using RobotRuntime.Settings;
-using System;
 using System.ComponentModel;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Settings
 {
     public abstract class BaseProperties
     {

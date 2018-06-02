@@ -1,12 +1,12 @@
 ﻿using RobotEditor.Abstractions;
 using Robot.Settings;
-using RobotEditor.Scripts;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using Robot.Abstractions;
+using RobotEditor.Settings;
 
 namespace RobotEditor
 {

@@ -164,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IScreenPaintForm.cs" />
-    <Compile Include="Abstractions\ITest.cs" />
     <Compile Include="CustomControls\CutomTrackbar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -181,18 +180,18 @@
     <Compile Include="Drawing\VisualizationPainter.cs" />
     <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
     <Compile Include="Editor\ProjectSelectionDialog.cs" />
-    <Compile Include="Scripts\DefaultCommandProperties.cs" />
-    <Compile Include="Scripts\NativeCommandProperties.cs" />
-    <Compile Include="Scripts\CommandProperties.cs" />
-    <Compile Include="Scripts\HierarchyNodeStringConverter.cs" />
-    <Compile Include="Scripts\HierarchyNode.cs" />
+    <Compile Include="Inspector\DefaultCommandProperties.cs" />
+    <Compile Include="Inspector\NativeCommandProperties.cs" />
+    <Compile Include="Inspector\CommandProperties.cs" />
+    <Compile Include="Hierarchy\HierarchyNodeStringConverter.cs" />
+    <Compile Include="Hierarchy\HierarchyNode.cs" />
     <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
-    <Compile Include="Settings\PropertyDependencyProvider.cs" />
-    <Compile Include="Settings\Utils\AssetGUIDImageStringConverter.cs" />
-    <Compile Include="Settings\Utils\AssetGUIDImageUITypeEditor.cs" />
+    <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
+    <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
+    <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
-    <Compile Include="Settings\Utils\CommandNameStringConverter.cs" />
-    <Compile Include="Settings\Utils\DetectorNameStringConverter.cs" />
+    <Compile Include="PropertyUtils\CommandNameStringConverter.cs" />
+    <Compile Include="PropertyUtils\DetectorNameStringConverter.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />

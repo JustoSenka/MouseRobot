@@ -4,13 +4,13 @@ using Unity;
 using Unity.Lifetime;
 using RobotEditor.Windows;
 using System.Windows.Forms;
-using RobotEditor.Scripts;
 using Robot;
 using RobotEditor.Editor;
 using Robot.Plugins;
-using RobotEditor.Settings;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
+using RobotEditor.Hierarchy;
+using RobotEditor.PropertyUtils;
 
 namespace RobotEditor
 {

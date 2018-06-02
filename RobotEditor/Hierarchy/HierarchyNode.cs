@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Hierarchy
 {
     public class HierarchyNode : IEnumerable<HierarchyNode>
     {

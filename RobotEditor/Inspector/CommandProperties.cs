@@ -1,5 +1,6 @@
 ﻿using Robot.Abstractions;
-using RobotEditor.Scripts.Utils;
+using RobotEditor.PropertyUtils;
+using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime;
 using System;
@@ -7,7 +8,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Inspector
 {
     public abstract class CommandProperties : BaseProperties
     {

@@ -1,10 +1,10 @@
-﻿using RobotEditor.Scripts.Utils;
+﻿using RobotEditor.PropertyUtils;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
 using System.ComponentModel;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Settings
 {
     public class FeatureDetectionProperties : BaseProperties
     {

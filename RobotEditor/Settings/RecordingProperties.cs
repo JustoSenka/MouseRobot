@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Settings
 {
     [Serializable]
     public class RecordingProperties : BaseProperties

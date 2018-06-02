@@ -1,7 +1,6 @@
 ﻿using Robot.Abstractions;
-using RobotRuntime.Abstractions;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Inspector
 {
     /// <summary>
     /// Left empty for future improvements

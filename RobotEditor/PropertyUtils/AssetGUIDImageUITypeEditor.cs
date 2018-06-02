@@ -1,12 +1,10 @@
-﻿using Robot;
-using Robot.Abstractions;
+﻿using Robot.Abstractions;
 using RobotRuntime.Utils;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
-using Unity;
 
-namespace RobotEditor.Scripts.Utils
+namespace RobotEditor.PropertyUtils
 {
     /// <summary>
     /// This will paint a small rect image near the Asset name in property View

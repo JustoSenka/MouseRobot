@@ -1,6 +1,6 @@
 ﻿using Robot;
 using Robot.Abstractions;
-using RobotEditor.Scripts.Utils;
+using RobotEditor.PropertyUtils;
 using RobotEditor.Utils;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
@@ -8,7 +8,7 @@ using RobotRuntime.Utils;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace RobotEditor.Scripts
+namespace RobotEditor.Inspector
 {
     public class NativeCommandProperties : CommandProperties
     {

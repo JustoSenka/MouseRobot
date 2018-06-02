@@ -5,8 +5,6 @@ using RobotEditor.Abstractions;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using RobotRuntime;
-using Robot;
-using RobotEditor.Scripts;
 using BrightIdeasSoftware;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +14,7 @@ using RobotRuntime.Utils;
 using System.Drawing;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
+using RobotEditor.Hierarchy;
 
 namespace RobotEditor
 {

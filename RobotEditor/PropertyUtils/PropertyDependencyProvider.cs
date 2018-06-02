@@ -1,10 +1,9 @@
 ﻿using Robot.Abstractions;
-using RobotEditor.Scripts.Utils;
 using RobotRuntime.Abstractions;
 using System.Reflection;
 using Unity;
 
-namespace RobotEditor.Settings
+namespace RobotEditor.PropertyUtils
 {
     /// <summary>
     /// This class is used to pass dependencies to UITypeEditor and StringConverter of .net classes. Since I cannot control the instantiation of these classes,
