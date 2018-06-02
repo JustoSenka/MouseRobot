@@ -10,7 +10,7 @@ namespace Robot.Abstractions
         CompilerParameters CompilerParams { get; }
 
         void AddReferencedAssemblies(params string[] paths);
-        bool CompileCode(params string[] sources);
+        void CompileCode(params string[] sources);
         void SetOutputPath(string customAssemblyPath);
 
         event Action ScriptsRecompiled;

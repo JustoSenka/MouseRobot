@@ -4,6 +4,7 @@ using RobotRuntime.Abstractions;
 using System;
 using System.CodeDom.Compiler;
 using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
+using System.Threading;
 
 namespace Robot.Plugins
 {
@@ -17,6 +18,10 @@ namespace Robot.Plugins
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
         public event Action ScriptsRecompiled;
+
+        private bool m_IsCompiling = false;
+        private bool m_ShouldRecompile = false;
+        private string[] m_TempSources;
 
         private IProfiler Profiler;
         public PluginCompiler(IProfiler Profiler)
@@ -37,11 +42,36 @@ namespace Robot.Plugins
             CompilerParams.ReferencedAssemblies.AddRange(paths);
         }
 
-        public bool CompileCode(params string[] sources)
+        public void CompileCode(params string[] sources)
+        {
+            // If already compiling, save sources for future compilation
+            if (m_IsCompiling)
+            {
+                m_ShouldRecompile = true;
+                m_TempSources = sources;
+                return;
+            }
+
+            m_IsCompiling = true;
+
+            new Thread(new ThreadStart(() => CompileCodeSync(sources))).Start();
+        }
+
+        private bool CompileCodeSync(string[] sources)
         {
             Profiler.Start("PluginCompiler_CompileCode");
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
             Profiler.Stop("PluginCompiler_CompileCode");
+
+            m_IsCompiling = false;
+
+            // This might happen if scripts are modified before compilation is finished
+            if (m_ShouldRecompile)
+            {
+                m_ShouldRecompile = false;
+                CompileCode(m_TempSources);
+                return false;
+            }
 
             if (results.Errors.HasErrors)
             {
@@ -60,6 +90,7 @@ namespace Robot.Plugins
                 Logger.Log(LogType.Log, "Scripts successfully compiled.");
                 return true;
             }
+
         }
 
         public void SetOutputPath(string customAssemblyPath)
