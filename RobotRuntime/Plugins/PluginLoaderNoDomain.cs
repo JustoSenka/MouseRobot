@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace RobotRuntime.Plugins
 {
     public class PluginLoaderNoDomain : IPluginLoader
     {
+        public AsyncOperation AsyncOperationOnUI { private get; set; }
+
         public string UserAssemblyName { get; set; }
         public string UserAssemblyPath { get; set; }
 
@@ -26,7 +29,7 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
-            UserDomainReloading?.Invoke();
+            AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
             Assemblies = null;
         }
 
@@ -36,7 +39,7 @@ namespace RobotRuntime.Plugins
 
             DestroyUserAppDomain();
             LoadUserAssemblies();
-            UserDomainReloaded?.Invoke();
+            AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
 
             Profiler.Stop("PluginLoader.ReloadAppDomain");
         }

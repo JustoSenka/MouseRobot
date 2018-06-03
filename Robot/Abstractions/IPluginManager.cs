@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Robot.Abstractions
+﻿namespace Robot.Abstractions
 {
     public interface IPluginManager
     {

@@ -1,4 +1,5 @@
 ﻿using RobotRuntime;
+using System;
 using System.Collections.Generic;
 
 namespace Robot.Abstractions
@@ -9,5 +10,9 @@ namespace Robot.Abstractions
 
         Command Create(string commandName);
         Command Create(string commandName, Command oldCommand);
+
+        event Action NewUserCommands;
+
+        bool IsNative(Command command);
     }
 }

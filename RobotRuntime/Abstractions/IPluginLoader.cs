@@ -1,12 +1,14 @@
-﻿using RobotRuntime.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace RobotRuntime.Abstractions
 {
     public interface IPluginLoader
     {
+        AsyncOperation AsyncOperationOnUI { set; }
+
         string UserAssemblyName { get; set; }
         string UserAssemblyPath { get; set; }
 

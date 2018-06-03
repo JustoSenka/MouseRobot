@@ -20,6 +20,7 @@ namespace Robot.Scripts
         public const string k_Time = "Time";
         public const string k_Timeout = "Timeout";
 
+        public event Action NewUserCommands;
 
         public IEnumerable<string> CommandNames { get { return m_CommandNames; } }
 
@@ -67,6 +68,8 @@ namespace Robot.Scripts
             m_CommandTypes = new Dictionary<string, Type>();
             foreach (var command in dummyCommands)
                 m_CommandTypes.Add(command.Name, command.GetType());
+
+            NewUserCommands?.Invoke();
         }
 
         public Command Create(string commandName)
@@ -87,15 +90,25 @@ namespace Robot.Scripts
         {
             var command = Create(commandName);
 
+            command.CopyAllProperties(oldCommand);
+            command.CopyAllFields(oldCommand);
+            
+            /*
             command.CopyPropertyFromIfExist(oldCommand, k_X);
             command.CopyPropertyFromIfExist(oldCommand, k_Y);
             command.CopyPropertyFromIfExist(oldCommand, k_DontMove);
             command.CopyPropertyFromIfExist(oldCommand, k_Smooth);
             command.CopyPropertyFromIfExist(oldCommand, k_Asset);
             command.CopyPropertyFromIfExist(oldCommand, k_Time);
-            command.CopyPropertyFromIfExist(oldCommand, k_Timeout);
+            command.CopyPropertyFromIfExist(oldCommand, k_Timeout);*/
 
             return command;
+        }
+
+        public bool IsNative(Command command)
+        {
+            // DO-DOMAIN: This will not work if command is in other domain
+            return m_NativeCommandTypes.Contains(command.GetType());
         }
     }
 }

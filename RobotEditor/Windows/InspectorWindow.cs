@@ -46,8 +46,9 @@ namespace RobotEditor.Windows
         {
             CollectUserCommands();
 
-            if (m_CurrentObject != null && m_CurrentObject.Command != null)
-                ShowCommand(m_CurrentObject.Command);
+            // This will break if command is custom command, because script manager replaces all old instances with newly compiled ones, so pointer type is no good here
+            /*if (m_CurrentObject != null && m_CurrentObject.Command != null)
+                Invoke(new MethodInvoker(() => ShowCommand(m_CurrentObject.Command)));*/
         }
 
         private void CollectNativeCommands()

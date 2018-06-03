@@ -6,6 +6,8 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using RobotRuntime.Utils;
+using System.ComponentModel;
+using System.Threading;
 
 namespace RobotRuntime
 {
@@ -125,6 +127,14 @@ namespace RobotRuntime
         public static bool IsDefault<T>(this T value) where T : struct
         {
             return value.Equals(default(T));
+        }
+
+        public static void Post(this AsyncOperation async, Action ac)
+        {
+            async?.Post(new SendOrPostCallback(delegate (object state)
+            {
+                ac.Invoke();
+            }), null);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using Robot.Scripts;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
 using System.Collections;
@@ -41,9 +42,16 @@ namespace Robot
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
         private IAssetManager AssetManager;
-        public ScriptManager(IAssetManager AssetManager)
+        private ICommandFactory CommandFactory;
+        private IProfiler Profiler;
+        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler)
         {
             this.AssetManager = AssetManager;
+            this.CommandFactory = CommandFactory;
+            this.Profiler = Profiler;
+
+            CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
+
             m_LoadedScripts = new List<Script>();
         }
 
@@ -65,6 +73,25 @@ namespace Robot
         public void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
             CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
+        }
+
+        private void ReplaceCommandsInScriptsWithNewRecompiledOnes()
+        {
+            Profiler.Start("ScriptManager_ReplaceOldCommandInstances");
+
+            foreach (var script in LoadedScripts)
+            {
+                foreach (var node in script.Commands.GetAllNodes().ToArray())
+                {
+                    var command = node.value;
+                    if (command == null || CommandFactory.IsNative(command))
+                        continue;
+
+                    script.ReplaceCommand(node.value, CommandFactory.Create(node.value.Name, node.value));
+                }
+            }
+
+            Profiler.Stop("ScriptManager_ReplaceOldCommandInstances");
         }
 
         public Script NewScript(Script clone = null)

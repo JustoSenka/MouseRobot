@@ -1,8 +1,6 @@
 ﻿using Robot.Abstractions;
 using System;
-using Robot.Utils.Win32;
 using System.ComponentModel;
-using System.IO;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Settings;
@@ -29,6 +27,7 @@ namespace Robot
             {
                 m_AsyncOperationOnUI = value;
                 InputCallbacks.AsyncOperationOnUI = value;
+                PluginLoader.AsyncOperationOnUI = value;
             }
         }
         private AsyncOperation m_AsyncOperationOnUI;
@@ -41,9 +40,10 @@ namespace Robot
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
+        private IPluginLoader PluginLoader;
         public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IInputCallbacks InputCallbacks)
+            IInputCallbacks InputCallbacks, IPluginLoader PluginLoader)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
@@ -53,6 +53,7 @@ namespace Robot
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
+            this.PluginLoader = PluginLoader;
 
             ScriptManager.NewScript();
             TestRunner.Finished += OnScriptFinished;

@@ -1,9 +1,10 @@
 ﻿using RobotRuntime.Abstractions;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace RobotRuntime.Plugins
 {
@@ -13,6 +14,8 @@ namespace RobotRuntime.Plugins
     /// </summary>
     public class PluginLoader : IPluginLoader
     {
+        public AsyncOperation AsyncOperationOnUI { private get; set; }
+
         private AppDomain m_PluginDomain;
 
         private string DomainName { get { return "UserScripts"; } }
@@ -33,7 +36,7 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
-            UserDomainReloading?.Invoke();
+            AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
 
             if (m_PluginDomain != null)
                 AppDomain.Unload(m_PluginDomain);
@@ -60,7 +63,7 @@ namespace RobotRuntime.Plugins
 
             LoadUserAssemblies(); // User assemblies must be loaded before UserDomainReloaded event fires
 
-            UserDomainReloaded?.Invoke();
+            AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
         }
 
         public void LoadUserAssemblies()
