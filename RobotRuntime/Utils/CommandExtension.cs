@@ -39,8 +39,8 @@ namespace RobotRuntime.Utils
 
         public static void CopyPropertyFromIfExist(this Command dest, Command source, string name)
         {
-            var destProp = dest.GetType().GetProperty(name);
-            var sourceProp = source.GetType().GetProperty(name);
+            var destProp = dest.GetType().GetProperty(name, k_BindingFlags);
+            var sourceProp = source.GetType().GetProperty(name, k_BindingFlags);
 
             if (destProp != null && sourceProp != null)
             {
@@ -50,14 +50,26 @@ namespace RobotRuntime.Utils
 
         public static void SetPropertyIfExist(this Command dest, string name, object value)
         {
-            var destProp = dest.GetType().GetProperty(name);
+            var destProp = dest.GetType().GetProperty(name, k_BindingFlags);
             destProp?.SetValue(dest, value);
         }
 
         public static object GetPropertyIfExist(this Command source, string name)
         {
-            var prop = source.GetType().GetProperty(name);
+            var prop = source.GetType().GetProperty(name, k_BindingFlags);
             return prop != null ? prop.GetValue(source) : null;
+        }
+
+        public static void SetFieldIfExist(this Command dest, string name, object value)
+        {
+            var destField = dest.GetType().GetField(name, k_BindingFlags);
+            destField?.SetValue(dest, value);
+        }
+
+        public static object GetFieldIfExist(this Command source, string name)
+        {
+            var field = source.GetType().GetField(name, k_BindingFlags);
+            return field != null ? field.GetValue(source) : null;
         }
     }
 }

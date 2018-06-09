@@ -11,7 +11,10 @@ namespace RobotRuntime.Utils
     public class TreeNode<T> : IEnumerable<TreeNode<T>>, ICloneable
     {
         public T value;
+
+        [NonSerialized]
         public TreeNode<T> parent;
+
         private LinkedList<TreeNode<T>> children;
 
         public TreeNode()

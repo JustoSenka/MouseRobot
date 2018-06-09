@@ -26,12 +26,17 @@ namespace Tests
 
         public void Logi(LogType logType, string str)
         {
-            OnLogReceived?.Invoke(default(Log));
+            Logi(logType, str, "");
         }
 
         public void Logi(LogType logType, string obj, string description)
         {
-            OnLogReceived?.Invoke(default(Log));
+            var log = new Log(logType, obj, description, null);
+
+            var str = "[" + logType + "] " + log.Header;
+            Console.WriteLine(str);
+
+            OnLogReceived?.Invoke(log);
         }
     }
 }
