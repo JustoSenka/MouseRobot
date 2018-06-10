@@ -23,9 +23,7 @@ namespace RobotRuntime.IO
 
         public override void SaveObject<T>(string path, T objToWrite)
         {
-            new YamlScriptIO().SaveObject(path, objToWrite);
-
-            /*try
+            try
             {
                 var serializer = new SerializerBuilder().EmitDefaults().Build();
                 var text = serializer.Serialize(objToWrite);
@@ -34,7 +32,7 @@ namespace RobotRuntime.IO
             catch (Exception e)
             {
                 Logger.Log(LogType.Error, "Failed to write to file: " + path, e.Message);
-            }*/
+            }
         }
     }
 }

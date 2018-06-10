@@ -1,11 +1,7 @@
 ﻿using RobotRuntime.Utils;
 using System;
-using System.Collections;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using YamlDotNet.Serialization;
 
 namespace RobotRuntime.IO
 {
@@ -15,13 +11,12 @@ namespace RobotRuntime.IO
 
         public override T LoadObject<T>(string path)
         {
-            return new BinaryObjectIO().LoadObject<T>(path);
-
             try
             {
                 var text = File.ReadAllText(path);
-                var deserializer = new DeserializerBuilder().Build();
-                return deserializer.Deserialize<T>(text);
+                var yamlTree = YamlSerializer.DeserializeYamlTree(text);
+                var s = Deserialize(yamlTree);
+                return (T)((object) s);
             }
             catch (Exception e)
             {
@@ -32,18 +27,16 @@ namespace RobotRuntime.IO
 
         public override void SaveObject<T>(string path, T objToWrite)
         {
-            /* try
-             {*/
-            var builder = new StringBuilder();
-
-            //YamlSerializer.WriteAllPropertiesRecursivelly(builder, objToWrite, 0);
-
-            File.WriteAllText(path, builder.ToString());
-            /*}
+            try
+            {
+                var yamlTree = Serialize(objToWrite as LightScript);
+                var text = YamlSerializer.SerializeYamlTree(yamlTree);
+                File.WriteAllText(path, text);
+            }
             catch (Exception e)
             {
                 Logger.Log(LogType.Error, "Failed to write to file: " + path, e.Message);
-            }*/
+            }
         }
 
         public static TreeNode<YamlObject> Serialize(LightScript script)
@@ -52,18 +45,41 @@ namespace RobotRuntime.IO
             var scriptObject = new YamlObject(level, script.GetType().Name, "");
             var tree = new TreeNode<YamlObject>(scriptObject);
 
-            foreach(var node in script.Commands)
-                AddCommandsRecursively(tree, node, level + 1);
+            foreach (var node in script.Commands)
+                SerializeCommandsRecursively(tree, node, level + 1);
 
             return tree;
         }
 
-        private static void AddCommandsRecursively(TreeNode<YamlObject> parent, TreeNode<Command> commandToAdd, int level)
+        private static void SerializeCommandsRecursively(TreeNode<YamlObject> parent, TreeNode<Command> commandToAdd, int level)
         {
-            parent.Join(YamlCommandIO.Serialize(commandToAdd.value, level));
+            var commandYamlObject = YamlCommandIO.Serialize(commandToAdd.value, level);
+            parent.Join(commandYamlObject);
 
             foreach (var childNode in commandToAdd)
-                AddCommandsRecursively(parent, childNode, level + 1);
+                SerializeCommandsRecursively(commandYamlObject, childNode, level + 1);
+        }
+
+        public static LightScript Deserialize(TreeNode<YamlObject> tree)
+        {
+            var commandRoot = new TreeNode<Command>();
+
+            foreach (var yamlCommandNode in tree)
+                DeserializeCommandsRecursively(commandRoot, yamlCommandNode);
+
+            return new LightScript(commandRoot);
+        }
+
+        private static void DeserializeCommandsRecursively(TreeNode<Command> commandRoot, TreeNode<YamlObject> yamlCommandNode)
+        {
+            var command = YamlCommandIO.Deserialize(yamlCommandNode);
+            if (command == null)
+                return;
+
+            var addedCommandNode = commandRoot.AddChild(command);
+
+            foreach (var yamlChildCommand in yamlCommandNode)
+                DeserializeCommandsRecursively(addedCommandNode, yamlChildCommand);
         }
     }
 }

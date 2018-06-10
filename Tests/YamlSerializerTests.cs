@@ -4,6 +4,7 @@ using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
 using System;
+using System.Linq;
 using Tests.Fakes;
 
 namespace Tests
@@ -44,7 +45,7 @@ namespace Tests
   <DontMove>k__BackingField: False";
 
         [TestMethod]
-        public void CommandToYaml_ProducesCorrect_YamlString()
+        public void Command_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlCommandIO.Serialize(command, 0);
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
@@ -52,11 +53,31 @@ namespace Tests
         }
 
         [TestMethod]
-        public void YamlObjectToCommand_ProducesCorrect_Command()
+        public void Command_ProducesCorrect_YamlObject()
+        {
+            var yamlObj = YamlCommandIO.Serialize(command, 0);
+
+            var props = yamlObj.ToArray();
+            Assert.AreEqual("CommandPress", yamlObj.value.property, "Command object had incorrect command type indicator.");
+            Assert.AreEqual(3, props.Length, "Command object should have 3 properties.");
+        }
+
+        [TestMethod]
+        public void YamlObject_ProducesCorrect_Command()
         {
             var yamlObj = YamlCommandIO.Serialize(command, 0);
             var newCommand = YamlCommandIO.Deserialize(yamlObj);
             Assert.AreEqual(command.ToString(), newCommand.ToString(), "Command strings should be equal.");
+        }
+
+        [TestMethod]
+        public void YamlString_ProducesCorrect_CommandYamlObject()
+        {
+            var tree = YamlSerializer.DeserializeYamlTree(serializedCommand);
+            var props = tree.ToArray();
+
+            Assert.AreEqual("CommandPress", tree.value.property, "Command object had incorrect command type indicator.");
+            Assert.AreEqual(3, props.Length, "Command object should have 3 properties.");
         }
 
 
@@ -83,11 +104,51 @@ namespace Tests
     <Y>k__BackingField: 20";
 
         [TestMethod]
-        public void ScriptToYaml_ProducesCorrect_YamlString()
+        public void Script_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlScriptIO.Serialize(Script);
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
             StringAssert.Contains(serializedScript, yamlString, "Strings missmatched.");
+        }
+
+        [TestMethod]
+        public void Script_ProducesCorrect_YamlObj()
+        {
+            var yamlObj = YamlScriptIO.Serialize(Script);
+            var commands = yamlObj.ToArray();
+            Assert.AreEqual(2, commands.Length, "only two root commands should be in the script.");
+            Assert.AreEqual(2, commands[0].ToArray().Length, "Image command has also two childs, timeout and CommandPress.");
+            Assert.AreEqual(2, commands[1].ToArray().Length, "Command move has also two childs, X and Y.");
+
+            var commandPress = commands[0].ToArray()[1];
+            Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
+            Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
+        }
+
+        [TestMethod]
+        public void YamlString_ProducesCorrect_ScriptYamlObject()
+        {
+            var yamlObj = YamlSerializer.DeserializeYamlTree(serializedScript);
+
+            var commands = yamlObj.ToArray();
+            Assert.AreEqual(2, commands.Length, "only two root commands should be in the script.");
+            Assert.AreEqual(2, commands[0].ToArray().Length, "Image command has also two childs, timeout and CommandPress.");
+            Assert.AreEqual(2, commands[1].ToArray().Length, "Command move has also two childs, X and Y.");
+
+            var commandPress = commands[0].ToArray()[1];
+            Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
+            Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
+        }
+
+        [TestMethod]
+        public void YamlObject_ProducesCorrect_Script()
+        {
+            var s = Script;
+            var lightScript = s.ToLightScript();
+            var yamlObj = YamlScriptIO.Serialize(s);
+            var newScript = YamlScriptIO.Deserialize(yamlObj);
+
+            Assert.AreEqual(lightScript.Commands.Count(), newScript.Commands.Count(), "Command count should be the same.");
         }
 
         [TestInitialize]

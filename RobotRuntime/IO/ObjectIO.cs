@@ -9,7 +9,9 @@
         {
             // TODO: User prefs file/user settings or something
 
-            return new YamlScriptIO();
+
+
+            //return new YamlScriptIO();
 
             //if (false)
             return new BinaryObjectIO();

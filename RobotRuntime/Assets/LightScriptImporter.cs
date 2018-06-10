@@ -11,12 +11,12 @@ namespace RobotRuntime
 
             protected override object LoadAsset()
             {
-                return ObjectIO.Create().LoadObject<LightScript>(Path);
+                return new YamlScriptIO().LoadObject<LightScript>(Path);
             }
 
             public override void SaveAsset()
             {
-                ObjectIO.Create().SaveObject(Path, (LightScript)Value);
+                new YamlScriptIO().SaveObject(Path, (LightScript)Value);
             }
 
             public override Type HoldsType()

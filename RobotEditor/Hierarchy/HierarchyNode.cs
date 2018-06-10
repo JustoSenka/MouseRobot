@@ -79,7 +79,7 @@ namespace RobotEditor.Hierarchy
         }
 
         /// <summary>
-        /// Returns all nodes in the tree hierarchy recursivelly, including all child and grandchild nodes
+        /// Returns all nodes in the tree hierarchy recursively, including all child and grandchild nodes
         /// </summary>
         public IEnumerable<HierarchyNode> GetAllNodes(bool includeSelf = true)
         {

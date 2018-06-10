@@ -194,7 +194,7 @@ namespace RobotRuntime.Utils
         }
 
         /// <summary>
-        /// Returns all nodes in the tree hierarchy recursivelly, including all child and grandchild nodes
+        /// Returns all nodes in the tree hierarchy recursively, including all child and grandchild nodes
         /// </summary>
         public IEnumerable<TreeNode<T>> GetAllNodes(bool includeSelf = true)
         {

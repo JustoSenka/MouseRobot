@@ -18,7 +18,7 @@ namespace Robot
 
             public override void SaveAsset()
             {
-                ObjectIO.Create().SaveObject(Path, ((Script)Value).ToLightScript());
+                new YamlScriptIO().SaveObject(Path, ((Script)Value).ToLightScript());
             }
 
             public override Type HoldsType()

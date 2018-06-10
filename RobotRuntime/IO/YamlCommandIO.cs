@@ -27,26 +27,11 @@ namespace RobotRuntime.IO
             var allCommandTypes = AppDomain.CurrentDomain.GetAllTypesWhichImplementInterface(typeof(Command));
             var commandType = allCommandTypes.FirstOrDefault(type => type.Name.Equals(tree.value.property));
 
+            if (commandType == null)
+                return null;
+
             var command = (Command)Activator.CreateInstance(commandType);
-
-            foreach (var propNode in tree)
-            {
-                var field = command.GetType().GetField(propNode.value.property, k_BindingFlags);
-                var fieldType = field != null ? field.FieldType : null;
-
-                if (fieldType == null || !YamlSerializer.IsConvertibleType(fieldType))
-                    continue;
-
-                try
-                {
-                    var newVal = Convert.ChangeType(propNode.value.value, fieldType);
-                    field.SetValue(command, newVal);
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(LogType.Error, "Error while deserializing command. Failed to cast property '" + propNode.value.property + "' value to correct type", e.Message);
-                }
-            }
+            YamlSerializer.DeserializeSimpleProperties(command, tree);
 
             return command;
         }

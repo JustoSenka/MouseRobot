@@ -94,7 +94,7 @@ namespace RobotEditor.Windows
 
         private void UpdateHierarchy()
         {
-            if (!m_ControlCreated)
+            if (!m_ControlCreated || !this.Created)
                 return;
 
             this.BeginInvoke(new MethodInvoker(delegate
