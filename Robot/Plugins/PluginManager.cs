@@ -50,6 +50,11 @@ namespace Robot.Plugins
         {
             if (assetPath.EndsWith(FileExtensions.PluginD))
                 m_ModifiedFilesSinceLastRecompilation.Add(assetPath);
+
+            // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
+            // but something has already changed from within app. Call refresh callback manually.
+            if (!AssetManager.IsEditingAssets)
+                OnAssetRefreshFinished();
         }
 
         private void OnAssetRefreshFinished()

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -26,7 +27,7 @@ namespace RobotRuntime.IO
                 if (!IsSerializable(f))
                     continue;
 
-                if (IsConvertibleType(fieldType))
+                if (IsConvertibleType(fieldType) || IsSimpleType(fieldType))
                     yield return new YamlObject(level, f.Name, f.GetValue(objToWrite));
             }
         }
@@ -41,12 +42,19 @@ namespace RobotRuntime.IO
                 var field = objToWrite.GetType().GetField(propNode.value.property, k_BindingFlags);
                 var fieldType = field != null ? field.FieldType : null;
 
-                if (fieldType == null || !IsConvertibleType(fieldType))
+                if (fieldType == null)
                     continue;
 
                 try
                 {
-                    var newVal = Convert.ChangeType(propNode.value.value, fieldType);
+                    object newVal = null;
+                    if (IsConvertibleType(fieldType))
+                        newVal = Convert.ChangeType(propNode.value.value, fieldType);
+                    else if (IsSimpleType(fieldType))
+                        newVal = TypeDescriptor.GetConverter(fieldType).ConvertFromInvariantString(propNode.value.value);
+                    else
+                        continue;
+
                     field.SetValue(objToWrite, newVal);
                 }
                 catch (Exception e)

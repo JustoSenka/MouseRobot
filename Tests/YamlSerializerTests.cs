@@ -3,6 +3,7 @@ using Robot.Scripts;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
+using RobotRuntime.Utils;
 using System;
 using System.Linq;
 using Tests.Fakes;
@@ -12,10 +13,10 @@ namespace Tests
     [TestClass]
     public class YamlSerializerTests
     {
-        private short level = 2;
-        private string PropertyName = "SomeInt";
-        private int PropertyValue = 157;
-        private string separator = ": ";
+        private const short level = 2;
+        private const string PropertyName = "SomeInt";
+        private const int PropertyValue = 157;
+        private const string separator = ": ";
 
         private string YamlLine { get { return YamlObject.GetIndentation(level) + PropertyName + separator + PropertyValue; } }
 
@@ -38,8 +39,8 @@ namespace Tests
 
 
 
-        private Command command = new CommandPress(50, 70, false);
-        private string serializedCommand = @"CommandPress: 
+        private readonly Command command = new CommandPress(50, 70, false);
+        private const string serializedCommand = @"CommandPress: 
   <X>k__BackingField: 50
   <Y>k__BackingField: 70
   <DontMove>k__BackingField: False";
@@ -92,8 +93,9 @@ namespace Tests
                 return s;
             }
         }
-        private string serializedScript = @"Script: 
+        private const string serializedScript = @"Script: 
   CommandForImage: 
+    <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
     <Timeout>k__BackingField: 1850
     CommandPress: 
       <X>k__BackingField: 55
@@ -117,10 +119,10 @@ namespace Tests
             var yamlObj = YamlScriptIO.Serialize(Script);
             var commands = yamlObj.ToArray();
             Assert.AreEqual(2, commands.Length, "only two root commands should be in the script.");
-            Assert.AreEqual(2, commands[0].ToArray().Length, "Image command has also two childs, timeout and CommandPress.");
+            Assert.AreEqual(3, commands[0].ToArray().Length, "Image command has also three childs, timeout CommandPress, and guid");
             Assert.AreEqual(2, commands[1].ToArray().Length, "Command move has also two childs, X and Y.");
 
-            var commandPress = commands[0].ToArray()[1];
+            var commandPress = commands[0].ToArray()[2];
             Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
             Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
         }
@@ -132,10 +134,10 @@ namespace Tests
 
             var commands = yamlObj.ToArray();
             Assert.AreEqual(2, commands.Length, "only two root commands should be in the script.");
-            Assert.AreEqual(2, commands[0].ToArray().Length, "Image command has also two childs, timeout and CommandPress.");
+            Assert.AreEqual(3, commands[0].ToArray().Length, "Image command has also three childs, timeout CommandPress, and guid");
             Assert.AreEqual(2, commands[1].ToArray().Length, "Command move has also two childs, X and Y.");
 
-            var commandPress = commands[0].ToArray()[1];
+            var commandPress = commands[0].ToArray()[2];
             Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
             Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
         }
@@ -149,6 +151,38 @@ namespace Tests
             var newScript = YamlScriptIO.Deserialize(yamlObj);
 
             Assert.AreEqual(lightScript.Commands.Count(), newScript.Commands.Count(), "Command count should be the same.");
+        }
+
+
+        private const string guidString = "2e3b9484-7b15-4511-91fb-c6f9f5aeb683";
+        private readonly Guid guidObject = new Guid(guidString);
+        private  class ObjectWithGuid { public Guid Guid; }
+
+        [TestMethod]
+        public void GuidsInObject_ProducesCorrect_YamlObject()
+        {
+            var expectedYamlObject = new YamlObject(0, "Guid", guidObject);
+
+            var obj = new ObjectWithGuid() { Guid = guidObject };
+            var props = YamlSerializer.SerializeSimpleProperties(obj, 0);
+
+            Assert.AreEqual(1, props.Count(), "Only one property should have been serialized.");
+            Assert.AreEqual(expectedYamlObject.property, props.First().property, "Property names should be identical.");
+            Assert.AreEqual(expectedYamlObject.value, props.First().value, "Guid values should be identical.");
+        }
+
+        [TestMethod]
+        public void GuidsInYamlObject_ProducesCorrect_ClassObject()
+        {
+            var serializedYamlObject = new YamlObject(0, "Guid", guidObject);
+            var objToWrite = new ObjectWithGuid();
+
+            var tree = new TreeNode<YamlObject>();
+            tree.AddChild(serializedYamlObject);
+
+            YamlSerializer.DeserializeSimpleProperties(objToWrite, tree);
+
+            Assert.AreEqual(guidObject, objToWrite.Guid, "Deserialized object should have correct guid value.");
         }
 
         [TestInitialize]
