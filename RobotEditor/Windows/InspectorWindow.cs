@@ -44,7 +44,7 @@ namespace RobotEditor.Windows
 
         private void OnDomainReloaded()
         {
-            CollectUserCommands();
+            CollectUserCommands(); 
 
             // This will break if command is custom command, because script manager replaces all old instances with newly compiled ones, so pointer type is no good here
             /*if (m_CurrentObject != null && m_CurrentObject.Command != null)

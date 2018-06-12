@@ -22,7 +22,7 @@ namespace RobotRuntime.IO
         }
 
         public override void SaveObject<T>(string path, T objToWrite)
-        {
+        { 
             try
             {
                 var serializer = new SerializerBuilder().EmitDefaults().Build();
