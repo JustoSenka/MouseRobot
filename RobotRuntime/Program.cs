@@ -8,6 +8,7 @@ using RobotRuntime.Execution;
 using RobotRuntime.Perf;
 using RobotRuntime.Plugins;
 using System;
+using RobotRuntime.Logging;
 
 namespace RobotRuntime
 {
@@ -43,6 +44,7 @@ namespace RobotRuntime
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginLoader, PluginLoaderNoDomain>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
         }
     }

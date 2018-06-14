@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RobotRuntime.Utils
+namespace RobotRuntime
 {
     [Serializable]
     public class ValueWrapper<T> where T : struct
@@ -9,7 +9,7 @@ namespace RobotRuntime.Utils
         public ValueWrapper(T value) { this.Value = value; }
     }
 
-    //[Serializable]
+    [Serializable]
     public class ValueWrapper : MarshalByRefObject
     {
         public object Value { get; set; }

@@ -6,6 +6,7 @@ using RobotRuntime;
 
 namespace Tests.Fakes
 {
+#pragma warning disable 0169
     class FakeScriptManager : IScriptManager
     {
         public Script ActiveScript
@@ -39,6 +40,7 @@ namespace Tests.Fakes
         public event Action ScriptPositioningChanged;
         public event Action<int> ScriptRemoved;
         public event Action<Script> ScriptSaved;
+#pragma warning restore 0169
 
         public IEnumerator<Script> GetEnumerator()
         {

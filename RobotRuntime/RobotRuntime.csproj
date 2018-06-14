@@ -207,9 +207,12 @@
     <Compile Include="IO\YamlObject.cs" />
     <Compile Include="IO\YamlScriptIO.cs" />
     <Compile Include="IO\YamlSerializer.cs" />
+    <Compile Include="Abstractions\IStatusManager.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\StaticLogger.cs" />
+    <Compile Include="Logging\Status.cs" />
+    <Compile Include="Logging\StatusManager.cs" />
     <Compile Include="Perf\LimitedStack.cs" />
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />
@@ -223,11 +226,12 @@
     <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
     <Compile Include="Settings\RuntimeSettings.cs" />
-    <Compile Include="Utils\AppDomainExtension.cs" />
+    <Compile Include="zExtensionMethods\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
-    <Compile Include="Utils\CommandExtension.cs" />
+    <Compile Include="zExtensionMethods\CommandExtension.cs" />
     <Compile Include="Utils\Commons.cs" />
-    <Compile Include="Utils\ExtensionMethods.cs" />
+    <Compile Include="zCustomDataTypes\CustomStack.cs" />
+    <Compile Include="zExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="IO\BinaryObjectIO.cs" />
     <Compile Include="IO\ObjectIO.cs" />
     <Compile Include="IO\YamlObjectIO.cs" />
@@ -235,11 +239,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\LightScript.cs" />
     <Compile Include="Scripts\TestRunner.cs" />
-    <Compile Include="Utils\LinkedTree.cs" />
-    <Compile Include="Utils\ObjectCreationExtension.cs" />
+    <Compile Include="zCustomDataTypes\LinkedTree.cs" />
+    <Compile Include="zExtensionMethods\ObjectCreationExtension.cs" />
     <Compile Include="Utils\Paths.cs" />
-    <Compile Include="Utils\ValueWrapper.cs" />
-    <Compile Include="Utils\Win32\WinAPI.cs" />
+    <Compile Include="zCustomDataTypes\PriorityStack.cs" />
+    <Compile Include="zCustomDataTypes\PriorityQueue.cs" />
+    <Compile Include="Utils\StandardColors.cs" />
+    <Compile Include="zCustomDataTypes\ValueWrapper.cs" />
+    <Compile Include="Utils\WinAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

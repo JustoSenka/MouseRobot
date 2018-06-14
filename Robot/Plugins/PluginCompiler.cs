@@ -5,6 +5,9 @@ using System;
 using System.CodeDom.Compiler;
 using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
 using System.Threading;
+using RobotRuntime.Logging;
+using System.Drawing;
+using RobotRuntime.Utils;
 
 namespace Robot.Plugins
 {
@@ -24,10 +27,13 @@ namespace Robot.Plugins
         private string[] m_TempSources;
 
         private IProfiler Profiler;
-        public PluginCompiler(IProfiler Profiler)
+        private IStatusManager StatusManager;
+        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager)
         {
             this.Profiler = Profiler;
-            
+            this.StatusManager = StatusManager;
+
+
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
 
@@ -59,6 +65,8 @@ namespace Robot.Plugins
 
         private bool CompileCodeSync(string[] sources)
         {
+            StatusManager.Add("PluginCompiler", 5, new Status("", "Compiling...", StandardColors.Orange));
+
             Profiler.Start("PluginCompiler_CompileCode");
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
             Profiler.Stop("PluginCompiler_CompileCode");
@@ -80,14 +88,16 @@ namespace Robot.Plugins
                         string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
                         string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
 
-                Logger.Log(LogType.Error, "Scripts have compilation errors.");
                 ScriptsRecompiled?.Invoke();
+                Logger.Log(LogType.Error, "Scripts have compilation errors.");
+                StatusManager.Add("PluginCompiler", 5, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
                 ScriptsRecompiled?.Invoke();
                 Logger.Log(LogType.Log, "Scripts successfully compiled.");
+                StatusManager.Add("PluginCompiler", 5, new Status("", "Compilation Complete", default(Color)));
                 return true;
             }
 

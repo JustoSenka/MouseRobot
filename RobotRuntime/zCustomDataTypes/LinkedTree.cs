@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RobotRuntime.Utils
+namespace RobotRuntime
 {
     public delegate void TreeVisitor<T>(T nodeData);
 

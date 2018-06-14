@@ -13,6 +13,7 @@ using RobotRuntime.Utils;
 using RobotEditor.Windows;
 using Robot.Settings;
 using RobotRuntime.Settings;
+using RobotRuntime.Logging;
 
 namespace RobotEditor
 {
@@ -40,12 +41,13 @@ namespace RobotEditor
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
+        private IStatusManager StatusManager;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestRunnerWindow TestRunnerWindow)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestRunnerWindow TestRunnerWindow, IStatusManager StatusManager)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -55,6 +57,7 @@ namespace RobotEditor
             this.AssetManager = AssetManager;
             this.ScreenStateThread = ScreenStateThread;
             this.InputCallbacks = InputCallbacks;
+            this.StatusManager = StatusManager;
 
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
@@ -96,6 +99,8 @@ namespace RobotEditor
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
+
+            StatusManager.StatusUpdated += OnStatusUpdated;
 
             this.Activated += (x, y) => AssetManager.Refresh();
 
@@ -158,6 +163,16 @@ namespace RobotEditor
         private void OnCommandDoubleClick(Command command)
         {
             m_InspectorWindow.ShowCommand(command);
+        }
+
+        private void OnStatusUpdated(Status status)
+        {
+            this.Invoke(new MethodInvoker(() =>
+            {
+                statusStrip.Items[0].Text = status.EditorStatus;
+                statusStrip.Items[1].Text = status.CurrentOperation;
+                statusStrip.BackColor = status.Color;
+            }));
         }
 
         private void PutLayoutWindowsInArray()
