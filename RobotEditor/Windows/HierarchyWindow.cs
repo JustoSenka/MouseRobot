@@ -28,13 +28,16 @@ namespace RobotEditor
         private IScriptManager ScriptManager;
         private ITestRunner TestRunner;
         private IAssetManager AssetManager;
+        private ICommandFactory CommandFactory;
         private IHierarchyNodeStringConverter HierarchyNodeStringConverter;
-        public HierarchyWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager, IHierarchyNodeStringConverter HierarchyNodeStringConverter)
+        public HierarchyWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager,
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
+            this.CommandFactory = CommandFactory;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -53,6 +56,9 @@ namespace RobotEditor
 
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
+
+            CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
+            OnNewUserCommandsAppeared();
 
             CreateColumns();
             UpdateHierarchy();
@@ -133,6 +139,22 @@ namespace RobotEditor
                 treeListView.Refresh();
         }
 
+        private void OnNewUserCommandsAppeared()
+        {
+            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[8];
+
+            createMenuItem.DropDownItems.Clear();
+            foreach (var name in CommandFactory.CommandNames)
+            {
+                var item = new ToolStripMenuItem(name);
+                item.Click += (sender, events) =>
+                {
+                    var command = CommandFactory.Create(name);
+                    ScriptManager.ActiveScript.AddCommand(command);
+                };
+                createMenuItem.DropDownItems.Add(item);
+            }
+        }
 
         #region ScriptManager Callbacks
 

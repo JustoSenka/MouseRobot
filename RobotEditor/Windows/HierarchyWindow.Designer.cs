@@ -39,12 +39,16 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.aToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -60,9 +64,11 @@
             this.showInExplorerToolStripMenuItem,
             this.toolStripMenuItem1,
             this.duplicateToolStripMenuItem1,
-            this.deleteToolStripMenuItem1});
+            this.deleteToolStripMenuItem1,
+            this.toolStripMenuItem2,
+            this.createToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(175, 126);
+            this.contextMenuStrip.Size = new System.Drawing.Size(175, 176);
             // 
             // setActiveToolStripMenuItem
             // 
@@ -112,6 +118,19 @@
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(171, 6);
+            // 
+            // createToolStripMenuItem
+            // 
+            this.createToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aToolStripMenuItem});
+            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.createToolStripMenuItem.Text = "Create";
+            // 
             // imageList
             // 
             this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
@@ -148,7 +167,8 @@
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolstripExpandAll,
             this.ToolstripExpandOne,
-            this.ToolstripCollapseAll});
+            this.ToolstripCollapseAll,
+            this.toolStripButton1});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
@@ -192,6 +212,21 @@
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            // 
+            // aToolStripMenuItem
+            // 
+            this.aToolStripMenuItem.Name = "aToolStripMenuItem";
+            this.aToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aToolStripMenuItem.Text = "a";
+            // 
             // HierarchyWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -229,5 +264,9 @@
         private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
         private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
         internal System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aToolStripMenuItem;
     }
 }
