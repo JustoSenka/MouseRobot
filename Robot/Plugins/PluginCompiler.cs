@@ -65,7 +65,7 @@ namespace Robot.Plugins
 
         private bool CompileCodeSync(string[] sources)
         {
-            StatusManager.Add("PluginCompiler", 5, new Status("", "Compiling...", StandardColors.Orange));
+            StatusManager.Add("PluginCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
 
             Profiler.Start("PluginCompiler_CompileCode");
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
@@ -90,14 +90,14 @@ namespace Robot.Plugins
 
                 ScriptsRecompiled?.Invoke();
                 Logger.Log(LogType.Error, "Scripts have compilation errors.");
-                StatusManager.Add("PluginCompiler", 5, new Status("", "Compilation Failed", StandardColors.Red));
+                StatusManager.Add("PluginCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
                 ScriptsRecompiled?.Invoke();
                 Logger.Log(LogType.Log, "Scripts successfully compiled.");
-                StatusManager.Add("PluginCompiler", 5, new Status("", "Compilation Complete", default(Color)));
+                StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default(Color)));
                 return true;
             }
 

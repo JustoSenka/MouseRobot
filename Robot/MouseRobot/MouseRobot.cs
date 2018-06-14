@@ -4,6 +4,8 @@ using System.ComponentModel;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Settings;
+using RobotRuntime.Logging;
+using RobotRuntime.Utils;
 
 namespace Robot
 {
@@ -41,9 +43,10 @@ namespace Robot
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
         private IPluginLoader PluginLoader;
+        private IStatusManager StatusManager;
         public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IInputCallbacks InputCallbacks, IPluginLoader PluginLoader)
+            IInputCallbacks InputCallbacks, IPluginLoader PluginLoader, IStatusManager StatusManager)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
@@ -54,7 +57,8 @@ namespace Robot
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
             this.PluginLoader = PluginLoader;
-
+            this.StatusManager = StatusManager;
+            
             ScriptManager.NewScript();
             TestRunner.Finished += OnScriptFinished;
         }
@@ -89,6 +93,11 @@ namespace Robot
                     m_IsRecording = value;
                     RecordingManager.IsRecording = value;
                     RecordingStateChanged?.Invoke(value);
+
+                    if (m_IsRecording)
+                        StatusManager.Add("IsRecording", 6, new Status("Waiting for input", "Recording", StandardColors.Purple));
+                    else
+                        StatusManager.Add("IsRecording", 10, new Status(null, "Recording Finished", StandardColors.Default));
                 }
             }
         }
@@ -111,9 +120,15 @@ namespace Robot
                     RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
 
                     if (m_IsPlaying)
+                    {
                         StartScript();
+                        StatusManager.Add("IsPlaying", 6, new Status("Busy", "Running Tests", StandardColors.Green));
+                    }
                     else
+                    {
                         TestRunner.Stop();
+                        StatusManager.Add("IsPlaying", 10, new Status(null, "Tests Complete", StandardColors.Default));
+                    }
                 }
             }
         }

@@ -11,6 +11,8 @@ namespace RobotRuntime.Utils
     /// </summary>
     public static class StandardColors
     {
+        public static Color Default { get { return default(Color); } }
+
         public static Color Blue { get { return Color.FromArgb(unchecked((int)0xFF007ACC)); } }
         public static Color Orange { get { return Color.FromArgb(unchecked((int)0xFFCA5100)); } }
         public static Color Red { get { return Color.FromArgb(unchecked((int)0xFFC30052)); } }

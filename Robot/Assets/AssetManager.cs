@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Logging;
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
@@ -25,10 +26,12 @@ namespace Robot
 
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
-        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler)
+        private IStatusManager StatusManager;
+        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.Profiler = Profiler;
+            this.StatusManager = StatusManager;
         }
 
         public void Refresh()
@@ -104,7 +107,8 @@ namespace Robot
             EndAssetEditing();
             Profiler.Stop("AssetManager_Refresh");
 
-            Logger.Log(LogType.Log, "Asset refresh finished");
+            StatusManager.Add("AssetManager", 10, new Status(null, "Asset Refresh Finished", StandardColors.Default));
+            // Logger.Log(LogType.Log, "Asset refresh finished");
 
             RefreshFinished?.Invoke();
         }

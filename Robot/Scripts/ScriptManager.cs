@@ -141,6 +141,8 @@ namespace Robot
                 return null;
             }
 
+            Profiler.Start("ScriptManager_LoadScript");
+
             // if hierarchy contains empty untitled script, remove it
             if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Script.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
                 RemoveScript(0);
@@ -166,16 +168,21 @@ namespace Robot
                 MakeSureActiveScriptExist();
                 ScriptLoaded?.Invoke(newScript);
             }
-            
+
+            Profiler.Stop("ScriptManager_LoadScript");
             return newScript;
         }
 
         public void SaveScript(Script script, string path)
         {
+            Profiler.Start("ScriptManager_SafeScript");
+
             AssetManager.CreateAsset(script, path);
             script.Path = Paths.GetProjectRelativePath(path);
 
             ScriptSaved?.Invoke(script);
+
+            Profiler.Stop("ScriptManager_SafeScript");
         }
 
         public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
