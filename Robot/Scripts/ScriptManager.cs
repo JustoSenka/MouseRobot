@@ -4,17 +4,12 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Robot
 {
-    public class ScriptManager : IEnumerable<Script>, IScriptManager
+    public class ScriptManager : BaseScriptManager, IScriptManager
     {
-        private readonly IList<Script> m_LoadedScripts;
-        public IReadOnlyList<Script> LoadedScripts { get { return m_LoadedScripts.ToList().AsReadOnly(); } }
-
         private Script m_ActiveScript;
         public Script ActiveScript
         {
@@ -31,122 +26,12 @@ namespace Robot
         public event Action<Script, Script> ActiveScriptChanged;
         public event Action<Script> ScriptSaved;
 
-        public event Action<Script> ScriptLoaded;
-        public event Action<Script> ScriptModified;
-        public event Action<int> ScriptRemoved;
-        public event Action ScriptPositioningChanged;
-
-        public event Action<Script, Command, Command> CommandAddedToScript;
-        public event Action<Script, Command, Command, int> CommandInsertedInScript;
-        public event Action<Script, Command, int> CommandRemovedFromScript;
-        public event Action<Script, Command, Command> CommandModifiedOnScript;
-
         private IAssetManager AssetManager;
-        private ICommandFactory CommandFactory;
         private IProfiler Profiler;
-        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler)
+        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler) : base(CommandFactory, Profiler)
         {
             this.AssetManager = AssetManager;
-            this.CommandFactory = CommandFactory;
             this.Profiler = Profiler;
-
-            CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
-
-            m_LoadedScripts = new List<Script>();
-        }
-
-        private void SubscribeToScriptEvents(Script s)
-        {
-            s.CommandAddedToScript += InvokeCommandAddedToScript;
-            s.CommandInsertedInScript += InvokeCommandInsertedInScript;
-            s.CommandRemovedFromScript += InvokeCommandRemovedFromScript;
-            s.CommandModifiedOnScript += InvokeCommandModifiedOnScript;
-        }
-
-        private void UnsubscribeToScriptEvents(Script s)
-        {
-            s.CommandAddedToScript -= InvokeCommandAddedToScript;
-            s.CommandInsertedInScript -= InvokeCommandInsertedInScript;
-            s.CommandRemovedFromScript -= InvokeCommandRemovedFromScript;
-            s.CommandModifiedOnScript -= InvokeCommandModifiedOnScript;
-        }
-
-        private void InvokeCommandAddedToScript(Script script, Command parentCommand, Command command)
-        {
-            CommandAddedToScript?.Invoke(script, parentCommand, command);
-        }
-
-        private void InvokeCommandInsertedInScript(Script script, Command parentCommand, Command command, int index)
-        {
-            CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
-        }
-
-        private void InvokeCommandRemovedFromScript(Script script, Command parentCommand, int index)
-        {
-            CommandRemovedFromScript?.Invoke(script, parentCommand, index);
-        }
-
-        private void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
-        {
-            CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
-        }
-
-        private void ReplaceCommandsInScriptsWithNewRecompiledOnes()
-        {
-            Profiler.Start("ScriptManager_ReplaceOldCommandInstances");
-
-            foreach (var script in LoadedScripts)
-            {
-                foreach (var node in script.Commands.GetAllNodes().ToArray())
-                {
-                    var command = node.value;
-                    if (command == null || CommandFactory.IsNative(command))
-                        continue;
-
-                    script.ReplaceCommand(node.value, CommandFactory.Create(node.value.Name, node.value));
-                }
-            }
-
-            Profiler.Stop("ScriptManager_ReplaceOldCommandInstances");
-        }
-
-        public Script NewScript(Script clone = null)
-        {
-            Script script;
-
-            if (clone == null)
-                script = new Script();
-            else
-                script = (Script)clone.Clone();
-
-            m_LoadedScripts.Add(script);
-            SubscribeToScriptEvents(script);
-            script.IsDirty = true;
-
-            MakeSureActiveScriptExist();
-            ScriptLoaded?.Invoke(script);
-            return script;
-        }
-
-        public void RemoveScript(Script script)
-        {
-            var position = m_LoadedScripts.IndexOf(script);
-
-            m_LoadedScripts.Remove(script);
-            UnsubscribeToScriptEvents(script);
-
-            MakeSureActiveScriptExist();
-
-            ScriptRemoved?.Invoke(position);
-        }
-
-        public void RemoveScript(int position)
-        {
-            UnsubscribeToScriptEvents(m_LoadedScripts[position]);
-            m_LoadedScripts.RemoveAt(position);
-
-            MakeSureActiveScriptExist();
-            ScriptRemoved?.Invoke(position);
         }
 
         public Script LoadScript(string path)
@@ -167,27 +52,7 @@ namespace Robot
             Script newScript = asset.Importer.ReloadAsset<Script>();
             newScript.Path = asset.Path;
 
-            // If script was already loaded, reload it to last saved state
-            var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(path));
-            if (oldScript != default(Script))
-            {
-                // Reload Script
-                var index = m_LoadedScripts.IndexOf(oldScript);
-                UnsubscribeToScriptEvents(oldScript);
-
-                m_LoadedScripts[index] = newScript;
-                MakeSureActiveScriptExist();
-                ScriptModified?.Invoke(newScript);
-            }
-            else
-            {
-                // Load New Script
-                m_LoadedScripts.Add(newScript);
-                MakeSureActiveScriptExist();
-                ScriptLoaded?.Invoke(newScript);
-            }
-
-            SubscribeToScriptEvents(newScript);
+            AddScript(newScript, true);
 
             Profiler.Stop("ScriptManager_LoadScript");
             return newScript;
@@ -205,75 +70,6 @@ namespace Robot
             Profiler.Stop("ScriptManager_SafeScript");
         }
 
-        public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
-        {
-            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-            {
-                var script = m_LoadedScripts[scriptIndex];
-                script.MoveCommandAfter(source, after);
-            }
-            else // Move between two different scripts
-            {
-                var destScript = m_LoadedScripts[destinationScriptIndex];
-                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(after).parent;
-                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
-
-                m_LoadedScripts[scriptIndex].RemoveCommand(source);
-
-                destParentNode.Join(sourceNode);
-                destScript.Commands.MoveAfter(source, after);
-
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex(this));
-
-                destScript.IsDirty = true;
-            }
-
-            m_LoadedScripts[scriptIndex].IsDirty = true;
-        }
-
-        public void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
-        {
-            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-            {
-                var script = m_LoadedScripts[scriptIndex];
-                script.MoveCommandBefore(source, before);
-            }
-            else // Move between two different scripts
-            {
-                var destScript = m_LoadedScripts[destinationScriptIndex];
-                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(before).parent;
-                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
-
-                m_LoadedScripts[scriptIndex].RemoveCommand(source);
-
-                destParentNode.Join(sourceNode);
-                destScript.Commands.MoveBefore(source, before);
-
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, source.GetIndex(this));
-
-                destScript.IsDirty = true;
-            }
-
-            m_LoadedScripts[scriptIndex].IsDirty = true;
-        }
-
-        public void MoveScriptAfter(int index, int after)
-        {
-            m_LoadedScripts.MoveAfter(index, after);
-            ScriptPositioningChanged?.Invoke();
-        }
-
-        public void MoveScriptBefore(int index, int before)
-        {
-            m_LoadedScripts.MoveBefore(index, before);
-            ScriptPositioningChanged?.Invoke();
-        }
-
-        public Script GetScriptFromCommand(Command command)
-        {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes().Select(n => n.value).Contains(command));
-        }
-
         private void MakeSureActiveScriptExist()
         {
             if (!m_LoadedScripts.Contains(ActiveScript) || m_LoadedScripts.Count == 0)
@@ -286,14 +82,30 @@ namespace Robot
                 ActiveScript = m_LoadedScripts[0];
         }
 
-        public IEnumerator<Script> GetEnumerator()
+        public override Script NewScript(Script clone = null)
         {
-            return m_LoadedScripts.GetEnumerator();
+            var s = base.NewScript(clone);
+            MakeSureActiveScriptExist();
+            return s;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override void RemoveScript(Script script)
         {
-            return m_LoadedScripts.GetEnumerator();
+            base.RemoveScript(script);
+            MakeSureActiveScriptExist();
+        }
+
+        public override void RemoveScript(int position)
+        {
+            base.RemoveScript(position);
+            MakeSureActiveScriptExist();
+        }
+
+        public override Script AddScript(Script script, bool removeScriptWithSamePath = false)
+        {
+            var s = base.AddScript(script, removeScriptWithSamePath);
+            MakeSureActiveScriptExist();
+            return s;
         }
     }
 }

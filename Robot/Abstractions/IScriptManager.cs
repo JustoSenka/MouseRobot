@@ -8,7 +8,7 @@ namespace Robot.Abstractions
     public interface IScriptManager
     {
         Script ActiveScript { get; set; }
-        IReadOnlyList<Script> LoadedScripts { get; }
+        IList<Script> LoadedScripts { get; }
 
         event Action<Script, Script> ActiveScriptChanged;
         event Action<Script, Command, Command> CommandAddedToScript;
