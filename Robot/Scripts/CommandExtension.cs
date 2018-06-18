@@ -13,6 +13,12 @@ namespace Robot
             return node.parent.IndexOf(command);
         }
 
+        public static int GetIndex(this Command command, Script script)
+        {
+            var node = script.Commands.GetNodeFromValue(command);
+            return node.parent.IndexOf(command);
+        }
+
         public static int GetIndex(this Script script, IScriptManager ScriptManager)
         {
             return ScriptManager.LoadedScripts.IndexOf(script);

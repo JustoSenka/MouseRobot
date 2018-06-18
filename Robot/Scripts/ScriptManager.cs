@@ -119,8 +119,6 @@ namespace Robot
             else
                 script = (Script)clone.Clone();
 
-            script.ScriptManager = this;
-
             m_LoadedScripts.Add(script);
             SubscribeToScriptEvents(script);
             script.IsDirty = true;
@@ -167,7 +165,6 @@ namespace Robot
                 RemoveScript(0);
 
             Script newScript = asset.Importer.ReloadAsset<Script>();
-            newScript.ScriptManager = this;
             newScript.Path = asset.Path;
 
             // If script was already loaded, reload it to last saved state
