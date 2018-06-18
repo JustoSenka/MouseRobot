@@ -392,7 +392,7 @@ namespace RobotEditor
                 return;
             }
 
-            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested || targetNode.Script != null;
+            e.DropSink.CanDropOnItem =  targetNode.Script != null || targetNode.Command.CanBeNested;
 
             if (targetNode.Script != null && sourceNode.Command != null)
                 e.DropSink.CanDropBetween = false;
