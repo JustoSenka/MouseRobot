@@ -85,7 +85,6 @@ namespace Tests
         private Script Script { get
             {
                 var s = new Script();
-                s.ScriptManager = new FakeScriptManager();
                 var imageCommand = new CommandForImage(new Guid(), 1850);
                 s.AddCommand(imageCommand);
                 s.AddCommand(new CommandPress(55, 66, true), imageCommand);

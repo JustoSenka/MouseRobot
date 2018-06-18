@@ -167,6 +167,9 @@ namespace RobotEditor
 
         private void OnStatusUpdated(Status status)
         {
+            if (!this.Created || !statusStrip.Created)
+                return;
+
             this.Invoke(new MethodInvoker(() =>
             {
                 statusStrip.Items[0].Text = status.EditorStatus;
@@ -281,7 +284,7 @@ namespace RobotEditor
         {
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Filter = string.Format("Files|*.*|Script File|*.{0}|Image File|*.{1}|Timeline File|*.{2}",
-                FileExtensions.Script, FileExtensions.Image, FileExtensions.Timeline);
+                FileExtensions.Script, FileExtensions.Image, FileExtensions.Test);
 
             openDialog.Title = "Select files to import.";
             openDialog.Multiselect = true;

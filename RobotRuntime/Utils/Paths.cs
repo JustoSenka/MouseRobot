@@ -11,11 +11,13 @@ namespace RobotRuntime.Utils
         public static string ImageFolder { get { return "Images"; } }
         public static string PluginFolder { get { return "Plugins"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
+        public static string TestsFolder { get { return "Tests"; } }
 
         public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
         public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
+        public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
 
         public static string AppName { get { return "MouseRobot"; } }
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
@@ -23,7 +25,7 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath }; }
+            get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath, TestsFolder }; }
         }
 
         public static string GetName(string path)
@@ -84,6 +86,8 @@ namespace RobotRuntime.Utils
                 return FileExtensions.Image;
             else if (folder == PluginFolder)
                 return FileExtensions.Plugin;
+            else if (folder == TestsFolder)
+                return FileExtensions.Test;
             else
                 return "";
         }
@@ -96,8 +100,8 @@ namespace RobotRuntime.Utils
                 return ImageFolder;
             else if (path.EndsWith(FileExtensions.Plugin))
                 return PluginFolder;
-            else if (path.EndsWith(FileExtensions.Timeline))
-                return "Timeline";
+            else if (path.EndsWith(FileExtensions.Test))
+                return TestsFolder;
             else
                 return "";
         }

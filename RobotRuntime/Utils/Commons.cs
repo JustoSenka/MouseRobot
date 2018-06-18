@@ -14,8 +14,8 @@ namespace RobotRuntime
         public const string Plugin = "cs";
         public const string PluginD = ".cs";
 
-        public const string Timeline = "mrt";
-        public const string TimelineD = ".mrt";
+        public const string Test = "mrt";
+        public const string TestD = ".mrt";
     }
 
     public static class RegexExpression
@@ -24,7 +24,7 @@ namespace RobotRuntime
         public const string GetScriptNameFromPath = GetNameWithDot + FileExtensions.Script;
         public const string GetImageNameFromPath = GetNameWithDot + FileExtensions.Image;
         public const string GetPluginNameFromPath = GetNameWithDot + FileExtensions.Plugin;
-        public const string GetTimelineNameFromPath = GetNameWithDot + FileExtensions.Timeline;
+        public const string GetTestNameFromPath = GetNameWithDot + FileExtensions.Test;
     }
 
     public static class Fonts
