@@ -138,6 +138,8 @@
     <Compile Include="Abstractions\ICroppingManager.cs" />
     <Compile Include="Abstractions\IRecordingManager.cs" />
     <Compile Include="Recording\RecordingManager.cs" />
+    <Compile Include="Scripts\AbstractCommandCollectionManager.cs" />
+    <Compile Include="Scripts\CommandCollection.cs" />
     <Compile Include="Scripts\CommandExtension.cs" />
     <Compile Include="Scripts\CommandFactory.cs" />
     <Compile Include="Abstractions\IScriptManager.cs" />
