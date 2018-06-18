@@ -55,22 +55,38 @@ namespace Robot
             m_LoadedScripts = new List<Script>();
         }
 
-        public void InvokeCommandAddedToScript(Script script, Command parentCommand, Command command)
+        private void SubscribeToScriptEvents(Script s)
+        {
+            s.CommandAddedToScript += InvokeCommandAddedToScript;
+            s.CommandInsertedInScript += InvokeCommandInsertedInScript;
+            s.CommandRemovedFromScript += InvokeCommandRemovedFromScript;
+            s.CommandModifiedOnScript += InvokeCommandModifiedOnScript;
+        }
+
+        private void UnsubscribeToScriptEvents(Script s)
+        {
+            s.CommandAddedToScript -= InvokeCommandAddedToScript;
+            s.CommandInsertedInScript -= InvokeCommandInsertedInScript;
+            s.CommandRemovedFromScript -= InvokeCommandRemovedFromScript;
+            s.CommandModifiedOnScript -= InvokeCommandModifiedOnScript;
+        }
+
+        private void InvokeCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
             CommandAddedToScript?.Invoke(script, parentCommand, command);
         }
 
-        public void InvokeCommandInsertedInScript(Script script, Command parentCommand, Command command, int index)
+        private void InvokeCommandInsertedInScript(Script script, Command parentCommand, Command command, int index)
         {
             CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
         }
 
-        public void InvokeCommandRemovedFromScript(Script script, Command parentCommand, int index)
+        private void InvokeCommandRemovedFromScript(Script script, Command parentCommand, int index)
         {
             CommandRemovedFromScript?.Invoke(script, parentCommand, index);
         }
 
-        public void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
+        private void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
             CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
         }
@@ -106,6 +122,7 @@ namespace Robot
             script.ScriptManager = this;
 
             m_LoadedScripts.Add(script);
+            SubscribeToScriptEvents(script);
             script.IsDirty = true;
 
             MakeSureActiveScriptExist();
@@ -118,6 +135,7 @@ namespace Robot
             var position = m_LoadedScripts.IndexOf(script);
 
             m_LoadedScripts.Remove(script);
+            UnsubscribeToScriptEvents(script);
 
             MakeSureActiveScriptExist();
 
@@ -126,6 +144,7 @@ namespace Robot
 
         public void RemoveScript(int position)
         {
+            UnsubscribeToScriptEvents(m_LoadedScripts[position]);
             m_LoadedScripts.RemoveAt(position);
 
             MakeSureActiveScriptExist();
@@ -157,6 +176,8 @@ namespace Robot
             {
                 // Reload Script
                 var index = m_LoadedScripts.IndexOf(oldScript);
+                UnsubscribeToScriptEvents(oldScript);
+
                 m_LoadedScripts[index] = newScript;
                 MakeSureActiveScriptExist();
                 ScriptModified?.Invoke(newScript);
@@ -168,6 +189,8 @@ namespace Robot
                 MakeSureActiveScriptExist();
                 ScriptLoaded?.Invoke(newScript);
             }
+
+            SubscribeToScriptEvents(newScript);
 
             Profiler.Stop("ScriptManager_LoadScript");
             return newScript;

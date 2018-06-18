@@ -17,6 +17,11 @@ namespace Robot.Scripts
         public event Action<Script> DirtyChanged;
         public const string DefaultScriptName = "New Script";
 
+        public event Action<Script, Command, Command> CommandAddedToScript;
+        public event Action<Script, Command, Command, int> CommandInsertedInScript;
+        public event Action<Script, Command, int> CommandRemovedFromScript;
+        public event Action<Script, Command, Command> CommandModifiedOnScript;
+
         public string Name
         {
             get
@@ -42,7 +47,7 @@ namespace Robot.Scripts
         public void ApplyCommandModifications(Command command)
         {
             m_IsDirty = true;
-            ScriptManager.InvokeCommandModifiedOnScript(this, command, command);
+            CommandModifiedOnScript?.Invoke(this, command, command);
         }
 
         /// <summary>
@@ -57,7 +62,7 @@ namespace Robot.Scripts
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.AddChild(command);
-            ScriptManager.InvokeCommandAddedToScript(this, parentCommand, command);
+            CommandAddedToScript?.Invoke(this, parentCommand, command);
             return command;
         }
 
@@ -74,7 +79,7 @@ namespace Robot.Scripts
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.Join(commandNode);
-            ScriptManager.InvokeCommandAddedToScript(this, parentCommand, commandNode.value);
+            CommandAddedToScript?.Invoke(this, parentCommand, commandNode.value);
             return commandNode.value;
         }
 
@@ -92,7 +97,7 @@ namespace Robot.Scripts
             var node = Commands.GetNodeFromValue(originalCommand);
             node.value = newCommand;
 
-            ScriptManager.InvokeCommandModifiedOnScript(this, originalCommand, newCommand);
+            CommandModifiedOnScript?.Invoke(this, originalCommand, newCommand);
             return newCommand;
         }
 
@@ -107,7 +112,7 @@ namespace Robot.Scripts
             treeNodeToInsert.Insert(position, command);
 
             m_IsDirty = true;
-            ScriptManager.InvokeCommandInsertedInScript(this, parentCommand, command, position);
+            CommandInsertedInScript?.Invoke(this, parentCommand, command, position);
             return command;
         }
 
@@ -143,8 +148,8 @@ namespace Robot.Scripts
 
             Commands.MoveAfter(source, after);
 
-            ScriptManager.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
-            ScriptManager.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex(ScriptManager));
+            CommandRemovedFromScript?.Invoke(this, sourceParentCommand, oldIndex);
+            CommandInsertedInScript?.Invoke(this, destParentCommand, source, source.GetIndex(ScriptManager));
             m_IsDirty = true;
         }
 
@@ -163,8 +168,8 @@ namespace Robot.Scripts
 
             Commands.MoveBefore(source, before);
 
-            ScriptManager.InvokeCommandRemovedFromScript(this, sourceParentCommand, oldIndex);
-            ScriptManager.InvokeCommandInsertedInScript(this, destParentCommand, source, source.GetIndex(ScriptManager));
+            CommandRemovedFromScript?.Invoke(this, sourceParentCommand, oldIndex);
+            CommandInsertedInScript?.Invoke(this, destParentCommand, source, source.GetIndex(ScriptManager));
             m_IsDirty = true;
         }
 
@@ -177,7 +182,7 @@ namespace Robot.Scripts
 
             Commands.Remove(command);
 
-            ScriptManager.InvokeCommandRemovedFromScript(this, parentCommand, oldIndex);
+            CommandRemovedFromScript?.Invoke(this, parentCommand, oldIndex);
             m_IsDirty = true;
         }
 
