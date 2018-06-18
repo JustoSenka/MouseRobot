@@ -30,14 +30,6 @@ namespace Robot.Scripts
             }
         }
 
-        public int Index
-        {
-            get
-            {
-                return ScriptManager.LoadedScripts.IndexOf(this);
-            }
-        }
-
         public IScriptManager ScriptManager { get; set; }
         public Script()
         {

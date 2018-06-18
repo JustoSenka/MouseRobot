@@ -15,6 +15,7 @@ using System.Drawing;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotEditor.Hierarchy;
+using Robot;
 
 namespace RobotEditor
 {
@@ -147,7 +148,7 @@ namespace RobotEditor
         private void OnScriptModified(Script script)
         {
             var node = new HierarchyNode(script);
-            var index = script.Index;
+            var index = script.GetIndex(ScriptManager);
             m_Nodes[index] = node;
             RefreshTreeListView();
 
@@ -172,7 +173,7 @@ namespace RobotEditor
             foreach (var script in ScriptManager.LoadedScripts)
             {
                 var index = m_Nodes.FindIndex(n => n.Script == script);
-                m_Nodes.MoveBefore(index, script.Index);
+                m_Nodes.MoveBefore(index, script.GetIndex(ScriptManager));
             }
 
             RefreshTreeListView();
@@ -280,7 +281,7 @@ namespace RobotEditor
             if (selectedNode.Script != null)
             {
                 ScriptManager.NewScript(selectedNode.Script);
-                ScriptManager.MoveScriptAfter(ScriptManager.LoadedScripts.Count - 1, selectedNode.Script.Index);
+                ScriptManager.MoveScriptAfter(ScriptManager.LoadedScripts.Count - 1, selectedNode.Script.GetIndex(ScriptManager));
             }
             else if (selectedNode.Command != null)
             {
@@ -388,9 +389,9 @@ namespace RobotEditor
             if (targetNode.Script != null && sourceNode.Script != null)
             {
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.MoveScriptBefore(sourceNode.Script.Index, targetNode.Script.Index);
+                    ScriptManager.MoveScriptBefore(sourceNode.Script.GetIndex(ScriptManager), targetNode.Script.GetIndex(ScriptManager));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.MoveScriptAfter(sourceNode.Script.Index, targetNode.Script.Index);
+                    ScriptManager.MoveScriptAfter(sourceNode.Script.GetIndex(ScriptManager), targetNode.Script.GetIndex(ScriptManager));
             }
 
             if (targetNode.Command != null && sourceNode.Command != null)
@@ -399,9 +400,9 @@ namespace RobotEditor
                 var sourceScript = ScriptManager.GetScriptFromCommand(sourceNode.Command);
 
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
+                    ScriptManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.GetIndex(ScriptManager), targetScript.GetIndex(ScriptManager));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.Index, targetScript.Index);
+                    ScriptManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.GetIndex(ScriptManager), targetScript.GetIndex(ScriptManager));
 
                 if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
                 {

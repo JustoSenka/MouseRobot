@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using Robot.Scripts;
 using RobotRuntime;
 
 namespace Robot
@@ -10,6 +11,11 @@ namespace Robot
             var script = ScriptManager.GetScriptFromCommand(command);
             var node = script.Commands.GetNodeFromValue(command);
             return node.parent.IndexOf(command);
+        }
+
+        public static int GetIndex(this Script script, IScriptManager ScriptManager)
+        {
+            return ScriptManager.LoadedScripts.IndexOf(script);
         }
     }
 }
