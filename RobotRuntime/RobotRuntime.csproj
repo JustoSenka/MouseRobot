@@ -222,10 +222,12 @@
     <Compile Include="Plugins\PluginDomainManager.cs" />
     <Compile Include="Plugins\PluginLoader.cs" />
     <Compile Include="Plugins\PluginLoaderNoDomain.cs" />
+    <Compile Include="Scripts\Script.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
     <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
     <Compile Include="Settings\RuntimeSettings.cs" />
+    <Compile Include="Tests\TestFixture.cs" />
     <Compile Include="zExtensionMethods\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="zExtensionMethods\CommandExtension.cs" />

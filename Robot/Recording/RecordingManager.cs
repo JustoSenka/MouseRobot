@@ -6,6 +6,7 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
+using RobotRuntime.Scripts;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;

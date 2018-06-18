@@ -3,6 +3,7 @@ using Robot.Scripts;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
+using RobotRuntime.Scripts;
 using RobotRuntime.Utils;
 using System;
 using System.Linq;

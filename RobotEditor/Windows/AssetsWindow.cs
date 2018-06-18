@@ -2,6 +2,7 @@
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Scripts;
 using RobotRuntime.Utils;
 using System;
 using System.Linq;

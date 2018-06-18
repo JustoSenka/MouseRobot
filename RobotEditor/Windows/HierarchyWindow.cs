@@ -16,6 +16,7 @@ using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotEditor.Hierarchy;
 using Robot;
+using RobotRuntime.Scripts;
 
 namespace RobotEditor
 {

@@ -1,12 +1,11 @@
-﻿using RobotRuntime;
-using RobotRuntime.Utils;
+﻿using RobotRuntime.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Robot.Scripts
+namespace RobotRuntime.Scripts
 {
     public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
     {
