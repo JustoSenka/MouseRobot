@@ -226,6 +226,11 @@ namespace Robot.Scripts
             return node.parent.IndexOf(command);
         }
 
+        public int GetScriptIndex(Script script)
+        {
+            return LoadedScripts.IndexOf(script);
+        }
+
         public IEnumerator<Script> GetEnumerator()
         {
             return m_LoadedScripts.GetEnumerator();

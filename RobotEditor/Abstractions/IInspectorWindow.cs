@@ -1,9 +1,10 @@
-﻿using RobotRuntime;
+﻿using Robot.Scripts;
+using RobotRuntime;
 
 namespace RobotEditor.Abstractions
 {
     public interface IInspectorWindow
     {
-        void ShowCommand<T>(T command) where T : Command;
+        void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command;
     }
 }

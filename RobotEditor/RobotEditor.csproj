@@ -226,11 +226,11 @@
     </Compile>
     <Compile Include="Abstractions\IConsoleWindow.cs" />
     <Compile Include="Editor\FlexibleMessageBox.cs" />
-    <Compile Include="Windows\TestRunnerWindow.cs">
+    <Compile Include="Windows\TestFixtureWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Windows\TestRunnerWindow.Designer.cs">
-      <DependentUpon>TestRunnerWindow.cs</DependentUpon>
+    <Compile Include="Windows\TestFixtureWindow.Designer.cs">
+      <DependentUpon>TestFixtureWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\InspectorWindow.cs">
       <SubType>Form</SubType>
@@ -288,6 +288,7 @@
       <DependentUpon>HierarchyWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\DynamicTypeDescriptor.cs" />
+    <Compile Include="zExtensionMethods\HierarchyNodeExtension.cs" />
     <EmbeddedResource Include="Windows\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -297,8 +298,8 @@
     <EmbeddedResource Include="Windows\ConsoleWindow.resx">
       <DependentUpon>ConsoleWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Windows\TestRunnerWindow.resx">
-      <DependentUpon>TestRunnerWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Windows\TestFixtureWindow.resx">
+      <DependentUpon>TestFixtureWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\InspectorWindow.resx">
       <DependentUpon>InspectorWindow.cs</DependentUpon>

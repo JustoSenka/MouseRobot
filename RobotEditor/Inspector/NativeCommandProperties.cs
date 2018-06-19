@@ -14,8 +14,8 @@ namespace RobotEditor.Inspector
     {
         private IAssetManager AssetManager;
         private IAssetGuidManager AssetGuidManager;
-        public NativeCommandProperties(IAssetManager AssetManager, IScriptManager ScriptManager, IAssetGuidManager AssetGuidManager, ICommandFactory CommandFactory)
-            : base(ScriptManager, CommandFactory)
+        public NativeCommandProperties(IAssetManager AssetManager, IAssetGuidManager AssetGuidManager, ICommandFactory CommandFactory)
+            : base(CommandFactory)
         {
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;

@@ -10,8 +10,8 @@ namespace RobotRuntime.Tests
 {
     public class TestFixture : BaseScriptManager
     {
-        public const string k_DefaultTestFixtureName = "New Fixture";
-        public const string k_DefaultTestName = "New Test";
+        public const string DefaultTestFixtureName = "New Fixture";
+        public const string DefaultTestName = "New Test";
 
         public const string k_Setup = "Setup";
         public const string k_TearDown = "TearDown";
@@ -24,6 +24,9 @@ namespace RobotRuntime.Tests
         public Script OneTimeTeardown { get { return GetScriptWithName(k_OneTimeTeardown); } set { ReplaceScriptWithName(k_OneTimeTeardown, value); } }
 
         public IList<Script> Tests { get { return GetAllTests(); } }
+        public IList<Script> Hooks { get { return GetAllHooks(); } }
+
+        public string Name { get; set; } = DefaultTestFixtureName;
 
         private bool m_IsDirty;
         public bool IsDirty
@@ -44,6 +47,11 @@ namespace RobotRuntime.Tests
         public TestFixture(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger) : base(CommandFactory, Profiler)
         {
             this.Logger = Logger;
+
+            AddScript(new Script() { Name = k_Setup });
+            AddScript(new Script() { Name = k_TearDown });
+            AddScript(new Script() { Name = k_OneTimeSetup });
+            AddScript(new Script() { Name = k_OneTimeTeardown });
         }
 
         private Script GetScriptWithName(string name)
@@ -67,6 +75,11 @@ namespace RobotRuntime.Tests
         private IList<Script> GetAllTests()
         {
            return LoadedScripts.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
+        }
+
+        private IList<Script> GetAllHooks()
+        {
+            return LoadedScripts.Where(s => s.Name == k_Setup || s.Name == k_TearDown || s.Name == k_OneTimeSetup || s.Name == k_OneTimeTeardown).ToList();
         }
     }
 }

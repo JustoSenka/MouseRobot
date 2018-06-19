@@ -1,4 +1,4 @@
-﻿#define ENABLE_UI_TESTING
+﻿//#define ENABLE_UI_TESTING
 
 using System;
 using RobotEditor.Abstractions;
@@ -9,52 +9,61 @@ using BrightIdeasSoftware;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using Robot.Scripts;
-using RobotRuntime.Utils;
 using System.Drawing;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotEditor.Hierarchy;
-using Robot;
 using RobotRuntime.Scripts;
+using RobotRuntime.Tests;
+using Unity;
 
 namespace RobotEditor
 {
-    public partial class TestRunnerWindow : DockContent
+    public partial class TestFixtureWindow : DockContent
     {
         public event Action<Command> OnCommandSelected;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
 
-        private IScriptManager ScriptManager;
+        public TestFixture m_TestFixture;
+        private HierarchyNode m_HooksNode;
+        private HierarchyNode m_TestsNode;
+
         private ITestRunner TestRunner;
         private IAssetManager AssetManager;
         private IHierarchyNodeStringConverter HierarchyNodeStringConverter;
-        public TestRunnerWindow(IScriptManager ScriptManager, ITestRunner TestRunner, IAssetManager AssetManager, IHierarchyNodeStringConverter HierarchyNodeStringConverter)
+        private ICommandFactory CommandFactory;
+        public TestFixtureWindow(IUnityContainer UnityContainer, ITestRunner TestRunner, IAssetManager AssetManager,
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory)
         {
-            this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
+            this.CommandFactory = CommandFactory;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
 
             treeListView.Font = Fonts.Default;
 
-            ScriptManager.CommandAddedToScript += OnCommandAddedToScript;
-            ScriptManager.CommandRemovedFromScript += OnCommandRemovedFromScript;
-            ScriptManager.CommandModifiedOnScript += OnCommandModifiedOnScript;
-            ScriptManager.CommandInsertedInScript += OnCommandInsertedInScript;
+            m_TestFixture = UnityContainer.Resolve<TestFixture>();
 
-            ScriptManager.ScriptAdded += OnScriptLoaded;
-            ScriptManager.ScriptModified += OnScriptModified;
-            ScriptManager.ScriptRemoved += OnScriptRemoved;
-            ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;
+            m_TestFixture.CommandAddedToScript += OnCommandAddedToScript;
+            m_TestFixture.CommandRemovedFromScript += OnCommandRemovedFromScript;
+            m_TestFixture.CommandModifiedOnScript += OnCommandModifiedOnScript;
+            m_TestFixture.CommandInsertedInScript += OnCommandInsertedInScript;
+
+            m_TestFixture.ScriptAdded += OnScriptLoaded;
+            m_TestFixture.ScriptModified += OnScriptModified;
+            m_TestFixture.ScriptRemoved += OnScriptRemoved;
+            m_TestFixture.ScriptPositioningChanged += OnScriptPositioningChanged;
 
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
+
+            CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
+            OnNewUserCommandsAppeared();
 
             CreateColumns();
             UpdateHierarchy();
@@ -92,11 +101,7 @@ namespace RobotEditor
 
             if (node.Script != null)
             {
-                if (node.Script == ScriptManager.ActiveScript && node.Script.IsDirty)
-                    e.SubItem.Font = Fonts.ActiveAndDirtyScript;//.AddFont(Fonts.ActiveScript);
-                else if (node.Script == ScriptManager.ActiveScript)
-                    e.SubItem.Font = Fonts.ActiveScript;
-                else if (node.Script.IsDirty)
+                if (node.Script.IsDirty)
                     e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
                 else
                     e.SubItem.Font = Fonts.Default;
@@ -113,8 +118,16 @@ namespace RobotEditor
         {
             m_Nodes.Clear();
 
-            foreach (var s in ScriptManager.LoadedScripts)
-                m_Nodes.Add(new HierarchyNode(s));
+            m_HooksNode = new HierarchyNode("Special Scripts");
+            foreach (var s in m_TestFixture.Hooks)
+                m_HooksNode.AddHierarchyNode(new HierarchyNode(s));
+
+            m_TestsNode = new HierarchyNode("Tests");
+            foreach (var s in m_TestFixture.Tests)
+                m_TestsNode.AddHierarchyNode(new HierarchyNode(s));
+
+            m_Nodes.Add(m_HooksNode);
+            m_Nodes.Add(m_TestsNode);
 
             RefreshTreeListView();
             treeListView.ExpandAll();
@@ -131,13 +144,30 @@ namespace RobotEditor
             treeListView.Refresh();
         }
 
+        private void OnNewUserCommandsAppeared()
+        {
+            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[8];
+
+            createMenuItem.DropDownItems.Clear();
+            foreach (var name in CommandFactory.CommandNames)
+            {
+                var item = new ToolStripMenuItem(name);
+                item.Click += (sender, events) =>
+                {
+                    var command = CommandFactory.Create(name);
+                    m_TestFixture.Setup.AddCommand(command);
+                };
+                createMenuItem.DropDownItems.Add(item);
+            }
+        }
+
 
         #region ScriptManager Callbacks
 
         private void OnScriptLoaded(Script script)
         {
             var node = new HierarchyNode(script);
-            m_Nodes.Add(node);
+            m_TestsNode.AddHierarchyNode(node);
             RefreshTreeListView();
 
             treeListView.SelectedObject = node;
@@ -149,8 +179,8 @@ namespace RobotEditor
         private void OnScriptModified(Script script)
         {
             var node = new HierarchyNode(script);
-            var index = script.GetIndex(ScriptManager);
-            m_Nodes[index] = node;
+            m_Nodes.ReplaceNodeWithNewOne(node);
+
             RefreshTreeListView();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
@@ -160,7 +190,7 @@ namespace RobotEditor
         {
             var oldSelectedObject = treeListView.SelectedObject;
 
-            m_Nodes.RemoveAt(index);
+            m_Nodes.RemoveAtIndexRemoving4(index);
             RefreshTreeListView();
 
             if (treeListView.SelectedObject != oldSelectedObject)
@@ -171,10 +201,18 @@ namespace RobotEditor
 
         private void OnScriptPositioningChanged()
         {
-            foreach (var script in ScriptManager.LoadedScripts)
+            foreach (var script in m_TestFixture.Tests)
             {
-                var index = m_Nodes.FindIndex(n => n.Script == script);
-                m_Nodes.MoveBefore(index, script.GetIndex(ScriptManager));
+                var index = m_TestsNode.Children.FindIndex(n => n.Script == script);
+                var indexInBackend = m_TestFixture.GetScriptIndex(script) - 4; // -4 since 4 scripts are reserved as hooks
+                m_TestsNode.Children.MoveBefore(index, indexInBackend);
+            }
+
+            // Hooks do not allow drag and drop, but keeping here in case of position changing from script
+            foreach (var script in m_TestFixture.Hooks)
+            {
+                var index = m_HooksNode.Children.FindIndex(n => n.Script == script);
+                m_HooksNode.Children.MoveBefore(index, m_TestFixture.GetScriptIndex(script));
             }
 
             RefreshTreeListView();
@@ -186,7 +224,7 @@ namespace RobotEditor
             var parentNode = script.Commands.GetNodeFromValue(command).parent;
             System.Diagnostics.Debug.Assert(parentNode.value == parentCommand, "parentCommand and parentNode missmatched");
 
-            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
+            var scriptNode = m_Nodes.FindRecursively(script);
 
             var parentHierarchyNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentNode.value);
             AddCommandToParentRecursive(script, command, parentHierarchyNode);
@@ -215,7 +253,7 @@ namespace RobotEditor
 
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
+            var scriptNode = m_Nodes.FindRecursively(script);
             var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
 
             parentNode.Children.RemoveAt(commandIndex);
@@ -224,7 +262,7 @@ namespace RobotEditor
 
         private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
+            var scriptNode = m_Nodes.FindRecursively(script);
             var commandNode = scriptNode.GetNodeFromValue(oldCommand);
 
             commandNode.Update(newCommand);
@@ -234,7 +272,7 @@ namespace RobotEditor
         // Will not work with multi dragging
         private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
+            var scriptNode = m_Nodes.FindRecursively(script);
             var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
 
             var node = AddCommandToParentRecursive(script, command, parentNode, pos);
@@ -248,17 +286,12 @@ namespace RobotEditor
         #region Context Menu Items
         private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var selectedNode = treeListView.SelectedObject as HierarchyNode;
-            if (selectedNode == null || selectedNode.Script == null)
-                return;
 
-            ScriptManager.ActiveScript = selectedNode.Script;
-            RefreshTreeListView();
         }
 
         public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            ScriptManager.NewScript();
+            m_TestFixture.NewScript();
             RefreshTreeListView();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
@@ -281,8 +314,8 @@ namespace RobotEditor
 
             if (selectedNode.Script != null)
             {
-                ScriptManager.NewScript(selectedNode.Script);
-                ScriptManager.MoveScriptAfter(ScriptManager.LoadedScripts.Count - 1, selectedNode.Script.GetIndex(ScriptManager));
+                m_TestFixture.NewScript(selectedNode.Script);
+                m_TestFixture.MoveScriptAfter(m_TestFixture.LoadedScripts.Count - 1, m_TestFixture.GetScriptIndex(selectedNode.Script));
             }
             else if (selectedNode.Command != null)
             {
@@ -308,9 +341,9 @@ namespace RobotEditor
                 return;
 
             if (selectedNode.Script != null)
-                ScriptManager.RemoveScript(selectedNode.Script);
+                m_TestFixture.RemoveScript(selectedNode.Script);
             else if (selectedNode.Command != null)
-                ScriptManager.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+                m_TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
             RefreshTreeListView();
 
@@ -320,34 +353,34 @@ namespace RobotEditor
 
         #region Menu Items (save scripts from MainForm)
         public void SaveAllScripts()
-        {
-            foreach (var script in ScriptManager)
+        {/*
+            foreach (var script in TestFixture)
             {
                 if (!script.IsDirty)
                     continue;
 
                 if (script.Path != "")
-                    ScriptManager.SaveScript(script, script.Path);
+                    TestFixture.SaveScript(script, script.Path);
                 else
                     SaveSelectedScriptWithDialog(script, updateUI: false);
             }
-
+            */
             RefreshTreeListView();
         }
 
         public void SaveSelectedScriptWithDialog(Script script, bool updateUI = true)
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.ScriptFolder;
-            saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
-            saveDialog.Title = "Select a path for script to save.";
-            saveDialog.FileName = script.Name + FileExtensions.ScriptD;
-            if (saveDialog.ShowDialog() == DialogResult.OK)
-            {
-                ScriptManager.SaveScript(script, saveDialog.FileName);
-                if (updateUI)
-                    RefreshTreeListView();
-            }
+            /* SaveFileDialog saveDialog = new SaveFileDialog();
+             saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.ScriptFolder;
+             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
+             saveDialog.Title = "Select a path for script to save.";
+             saveDialog.FileName = script.Name + FileExtensions.ScriptD;
+             if (saveDialog.ShowDialog() == DialogResult.OK)
+             {
+                 ScriptManager.SaveScript(script, saveDialog.FileName);
+                 if (updateUI)
+                     RefreshTreeListView();
+             }*/
         }
         #endregion
 
@@ -361,14 +394,19 @@ namespace RobotEditor
             e.DropSink.CanDropBetween = true;
 
             if (targetNode == null || sourceNode == null ||
-                targetNode.Script == null && sourceNode.Command == null ||
-                targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item)
+                sourceNode.Script == null && sourceNode.Command == null || // Source node is empty string value
+                targetNode.Script == null && targetNode.Command == null || // Target node is empty string value
+                targetNode.Script == null && sourceNode.Command == null || // Cannot drag scripts onto commands
+                m_HooksNode.Children.Contains(sourceNode) || // Hooks scripts are special and should not be moved at all
+                m_HooksNode.Children.Contains(targetNode) && sourceNode.Script != null || // Cannot drag any script onto or inbetween hooks scripts
+                targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item) // Cannot drag scripts onto scripts
             {
                 e.Effect = DragDropEffects.None;
                 return;
             }
 
-            e.DropSink.CanDropOnItem = targetNode.Command.CanBeNested || targetNode.Script != null;
+            e.DropSink.CanDropOnItem = sourceNode.Script == null && // We don't want scripts to be dropped on any item
+                (targetNode.Script != null || targetNode.Command.CanBeNested); // Everything can be dropped on script and commands with nested tag can also be dropped onto
 
             if (targetNode.Script != null && sourceNode.Command != null)
                 e.DropSink.CanDropBetween = false;
@@ -390,20 +428,20 @@ namespace RobotEditor
             if (targetNode.Script != null && sourceNode.Script != null)
             {
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.MoveScriptBefore(sourceNode.Script.GetIndex(ScriptManager), targetNode.Script.GetIndex(ScriptManager));
+                    m_TestFixture.MoveScriptBefore(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.MoveScriptAfter(sourceNode.Script.GetIndex(ScriptManager), targetNode.Script.GetIndex(ScriptManager));
+                    m_TestFixture.MoveScriptAfter(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
             }
 
             if (targetNode.Command != null && sourceNode.Command != null)
             {
-                var targetScript = ScriptManager.GetScriptFromCommand(targetNode.Command);
-                var sourceScript = ScriptManager.GetScriptFromCommand(sourceNode.Command);
+                var targetScript = m_TestFixture.GetScriptFromCommand(targetNode.Command);
+                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
 
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    ScriptManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceScript.GetIndex(ScriptManager), targetScript.GetIndex(ScriptManager));
+                    m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    ScriptManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceScript.GetIndex(ScriptManager), targetScript.GetIndex(ScriptManager));
+                    m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
 
                 if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
                 {
@@ -415,7 +453,7 @@ namespace RobotEditor
 
             if (targetNode.Script != null && sourceNode.Command != null)
             {
-                var sourceScript = ScriptManager.GetScriptFromCommand(sourceNode.Command);
+                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
 
                 var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
                 sourceScript.RemoveCommand(sourceNode.Command);
@@ -429,11 +467,11 @@ namespace RobotEditor
 
         private void OnCommandRunning(Command command)
         {
-            var script = ScriptManager.GetScriptFromCommand(command);
+            var script = m_TestFixture.GetScriptFromCommand(command);
             if (script == null)
                 return;
 
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
+            var scriptNode = m_Nodes.FindRecursively(script);
             if (scriptNode == null)
                 return;
 
@@ -496,13 +534,13 @@ namespace RobotEditor
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].Script == ScriptManager.LoadedScripts[i],
+                Debug.Assert(m_Nodes[i].Script == m_TestFixture.LoadedScripts[i],
                     string.Format("Hierarchy script missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
 
                 // Will not work in nested scenarios
                 for (int j = 0; j < m_Nodes[i].Script.Commands.Count(); j++)
                 {
-                    Debug.Assert(m_Nodes[i].Children[j].Command == ScriptManager.LoadedScripts[i].Commands.GetChild(j).value,
+                    Debug.Assert(m_Nodes[i].Children[j].Command == m_TestFixture.LoadedScripts[i].Commands.GetChild(j).value,
                         string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
                         i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Script.Commands.GetChild(j).value.ToString()));
                 }

@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using Robot.Scripts;
 using RobotEditor.PropertyUtils;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
@@ -18,13 +19,14 @@ namespace RobotEditor.Inspector
         [Browsable(false)]
         public override string Title { get { return "Command Properties"; } }
 
-        protected PropertyDescriptorCollection Properties;
+        [Browsable(false)]
+        [NonSerialized]
+        public BaseScriptManager BaseScriptManager;
 
-        private IScriptManager ScriptManager;
+        protected PropertyDescriptorCollection Properties;
         private ICommandFactory CommandFactory;
-        public CommandProperties(IScriptManager ScriptManager, ICommandFactory CommandFactory)
+        public CommandProperties(ICommandFactory CommandFactory)
         {
-            this.ScriptManager = ScriptManager;
             this.CommandFactory = CommandFactory;
 
             Properties = TypeDescriptor.GetProperties(this);
@@ -43,7 +45,7 @@ namespace RobotEditor.Inspector
             set
             {
                 var newCommand = CommandFactory.Create(value, Command);
-                ScriptManager.GetScriptFromCommand(Command).ReplaceCommand(Command, newCommand);
+                BaseScriptManager.GetScriptFromCommand(Command).ReplaceCommand(Command, newCommand);
                 Command = newCommand;
             }
         }

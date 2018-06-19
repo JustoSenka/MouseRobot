@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace RobotRuntime
 {
@@ -13,7 +14,17 @@ namespace RobotRuntime
         public event Action<Log> OnLogReceived;
         public event Action LogCleared;
 
-        public IList<Log> LogList { get; private set; } = new List<Log>();
+        private IList<Log> m_LogList = new List<Log>();
+        public IList<Log> LogList
+        {
+            get
+            {
+                lock (m_LogLock)
+                {
+                    return m_LogList.ToList();
+                }
+            }
+        }
 
         private string LogName { get { return "Log.txt"; } }
         private string LogPath { get { return Path.Combine(Paths.RoamingAppdataPath, LogName); } }
@@ -35,7 +46,7 @@ namespace RobotRuntime
         {
             lock (m_LogLock)
             {
-                LogList = new List<Log>();
+                m_LogList = new List<Log>();
                 LogCleared?.Invoke();
             }
         }
@@ -62,7 +73,7 @@ namespace RobotRuntime
                 Console.WriteLine(str);
                 Debug.WriteLine(str);
 
-                LogList.Add(log);
+                m_LogList.Add(log);
 
                 var strToFile = log.HasDescription() ? str + Environment.NewLine + description : str;
                 var multilineStr = new string[] { strToFile, log.Stacktrace.ToString() + Environment.NewLine };

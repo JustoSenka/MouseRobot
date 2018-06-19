@@ -16,6 +16,8 @@ namespace RobotRuntime.Tests
 
         public IList<Script> Tests { get; private set; }
 
+        public string Name { get; set; }
+
         public LightTestFixture()
         {
 

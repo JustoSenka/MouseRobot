@@ -7,8 +7,8 @@ namespace RobotEditor.Inspector
     /// </summary>
     public class DefaultCommandProperties : CommandProperties
     {
-        public DefaultCommandProperties(IScriptManager ScriptManager, ICommandFactory CommandFactory)
-            : base(ScriptManager, CommandFactory)
+        public DefaultCommandProperties(ICommandFactory CommandFactory)
+            : base(CommandFactory)
         {
         }
     }

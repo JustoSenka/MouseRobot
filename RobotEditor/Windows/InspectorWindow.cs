@@ -10,6 +10,7 @@ using System;
 using Unity;
 using System.Linq;
 using RobotRuntime.Execution;
+using Robot.Scripts;
 
 namespace RobotEditor.Windows
 {
@@ -22,13 +23,13 @@ namespace RobotEditor.Windows
         private Type[] m_UserDesignerTypes;
         private Type[] m_DesignerTypes;
 
+        private BaseScriptManager BaseScriptManager;
+
         private new IUnityContainer Container;
-        private IScriptManager ScriptManager;
         private IPluginLoader PluginLoader;
         private ILogger Logger;
-        public InspectorWindow(IUnityContainer Container, IScriptManager ScriptManager, IPluginLoader PluginLoader, ILogger Logger)
+        public InspectorWindow(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
         {
-            this.ScriptManager = ScriptManager;
             this.Container = Container;
             this.PluginLoader = PluginLoader;
             this.Logger = Logger;
@@ -63,7 +64,7 @@ namespace RobotEditor.Windows
             m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 
-        public void ShowCommand<T>(T command) where T : Command
+        public void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command
         {
             if (command == null)
             {
@@ -74,6 +75,9 @@ namespace RobotEditor.Windows
             var designerType = GetDesignerTypeForCommand(command.GetType());
             m_CurrentObject = (CommandProperties)Container.Resolve(designerType);
 
+            this.BaseScriptManager = BaseScriptManager;
+            m_CurrentObject.BaseScriptManager = BaseScriptManager;
+
             m_OldCommand = command;
             m_CurrentObject.Command = command;
             ApplyDynamicTypeDescriptorToPropertyView();
@@ -82,11 +86,11 @@ namespace RobotEditor.Windows
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             var command = m_CurrentObject.Command;
-            ScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
+            BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
             // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
             if (m_OldCommand.GetType() != command.GetType())
-                ShowCommand(command);
+                ShowCommand(command, BaseScriptManager);
             // If not, updating type descriptor is enough
             else
                 ApplyDynamicTypeDescriptorToPropertyView();

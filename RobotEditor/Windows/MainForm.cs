@@ -14,6 +14,7 @@ using RobotEditor.Windows;
 using Robot.Settings;
 using RobotRuntime.Settings;
 using RobotRuntime.Logging;
+using Robot.Scripts;
 
 namespace RobotEditor
 {
@@ -31,7 +32,7 @@ namespace RobotEditor
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
         private IConsoleWindow m_ConsoleWindow;
-        private TestRunnerWindow m_TestRunnerWindow;
+        private TestFixtureWindow m_TestRunnerWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -47,7 +48,7 @@ namespace RobotEditor
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestRunnerWindow TestRunnerWindow, IStatusManager StatusManager)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestFixtureWindow TestRunnerWindow, IStatusManager StatusManager)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -94,7 +95,8 @@ namespace RobotEditor
             InputCallbacks.InputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
-            m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick;
+            m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick_Hierarchy;
+            m_TestRunnerWindow.OnCommandSelected += OnCommandDoubleClick_TestFixture;
 
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
@@ -160,9 +162,14 @@ namespace RobotEditor
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
         }
 
-        private void OnCommandDoubleClick(Command command)
+        private void OnCommandDoubleClick_Hierarchy(Command command)
         {
-            m_InspectorWindow.ShowCommand(command);
+            m_InspectorWindow.ShowCommand(command, (BaseScriptManager)ScriptManager);
+        }
+
+        private void OnCommandDoubleClick_TestFixture(Command command)
+        {
+            m_InspectorWindow.ShowCommand(command, m_TestRunnerWindow.m_TestFixture);
         }
 
         private void OnStatusUpdated(Status status)
@@ -379,7 +386,7 @@ namespace RobotEditor
 
         private void testRunnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((TestRunnerWindow)m_TestRunnerWindow).Show(m_DockPanel);
+            ((TestFixtureWindow)m_TestRunnerWindow).Show(m_DockPanel);
         }
 
         #endregion

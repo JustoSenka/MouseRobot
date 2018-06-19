@@ -9,7 +9,6 @@ using BrightIdeasSoftware;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using Robot.Scripts;
 using RobotRuntime.Utils;
 using System.Drawing;
 using Robot.Abstractions;
@@ -312,7 +311,7 @@ namespace RobotEditor
             }
             else if (selectedNode.Command != null)
             {
-                var script = selectedNode.TopLevelScriptNode.Script;
+                var script = selectedNode.TopLevelNode.Script;
                 var node = script.Commands.GetNodeFromValue(selectedNode.Command);
                 var clone = (TreeNode<Command>)node.Clone();
 
