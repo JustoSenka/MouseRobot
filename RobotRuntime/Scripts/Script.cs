@@ -20,13 +20,7 @@ namespace RobotRuntime.Scripts
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
-        public string Name
-        {
-            get
-            {
-                return (Path == "") ? DefaultScriptName : Paths.GetName(Path);
-            }
-        }
+        public string Name { get; set; }
 
         public Script()
         {
@@ -204,6 +198,7 @@ namespace RobotRuntime.Scripts
             set
             {
                 m_Path = value;
+                Name = (Path == "") ? DefaultScriptName : Paths.GetName(Path);
                 IsDirty = false;
             }
             get { return m_Path; }

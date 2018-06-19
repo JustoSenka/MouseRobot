@@ -51,7 +51,7 @@ namespace RobotEditor
             ScriptManager.CommandModifiedOnScript += OnCommandModifiedOnScript;
             ScriptManager.CommandInsertedInScript += OnCommandInsertedInScript;
 
-            ScriptManager.ScriptLoaded += OnScriptLoaded;
+            ScriptManager.ScriptAdded += OnScriptLoaded;
             ScriptManager.ScriptModified += OnScriptModified;
             ScriptManager.ScriptRemoved += OnScriptRemoved;
             ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;

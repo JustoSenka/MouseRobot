@@ -227,7 +227,7 @@
     <Compile Include="Settings\FeatureDetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
     <Compile Include="Settings\RuntimeSettings.cs" />
-    <Compile Include="Tests\TestFixture.cs" />
+    <Compile Include="Tests\LightTestFixture.cs" />
     <Compile Include="zExtensionMethods\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />
     <Compile Include="zExtensionMethods\CommandExtension.cs" />

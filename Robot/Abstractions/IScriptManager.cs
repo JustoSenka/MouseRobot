@@ -15,7 +15,7 @@ namespace Robot.Abstractions
         event Action<Script, Command, Command, int> CommandInsertedInScript;
         event Action<Script, Command, Command> CommandModifiedOnScript;
         event Action<Script, Command, int> CommandRemovedFromScript;
-        event Action<Script> ScriptLoaded;
+        event Action<Script> ScriptAdded;
         event Action<Script> ScriptModified;
         event Action ScriptPositioningChanged;
         event Action<int> ScriptRemoved;

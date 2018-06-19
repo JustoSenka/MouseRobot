@@ -14,7 +14,7 @@ namespace Robot.Scripts
         protected readonly IList<Script> m_LoadedScripts;
         public IList<Script> LoadedScripts { get { return m_LoadedScripts; } }
 
-        public event Action<Script> ScriptLoaded;
+        public event Action<Script> ScriptAdded;
         public event Action<Script> ScriptModified;
         public event Action<int> ScriptRemoved;
         public event Action ScriptPositioningChanged;
@@ -104,7 +104,7 @@ namespace Robot.Scripts
             SubscribeToScriptEvents(script);
             script.IsDirty = true;
 
-            ScriptLoaded?.Invoke(script);
+            ScriptAdded?.Invoke(script);
             return script;
         }
 
@@ -143,7 +143,7 @@ namespace Robot.Scripts
             {
                 // Load New Script
                 m_LoadedScripts.Add(script);
-                ScriptLoaded?.Invoke(script);
+                ScriptAdded?.Invoke(script);
             }
 
             SubscribeToScriptEvents(script);
