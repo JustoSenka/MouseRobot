@@ -54,6 +54,13 @@ namespace RobotRuntime.Tests
             AddScript(new Script() { Name = k_OneTimeTeardown });
         }
 
+        public override Script NewScript(Script clone = null)
+        {
+            var s = base.NewScript(clone);
+            s.Name = DefaultTestName;
+            return s;
+        }
+
         private Script GetScriptWithName(string name)
         {
             return LoadedScripts.FirstOrDefault(s => s.Name == name);
@@ -71,10 +78,10 @@ namespace RobotRuntime.Tests
             AddScript(s);
             MoveScriptBefore(addedScriptIndex, instertIntoIndex);
         }
-        
+
         private IList<Script> GetAllTests()
         {
-           return LoadedScripts.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
+            return LoadedScripts.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
         }
 
         private IList<Script> GetAllHooks()

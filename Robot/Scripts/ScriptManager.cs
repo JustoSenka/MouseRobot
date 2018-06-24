@@ -11,6 +11,8 @@ namespace Robot
 {
     public class ScriptManager : BaseScriptManager, IScriptManager
     {
+        public static string k_DefaultScriptName = "New Script";
+
         private Script m_ActiveScript;
         public Script ActiveScript
         {
@@ -86,6 +88,7 @@ namespace Robot
         public override Script NewScript(Script clone = null)
         {
             var s = base.NewScript(clone);
+            s.Name = k_DefaultScriptName;
             MakeSureActiveScriptExist();
             return s;
         }

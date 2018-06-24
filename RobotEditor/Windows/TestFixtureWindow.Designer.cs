@@ -32,21 +32,20 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestFixtureWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.setActiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -56,7 +55,6 @@
             // 
             this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setActiveToolStripMenuItem,
             this.newScriptToolStripMenuItem1,
             this.toolStripSeparator1,
             this.showInExplorerToolStripMenuItem,
@@ -66,14 +64,7 @@
             this.toolStripMenuItem2,
             this.createToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(175, 176);
-            // 
-            // setActiveToolStripMenuItem
-            // 
-            this.setActiveToolStripMenuItem.Name = "setActiveToolStripMenuItem";
-            this.setActiveToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.setActiveToolStripMenuItem.Text = "Set Active";
-            this.setActiveToolStripMenuItem.Click += new System.EventHandler(this.setActiveToolStripMenuItem_Click);
+            this.contextMenuStrip.Size = new System.Drawing.Size(175, 132);
             // 
             // newScriptToolStripMenuItem1
             // 
@@ -115,6 +106,17 @@
             this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(171, 6);
+            // 
+            // createToolStripMenuItem
+            // 
+            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.createToolStripMenuItem.Text = "Create";
             // 
             // imageList
             // 
@@ -196,18 +198,7 @@
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(171, 6);
-            // 
-            // createToolStripMenuItem
-            // 
-            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
-            this.createToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
-            this.createToolStripMenuItem.Text = "Create";
-            // 
-            // TestRunnerWindow
+            // TestFixtureWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -217,7 +208,7 @@
             this.Controls.Add(this.toolStrip);
             this.HideOnClose = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "TestRunnerWindow";
+            this.Name = "TestFixtureWindow";
             this.Text = "Test Runner";
             this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
@@ -230,7 +221,6 @@
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem setActiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;

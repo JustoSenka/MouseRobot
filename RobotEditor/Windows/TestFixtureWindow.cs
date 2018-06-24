@@ -79,7 +79,10 @@ namespace RobotEditor
 
             nameColumn.ImageGetter += delegate (object x)
             {
-                var imageListIndex = (x as HierarchyNode).Level == 0 ? 0 : 1;
+                var imageListIndex = -1;
+                var node = (HierarchyNode)x;
+                imageListIndex = node.Script != null ? 0 : imageListIndex;
+                imageListIndex = node.Command != null ? 1 : imageListIndex;
                 return imageListIndex;
             };
 
@@ -146,7 +149,7 @@ namespace RobotEditor
 
         private void OnNewUserCommandsAppeared()
         {
-            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[8];
+            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[7];
 
             createMenuItem.DropDownItems.Clear();
             foreach (var name in CommandFactory.CommandNames)
@@ -284,10 +287,6 @@ namespace RobotEditor
         #endregion
 
         #region Context Menu Items
-        private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
 
         public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
