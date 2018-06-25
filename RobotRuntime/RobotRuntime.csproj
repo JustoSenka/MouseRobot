@@ -169,6 +169,7 @@
     <Compile Include="Assets\AssetImporter.cs" />
     <Compile Include="Abstractions\IAssetGuidManager.cs" />
     <Compile Include="Assets\ImageImporter.cs" />
+    <Compile Include="Assets\LightTestFixtureImporter.cs" />
     <Compile Include="Assets\PluginImporter.cs" />
     <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />

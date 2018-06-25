@@ -139,6 +139,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AssetGuidManagerTests.cs" />
+    <Compile Include="TestFixtureTests.cs" />
     <Compile Include="Fakes\FakeLogger.cs" />
     <Compile Include="PerformanceTests.cs" />
     <Compile Include="AssetTests.cs" />
