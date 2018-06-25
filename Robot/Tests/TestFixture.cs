@@ -88,5 +88,37 @@ namespace RobotRuntime.Tests
         {
             return LoadedScripts.Where(s => s.Name == k_Setup || s.Name == k_TearDown || s.Name == k_OneTimeSetup || s.Name == k_OneTimeTeardown).ToList();
         }
+
+        // Inheritence
+
+        public LightTestFixture ToLightTestFixture()
+        {
+            var t = new LightTestFixture();
+            t.Tests = Tests;
+            t.Setup = Setup;
+            t.OneTimeSetup = OneTimeSetup;
+            t.TearDown = TearDown;
+            t.OneTimeTeardown = OneTimeTeardown;
+            t.Name = Name;
+            return t;
+        }
+
+        public TestFixture ApplyLightScriptValues(LightTestFixture t)
+        {
+            m_LoadedScripts.Clear();
+
+            Name = t.Name;
+
+            AddScript(t.Setup);
+            AddScript(t.TearDown);
+            AddScript(t.OneTimeSetup);
+            AddScript(t.OneTimeTeardown);
+            
+            foreach (var test in t.Tests)
+                AddScript(test);
+
+            return this;
+        }
+
     }
 }

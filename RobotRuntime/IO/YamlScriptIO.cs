@@ -29,7 +29,7 @@ namespace RobotRuntime.IO
         {
             try
             {
-                var yamlTree = Serialize(objToWrite as LightScript);
+                var yamlTree = Serialize(objToWrite as LightScript, 0);
                 var text = YamlSerializer.SerializeYamlTree(yamlTree);
                 File.WriteAllText(path, text);
             }
@@ -39,11 +39,13 @@ namespace RobotRuntime.IO
             }
         }
 
-        public static TreeNode<YamlObject> Serialize(LightScript script)
+        public static TreeNode<YamlObject> Serialize(LightScript script, int level = 0)
         {
-            var level = 0;
             var scriptObject = new YamlObject(level, script.GetType().Name, "");
             var tree = new TreeNode<YamlObject>(scriptObject);
+
+            foreach (var n in YamlSerializer.SerializeSimpleProperties(script, level + 1))
+                tree.AddChild(n);
 
             foreach (var node in script.Commands)
                 SerializeCommandsRecursively(tree, node, level + 1);
@@ -67,7 +69,10 @@ namespace RobotRuntime.IO
             foreach (var yamlCommandNode in tree)
                 DeserializeCommandsRecursively(commandRoot, yamlCommandNode);
 
-            return new LightScript(commandRoot);
+            var lightScript = new LightScript(commandRoot);
+            YamlSerializer.DeserializeSimpleProperties(lightScript, tree);
+
+            return lightScript;
         }
 
         private static void DeserializeCommandsRecursively(TreeNode<Command> commandRoot, TreeNode<YamlObject> yamlCommandNode)

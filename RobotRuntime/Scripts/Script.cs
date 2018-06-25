@@ -222,17 +222,18 @@ namespace RobotRuntime.Scripts
 
         public LightScript ToLightScript()
         {
-            return new LightScript(Commands);
+            return new LightScript(Commands) { Name = Name};
         }
 
         public Script(LightScript lightScript)
         {
             Commands = lightScript.Commands;
+            Name = lightScript.Name;
         }
 
         public static Script FromLightScript(LightScript lightScript)
         {
-            return new Script(lightScript);
+            return new Script(lightScript) { Name = lightScript.Name };
         }
 
 

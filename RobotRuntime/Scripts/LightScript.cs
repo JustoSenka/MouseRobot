@@ -7,6 +7,7 @@ namespace RobotRuntime
     [RunnerType(typeof(ScriptRunner))] 
     public class LightScript : IRunnable
     {
+
         public LightScript() { }
 
         public LightScript(TreeNode<Command> commands)
@@ -14,6 +15,7 @@ namespace RobotRuntime
             Commands = commands;
         }
 
+        public string Name { get; set; }
         public TreeNode<Command> Commands { get; protected set; }
 
         public void Run(IRunner runner)

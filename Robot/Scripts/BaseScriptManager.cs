@@ -128,6 +128,9 @@ namespace Robot.Scripts
 
         public virtual Script AddScript(Script script, bool removeScriptWithSamePath = false)
         {
+            if (script == null)
+                return null;
+
             // If script was already loaded, reload it to last saved state
             var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(script.Path));
             if (oldScript != default(Script) && removeScriptWithSamePath)

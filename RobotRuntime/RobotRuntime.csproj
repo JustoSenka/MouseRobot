@@ -205,6 +205,7 @@
     <Compile Include="Abstractions\IProfiler.cs" />
     <Compile Include="IO\YamlCommandIO.cs" />
     <Compile Include="IO\YamlObject.cs" />
+    <Compile Include="IO\YamlTestFixtureIO.cs" />
     <Compile Include="IO\YamlScriptIO.cs" />
     <Compile Include="IO\YamlSerializer.cs" />
     <Compile Include="Abstractions\IStatusManager.cs" />

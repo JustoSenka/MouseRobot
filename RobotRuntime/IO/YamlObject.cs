@@ -12,7 +12,7 @@ namespace RobotRuntime.IO
         {
             this.level = (short)level;
             this.property = property;
-            this.value = value.ToString();
+            this.value = value != null ? value.ToString() : "";
         }
 
         /// <summary>

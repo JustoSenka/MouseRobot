@@ -10,6 +10,7 @@ using Unity;
 using RobotRuntime.Utils;
 using Unity.Lifetime;
 using RobotRuntime;
+using RobotRuntime.Scripts;
 
 namespace Tests
 {
