@@ -170,12 +170,11 @@ namespace RobotEditor
 
             RefreshTreeListView();
             treeListView.ExpandAll();
-
-            this.Text = TestFixture.Name;
         }
 
         private void RefreshTreeListView()
         {
+            this.Text = TestFixture.ToString();
             treeListView.Roots = m_Nodes;
 
             for (int i = 0; i < treeListView.Items.Count; ++i)
@@ -400,7 +399,6 @@ namespace RobotEditor
             else
                 SaveSelectedScriptWithDialog(TestFixture, updateUI: false);
 
-            this.Text = TestFixture.Name;
             RefreshTreeListView();
         }
 
@@ -414,7 +412,6 @@ namespace RobotEditor
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 TestFixtureManager.SaveTestFixture(fixture, saveDialog.FileName);
-                this.Text = TestFixture.Name;
                 if (updateUI)
                     RefreshTreeListView();
             }

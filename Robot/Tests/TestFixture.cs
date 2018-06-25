@@ -38,10 +38,16 @@ namespace RobotRuntime.Tests
                     DirtyChanged?.Invoke(this);
 
                 m_IsDirty = value;
+
+                if (m_IsDirty == false)
+                {
+                    foreach (var s in LoadedScripts)
+                        s.IsDirty = false;
+                }
             }
             get
             {
-                return LoadedScripts.FirstOrDefault(s => s.IsDirty) != null;
+                return LoadedScripts.Any(s => s.IsDirty) || m_IsDirty;
             }
         }
 
@@ -124,5 +130,9 @@ namespace RobotRuntime.Tests
             return this;
         }
 
+        public override string ToString()
+        {
+            return IsDirty ? Name + "*" : Name;
+        }
     }
 }

@@ -142,7 +142,8 @@ namespace RobotEditor
                 {
                     var lightTestFixture = asset.Importer.Load<LightTestFixture>();
                     lightTestFixture.Name = asset.Name;
-                    TestFixtureManager.NewTestFixture(lightTestFixture);
+                    var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
+                    fixture.Path = asset.Path;
                 }
             }
         }

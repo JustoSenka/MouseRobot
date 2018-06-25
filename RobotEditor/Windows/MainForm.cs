@@ -274,7 +274,11 @@ namespace RobotEditor
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
+            if (((Form)m_HierarchyWindow).ContainsFocus)
+                m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
+
+            else if (((Form)m_TestFixtureWindow).ContainsFocus)
+                m_TestFixtureWindow.SaveSelectedScriptWithDialog(m_TestFixtureWindow.TestFixture, true);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
