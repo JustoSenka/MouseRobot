@@ -1,8 +1,10 @@
 ﻿using Robot;
 using Robot.Abstractions;
+using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Scripts;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
 using System.Linq;
@@ -17,10 +19,12 @@ namespace RobotEditor
 
         private IAssetManager AssetManager;
         private IScriptManager ScriptManager;
-        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager)
+        private ITestFixtureManager TestFixtureManager;
+        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager)
         {
             this.AssetManager = AssetManager;
             this.ScriptManager = ScriptManager;
+            this.TestFixtureManager = TestFixtureManager;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -120,12 +124,27 @@ namespace RobotEditor
 
         private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != Paths.ScriptFolder)
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 ||
+                treeView.SelectedNode.Parent.Text != Paths.ScriptFolder &&
+                treeView.SelectedNode.Parent.Text != Paths.TestsFolder)
                 return;
 
             var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
-            if (!ScriptManager.LoadedScripts.Any(s => s.Name == asset.Name))
-                ScriptManager.LoadScript(asset.Path);
+
+            if (asset.HoldsTypeOf(typeof(Script)))
+            {
+                if (!ScriptManager.LoadedScripts.Any(s => s.Name == asset.Name))
+                    ScriptManager.LoadScript(asset.Path);
+            }
+            else if (asset.HoldsTypeOf(typeof(LightTestFixture)))
+            {
+                if (!TestFixtureManager.Contains(asset.Name))
+                {
+                    var lightTestFixture = asset.Importer.Load<LightTestFixture>();
+                    lightTestFixture.Name = asset.Name;
+                    TestFixtureManager.NewTestFixture(lightTestFixture);
+                }
+            }
         }
 
         private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)

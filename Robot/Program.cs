@@ -6,6 +6,7 @@ using Robot.Settings;
 using Robot.Utils.Win32;
 using Robot.Plugins;
 using Robot.Scripts;
+using Robot.Tests;
 
 namespace Robot
 {
@@ -26,6 +27,7 @@ namespace Robot
             Container.RegisterType<IPluginManager, PluginManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IPluginCompiler, PluginCompiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ICommandFactory, CommandFactory>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITestFixtureManager, TestFixtureManager>(new ContainerControlledLifetimeManager());
         }
     }
 }

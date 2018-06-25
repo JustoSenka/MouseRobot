@@ -20,8 +20,6 @@ namespace RobotRuntime.Scripts
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
-        public string Name { get; set; }
-
         public Script()
         {
             Commands = new TreeNode<Command>();

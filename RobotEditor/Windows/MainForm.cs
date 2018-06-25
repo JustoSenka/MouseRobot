@@ -15,6 +15,8 @@ using Robot.Settings;
 using RobotRuntime.Settings;
 using RobotRuntime.Logging;
 using Robot.Scripts;
+using Unity;
+using Robot.Tests;
 
 namespace RobotEditor
 {
@@ -32,7 +34,7 @@ namespace RobotEditor
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
         private IConsoleWindow m_ConsoleWindow;
-        private TestFixtureWindow m_TestRunnerWindow;
+        private TestFixtureWindow m_TestFixtureWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -43,12 +45,13 @@ namespace RobotEditor
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
         private IStatusManager StatusManager;
+        private ITestFixtureManager TestFixtureManager;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
         public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestFixtureWindow TestRunnerWindow, IStatusManager StatusManager)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestFixtureWindow TestRunnerWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager)
         {
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
@@ -59,7 +62,8 @@ namespace RobotEditor
             this.ScreenStateThread = ScreenStateThread;
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
-
+            this.TestFixtureManager = TestFixtureManager;
+            ;
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
             this.m_ScreenPreviewWindow = ScreenPreviewWindow;
@@ -67,7 +71,7 @@ namespace RobotEditor
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
             this.m_ConsoleWindow = ConsoleWindow;
-            this.m_TestRunnerWindow = TestRunnerWindow;
+            this.m_TestFixtureWindow = TestRunnerWindow;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -96,7 +100,7 @@ namespace RobotEditor
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
             m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick_Hierarchy;
-            m_TestRunnerWindow.OnCommandSelected += OnCommandDoubleClick_TestFixture;
+            m_TestFixtureWindow.OnCommandSelected += OnCommandDoubleClick_TestFixture;
 
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
@@ -169,7 +173,7 @@ namespace RobotEditor
 
         private void OnCommandDoubleClick_TestFixture(Command command)
         {
-            m_InspectorWindow.ShowCommand(command, m_TestRunnerWindow.m_TestFixture);
+            m_InspectorWindow.ShowCommand(command, m_TestFixtureWindow.TestFixture);
         }
 
         private void OnStatusUpdated(Status status)
@@ -196,7 +200,7 @@ namespace RobotEditor
                 (DockContent)m_ProfilerWindow,
                 (DockContent)m_InspectorWindow,
                 (DockContent)m_ConsoleWindow,
-                (DockContent)m_TestRunnerWindow,
+                (DockContent)m_TestFixtureWindow,
             };
         }
 
@@ -261,7 +265,11 @@ namespace RobotEditor
 
         private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.SaveAllScripts();
+            if (((Form)m_HierarchyWindow).ContainsFocus)
+                m_HierarchyWindow.SaveAllScripts();
+
+            else if (((Form)m_TestFixtureWindow).ContainsFocus)
+                m_TestFixtureWindow.SaveTestFixture();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -386,7 +394,7 @@ namespace RobotEditor
 
         private void testRunnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((TestFixtureWindow)m_TestRunnerWindow).Show(m_DockPanel);
+            ((TestFixtureWindow)m_TestFixtureWindow).Show(m_DockPanel);
         }
 
         #endregion
@@ -482,6 +490,12 @@ namespace RobotEditor
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ProjectSelectionDialog.InitProjectWithDialog();
+        }
+
+        private void newTestFixtureToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var testFixture = TestFixtureManager.NewTestFixture();
+            m_TestFixtureWindow.DisplayTestFixture(testFixture);
         }
     }
 }

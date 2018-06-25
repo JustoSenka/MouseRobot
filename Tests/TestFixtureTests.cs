@@ -136,7 +136,7 @@ namespace Tests
         [TestCleanup]
         public void Cleanup()
         {
-            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.ScriptFolder);
+            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.TestsFolder);
             foreach (FileInfo file in di.GetFiles())
                 file.Delete();
 

@@ -1,4 +1,4 @@
-﻿//#define ENABLE_UI_TESTING
+﻿#define ENABLE_UI_TESTING
 
 using System;
 using RobotEditor.Abstractions;
@@ -16,6 +16,8 @@ using RobotEditor.Hierarchy;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using Unity;
+using Robot.Tests;
+using RobotRuntime.Utils;
 
 namespace RobotEditor
 {
@@ -26,19 +28,21 @@ namespace RobotEditor
 
         private HierarchyNode m_HighlightedNode;
 
-        public TestFixture m_TestFixture;
+        public TestFixture TestFixture;
         private HierarchyNode m_HooksNode;
         private HierarchyNode m_TestsNode;
 
         private ITestRunner TestRunner;
         private IAssetManager AssetManager;
+        private ITestFixtureManager TestFixtureManager;
         private IHierarchyNodeStringConverter HierarchyNodeStringConverter;
         private ICommandFactory CommandFactory;
-        public TestFixtureWindow(IUnityContainer UnityContainer, ITestRunner TestRunner, IAssetManager AssetManager,
+        public TestFixtureWindow(ITestRunner TestRunner, IAssetManager AssetManager, ITestFixtureManager TestFixtureManager,
             IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory)
         {
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
+            this.TestFixtureManager = TestFixtureManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
             this.CommandFactory = CommandFactory;
 
@@ -47,26 +51,55 @@ namespace RobotEditor
 
             treeListView.Font = Fonts.Default;
 
-            m_TestFixture = UnityContainer.Resolve<TestFixture>();
-
-            m_TestFixture.CommandAddedToScript += OnCommandAddedToScript;
-            m_TestFixture.CommandRemovedFromScript += OnCommandRemovedFromScript;
-            m_TestFixture.CommandModifiedOnScript += OnCommandModifiedOnScript;
-            m_TestFixture.CommandInsertedInScript += OnCommandInsertedInScript;
-
-            m_TestFixture.ScriptAdded += OnScriptLoaded;
-            m_TestFixture.ScriptModified += OnScriptModified;
-            m_TestFixture.ScriptRemoved += OnScriptRemoved;
-            m_TestFixture.ScriptPositioningChanged += OnScriptPositioningChanged;
-
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
 
             CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
             OnNewUserCommandsAppeared();
 
+            TestFixtureManager.FixtureAdded += DisplayTestFixture;
+
             CreateColumns();
             UpdateHierarchy();
+        }
+
+        public void DisplayTestFixture(TestFixture fixture)
+        {
+            if (fixture == null || TestFixture == fixture)
+                return;
+
+            if (TestFixture != null)
+                UnsubscribeAllEvents(TestFixture);
+
+            TestFixture = fixture;
+            SubscribeALlEvents(TestFixture);
+            UpdateHierarchy();
+        }
+
+        private void SubscribeALlEvents(TestFixture fixture)
+        {
+            fixture.CommandAddedToScript += OnCommandAddedToScript;
+            fixture.CommandRemovedFromScript += OnCommandRemovedFromScript;
+            fixture.CommandModifiedOnScript += OnCommandModifiedOnScript;
+            fixture.CommandInsertedInScript += OnCommandInsertedInScript;
+
+            fixture.ScriptAdded += OnScriptLoaded;
+            fixture.ScriptModified += OnScriptModified;
+            fixture.ScriptRemoved += OnScriptRemoved;
+            fixture.ScriptPositioningChanged += OnScriptPositioningChanged;
+        }
+
+        private void UnsubscribeAllEvents(TestFixture fixture)
+        {
+            fixture.CommandAddedToScript -= OnCommandAddedToScript;
+            fixture.CommandRemovedFromScript -= OnCommandRemovedFromScript;
+            fixture.CommandModifiedOnScript -= OnCommandModifiedOnScript;
+            fixture.CommandInsertedInScript -= OnCommandInsertedInScript;
+
+            fixture.ScriptAdded -= OnScriptLoaded;
+            fixture.ScriptModified -= OnScriptModified;
+            fixture.ScriptRemoved -= OnScriptRemoved;
+            fixture.ScriptPositioningChanged -= OnScriptPositioningChanged;
         }
 
         private void CreateColumns()
@@ -117,16 +150,19 @@ namespace RobotEditor
             }
         }
 
-        private void UpdateHierarchy()
+        public void UpdateHierarchy()
         {
             m_Nodes.Clear();
 
+            if (TestFixture == null)
+                return;
+
             m_HooksNode = new HierarchyNode("Special Scripts");
-            foreach (var s in m_TestFixture.Hooks)
+            foreach (var s in TestFixture.Hooks)
                 m_HooksNode.AddHierarchyNode(new HierarchyNode(s));
 
             m_TestsNode = new HierarchyNode("Tests");
-            foreach (var s in m_TestFixture.Tests)
+            foreach (var s in TestFixture.Tests)
                 m_TestsNode.AddHierarchyNode(new HierarchyNode(s));
 
             m_Nodes.Add(m_HooksNode);
@@ -134,6 +170,8 @@ namespace RobotEditor
 
             RefreshTreeListView();
             treeListView.ExpandAll();
+
+            this.Text = TestFixture.Name;
         }
 
         private void RefreshTreeListView()
@@ -147,6 +185,7 @@ namespace RobotEditor
             treeListView.Refresh();
         }
 
+        // TODO: if text fixture changes in the middle of runtime, will this still work due to referencing old test fixture in lamda?
         private void OnNewUserCommandsAppeared()
         {
             var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[7];
@@ -158,7 +197,7 @@ namespace RobotEditor
                 item.Click += (sender, events) =>
                 {
                     var command = CommandFactory.Create(name);
-                    m_TestFixture.Setup.AddCommand(command);
+                    TestFixture.Setup.AddCommand(command);
                 };
                 createMenuItem.DropDownItems.Add(item);
             }
@@ -204,18 +243,18 @@ namespace RobotEditor
 
         private void OnScriptPositioningChanged()
         {
-            foreach (var script in m_TestFixture.Tests)
+            foreach (var script in TestFixture.Tests)
             {
                 var index = m_TestsNode.Children.FindIndex(n => n.Script == script);
-                var indexInBackend = m_TestFixture.GetScriptIndex(script) - 4; // -4 since 4 scripts are reserved as hooks
+                var indexInBackend = TestFixture.GetScriptIndex(script) - 4; // -4 since 4 scripts are reserved as hooks
                 m_TestsNode.Children.MoveBefore(index, indexInBackend);
             }
 
             // Hooks do not allow drag and drop, but keeping here in case of position changing from script
-            foreach (var script in m_TestFixture.Hooks)
+            foreach (var script in TestFixture.Hooks)
             {
                 var index = m_HooksNode.Children.FindIndex(n => n.Script == script);
-                m_HooksNode.Children.MoveBefore(index, m_TestFixture.GetScriptIndex(script));
+                m_HooksNode.Children.MoveBefore(index, TestFixture.GetScriptIndex(script));
             }
 
             RefreshTreeListView();
@@ -290,7 +329,7 @@ namespace RobotEditor
 
         public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            m_TestFixture.NewScript();
+            TestFixture.NewScript();
             RefreshTreeListView();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
@@ -313,8 +352,8 @@ namespace RobotEditor
 
             if (selectedNode.Script != null)
             {
-                m_TestFixture.NewScript(selectedNode.Script);
-                m_TestFixture.MoveScriptAfter(m_TestFixture.LoadedScripts.Count - 1, m_TestFixture.GetScriptIndex(selectedNode.Script));
+                TestFixture.NewScript(selectedNode.Script);
+                TestFixture.MoveScriptAfter(TestFixture.LoadedScripts.Count - 1, TestFixture.GetScriptIndex(selectedNode.Script));
             }
             else if (selectedNode.Command != null)
             {
@@ -340,9 +379,9 @@ namespace RobotEditor
                 return;
 
             if (selectedNode.Script != null)
-                m_TestFixture.RemoveScript(selectedNode.Script);
+                TestFixture.RemoveScript(selectedNode.Script);
             else if (selectedNode.Command != null)
-                m_TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+                TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
             RefreshTreeListView();
 
@@ -351,35 +390,34 @@ namespace RobotEditor
         #endregion
 
         #region Menu Items (save scripts from MainForm)
-        public void SaveAllScripts()
-        {/*
-            foreach (var script in TestFixture)
-            {
-                if (!script.IsDirty)
-                    continue;
+        public void SaveTestFixture()
+        {
+            if (!TestFixture.IsDirty)
+                return;
+            
+            if (TestFixture.Path != "")
+                TestFixtureManager.SaveTestFixture(TestFixture, TestFixture.Path);
+            else
+                SaveSelectedScriptWithDialog(TestFixture, updateUI: false);
 
-                if (script.Path != "")
-                    TestFixture.SaveScript(script, script.Path);
-                else
-                    SaveSelectedScriptWithDialog(script, updateUI: false);
-            }
-            */
+            this.Text = TestFixture.Name;
             RefreshTreeListView();
         }
 
-        public void SaveSelectedScriptWithDialog(Script script, bool updateUI = true)
+        public void SaveSelectedScriptWithDialog(TestFixture fixture, bool updateUI = true)
         {
-            /* SaveFileDialog saveDialog = new SaveFileDialog();
-             saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.ScriptFolder;
-             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Script);
-             saveDialog.Title = "Select a path for script to save.";
-             saveDialog.FileName = script.Name + FileExtensions.ScriptD;
-             if (saveDialog.ShowDialog() == DialogResult.OK)
-             {
-                 ScriptManager.SaveScript(script, saveDialog.FileName);
-                 if (updateUI)
-                     RefreshTreeListView();
-             }*/
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.TestsFolder;
+            saveDialog.Filter = string.Format("Test Fixture File (*.{0})|*.{0}", FileExtensions.Test);
+            saveDialog.Title = "Select a path for script to save.";
+            saveDialog.FileName = fixture.Name + FileExtensions.TestD;
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                TestFixtureManager.SaveTestFixture(fixture, saveDialog.FileName);
+                this.Text = TestFixture.Name;
+                if (updateUI)
+                    RefreshTreeListView();
+            }
         }
         #endregion
 
@@ -427,20 +465,20 @@ namespace RobotEditor
             if (targetNode.Script != null && sourceNode.Script != null)
             {
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveScriptBefore(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
+                    TestFixture.MoveScriptBefore(TestFixture.GetScriptIndex(sourceNode.Script), TestFixture.GetScriptIndex(targetNode.Script));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveScriptAfter(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
+                    TestFixture.MoveScriptAfter(TestFixture.GetScriptIndex(sourceNode.Script), TestFixture.GetScriptIndex(targetNode.Script));
             }
 
             if (targetNode.Command != null && sourceNode.Command != null)
             {
-                var targetScript = m_TestFixture.GetScriptFromCommand(targetNode.Command);
-                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
+                var targetScript = TestFixture.GetScriptFromCommand(targetNode.Command);
+                var sourceScript = TestFixture.GetScriptFromCommand(sourceNode.Command);
 
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
+                    TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, TestFixture.GetScriptIndex(sourceScript), TestFixture.GetScriptIndex(targetScript));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
+                    TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, TestFixture.GetScriptIndex(sourceScript), TestFixture.GetScriptIndex(targetScript));
 
                 if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
                 {
@@ -452,7 +490,7 @@ namespace RobotEditor
 
             if (targetNode.Script != null && sourceNode.Command != null)
             {
-                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
+                var sourceScript = TestFixture.GetScriptFromCommand(sourceNode.Command);
 
                 var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
                 sourceScript.RemoveCommand(sourceNode.Command);
@@ -466,7 +504,7 @@ namespace RobotEditor
 
         private void OnCommandRunning(Command command)
         {
-            var script = m_TestFixture.GetScriptFromCommand(command);
+            var script = TestFixture.GetScriptFromCommand(command);
             if (script == null)
                 return;
 
@@ -531,17 +569,24 @@ namespace RobotEditor
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()
         {
 #if ENABLE_UI_TESTING
-            for (int i = 0; i < m_Nodes.Count; i++)
+
+            var list = new List<HierarchyNode>();
+            foreach (var n in m_Nodes[0].Children)
+                list.Add(n);
+            foreach (var n in m_Nodes[1].Children)
+                list.Add(n);
+
+            for (int i = 0; i < list.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].Script == m_TestFixture.LoadedScripts[i],
-                    string.Format("Hierarchy script missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
+                Debug.Assert(list[i].Script == TestFixture.LoadedScripts[i],
+                    string.Format("Hierarchy script missmatch: {0}:{1}", i, list[i].Value.ToString()));
 
                 // Will not work in nested scenarios
-                for (int j = 0; j < m_Nodes[i].Script.Commands.Count(); j++)
+                for (int j = 0; j < list[i].Script.Commands.Count(); j++)
                 {
-                    Debug.Assert(m_Nodes[i].Children[j].Command == m_TestFixture.LoadedScripts[i].Commands.GetChild(j).value,
+                    Debug.Assert(list[i].Children[j].Command == TestFixture.LoadedScripts[i].Commands.GetChild(j).value,
                         string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
-                        i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Script.Commands.GetChild(j).value.ToString()));
+                        i, list[i].Value.ToString(), j, list[i].Script.Commands.GetChild(j).value.ToString()));
                 }
             }
 #endif

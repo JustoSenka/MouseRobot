@@ -27,6 +27,7 @@ namespace RobotRuntime.Tests
         public IList<Script> Hooks { get { return GetAllHooks(); } }
 
         public string Name { get; set; } = DefaultTestFixtureName;
+        public string Path { get; set; } = "";
 
         private bool m_IsDirty;
         public bool IsDirty
@@ -38,7 +39,10 @@ namespace RobotRuntime.Tests
 
                 m_IsDirty = value;
             }
-            get { return m_IsDirty; }
+            get
+            {
+                return LoadedScripts.FirstOrDefault(s => s.IsDirty) != null;
+            }
         }
 
         public event Action<TestFixture> DirtyChanged;

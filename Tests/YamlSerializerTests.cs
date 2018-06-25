@@ -311,6 +311,7 @@ namespace Tests
             var yamlObj = YamlTestFixtureIO.Serialize(f);
             var newFixture = YamlTestFixtureIO.Deserialize(yamlObj);
 
+            Assert.AreEqual(f.Name, newFixture.Name, "Fixture names missmatched.");
             Assert.AreEqual(f.Tests.Count(), newFixture.Tests.Count(), "Test count should be the same.");
             Assert.AreEqual(f.Setup.Name, newFixture.Setup.Name, "Setup names should be equal.");
             Assert.AreEqual(f.Setup.Commands.Count(), newFixture.Setup.Commands.Count(), "Setup command count should be the same.");
@@ -318,6 +319,21 @@ namespace Tests
             var yamlObj2 = YamlTestFixtureIO.Serialize(newFixture);
             var text = YamlSerializer.SerializeYamlTree(yamlObj2);
             StringAssert.Contains(serializedFixture, text, "Strings missmatched.");
+        }
+
+        [TestMethod]
+        public void YamlString_ProducesCorrect_Fixture()
+        {
+            var f = Fixture;
+            var yamlObj = YamlTestFixtureIO.Serialize(f);
+            var text = YamlSerializer.SerializeYamlTree(yamlObj);
+            var newObj = YamlSerializer.DeserializeYamlTree(text);
+            var newFixture = YamlTestFixtureIO.Deserialize(newObj);
+
+            Assert.AreEqual(f.Name, newFixture.Name, "Fixture names missmatched.");
+            Assert.AreEqual(f.Tests.Count(), newFixture.Tests.Count(), "Test count should be the same.");
+            Assert.AreEqual(f.Setup.Name, newFixture.Setup.Name, "Setup names should be equal.");
+            Assert.AreEqual(f.Setup.Commands.Count(), newFixture.Setup.Commands.Count(), "Setup command count should be the same.");
         }
 
         [TestInitialize]
