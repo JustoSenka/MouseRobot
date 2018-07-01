@@ -79,9 +79,11 @@ namespace RobotEditor
 
             foreach (var asset in AssetManager.Assets)
             {
-                TreeNode assetNode = new TreeNode(asset.Name);
-                assetNode.ImageIndex = 0;
-                assetNode.SelectedImageIndex = 0;
+                TreeNode assetNode = new TreeNode(asset.Name)
+                {
+                    ImageIndex = 0,
+                    SelectedImageIndex = 0
+                };
 
                 if (asset.Path.EndsWith(FileExtensions.Image))
                     imageNode.Nodes.Add(assetNode);

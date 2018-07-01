@@ -10,7 +10,6 @@ namespace RobotRuntime.Graphics
         public event Action Update;
 
         private Thread m_Thread;
-        private Action m_Action;
         private bool m_Run;
         private bool m_Init;
 

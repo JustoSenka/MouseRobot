@@ -15,15 +15,13 @@ using RobotRuntime.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
-using Unity;
-using Robot.Tests;
 using RobotRuntime.Utils;
 
 namespace RobotEditor
 {
     public partial class TestFixtureWindow : DockContent
     {
-        public event Action<Command> OnCommandSelected;
+        public event Action<TestFixtureWindow, Command> OnCommandSelected;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
@@ -33,15 +31,13 @@ namespace RobotEditor
         private HierarchyNode m_TestsNode;
 
         private ITestRunner TestRunner;
-        private IAssetManager AssetManager;
         private ITestFixtureManager TestFixtureManager;
         private IHierarchyNodeStringConverter HierarchyNodeStringConverter;
         private ICommandFactory CommandFactory;
-        public TestFixtureWindow(ITestRunner TestRunner, IAssetManager AssetManager, ITestFixtureManager TestFixtureManager,
+        public TestFixtureWindow(ITestRunner TestRunner, ITestFixtureManager TestFixtureManager,
             IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory)
         {
             this.TestRunner = TestRunner;
-            this.AssetManager = AssetManager;
             this.TestFixtureManager = TestFixtureManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
             this.CommandFactory = CommandFactory;
@@ -53,15 +49,14 @@ namespace RobotEditor
 
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
-
             CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
-            OnNewUserCommandsAppeared();
 
-            TestFixtureManager.FixtureAdded += DisplayTestFixture;
+            OnNewUserCommandsAppeared();
 
             CreateColumns();
             UpdateHierarchy();
         }
+
 
         public void DisplayTestFixture(TestFixture fixture)
         {
@@ -131,8 +126,7 @@ namespace RobotEditor
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
         {
-            var node = e.Model as HierarchyNode;
-            if (node == null)
+            if (!(e.Model is HierarchyNode node))
                 return;
 
             if (node.Script != null)
@@ -235,7 +229,7 @@ namespace RobotEditor
             RefreshTreeListView();
 
             if (treeListView.SelectedObject != oldSelectedObject)
-                OnCommandSelected?.Invoke(null);
+                OnCommandSelected?.Invoke(this, null);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -334,6 +328,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
+        // TODO: will not work 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;
@@ -343,10 +338,10 @@ namespace RobotEditor
             Process.Start("explorer.exe", "/select, " + selectedNode.Script.Path);
         }
 
+        // TODO: Do not allow duplicating setup methods
         public void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var selectedNode = treeListView.SelectedObject as HierarchyNode;
-            if (selectedNode == null)
+            if (!(treeListView.SelectedObject is HierarchyNode selectedNode))
                 return;
 
             if (selectedNode.Script != null)
@@ -371,6 +366,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
+        // TODO: Do not allow deleting setup methods
         public void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;
@@ -393,25 +389,28 @@ namespace RobotEditor
         {
             if (!TestFixture.IsDirty)
                 return;
-            
+
             if (TestFixture.Path != "")
                 TestFixtureManager.SaveTestFixture(TestFixture, TestFixture.Path);
             else
-                SaveSelectedScriptWithDialog(TestFixture, updateUI: false);
+                SaveFixtureWithDialog(false);
 
             RefreshTreeListView();
         }
 
-        public void SaveSelectedScriptWithDialog(TestFixture fixture, bool updateUI = true)
+        public void SaveFixtureWithDialog(bool updateUI = true)
         {
-            SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.TestsFolder;
-            saveDialog.Filter = string.Format("Test Fixture File (*.{0})|*.{0}", FileExtensions.Test);
-            saveDialog.Title = "Select a path for script to save.";
-            saveDialog.FileName = fixture.Name + FileExtensions.TestD;
+            SaveFileDialog saveDialog = new SaveFileDialog
+            {
+                InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.TestsFolder,
+                Filter = string.Format("Test Fixture File (*.{0})|*.{0}", FileExtensions.Test),
+                Title = "Select a path for script to save.",
+                FileName = TestFixture.Name + FileExtensions.TestD
+            };
+
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                TestFixtureManager.SaveTestFixture(fixture, saveDialog.FileName);
+                TestFixtureManager.SaveTestFixture(TestFixture, saveDialog.FileName);
                 if (updateUI)
                     RefreshTreeListView();
             }
@@ -499,6 +498,8 @@ namespace RobotEditor
 
         #region ScriptRunner Callbacks
 
+        // TODO: Not tested if works.
+        // TODO: Also mark parent commands/scripts/tests
         private void OnCommandRunning(Command command)
         {
             var script = TestFixture.GetScriptFromCommand(command);
@@ -553,14 +554,17 @@ namespace RobotEditor
         {
             var node = treeListView.SelectedObject as HierarchyNode;
 
-            if (node == null)
-            {
-                OnCommandSelected?.Invoke(null);
-            }
-            else if (node.Command != null)
-            {
-                OnCommandSelected?.Invoke(node.Command);
-            }
+            var obj = node?.Command;
+            OnCommandSelected?.Invoke(this, obj);
+        }
+
+        private void TestFixtureWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            TestFixtureManager.Remove(TestFixture);
+
+            TestRunner.Finished -= OnScriptsFinishedRunning;
+            TestRunner.RunningCommandCallback -= OnCommandRunning;
+            CommandFactory.NewUserCommands -= OnNewUserCommandsAppeared;
         }
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()

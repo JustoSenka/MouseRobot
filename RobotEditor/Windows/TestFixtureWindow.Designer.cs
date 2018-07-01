@@ -206,10 +206,10 @@
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);
-            this.HideOnClose = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TestFixtureWindow";
             this.Text = "Test Runner";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TestFixtureWindow_FormClosing);
             this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
             this.toolStrip.ResumeLayout(false);

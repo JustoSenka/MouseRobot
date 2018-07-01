@@ -47,9 +47,6 @@ namespace Robot.Tests
 
         public void Add(TestFixture fixture)
         {
-            // Temporary thing, clearing all fixtures since only one window currently shows them
-            Fixtures.Clear();
-
             Fixtures.Add(fixture);
             FixtureAdded?.Invoke(fixture);
         }

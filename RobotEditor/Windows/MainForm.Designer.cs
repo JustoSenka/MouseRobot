@@ -416,7 +416,6 @@
             this.testRunnerToolStripMenuItem.Name = "testRunnerToolStripMenuItem";
             this.testRunnerToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.testRunnerToolStripMenuItem.Text = "Test Runner";
-            this.testRunnerToolStripMenuItem.Click += new System.EventHandler(this.testRunnerToolStripMenuItem_Click);
             // 
             // hierarchyToolStripMenuItem
             // 

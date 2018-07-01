@@ -16,7 +16,9 @@ using RobotRuntime.Settings;
 using RobotRuntime.Logging;
 using Robot.Scripts;
 using Unity;
-using Robot.Tests;
+using RobotRuntime.Tests;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RobotEditor
 {
@@ -27,6 +29,8 @@ namespace RobotEditor
 
         private FormWindowState m_DefaultWindowState;
 
+        private IList<TestFixtureWindow> TestFixtureWindows = new List<TestFixtureWindow>();
+
         private IHierarchyWindow m_HierarchyWindow;
         private IPropertiesWindow m_PropertiesWindow;
         private IScreenPreviewWindow m_ScreenPreviewWindow;
@@ -34,7 +38,6 @@ namespace RobotEditor
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
         private IConsoleWindow m_ConsoleWindow;
-        private TestFixtureWindow m_TestFixtureWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -48,11 +51,14 @@ namespace RobotEditor
         private ITestFixtureManager TestFixtureManager;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
-        public MainForm(IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
+        private new IUnityContainer Container;
+        public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, TestFixtureWindow TestRunnerWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager)
         {
+            this.Container = Container;
+
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
             this.FeatureDetectionThread = FeatureDetectionThread;
@@ -71,7 +77,6 @@ namespace RobotEditor
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
             this.m_ConsoleWindow = ConsoleWindow;
-            this.m_TestFixtureWindow = TestRunnerWindow;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -100,7 +105,6 @@ namespace RobotEditor
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
             m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick_Hierarchy;
-            m_TestFixtureWindow.OnCommandSelected += OnCommandDoubleClick_TestFixture;
 
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
@@ -108,9 +112,30 @@ namespace RobotEditor
 
             StatusManager.StatusUpdated += OnStatusUpdated;
 
+            TestFixtureManager.FixtureAdded += OnFixtureAdded;
+
             this.Activated += (x, y) => AssetManager.Refresh();
 
             ((Form)ScreenPaintForm).Show();
+        }
+
+        private void OnFixtureAdded(TestFixture fixture)
+        {
+            var window = Container.Resolve<TestFixtureWindow>();
+            window.Show(m_DockPanel);
+
+            // Removes closed forms
+            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+
+            if (TestFixtureWindows.Count > 0)
+            {
+                var parent = TestFixtureWindows[0];
+                window.DockTo(parent.DockPanel, DockStyle.Fill);
+            }
+
+            window.DisplayTestFixture(fixture);
+            window.OnCommandSelected += OnCommandDoubleClick_TestFixture;
+            TestFixtureWindows.Add(window);
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -171,9 +196,9 @@ namespace RobotEditor
             m_InspectorWindow.ShowCommand(command, (BaseScriptManager)ScriptManager);
         }
 
-        private void OnCommandDoubleClick_TestFixture(Command command)
+        private void OnCommandDoubleClick_TestFixture(TestFixtureWindow testFixtureWindow, Command command)
         {
-            m_InspectorWindow.ShowCommand(command, m_TestFixtureWindow.TestFixture);
+            m_InspectorWindow.ShowCommand(command, testFixtureWindow.TestFixture);
         }
 
         private void OnStatusUpdated(Status status)
@@ -200,7 +225,6 @@ namespace RobotEditor
                 (DockContent)m_ProfilerWindow,
                 (DockContent)m_InspectorWindow,
                 (DockContent)m_ConsoleWindow,
-                (DockContent)m_TestFixtureWindow,
             };
         }
 
@@ -268,8 +292,10 @@ namespace RobotEditor
             if (((Form)m_HierarchyWindow).ContainsFocus)
                 m_HierarchyWindow.SaveAllScripts();
 
-            else if (((Form)m_TestFixtureWindow).ContainsFocus)
-                m_TestFixtureWindow.SaveTestFixture();
+            // Removes closed forms
+            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+
+            TestFixtureWindows.FirstOrDefault(w => w.ContainsFocus)?.SaveTestFixture();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -277,8 +303,10 @@ namespace RobotEditor
             if (((Form)m_HierarchyWindow).ContainsFocus)
                 m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
 
-            else if (((Form)m_TestFixtureWindow).ContainsFocus)
-                m_TestFixtureWindow.SaveSelectedScriptWithDialog(m_TestFixtureWindow.TestFixture, true);
+            // Removes closed forms
+            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+
+            TestFixtureWindows.FirstOrDefault(w => w.ContainsFocus)?.SaveFixtureWithDialog(true);
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -396,11 +424,6 @@ namespace RobotEditor
             ((ConsoleWindow)m_ConsoleWindow).Show(m_DockPanel);
         }
 
-        private void testRunnerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ((TestFixtureWindow)m_TestFixtureWindow).Show(m_DockPanel);
-        }
-
         #endregion
 
         #region Menu Items (Windows -> Settings)
@@ -482,6 +505,7 @@ namespace RobotEditor
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DockLayout.Save(m_DockPanel);
+            
             MouseRobot.IsRecording = false;
             MouseRobot.IsPlaying = false;
         }
@@ -499,7 +523,6 @@ namespace RobotEditor
         private void newTestFixtureToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var testFixture = TestFixtureManager.NewTestFixture();
-            m_TestFixtureWindow.DisplayTestFixture(testFixture);
         }
     }
 }
