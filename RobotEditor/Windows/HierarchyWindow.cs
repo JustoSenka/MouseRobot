@@ -16,6 +16,7 @@ using RobotRuntime.Abstractions;
 using RobotEditor.Hierarchy;
 using Robot;
 using RobotRuntime.Scripts;
+using RobotEditor.Utils;
 
 namespace RobotEditor
 {
@@ -58,35 +59,22 @@ namespace RobotEditor
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
 
-            CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
-            OnNewUserCommandsAppeared();
+            CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
+            AddNewCommandsToCreateMenu();
 
-            CreateColumns();
+            treeListView.FormatCell += UpdateFontsTreeListView;
+            HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
+
             UpdateHierarchy();
         }
 
-        private void CreateColumns()
+        private void AddNewCommandsToCreateMenu()
         {
-            treeListView.CanExpandGetter = x => (x as HierarchyNode).Children.Count > 0;
-            treeListView.ChildrenGetter = x => (x as HierarchyNode).Children;
-
-            var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => HierarchyNodeStringConverter.ToString(x as HierarchyNode);
-
-            nameColumn.ImageGetter += delegate (object x)
+            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8, (name) =>
             {
-                var imageListIndex = (x as HierarchyNode).Level == 0 ? 0 : 1;
-                return imageListIndex;
-            };
-
-            treeListView.UseCellFormatEvents = true;
-            treeListView.FormatCell += UpdateFontsTreeListView;
-
-            treeListView.IsSimpleDragSource = true;
-            treeListView.IsSimpleDropSink = true;
-
-            nameColumn.Width = treeListView.Width;
-            treeListView.Columns.Add(nameColumn);
+                var command = CommandFactory.Create(name);
+                ScriptManager.ActiveScript.AddCommand(command);
+            });
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
@@ -208,62 +196,26 @@ namespace RobotEditor
 
         private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
-            var parentNode = script.Commands.GetNodeFromValue(command).parent;
-            System.Diagnostics.Debug.Assert(parentNode.value == parentCommand, "parentCommand and parentNode missmatched");
-
-            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
-
-            var parentHierarchyNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentNode.value);
-            AddCommandToParentRecursive(script, command, parentHierarchyNode);
-
-            if (scriptNode.Children.Count == 1)
-                treeListView.Expand(scriptNode);
-
+            HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
             RefreshTreeListView();
-        }
-
-        private static HierarchyNode AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode, int pos = -1)
-        {
-            var nodeToAdd = new HierarchyNode(command, parentHierarchyNode);
-
-            if (pos == -1)
-                parentHierarchyNode.Children.Add(nodeToAdd);
-            else
-                parentHierarchyNode.Children.Insert(pos, nodeToAdd);
-
-            var commandNode = script.Commands.GetNodeFromValue(command);
-            foreach (var childNode in commandNode)
-                AddCommandToParentRecursive(script, childNode.value, nodeToAdd);
-
-            return nodeToAdd;
         }
 
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
-            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
-
-            parentNode.Children.RemoveAt(commandIndex);
+            HierarchyUtils.OnCommandRemovedFromScript(m_Nodes, script, parentCommand, commandIndex);
             RefreshTreeListView();
         }
 
         private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(node => node.Script == script);
-            var commandNode = scriptNode.GetNodeFromValue(oldCommand);
-
-            commandNode.Update(newCommand);
+            HierarchyUtils.OnCommandModifiedOnScript(m_Nodes, script, oldCommand, newCommand);
             RefreshTreeListView();
         }
 
         // Will not work with multi dragging
         private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
-            var scriptNode = m_Nodes.FirstOrDefault(n => n.Script == script);
-            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
-
-            var node = AddCommandToParentRecursive(script, command, parentNode, pos);
-
+            var node = HierarchyUtils.OnCommandInsertedInScript(m_Nodes, script, parentCommand, command, pos);
             RefreshTreeListView();
             treeListView.SelectedObject = node;
         }

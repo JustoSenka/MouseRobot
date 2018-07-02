@@ -16,6 +16,7 @@ using RobotEditor.Hierarchy;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
+using RobotEditor.Utils;
 
 namespace RobotEditor
 {
@@ -49,14 +50,24 @@ namespace RobotEditor
 
             TestRunner.Finished += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
-            CommandFactory.NewUserCommands += OnNewUserCommandsAppeared;
 
-            OnNewUserCommandsAppeared();
+            CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
+            AddNewCommandsToCreateMenu();
 
-            CreateColumns();
+            treeListView.FormatCell += UpdateFontsTreeListView;
+            HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
+
             UpdateHierarchy();
         }
 
+        private void AddNewCommandsToCreateMenu()
+        {
+            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 5, (name) =>
+            {
+                var command = CommandFactory.Create(name);
+                TestFixture.Setup.AddCommand(command);
+            });
+        }
 
         public void DisplayTestFixture(TestFixture fixture)
         {
@@ -95,33 +106,6 @@ namespace RobotEditor
             fixture.ScriptModified -= OnScriptModified;
             fixture.ScriptRemoved -= OnScriptRemoved;
             fixture.ScriptPositioningChanged -= OnScriptPositioningChanged;
-        }
-
-        private void CreateColumns()
-        {
-            treeListView.CanExpandGetter = x => (x as HierarchyNode).Children.Count > 0;
-            treeListView.ChildrenGetter = x => (x as HierarchyNode).Children;
-
-            var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => HierarchyNodeStringConverter.ToString(x as HierarchyNode);
-
-            nameColumn.ImageGetter += delegate (object x)
-            {
-                var imageListIndex = -1;
-                var node = (HierarchyNode)x;
-                imageListIndex = node.Script != null ? 0 : imageListIndex;
-                imageListIndex = node.Command != null ? 1 : imageListIndex;
-                return imageListIndex;
-            };
-
-            treeListView.UseCellFormatEvents = true;
-            treeListView.FormatCell += UpdateFontsTreeListView;
-
-            treeListView.IsSimpleDragSource = true;
-            treeListView.IsSimpleDropSink = true;
-
-            nameColumn.Width = treeListView.Width;
-            treeListView.Columns.Add(nameColumn);
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
@@ -177,25 +161,6 @@ namespace RobotEditor
             }
             treeListView.Refresh();
         }
-
-        // TODO: if text fixture changes in the middle of runtime, will this still work due to referencing old test fixture in lamda?
-        private void OnNewUserCommandsAppeared()
-        {
-            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[7];
-
-            createMenuItem.DropDownItems.Clear();
-            foreach (var name in CommandFactory.CommandNames)
-            {
-                var item = new ToolStripMenuItem(name);
-                item.Click += (sender, events) =>
-                {
-                    var command = CommandFactory.Create(name);
-                    TestFixture.Setup.AddCommand(command);
-                };
-                createMenuItem.DropDownItems.Add(item);
-            }
-        }
-
 
         #region ScriptManager Callbacks
 
@@ -256,62 +221,26 @@ namespace RobotEditor
 
         private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
-            var parentNode = script.Commands.GetNodeFromValue(command).parent;
-            System.Diagnostics.Debug.Assert(parentNode.value == parentCommand, "parentCommand and parentNode missmatched");
-
-            var scriptNode = m_Nodes.FindRecursively(script);
-
-            var parentHierarchyNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentNode.value);
-            AddCommandToParentRecursive(script, command, parentHierarchyNode);
-
-            if (scriptNode.Children.Count == 1)
-                treeListView.Expand(scriptNode);
-
+            HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
             RefreshTreeListView();
-        }
-
-        private static HierarchyNode AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode, int pos = -1)
-        {
-            var nodeToAdd = new HierarchyNode(command, parentHierarchyNode);
-
-            if (pos == -1)
-                parentHierarchyNode.Children.Add(nodeToAdd);
-            else
-                parentHierarchyNode.Children.Insert(pos, nodeToAdd);
-
-            var commandNode = script.Commands.GetNodeFromValue(command);
-            foreach (var childNode in commandNode)
-                AddCommandToParentRecursive(script, childNode.value, nodeToAdd);
-
-            return nodeToAdd;
         }
 
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
-            var scriptNode = m_Nodes.FindRecursively(script);
-            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
-
-            parentNode.Children.RemoveAt(commandIndex);
+            HierarchyUtils.OnCommandRemovedFromScript(m_Nodes, script, parentCommand, commandIndex);
             RefreshTreeListView();
         }
 
         private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
-            var scriptNode = m_Nodes.FindRecursively(script);
-            var commandNode = scriptNode.GetNodeFromValue(oldCommand);
-
-            commandNode.Update(newCommand);
+            HierarchyUtils.OnCommandModifiedOnScript(m_Nodes, script, oldCommand, newCommand);
             RefreshTreeListView();
         }
 
         // Will not work with multi dragging
         private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
-            var scriptNode = m_Nodes.FindRecursively(script);
-            var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
-
-            var node = AddCommandToParentRecursive(script, command, parentNode, pos);
-
+            var node = HierarchyUtils.OnCommandInsertedInScript(m_Nodes, script, parentCommand, command, pos);
             RefreshTreeListView();
             treeListView.SelectedObject = node;
         }
@@ -328,23 +257,12 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        // TODO: will not work 
-        private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var selectedNode = treeListView.SelectedObject as HierarchyNode;
-            if (selectedNode == null || selectedNode.Script == null)
-                return;
-
-            Process.Start("explorer.exe", "/select, " + selectedNode.Script.Path);
-        }
-
-        // TODO: Do not allow duplicating setup methods
         public void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (!(treeListView.SelectedObject is HierarchyNode selectedNode))
                 return;
 
-            if (selectedNode.Script != null)
+            if (selectedNode.Script != null && IsItASpecialScript(selectedNode.Script))
             {
                 TestFixture.NewScript(selectedNode.Script);
                 TestFixture.MoveScriptAfter(TestFixture.LoadedScripts.Count - 1, TestFixture.GetScriptIndex(selectedNode.Script));
@@ -366,14 +284,13 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        // TODO: Do not allow deleting setup methods
         public void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;
             if (selectedNode == null)
                 return;
 
-            if (selectedNode.Script != null)
+            if (selectedNode.Script != null && IsItASpecialScript(selectedNode.Script))
                 TestFixture.RemoveScript(selectedNode.Script);
             else if (selectedNode.Command != null)
                 TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
@@ -564,7 +481,15 @@ namespace RobotEditor
 
             TestRunner.Finished -= OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback -= OnCommandRunning;
-            CommandFactory.NewUserCommands -= OnNewUserCommandsAppeared;
+            CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
+        }
+
+        private bool IsItASpecialScript(Script script)
+        {
+            if (script == null)
+                return false;
+
+            return TestFixture.GetScriptIndex(script) >= 4;
         }
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()
