@@ -62,11 +62,8 @@ namespace RobotEditor
 
         private void AddNewCommandsToCreateMenu()
         {
-            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 5, (name) =>
-            {
-                var command = CommandFactory.Create(name);
-                TestFixture.Setup.AddCommand(command);
-            });
+            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 5,
+                treeListView, TestFixture);
         }
 
         public void DisplayTestFixture(TestFixture fixture)

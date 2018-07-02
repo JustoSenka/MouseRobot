@@ -17,6 +17,7 @@ using RobotEditor.Hierarchy;
 using Robot;
 using RobotRuntime.Scripts;
 using RobotEditor.Utils;
+using Robot.Scripts;
 
 namespace RobotEditor
 {
@@ -70,11 +71,8 @@ namespace RobotEditor
 
         private void AddNewCommandsToCreateMenu()
         {
-            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8, (name) =>
-            {
-                var command = CommandFactory.Create(name);
-                ScriptManager.ActiveScript.AddCommand(command);
-            });
+            HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8,
+                treeListView, ScriptManager as BaseScriptManager);
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
