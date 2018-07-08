@@ -458,9 +458,9 @@ namespace RobotEditor
             {
                 OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, null);
             }
-            else if (node.Command != null)
+            else
             {
-                OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, node.Command);
+                OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, node.Value);
             }
         }
 

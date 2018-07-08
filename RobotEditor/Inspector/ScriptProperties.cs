@@ -1,8 +1,10 @@
-﻿using Robot.Abstractions;
-using RobotEditor.PropertyUtils;
+﻿using Robot;
+using Robot.Abstractions;
+using Robot.Scripts;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime.Scripts;
+using RobotRuntime.Tests;
 using System.ComponentModel;
 
 namespace RobotEditor.Inspector
@@ -30,7 +32,22 @@ namespace RobotEditor.Inspector
         public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
             dt.Properties.Clear();
-            AddProperty(dt, "Name");
+
+            var isSpecialScript = IsSpecialScript(Script, BaseScriptManager);
+
+            if (!isSpecialScript)
+                AddProperty(dt, "Name");
+            else
+                AddProperty(dt, "ReadonlyName");
+        }
+
+        private bool IsSpecialScript(Script Script, BaseScriptManager BaseScriptManager)
+        {
+            return (Script.Name == LightTestFixture.k_OneTimeSetup ||
+                Script.Name == LightTestFixture.k_OneTimeTeardown ||
+                Script.Name == LightTestFixture.k_Setup ||
+                Script.Name == LightTestFixture.k_TearDown) ||
+                BaseScriptManager is ScriptManager;
         }
 
         [SortedCategory("Test Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -44,6 +61,16 @@ namespace RobotEditor.Inspector
             set
             {
                 Script.Name = value;
+            }
+        }
+
+        [SortedCategory("Test Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DisplayName("Test Name")]
+        public string ReadonlyName
+        {
+            get
+            {
+                return Script.Name;
             }
         }
 

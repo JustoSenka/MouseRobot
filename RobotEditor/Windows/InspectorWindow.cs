@@ -82,6 +82,8 @@ namespace RobotEditor.Windows
 
             this.BaseScriptManager = BaseScriptManager;
             m_CurrentObject.BaseScriptManager = BaseScriptManager;
+
+            ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void ShowScript<T>(T script) where T : Script
@@ -90,7 +92,6 @@ namespace RobotEditor.Windows
             scriptProperties.Script = script;
 
             m_CurrentObject = scriptProperties;
-            ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command
@@ -104,8 +105,6 @@ namespace RobotEditor.Windows
             commandProperties.Command = command;
             m_CurrentObject = commandProperties;
             m_CurrentObject.BaseScriptManager = BaseScriptManager;
-
-            ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
@@ -123,11 +122,9 @@ namespace RobotEditor.Windows
                 // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
                 if (m_OldCommand.GetType() != command.GetType())
                     ShowCommand(command, BaseScriptManager);
-                // If not, updating type descriptor is enough
-                else
-                    ApplyDynamicTypeDescriptorToPropertyView();
-            }
 
+                ApplyDynamicTypeDescriptorToPropertyView();
+            }
         }
 
         private void ApplyDynamicTypeDescriptorToPropertyView()
