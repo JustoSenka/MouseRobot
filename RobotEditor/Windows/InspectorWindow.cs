@@ -4,19 +4,20 @@ using RobotEditor.Utils;
 using RobotRuntime;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using Robot.Abstractions;
 using RobotRuntime.Abstractions;
 using System;
 using Unity;
 using System.Linq;
 using RobotRuntime.Execution;
 using Robot.Scripts;
+using RobotEditor.Settings;
+using RobotRuntime.Scripts;
 
 namespace RobotEditor.Windows
 {
     public partial class InspectorWindow : DockContent, IInspectorWindow
     {
-        private CommandProperties m_CurrentObject;
+        private BaseProperties m_CurrentObject;
         private Command m_OldCommand;
 
         private Type[] m_NativeDesignerTypes;
@@ -45,7 +46,7 @@ namespace RobotEditor.Windows
 
         private void OnDomainReloaded()
         {
-            CollectUserCommands(); 
+            CollectUserCommands();
 
             // This will break if command is custom command, because script manager replaces all old instances with newly compiled ones, so pointer type is no good here
             /*if (m_CurrentObject != null && m_CurrentObject.Command != null)
@@ -64,36 +65,69 @@ namespace RobotEditor.Windows
             m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 
-        public void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command
+        public void ShowObject(object obj, BaseScriptManager BaseScriptManager = null)
         {
-            if (command == null)
+            if (obj == null)
             {
                 propertyGrid.SelectedObject = null;
                 return;
             }
 
-            var designerType = GetDesignerTypeForCommand(command.GetType());
-            m_CurrentObject = (CommandProperties)Container.Resolve(designerType);
+            var type = obj.GetType();
+            if (typeof(Script).IsAssignableFrom(type))
+                ShowScript((Script)obj);
+
+            else if (typeof(Command).IsAssignableFrom(type))
+                ShowCommand((Command)obj, BaseScriptManager);
 
             this.BaseScriptManager = BaseScriptManager;
             m_CurrentObject.BaseScriptManager = BaseScriptManager;
+        }
+
+        private void ShowScript<T>(T script) where T : Script
+        {
+            var scriptProperties = Container.Resolve<ScriptProperties>();
+            scriptProperties.Script = script;
+
+            m_CurrentObject = scriptProperties;
+            ApplyDynamicTypeDescriptorToPropertyView();
+        }
+
+        private void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command
+        {
+            var designerType = GetDesignerTypeForCommand(command.GetType());
+
+            var commandProperties = (CommandProperties)Container.Resolve(designerType);
 
             m_OldCommand = command;
-            m_CurrentObject.Command = command;
+
+            commandProperties.Command = command;
+            m_CurrentObject = commandProperties;
+            m_CurrentObject.BaseScriptManager = BaseScriptManager;
+
             ApplyDynamicTypeDescriptorToPropertyView();
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            var command = m_CurrentObject.Command;
-            BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
-
-            // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
-            if (m_OldCommand.GetType() != command.GetType())
-                ShowCommand(command, BaseScriptManager);
-            // If not, updating type descriptor is enough
-            else
+            if (m_CurrentObject is ScriptProperties scriptProperties)
+            {
                 ApplyDynamicTypeDescriptorToPropertyView();
+            }
+            else if (typeof(CommandProperties).IsAssignableFrom(m_CurrentObject.GetType()))
+            {
+                var commandProperties = (CommandProperties)m_CurrentObject;
+                var command = commandProperties.Command;
+                BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
+
+                // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
+                if (m_OldCommand.GetType() != command.GetType())
+                    ShowCommand(command, BaseScriptManager);
+                // If not, updating type descriptor is enough
+                else
+                    ApplyDynamicTypeDescriptorToPropertyView();
+            }
+
         }
 
         private void ApplyDynamicTypeDescriptorToPropertyView()
@@ -101,12 +135,18 @@ namespace RobotEditor.Windows
             var designerType = m_CurrentObject.GetType();
             var isDesignerDefault = designerType == typeof(DefaultCommandProperties);
 
-            DynamicTypeDescriptor dt = isDesignerDefault ? new DynamicTypeDescriptor(m_CurrentObject.Command.GetType()) : new DynamicTypeDescriptor(m_CurrentObject.GetType());
+            var command = isDesignerDefault ? ((CommandProperties)m_CurrentObject).Command : null;
+
+            DynamicTypeDescriptor dt = isDesignerDefault ?
+                new DynamicTypeDescriptor(command.GetType()) :
+                new DynamicTypeDescriptor(m_CurrentObject.GetType());
 
             m_CurrentObject.HideProperties(ref dt);
             m_CurrentObject.OnPropertiesModified();
 
-            propertyGrid.SelectedObject = isDesignerDefault ? dt.FromComponent(m_CurrentObject.Command) : dt.FromComponent(m_CurrentObject);
+            propertyGrid.SelectedObject = isDesignerDefault ?
+                dt.FromComponent(command) :
+                dt.FromComponent(m_CurrentObject);
         }
 
         private Type GetDesignerTypeForCommand(Type commandType)

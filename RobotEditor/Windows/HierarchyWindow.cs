@@ -23,7 +23,7 @@ namespace RobotEditor
 {
     public partial class HierarchyWindow : DockContent, IHierarchyWindow
     {
-        public event Action<Command> OnCommandSelected;
+        public event Action<BaseScriptManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
@@ -175,7 +175,7 @@ namespace RobotEditor
             RefreshTreeListView();
 
             if (treeListView.SelectedObject != oldSelectedObject)
-                OnCommandSelected?.Invoke(null);
+                OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, null);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -454,15 +454,13 @@ namespace RobotEditor
 
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
-            var node = treeListView.SelectedObject as HierarchyNode;
-
-            if (node == null)
+            if (!(treeListView.SelectedObject is HierarchyNode node))
             {
-                OnCommandSelected?.Invoke(null);
+                OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, null);
             }
             else if (node.Command != null)
             {
-                OnCommandSelected?.Invoke(node.Command);
+                OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, node.Command);
             }
         }
 

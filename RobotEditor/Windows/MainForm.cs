@@ -104,7 +104,7 @@ namespace RobotEditor
             InputCallbacks.InputEvent += OnInputEvent;
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
-            m_HierarchyWindow.OnCommandSelected += OnCommandDoubleClick_Hierarchy;
+            m_HierarchyWindow.OnSelectionChanged += ShowSelectedObjectInInspector;
 
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
@@ -134,7 +134,7 @@ namespace RobotEditor
             }
 
             window.DisplayTestFixture(fixture);
-            window.OnCommandSelected += OnCommandDoubleClick_TestFixture;
+            window.OnSelectionChanged += ShowSelectedObjectInInspector;
             TestFixtureWindows.Add(window);
         }
 
@@ -191,14 +191,9 @@ namespace RobotEditor
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
         }
 
-        private void OnCommandDoubleClick_Hierarchy(Command command)
+        private void ShowSelectedObjectInInspector(BaseScriptManager BaseScriptManager, object obj)
         {
-            m_InspectorWindow.ShowCommand(command, (BaseScriptManager)ScriptManager);
-        }
-
-        private void OnCommandDoubleClick_TestFixture(TestFixtureWindow testFixtureWindow, Command command)
-        {
-            m_InspectorWindow.ShowCommand(command, testFixtureWindow.TestFixture);
+            m_InspectorWindow.ShowObject(obj, BaseScriptManager);
         }
 
         private void OnStatusUpdated(Status status)

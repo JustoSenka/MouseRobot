@@ -1,4 +1,6 @@
-﻿using RobotEditor.Utils;
+﻿using Robot.Scripts;
+using RobotEditor.Utils;
+using System;
 using System.ComponentModel;
 
 namespace RobotEditor.Settings
@@ -7,6 +9,10 @@ namespace RobotEditor.Settings
     {
         [Browsable(false)]
         public virtual string Title { get { return "Properties"; } }
+
+        [Browsable(false)]
+        [NonSerialized]
+        public BaseScriptManager BaseScriptManager;
 
         public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {

@@ -15,7 +15,7 @@ namespace RobotRuntime
             Commands = commands;
         }
 
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         public TreeNode<Command> Commands { get; protected set; }
 
         public void Run(IRunner runner)

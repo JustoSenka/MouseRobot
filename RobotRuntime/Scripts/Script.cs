@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Utils;
+﻿using RobotRuntime.Execution;
+using RobotRuntime.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace RobotRuntime.Scripts
 {
+    [PropertyDesignerType("ScriptProperties")]
     public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
     {
         private bool m_IsDirty;
@@ -196,10 +198,27 @@ namespace RobotRuntime.Scripts
             set
             {
                 m_Path = value;
-                Name = (Path == "") ? DefaultScriptName : Paths.GetName(Path);
+                m_Name = (Path == "") ? DefaultScriptName : Paths.GetName(Path);
                 IsDirty = false;
             }
             get { return m_Path; }
+        }
+
+        private string m_Name;
+        public override string Name
+        {
+            get
+            {
+                return m_Name;
+            }
+            set
+            {
+                if (m_Name != value)
+                {
+                    m_Name = value;
+                    IsDirty = true;
+                }
+            }
         }
 
         public bool IsDirty
@@ -220,13 +239,13 @@ namespace RobotRuntime.Scripts
 
         public LightScript ToLightScript()
         {
-            return new LightScript(Commands) { Name = Name};
+            return new LightScript(Commands) { Name = Name };
         }
 
         public Script(LightScript lightScript)
         {
             Commands = lightScript.Commands;
-            Name = lightScript.Name;
+            m_Name = lightScript.Name;
         }
 
         public static Script FromLightScript(LightScript lightScript)

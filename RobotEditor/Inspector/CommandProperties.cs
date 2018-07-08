@@ -19,10 +19,6 @@ namespace RobotEditor.Inspector
         [Browsable(false)]
         public override string Title { get { return "Command Properties"; } }
 
-        [Browsable(false)]
-        [NonSerialized]
-        public BaseScriptManager BaseScriptManager;
-
         protected PropertyDescriptorCollection Properties;
         private ICommandFactory CommandFactory;
         public CommandProperties(ICommandFactory CommandFactory)

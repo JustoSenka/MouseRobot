@@ -17,12 +17,13 @@ using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using RobotEditor.Utils;
+using Robot.Scripts;
 
 namespace RobotEditor
 {
     public partial class TestFixtureWindow : DockContent
     {
-        public event Action<TestFixtureWindow, Command> OnCommandSelected;
+        public event Action<BaseScriptManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
@@ -191,7 +192,7 @@ namespace RobotEditor
             RefreshTreeListView();
 
             if (treeListView.SelectedObject != oldSelectedObject)
-                OnCommandSelected?.Invoke(this, null);
+                OnSelectionChanged?.Invoke(TestFixture, null);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -466,10 +467,14 @@ namespace RobotEditor
 
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
-            var node = treeListView.SelectedObject as HierarchyNode;
-
-            var obj = node?.Command;
-            OnCommandSelected?.Invoke(this, obj);
+            if (!(treeListView.SelectedObject is HierarchyNode node))
+            {
+                OnSelectionChanged?.Invoke(TestFixture, null);
+            }
+            else
+            {
+                OnSelectionChanged?.Invoke(TestFixture, node.Value);
+            }
         }
 
         private void TestFixtureWindow_FormClosing(object sender, FormClosingEventArgs e)
