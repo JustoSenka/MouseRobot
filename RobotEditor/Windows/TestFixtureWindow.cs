@@ -492,9 +492,12 @@ namespace RobotEditor
         {
             TestFixtureManager.Remove(m_TestFixture);
 
+            UnsubscribeAllEvents(m_TestFixture);
+
             TestRunner.Finished -= OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback -= OnCommandRunning;
             CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
+            treeListView.FormatCell -= UpdateFontsTreeListView;
         }
 
         private bool IsItASpecialScript(Script script)

@@ -26,6 +26,7 @@ namespace RobotEditor
     {
         private DockContent[] m_Windows;
         private ThemeBase m_CurrentTheme;
+        private readonly VisualStudioToolStripExtender.VsVersion m_VsVersion = VisualStudioToolStripExtender.VsVersion.Vs2015;
 
         private FormWindowState m_DefaultWindowState;
 
@@ -124,7 +125,9 @@ namespace RobotEditor
             var window = Container.Resolve<TestFixtureWindow>();
             window.Show(m_DockPanel);
 
-            // Removes closed forms
+            SetTestFixtureWindowTheme(window, m_VsVersion, m_CurrentTheme);
+
+            // Skips closed forms
             TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
 
             if (TestFixtureWindows.Count > 0)
@@ -234,7 +237,7 @@ namespace RobotEditor
             m_CurrentTheme = theme;
             m_DockPanel.Theme = theme;
 
-            EnableVSDesignForToolstrips(VisualStudioToolStripExtender.VsVersion.Vs2015, theme);
+            EnableVSDesignForToolstrips(m_VsVersion, theme);
 
             if (m_DockPanel.Theme.ColorPalette != null)
                 statusStrip.BackColor = m_DockPanel.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
@@ -258,6 +261,17 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_ConsoleWindow.ToolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
+
+            foreach (var window in TestFixtureWindows)
+                SetTestFixtureWindowTheme(window, version, theme);
+        }
+
+        private void SetTestFixtureWindowTheme(TestFixtureWindow window, VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
+        {
+            if (window.ContextMenuStrip != null)
+                visualStudioToolStripExtender.SetStyle(window.ContextMenuStrip, version, theme);
+            if (window.ToolStrip != null)
+                visualStudioToolStripExtender.SetStyle(window.ToolStrip, version, theme);
         }
 
         private void ShowSplashScreen(int millis)
@@ -500,7 +514,7 @@ namespace RobotEditor
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             DockLayout.Save(m_DockPanel);
-            
+
             MouseRobot.IsRecording = false;
             MouseRobot.IsPlaying = false;
         }
