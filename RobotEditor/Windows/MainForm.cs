@@ -70,7 +70,7 @@ namespace RobotEditor
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
             this.TestFixtureManager = TestFixtureManager;
-            ;
+            
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
             this.m_ScreenPreviewWindow = ScreenPreviewWindow;
@@ -122,22 +122,30 @@ namespace RobotEditor
 
         private void OnFixtureAdded(TestFixture fixture)
         {
+            // Skips closed forms
+            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
             var window = Container.Resolve<TestFixtureWindow>();
-            window.Show(m_DockPanel);
+
+            ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(window);
 
             SetTestFixtureWindowTheme(window, m_VsVersion, m_CurrentTheme);
 
-            // Skips closed forms
-            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+            window.DisplayTestFixture(fixture);
+            window.OnSelectionChanged += ShowSelectedObjectInInspector;
+        }
 
+        private void ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(TestFixtureWindow window)
+        {
             if (TestFixtureWindows.Count > 0)
             {
                 var parent = TestFixtureWindows[0];
-                window.DockTo(parent.DockPanel, DockStyle.Fill);
+                window.Show(parent.Pane, null); // Show as tab on another test fixture window
             }
-
-            window.DisplayTestFixture(fixture);
-            window.OnSelectionChanged += ShowSelectedObjectInInspector;
+            else
+            {
+                var firstWindow = m_Windows[0];
+                window.Show(firstWindow.Pane, DockAlignment.Right, 0.5); // Dock to the right to first window in list ([0] is HierarhcyWindows)
+            }
             TestFixtureWindows.Add(window);
         }
 

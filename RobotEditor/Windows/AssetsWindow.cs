@@ -147,6 +147,7 @@ namespace RobotEditor
                     var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
                     fixture.Path = asset.Path;
                 }
+                // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
         }
 
