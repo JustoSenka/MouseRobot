@@ -71,6 +71,14 @@ namespace RobotEditor
 
         private void AddNewCommandsToCreateMenu()
         {
+            if (CommandFactory == null || contextMenuStrip == null || treeListView == null || ScriptManager == null)
+            {
+                Logger.Log(LogType.Error, "HierarchyWindow.AddNewCommandsToCreateMenu() was called to early. Creating commands will not be possible. Please report a bug.",
+                    "CommandFactory " + (CommandFactory == null) + ", contextMenuStrip " + (contextMenuStrip == null) +
+                    ", treeListView " + (treeListView == null) + ", TestFixture " + (ScriptManager == null));
+                return;
+            }
+
             HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8,
                 treeListView, ScriptManager as BaseScriptManager);
         }

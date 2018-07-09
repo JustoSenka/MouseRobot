@@ -24,8 +24,6 @@ namespace RobotEditor.Windows
         private Type[] m_UserDesignerTypes;
         private Type[] m_DesignerTypes;
 
-        private BaseScriptManager BaseScriptManager;
-
         private new IUnityContainer Container;
         private IPluginLoader PluginLoader;
         private ILogger Logger;
@@ -80,10 +78,11 @@ namespace RobotEditor.Windows
             else if (typeof(Command).IsAssignableFrom(type))
                 ShowCommand((Command)obj, BaseScriptManager);
 
-            this.BaseScriptManager = BaseScriptManager;
-            m_CurrentObject.BaseScriptManager = BaseScriptManager;
-
-            ApplyDynamicTypeDescriptorToPropertyView();
+            if (m_CurrentObject != null)
+            {
+                m_CurrentObject.BaseScriptManager = BaseScriptManager;
+                ApplyDynamicTypeDescriptorToPropertyView();
+            }
         }
 
         private void ShowScript<T>(T script) where T : Script
@@ -117,11 +116,11 @@ namespace RobotEditor.Windows
             {
                 var commandProperties = (CommandProperties)m_CurrentObject;
                 var command = commandProperties.Command;
-                BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
+                m_CurrentObject.BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
 
                 // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
                 if (m_OldCommand.GetType() != command.GetType())
-                    ShowCommand(command, BaseScriptManager);
+                    ShowCommand(command, m_CurrentObject.BaseScriptManager);
 
                 ApplyDynamicTypeDescriptorToPropertyView();
             }
@@ -129,6 +128,9 @@ namespace RobotEditor.Windows
 
         private void ApplyDynamicTypeDescriptorToPropertyView()
         {
+            if (m_CurrentObject == null)
+                return;
+
             var designerType = m_CurrentObject.GetType();
             var isDesignerDefault = designerType == typeof(DefaultCommandProperties);
 
