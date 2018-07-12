@@ -78,8 +78,9 @@ namespace RobotEditor
             Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<PropertyDependencyProvider, PropertyDependencyProvider>(new ContainerControlledLifetimeManager());
-
+            
             Container.RegisterType<IProjectSelectionDialog, ProjectSelectionDialog>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
         }
     }
 }

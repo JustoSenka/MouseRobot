@@ -228,6 +228,7 @@
     </Compile>
     <Compile Include="Abstractions\IConsoleWindow.cs" />
     <Compile Include="Editor\FlexibleMessageBox.cs" />
+    <Compile Include="Abstractions\ITestFixtureWindow.cs" />
     <Compile Include="Windows\TestFixtureWindow.cs">
       <SubType>Form</SubType>
     </Compile>

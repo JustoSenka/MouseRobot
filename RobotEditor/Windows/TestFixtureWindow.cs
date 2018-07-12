@@ -21,7 +21,7 @@ using Robot.Scripts;
 
 namespace RobotEditor
 {
-    public partial class TestFixtureWindow : DockContent
+    public partial class TestFixtureWindow : DockContent, ITestFixtureWindow
     {
         public event Action<BaseScriptManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
@@ -137,7 +137,7 @@ namespace RobotEditor
             }
         }
 
-        public void UpdateHierarchy()
+        private void UpdateHierarchy()
         {
             m_Nodes.Clear();
 
@@ -258,7 +258,7 @@ namespace RobotEditor
 
         #region Context Menu Items
 
-        public void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             m_TestFixture.NewScript();
             RefreshTreeListView();
@@ -266,7 +266,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        public void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (!(treeListView.SelectedObject is HierarchyNode selectedNode))
                 return;
@@ -293,7 +293,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        public void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;
             if (selectedNode == null)

@@ -30,7 +30,7 @@ namespace RobotEditor
 
         private FormWindowState m_DefaultWindowState;
 
-        private IList<TestFixtureWindow> TestFixtureWindows = new List<TestFixtureWindow>();
+        private IList<ITestFixtureWindow> TestFixtureWindows = new List<ITestFixtureWindow>();
 
         private IHierarchyWindow m_HierarchyWindow;
         private IPropertiesWindow m_PropertiesWindow;
@@ -114,6 +114,7 @@ namespace RobotEditor
             StatusManager.StatusUpdated += OnStatusUpdated;
 
             TestFixtureManager.FixtureAdded += OnFixtureAdded;
+            TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
 
             this.Activated += (x, y) => AssetManager.Refresh();
 
@@ -122,29 +123,34 @@ namespace RobotEditor
 
         private void OnFixtureAdded(TestFixture fixture)
         {
-            // Skips closed forms
-            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
-            var window = Container.Resolve<TestFixtureWindow>();
+            TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
+            var window = Container.Resolve<ITestFixtureWindow>();
 
             ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(window);
 
-            SetTestFixtureWindowTheme(window, m_VsVersion, m_CurrentTheme);
+            SetTestFixtureWindowTheme((TestFixtureWindow)window, m_VsVersion, m_CurrentTheme);
 
             window.DisplayTestFixture(fixture);
             window.OnSelectionChanged += ShowSelectedObjectInInspector;
         }
 
-        private void ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(TestFixtureWindow window)
+        private void OnFixtureRemoved(TestFixture fixture)
         {
+            TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
+        }
+
+        private void ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(ITestFixtureWindow window)
+        {
+            var dockContent = (DockContent)window;
             if (TestFixtureWindows.Count > 0)
             {
-                var parent = TestFixtureWindows[0];
-                window.Show(parent.Pane, null); // Show as tab on another test fixture window
+                var parent = (DockContent)TestFixtureWindows[0];
+                dockContent.Show(parent.Pane, null); // Show as tab on another test fixture window
             }
             else
             {
                 var firstWindow = m_Windows[0];
-                window.Show(firstWindow.Pane, DockAlignment.Right, 0.5); // Dock to the right to first window in list ([0] is HierarhcyWindows)
+                dockContent.Show(firstWindow.Pane, DockAlignment.Right, 0.5); // Dock to the right to first window in list ([0] is HierarhcyWindows)
             }
             TestFixtureWindows.Add(window);
         }
@@ -209,7 +215,7 @@ namespace RobotEditor
 
         private void OnStatusUpdated(Status status)
         {
-            if (!this.Created || !statusStrip.Created)
+            if (!this.Created || !statusStrip.Created || this.Disposing || this.IsDisposed)
                 return;
 
             this.Invoke(new MethodInvoker(() =>
@@ -271,7 +277,7 @@ namespace RobotEditor
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
 
             foreach (var window in TestFixtureWindows)
-                SetTestFixtureWindowTheme(window, version, theme);
+                SetTestFixtureWindowTheme((TestFixtureWindow)window, version, theme);
         }
 
         private void SetTestFixtureWindowTheme(TestFixtureWindow window, VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
@@ -309,10 +315,9 @@ namespace RobotEditor
             if (((Form)m_HierarchyWindow).ContainsFocus)
                 m_HierarchyWindow.SaveAllScripts();
 
-            // Removes closed forms
-            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+            TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
 
-            TestFixtureWindows.FirstOrDefault(w => w.ContainsFocus)?.SaveTestFixture();
+            TestFixtureWindows.FirstOrDefault(w => ((Form)w).ContainsFocus)?.SaveTestFixture();
         }
 
         private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -320,10 +325,19 @@ namespace RobotEditor
             if (((Form)m_HierarchyWindow).ContainsFocus)
                 m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
 
-            // Removes closed forms
-            TestFixtureWindows = TestFixtureWindows.Where(form => form.Created && !form.Disposing).ToList();
+            TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
 
-            TestFixtureWindows.FirstOrDefault(w => w.ContainsFocus)?.SaveFixtureWithDialog(true);
+            TestFixtureWindows.FirstOrDefault(w => ((Form)w).ContainsFocus)?.SaveFixtureWithDialog(true);
+        }
+
+        private IEnumerable<ITestFixtureWindow> GetNotDestroyedWindows(IList<ITestFixtureWindow> TestFixtureWindows)
+        {
+            foreach(var window in TestFixtureWindows)
+            {
+                var form = (Form)window;
+                if (form.Created && !form.Disposing && !form.IsDisposed)
+                    yield return window;
+            }
         }
 
         private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
