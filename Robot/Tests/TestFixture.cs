@@ -68,7 +68,26 @@ namespace RobotRuntime.Tests
         {
             var s = base.NewScript(clone);
             s.Name = DefaultTestName;
+            m_IsDirty = true;
             return s;
+        }
+
+        public override void RemoveScript(Script script)
+        {
+            base.RemoveScript(script);
+            m_IsDirty = true;
+        }
+
+        public override void RemoveScript(int position)
+        {
+            base.RemoveScript(position);
+            m_IsDirty = true;
+        }
+
+        public override Script AddScript(Script script, bool removeScriptWithSamePath = false)
+        {
+            m_IsDirty = true;
+            return base.AddScript(script, removeScriptWithSamePath);
         }
 
         private Script GetScriptWithName(string name)
@@ -126,6 +145,8 @@ namespace RobotRuntime.Tests
             
             foreach (var test in t.Tests)
                 AddScript(test);
+
+            m_IsDirty = false;
 
             return this;
         }
