@@ -113,12 +113,12 @@ namespace RobotRuntime.Tests
             return t;
         }
 
-        public TestFixture ApplyLightScriptValues(LightTestFixture t)
+        public TestFixture ApplyLightFixtureValues(LightTestFixture t)
         {
             m_LoadedScripts.Clear();
 
             Name = t.Name;
-
+            
             AddScript(t.Setup);
             AddScript(t.TearDown);
             AddScript(t.OneTimeSetup);

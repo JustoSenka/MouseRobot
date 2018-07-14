@@ -161,6 +161,26 @@ namespace Tests
         }
 
         [TestMethod]
+        public void Refresh_WithRenamedFiles_AndOneBeingDeleted_AcceptsRename()
+        {
+            var assetA = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var assetC = AssetManager.CreateAsset(new Script(), k_ScriptCPath);
+
+            // This will actually think that A was renamed to D, and B deleted
+            // this is due to having the same hash
+            File.Move(k_ScriptBPath, k_ScriptDPath);
+            File.Delete(k_ScriptAPath);
+            AssetManager.Refresh();
+
+            Assert.AreEqual(2, AssetManager.Assets.Count());
+            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_ScriptDPath).Guid, "B asset guid missmath");
+            Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_ScriptCPath).Guid, "C asset guid missmath");
+            Assert.IsNull(AssetManager.GetAsset(k_ScriptAPath), "A asset was renamed, so should not appear");
+            Assert.IsNull(AssetManager.GetAsset(k_ScriptBPath), "B asset was renamed, so should not appear");
+        }
+
+        [TestMethod]
         public void DeleteAsset_RemovesFromManager_AndFromDisk()
         {
             AssetManager.CreateAsset(new Script(), k_ScriptAPath);

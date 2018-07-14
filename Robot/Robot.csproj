@@ -151,8 +151,10 @@
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Abstractions\IInputCallbacks.cs" />
     <Compile Include="Abstractions\ITestFixtureManager.cs" />
+    <Compile Include="Abstractions\ITestRunnerManager.cs" />
     <Compile Include="Tests\TestFixture.cs" />
     <Compile Include="Tests\TestFixtureManager.cs" />
+    <Compile Include="Tests\TestRunnerManager.cs" />
     <Compile Include="Utils\Win32\InputCallbacks.cs" />
     <Compile Include="Utils\Win32\KeyEvent.cs" />
   </ItemGroup>

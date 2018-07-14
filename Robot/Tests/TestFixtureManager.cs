@@ -8,6 +8,13 @@ using System.Linq;
 
 namespace Robot.Tests
 {
+    /// <summary>
+    /// Contains TextFixtures which are currently open and loaded (has window document open).
+    /// Responsible for keeping setup and teardown special scripts
+    /// Handles saving of test fixtures
+    /// Double clicking fixture in assets window will add fixture here
+    /// TestFixtureWindow will rely on this manager callbacks
+    /// </summary>
     public class TestFixtureManager : ITestFixtureManager
     {
         public IList<TestFixture> Fixtures { get; private set; }
@@ -40,7 +47,7 @@ namespace Robot.Tests
         public TestFixture NewTestFixture(LightTestFixture lightTestFixture)
         {
             var fixture = new TestFixture(AssetManager, CommandFactory, Profiler, Logger);
-            fixture.ApplyLightScriptValues(lightTestFixture);
+            fixture.ApplyLightFixtureValues(lightTestFixture);
             Add(fixture);
             return fixture;
         }

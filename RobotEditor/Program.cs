@@ -73,6 +73,7 @@ namespace RobotEditor
             Container.RegisterType<IPropertiesWindow, PropertiesWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenPreviewWindow, ScreenPreviewWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IConsoleWindow, ConsoleWindow>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITestRunnerWindow, TestRunnerWindow>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<IHierarchyNodeStringConverter, HierarchyNodeStringConverter>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());

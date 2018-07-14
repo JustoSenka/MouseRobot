@@ -186,7 +186,8 @@ namespace Robot
             DeleteAssetInternal(asset, true);
             asset.UpdatePath(destPath);
 
-            AssetGuidManager.AddNewGuid(guid, asset.Path, asset.Hash);
+            // AddAssetInternal deals with it
+            // AssetGuidManager.AddNewGuid(guid, asset.Path, asset.Hash);
             if (!IsEditingAssets)
                 AssetGuidManager.Save();
 

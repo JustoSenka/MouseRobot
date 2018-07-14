@@ -39,6 +39,7 @@ namespace RobotEditor
         private IProfilerWindow m_ProfilerWindow;
         private IInspectorWindow m_InspectorWindow;
         private IConsoleWindow m_ConsoleWindow;
+        private ITestRunnerWindow m_TestRunnerWindow;
 
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
@@ -56,7 +57,8 @@ namespace RobotEditor
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager, 
+            ITestRunnerWindow TestRunnerWindow)
         {
             this.Container = Container;
 
@@ -78,6 +80,7 @@ namespace RobotEditor
             this.m_ProfilerWindow = ProfilerWindow;
             this.m_InspectorWindow = InspectorWindow;
             this.m_ConsoleWindow = ConsoleWindow;
+            this.m_TestRunnerWindow = TestRunnerWindow;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -237,6 +240,7 @@ namespace RobotEditor
                 (DockContent)m_ProfilerWindow,
                 (DockContent)m_InspectorWindow,
                 (DockContent)m_ConsoleWindow,
+                (DockContent)m_TestRunnerWindow,
             };
         }
 
@@ -270,10 +274,12 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(((Form)m_AssetsWindow).ContextMenuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(((Form)m_PropertiesWindow).ContextMenuStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(((Form)m_ConsoleWindow).ContextMenuStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(((Form)m_TestRunnerWindow).ContextMenuStrip, version, theme);
 
             visualStudioToolStripExtender.SetStyle(m_HierarchyWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_ConsoleWindow.ToolStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_TestRunnerWindow.ToolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
 
             foreach (var window in TestFixtureWindows)
@@ -453,6 +459,11 @@ namespace RobotEditor
         private void consoleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((ConsoleWindow)m_ConsoleWindow).Show(m_DockPanel);
+        }
+
+        private void testRunnerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((TestRunnerWindow)m_TestRunnerWindow).Show(m_DockPanel);
         }
 
         #endregion

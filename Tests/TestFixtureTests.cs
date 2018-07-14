@@ -60,7 +60,7 @@ namespace Tests
         [TestMethod]
         public void AssetIsCreated_For_TestFixture()
         {
-            TestFixture.ApplyLightScriptValues(LightTestFixture);
+            TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var asset = AssetManager.CreateAsset(TestFixture.ToLightTestFixture(), k_FixturePath);
             Assert.IsTrue(File.Exists(asset.Path), "Test fixture asset should have been created at path: " + k_FixturePath);
         }
@@ -68,7 +68,7 @@ namespace Tests
         [TestMethod]
         public void TestFixture_FromLightTestFixture_ConvertsCorrectlyBack()
         {
-            TestFixture.ApplyLightScriptValues(LightTestFixture);
+            TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var newLightFixture = TestFixture.ToLightTestFixture();
             CheckIfLightTestFixturesAreEqual(LightTestFixture, newLightFixture);
         }
@@ -76,7 +76,7 @@ namespace Tests
         [TestMethod]
         public void LightTestFixture_LoadedFromImporter_IsCorrect()
         {
-            TestFixture.ApplyLightScriptValues(LightTestFixture);
+            TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var asset = AssetManager.CreateAsset(TestFixture.ToLightTestFixture(), k_FixturePath);
 
             var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
@@ -86,12 +86,12 @@ namespace Tests
         [TestMethod]
         public void TestFixture_LoadedFromImporter_AndConverted_IsCorrect()
         {
-            TestFixture.ApplyLightScriptValues(LightTestFixture);
+            TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var asset = AssetManager.CreateAsset(TestFixture.ToLightTestFixture(), k_FixturePath);
 
             var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
             var newTestFixture = Container.Resolve<TestFixture>();
-            newTestFixture.ApplyLightScriptValues(newLightFixture);
+            newTestFixture.ApplyLightFixtureValues(newLightFixture);
 
             CheckIfTestFixturesAreEqual(TestFixture, newTestFixture);
         }

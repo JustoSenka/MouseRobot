@@ -28,6 +28,7 @@ namespace Robot
             Container.RegisterType<IPluginCompiler, PluginCompiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ICommandFactory, CommandFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestFixtureManager, TestFixtureManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITestRunnerManager, TestRunnerManager>(new ContainerControlledLifetimeManager());
         }
     }
 }
