@@ -10,6 +10,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
+using Robot.Tests;
 
 namespace Tests
 {
@@ -24,9 +25,11 @@ namespace Tests
             }
         }
 
-        private const string k_FixturePath = "Tests\\fixture.mrt";
+        private const string k_FixtureName = "fixture";
+        private const string k_FixturePath = "Tests\\" + k_FixtureName + ".mrt";
 
         IAssetManager AssetManager;
+        private ITestFixtureManager TestFixtureManager;
         UnityContainer Container;
 
         private TestFixture TestFixture;
@@ -96,6 +99,43 @@ namespace Tests
             CheckIfTestFixturesAreEqual(TestFixture, newTestFixture);
         }
 
+        [TestMethod]
+        public void SavingFixtureVia_TestFixtureManager_ProducesCorrectAsset()
+        {
+            var fixture = TestFixtureManager.NewTestFixture();
+            var lightFixture = LightTestFixture;
+            fixture.ApplyLightFixtureValues(lightFixture);
+            TestFixtureManager.SaveTestFixture(fixture, k_FixturePath);
+
+            var asset = AssetManager.GetAsset(k_FixturePath);
+            var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
+            newLightFixture.Name = lightFixture.Name; // Names are overrided by path they are saved
+
+            CheckIfLightTestFixturesAreEqual(lightFixture, newLightFixture);
+        }
+
+        [TestMethod]
+        public void SavingFixture_ToPath_WillAdjustTheNameOfFixture()
+        {
+            var fixture = TestFixtureManager.NewTestFixture();
+            var lightFixture = LightTestFixture;
+            fixture.ApplyLightFixtureValues(lightFixture);
+
+            TestFixtureManager.SaveTestFixture(fixture, k_FixturePath);
+
+            Assert.AreEqual(k_FixtureName, fixture.Name, "Names should be adjusted according to path");
+        }
+
+        [TestMethod]
+        public void ApplyLightFixtureValues_CorrectlyAppliesFixtureNames()
+        {
+            var fixture = TestFixtureManager.NewTestFixture();
+            var lightFixture = LightTestFixture;
+            fixture.ApplyLightFixtureValues(lightFixture);
+
+            Assert.AreEqual(lightFixture.Name, fixture.Name, "Names should be the same");
+        }
+
         private void CheckIfLightTestFixturesAreEqual(LightTestFixture a, LightTestFixture b)
         {
             Assert.AreEqual(a.Name, b.Name, "Names missmatched");
@@ -128,6 +168,7 @@ namespace Tests
 
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
+            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
             TestFixture = Container.Resolve<TestFixture>();
 
             ProjectManager.InitProject(TempProjectPath);

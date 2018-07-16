@@ -91,6 +91,7 @@ namespace Robot.Tests
                 {
                     fixture = Container.Resolve<TestFixture>();
                     fixture.ApplyLightFixtureValues(lightFixture);
+                    fixture.Path = asset.Path;
 
                     m_TestFixtures.Add(fixture);
                     TestFixtureAdded?.Invoke(fixture, m_TestFixtures.Count - 1);
@@ -98,6 +99,7 @@ namespace Robot.Tests
                 else
                 {
                     fixture.ApplyLightFixtureValues(lightFixture);
+                    fixture.Path = asset.Path;
                     TestFixtureModified?.Invoke(fixture, m_TestFixtures.IndexOf(fixture));
                 }
             }
