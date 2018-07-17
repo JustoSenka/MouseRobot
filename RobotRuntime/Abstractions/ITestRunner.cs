@@ -8,8 +8,8 @@ namespace RobotRuntime.Abstractions
         event Action Finished;
         event CommandRunningCallback RunningCommandCallback;
 
-        void Start(string projectPath, string scriptName);
-        void Start(LightScript lightScript);
+        void StartScript(string projectPath, string scriptName);
+        void StartScript(LightScript lightScript);
         void Stop();
     }
 }

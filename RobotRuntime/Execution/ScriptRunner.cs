@@ -2,6 +2,7 @@
 using RobotRuntime.Commands;
 using RobotRuntime.Utils;
 using System;
+using System.Linq;
 
 namespace RobotRuntime.Execution
 {
@@ -34,7 +35,8 @@ namespace RobotRuntime.Execution
             var script = runnable as LightScript;
             RunnerFactory.PassDependencies(script, m_Callback, m_ShouldCancelRun);
 
-            foreach (var node in script.Commands)
+            // making shallow copy of commands collection, so it doesn't crash when test tries to modify itself while running
+            foreach (var node in script.Commands.ToList())
             {
                 if (m_ShouldCancelRun.Value)
                 {

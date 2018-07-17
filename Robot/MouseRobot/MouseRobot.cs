@@ -68,7 +68,7 @@ namespace Robot
             if (ScriptManager.ActiveScript == null)
                 return;
 
-            TestRunner.Start(ScriptManager.ActiveScript.ToLightScript());
+            TestRunner.StartScript(ScriptManager.ActiveScript.ToLightScript());
         }
 
         private void OnScriptFinished()
