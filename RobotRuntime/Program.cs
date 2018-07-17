@@ -28,7 +28,7 @@ namespace RobotRuntime
             Logger.Instance = container.Resolve<ILogger>();
 
             var testRunner = container.Resolve<ITestRunner>();
-            testRunner.Start(args[0], args[1]);
+            testRunner.StartScript(args[0], args[1]);
         }
 
 
@@ -36,6 +36,7 @@ namespace RobotRuntime
         {
             Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetGuidManager, AssetGuidManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IRuntimeAssetManager, RuntimeAssetManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectionThread, FeatureDetectionThread>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRuntimeSettings, RuntimeSettings>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScreenStateThread, ScreenStateThread>(new ContainerControlledLifetimeManager());
