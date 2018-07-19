@@ -11,6 +11,7 @@ using Robot.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotRuntime.Tests;
 using RobotRuntime.Abstractions;
+using System.Text;
 
 namespace RobotEditor
 {
@@ -177,31 +178,71 @@ namespace RobotEditor
         {
         }
 
-        private void ToolstripRunTests_Click(object sender, EventArgs e)
-        {
-            if (MouseRobot.IsRecording)
-                return;
-
-            MouseRobot.IsPlaying ^= true;
-
-            if (MouseRobot.IsPlaying)
-                TestRunner.StartTests();
-        }
-
         private void OnPlayingStateChanged(bool isPlaying)
         {
+            if (!Created || IsDisposed || Disposing)
+                return;
+
             // Since Playing State can be changed from ScriptThread, we need to make sure we run this on UI thread
             this.BeginInvoke(new MethodInvoker(delegate
             {
-                ToolstripRunTests.Image = (MouseRobot.IsPlaying) ?
-                    Properties.Resources.ToolButton_Stop_32 : Properties.Resources.ToolButton_Play_32;
-
-                ToolstripRunTests.Enabled = !MouseRobot.IsRecording;
-
-                ToolstripRunTests.ToolTipText = (MouseRobot.IsPlaying) ?
-                    Properties.Settings.Default.S_Stop : Properties.Settings.Default.S_Play;
+                RunAllButton.Enabled = !MouseRobot.IsRecording && !MouseRobot.IsPlaying;
+                RunDropdownButton.Enabled = !MouseRobot.IsRecording && !MouseRobot.IsPlaying;
+                StopRunButton.Enabled = !MouseRobot.IsRecording && MouseRobot.IsPlaying;
             }));
         }
+
+        #region Run Tests Toolstrip Buttons
+
+        private void RunAllButton_Click(object sender, EventArgs e)
+        {
+            StartTestsWithSafeChecks();
+        }
+
+        private void runSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var item in treeListView.SelectedObjects)
+                builder.Append("^" + item.ToString() + "$|");
+
+            builder.Replace("*", ""); // Removing dirty signs if accidentally they appear
+
+            var filter = builder.ToString();
+            filter = filter.TrimEnd('|'); // removing last vertical bar symbol
+
+            StartTestsWithSafeChecks(filter);
+        }
+
+        private void runFailedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO:
+        }
+
+        private void runNotRunToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // TODO:
+        }
+
+        private void StopRunButton_Click(object sender, EventArgs e)
+        {
+            MouseRobot.IsPlaying = false;
+        }
+
+        private void StartTestsWithSafeChecks(string testFilter = "")
+        {
+            if (MouseRobot.IsRecording || MouseRobot.IsPlaying)
+                return;
+
+            MouseRobot.IsPlaying = true;
+
+            if (testFilter == "")
+                TestRunner.StartTests();
+            else
+                TestRunner.StartTests(testFilter);
+        }
+
+        #endregion
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()
         {

@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestRunnerWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.runSelectedTestsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
@@ -39,8 +41,13 @@
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripRunTests = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.RunAllButton = new System.Windows.Forms.ToolStripButton();
+            this.RunDropdownButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.runSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runFailedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runNotRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.StopRunButton = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -50,14 +57,27 @@
             // 
             this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runSelectedTestsToolStripMenuItem,
+            this.toolStripMenuItem1,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(162, 26);
+            this.contextMenuStrip.Size = new System.Drawing.Size(169, 54);
+            // 
+            // runSelectedTestsToolStripMenuItem
+            // 
+            this.runSelectedTestsToolStripMenuItem.Name = "runSelectedTestsToolStripMenuItem";
+            this.runSelectedTestsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.runSelectedTestsToolStripMenuItem.Text = "Run selected tests";
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
             // 
             // showInExplorerToolStripMenuItem
             // 
             this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
-            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.showInExplorerToolStripMenuItem.Text = "Show in explorer";
             this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
             // 
@@ -71,7 +91,6 @@
             // 
             // treeListView
             // 
-            this.treeListView.AllowDrop = true;
             this.treeListView.CellEditUseWholeCell = false;
             this.treeListView.ContextMenuStrip = this.contextMenuStrip;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -93,11 +112,13 @@
             // 
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RunAllButton,
+            this.RunDropdownButton,
+            this.StopRunButton,
+            this.toolStripSeparator1,
             this.ToolstripExpandAll,
             this.ToolstripExpandOne,
-            this.ToolstripCollapseAll,
-            this.toolStripSeparator1,
-            this.ToolstripRunTests});
+            this.ToolstripCollapseAll});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
@@ -141,21 +162,65 @@
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
-            // ToolstripRunTests
-            // 
-            this.ToolstripRunTests.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ToolstripRunTests.Image = global::RobotEditor.Properties.Resources.ToolButton_Play_32;
-            this.ToolstripRunTests.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ToolstripRunTests.Name = "ToolstripRunTests";
-            this.ToolstripRunTests.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.ToolstripRunTests.Size = new System.Drawing.Size(40, 22);
-            this.ToolstripRunTests.Text = "toolStripButton1";
-            this.ToolstripRunTests.Click += new System.EventHandler(this.ToolstripRunTests_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // RunAllButton
+            // 
+            this.RunAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RunAllButton.Image = ((System.Drawing.Image)(resources.GetObject("RunAllButton.Image")));
+            this.RunAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RunAllButton.Name = "RunAllButton";
+            this.RunAllButton.Size = new System.Drawing.Size(49, 22);
+            this.RunAllButton.Text = "Run All";
+            this.RunAllButton.Click += new System.EventHandler(this.RunAllButton_Click);
+            // 
+            // RunDropdownButton
+            // 
+            this.RunDropdownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RunDropdownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runSelectedToolStripMenuItem,
+            this.runFailedToolStripMenuItem,
+            this.runNotRunToolStripMenuItem});
+            this.RunDropdownButton.Image = ((System.Drawing.Image)(resources.GetObject("RunDropdownButton.Image")));
+            this.RunDropdownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RunDropdownButton.Name = "RunDropdownButton";
+            this.RunDropdownButton.Size = new System.Drawing.Size(50, 22);
+            this.RunDropdownButton.Text = "Run...";
+            // 
+            // runSelectedToolStripMenuItem
+            // 
+            this.runSelectedToolStripMenuItem.Name = "runSelectedToolStripMenuItem";
+            this.runSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runSelectedToolStripMenuItem.Text = "Run Selected Tests";
+            this.runSelectedToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
+            // 
+            // runFailedToolStripMenuItem
+            // 
+            this.runFailedToolStripMenuItem.Name = "runFailedToolStripMenuItem";
+            this.runFailedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runFailedToolStripMenuItem.Text = "Run Failed Tests";
+            this.runFailedToolStripMenuItem.Click += new System.EventHandler(this.runFailedToolStripMenuItem_Click);
+            // 
+            // runNotRunToolStripMenuItem
+            // 
+            this.runNotRunToolStripMenuItem.Name = "runNotRunToolStripMenuItem";
+            this.runNotRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runNotRunToolStripMenuItem.Text = "Run Not Run tests";
+            this.runNotRunToolStripMenuItem.Click += new System.EventHandler(this.runNotRunToolStripMenuItem_Click);
+            // 
+            // StopRunButton
+            // 
+            this.StopRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.StopRunButton.Enabled = false;
+            this.StopRunButton.Image = ((System.Drawing.Image)(resources.GetObject("StopRunButton.Image")));
+            this.StopRunButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.StopRunButton.Name = "StopRunButton";
+            this.StopRunButton.Size = new System.Drawing.Size(35, 22);
+            this.StopRunButton.Text = "Stop";
+            this.StopRunButton.Click += new System.EventHandler(this.StopRunButton_Click);
             // 
             // TestRunnerWindow
             // 
@@ -188,7 +253,14 @@
         private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
         private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
         internal System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton ToolstripRunTests;
+        private System.Windows.Forms.ToolStripMenuItem runSelectedTestsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripButton StopRunButton;
+        private System.Windows.Forms.ToolStripDropDownButton RunDropdownButton;
+        private System.Windows.Forms.ToolStripMenuItem runSelectedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runFailedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runNotRunToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton RunAllButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

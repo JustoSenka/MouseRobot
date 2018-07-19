@@ -9,10 +9,10 @@ namespace RobotRuntime.Abstractions
         event CommandRunningCallback RunningCommandCallback;
 
         void StartScript(string projectPath, string scriptName);
-        void StartTests(string projectPath, string testFilter = "");
+        void StartTests(string projectPath, string testFilter = ".");
 
         void StartScript(LightScript lightScript);
-        void StartTests(string testFilter = "");
+        void StartTests(string testFilter = ".");
 
         void Stop();
     }

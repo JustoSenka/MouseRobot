@@ -5,6 +5,7 @@ using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -103,7 +104,11 @@ namespace RobotRuntime
             }).Start();
         }
 
-        public void StartTests(string testFilter = "") // TODO: TestFilter
+        /// <summary>
+        /// Runs all tests from all test fixtures.
+        /// Accepts Regex filter for fixture and test names.
+        /// </summary>
+        public void StartTests(string testFilter = ".")
         {
             InitializeNewRun();
 
@@ -120,8 +125,14 @@ namespace RobotRuntime
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
                     if (ShouldCancelRun.Value) return;
 
+                    var fixtureMathesFilter = Regex.IsMatch(fixture.Name, testFilter);
+
                     foreach (var test in fixture.Tests)
                     {
+                        var testMathesFilter = Regex.IsMatch(test.Name, testFilter);
+                        if (!fixtureMathesFilter && !testMathesFilter)
+                            continue;
+
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
                         if (ShouldCancelRun.Value) return;
 
@@ -135,6 +146,9 @@ namespace RobotRuntime
 
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
                 }
+
+                ScreenStateThread.Stop();
+                FeatureDetectionThread.Stop();
 
                 TestRunEnd?.Invoke();
             }).Start();
