@@ -49,7 +49,7 @@ namespace RobotEditor
 
             treeListView.Font = Fonts.Default;
 
-            TestRunner.Finished += OnScriptsFinishedRunning;
+            TestRunner.TestRunEnd += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
 
             treeListView.FormatCell += UpdateFontsTreeListView;
@@ -494,7 +494,7 @@ namespace RobotEditor
 
             UnsubscribeAllEvents(m_TestFixture);
 
-            TestRunner.Finished -= OnScriptsFinishedRunning;
+            TestRunner.TestRunEnd -= OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback -= OnCommandRunning;
             CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
             treeListView.FormatCell -= UpdateFontsTreeListView;

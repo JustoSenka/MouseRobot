@@ -60,15 +60,7 @@ namespace Robot
             this.StatusManager = StatusManager;
             
             ScriptManager.NewScript();
-            TestRunner.Finished += OnScriptFinished;
-        }
-
-        public void StartScript()
-        {
-            if (ScriptManager.ActiveScript == null)
-                return;
-
-            TestRunner.StartScript(ScriptManager.ActiveScript.ToLightScript());
+            TestRunner.TestRunEnd += OnScriptFinished;
         }
 
         private void OnScriptFinished()
@@ -121,7 +113,6 @@ namespace Robot
 
                     if (m_IsPlaying)
                     {
-                        StartScript();
                         StatusManager.Add("IsPlaying", 6, new Status("Busy", "Running Tests", StandardColors.Green));
                     }
                     else

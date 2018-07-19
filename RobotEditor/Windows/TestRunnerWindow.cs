@@ -10,6 +10,7 @@ using System.Diagnostics;
 using Robot.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotRuntime.Tests;
+using RobotRuntime.Abstractions;
 
 namespace RobotEditor
 {
@@ -19,10 +20,14 @@ namespace RobotEditor
 
         // private TestNode m_HighlightedNode;
 
+        private IMouseRobot MouseRobot;
         private ITestRunnerManager TestRunnerManager;
-        public TestRunnerWindow(ITestRunnerManager TestRunnerManager)
+        private ITestRunner TestRunner;
+        public TestRunnerWindow(IMouseRobot MouseRobot, ITestRunnerManager TestRunnerManager, ITestRunner TestRunner)
         {
+            this.MouseRobot = MouseRobot;
             this.TestRunnerManager = TestRunnerManager;
+            this.TestRunner = TestRunner;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -32,6 +37,8 @@ namespace RobotEditor
             TestRunnerManager.TestFixtureAdded += OnTestFixtureAdded;
             TestRunnerManager.TestFixtureRemoved += OnTestFixtureRemoved;
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;
+
+            MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
 
             CreateColumns();
 
@@ -168,6 +175,32 @@ namespace RobotEditor
 
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
+        }
+
+        private void ToolstripRunTests_Click(object sender, EventArgs e)
+        {
+            if (MouseRobot.IsRecording)
+                return;
+
+            MouseRobot.IsPlaying ^= true;
+
+            if (MouseRobot.IsPlaying)
+                TestRunner.StartTests();
+        }
+
+        private void OnPlayingStateChanged(bool isPlaying)
+        {
+            // Since Playing State can be changed from ScriptThread, we need to make sure we run this on UI thread
+            this.BeginInvoke(new MethodInvoker(delegate
+            {
+                ToolstripRunTests.Image = (MouseRobot.IsPlaying) ?
+                    Properties.Resources.ToolButton_Stop_32 : Properties.Resources.ToolButton_Play_32;
+
+                ToolstripRunTests.Enabled = !MouseRobot.IsRecording;
+
+                ToolstripRunTests.ToolTipText = (MouseRobot.IsPlaying) ?
+                    Properties.Settings.Default.S_Stop : Properties.Settings.Default.S_Play;
+            }));
         }
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()

@@ -51,14 +51,15 @@ namespace RobotEditor
         private IInputCallbacks InputCallbacks;
         private IStatusManager StatusManager;
         private ITestFixtureManager TestFixtureManager;
+        private ITestRunner TestRunner;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
-            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager, 
-            ITestRunnerWindow TestRunnerWindow)
+            IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
+            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner)
         {
             this.Container = Container;
 
@@ -72,7 +73,8 @@ namespace RobotEditor
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
             this.TestFixtureManager = TestFixtureManager;
-            
+            this.TestRunner = TestRunner;
+
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
             this.m_ScreenPreviewWindow = ScreenPreviewWindow;
@@ -338,7 +340,7 @@ namespace RobotEditor
 
         private IEnumerable<ITestFixtureWindow> GetNotDestroyedWindows(IList<ITestFixtureWindow> TestFixtureWindows)
         {
-            foreach(var window in TestFixtureWindows)
+            foreach (var window in TestFixtureWindows)
             {
                 var form = (Form)window;
                 if (form.Created && !form.Disposing && !form.IsDisposed)
@@ -491,6 +493,14 @@ namespace RobotEditor
                 return;
 
             MouseRobot.IsPlaying ^= true;
+
+            if (MouseRobot.IsPlaying)
+            {
+                if (ScriptManager.ActiveScript == null)
+                    MouseRobot.IsPlaying = false;
+                else
+                    TestRunner.StartScript(ScriptManager.ActiveScript.ToLightScript());
+            }
         }
 
         private void recordButton_Click(object sender, EventArgs e)

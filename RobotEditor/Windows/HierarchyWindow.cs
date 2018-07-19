@@ -57,7 +57,7 @@ namespace RobotEditor
             ScriptManager.ScriptRemoved += OnScriptRemoved;
             ScriptManager.ScriptPositioningChanged += OnScriptPositioningChanged;
 
-            TestRunner.Finished += OnScriptsFinishedRunning;
+            TestRunner.TestRunEnd += OnScriptsFinishedRunning;
             TestRunner.RunningCommandCallback += OnCommandRunning;
 
             CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;

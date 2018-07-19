@@ -13,8 +13,8 @@ namespace RobotRuntime.Assets
     /// </summary>
     public class RuntimeAssetManager : IRuntimeAssetManager
     {
-        private Dictionary<Guid, object> m_GuidAssetMap = new Dictionary<Guid, object>();
-        private Dictionary<Guid, AssetImporter> m_GuidImporterMap = new Dictionary<Guid, AssetImporter>();
+        private readonly Dictionary<Guid, object> m_GuidAssetMap = new Dictionary<Guid, object>();
+        private readonly Dictionary<Guid, AssetImporter> m_GuidImporterMap = new Dictionary<Guid, AssetImporter>();
 
         private bool m_PreloadedAssetsUpToDate = false;
 
@@ -28,6 +28,8 @@ namespace RobotRuntime.Assets
 
         public void CollectAllImporters()
         {
+            m_GuidImporterMap.Clear();
+
             m_PreloadedAssetsUpToDate = false;
 
             var paths = Paths.GetAllFilePaths();
@@ -48,6 +50,8 @@ namespace RobotRuntime.Assets
         {
             if (m_GuidImporterMap.Count == 0)
                 CollectAllImporters();
+
+            m_GuidAssetMap.Clear();
 
             Logger.AssertIf(m_GuidImporterMap.Count == 0, "No Assets found in project");
 

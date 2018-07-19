@@ -39,6 +39,8 @@
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripRunTests = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -93,7 +95,9 @@
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolstripExpandAll,
             this.ToolstripExpandOne,
-            this.ToolstripCollapseAll});
+            this.ToolstripCollapseAll,
+            this.toolStripSeparator1,
+            this.ToolstripRunTests});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
@@ -137,6 +141,22 @@
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
+            // ToolstripRunTests
+            // 
+            this.ToolstripRunTests.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolstripRunTests.Image = global::RobotEditor.Properties.Resources.ToolButton_Play_32;
+            this.ToolstripRunTests.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolstripRunTests.Name = "ToolstripRunTests";
+            this.ToolstripRunTests.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripRunTests.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripRunTests.Text = "toolStripButton1";
+            this.ToolstripRunTests.Click += new System.EventHandler(this.ToolstripRunTests_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // TestRunnerWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,5 +188,7 @@
         private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
         private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
         internal System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripButton ToolstripRunTests;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

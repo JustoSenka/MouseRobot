@@ -14,7 +14,5 @@ namespace Robot.Abstractions
         event Action<bool> PlayingStateChanged;
         event Action<bool> RecordingStateChanged;
         event Action<bool> VisualizationStateChanged;
-
-        void StartScript();
     }
 }

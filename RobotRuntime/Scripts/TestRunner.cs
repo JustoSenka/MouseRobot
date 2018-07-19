@@ -12,8 +12,10 @@ namespace RobotRuntime
 {
     public class TestRunner : ITestRunner
     {
-        public event Action Finished;
         public event CommandRunningCallback RunningCommandCallback;
+
+        public event Action TestRunStart;
+        public event Action TestRunEnd;
 
         private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
 
@@ -49,6 +51,7 @@ namespace RobotRuntime
 
         private void InitializeNewRun()
         {
+            TestRunStart?.Invoke();
             ShouldCancelRun.Value = false;
 
             AssetGuidManager.LoadMetaFiles();
@@ -90,16 +93,13 @@ namespace RobotRuntime
 
             new Thread(delegate ()
             {
-                Logger.Log(LogType.Debug, "Script start");
-
                 var runner = RunnerFactory.GetFor(lightScript.GetType());
                 runner.Run(lightScript);
 
                 ScreenStateThread.Stop();
                 FeatureDetectionThread.Stop();
 
-                Finished?.Invoke();
-                Logger.Log(LogType.Debug, "Script end");
+                TestRunEnd?.Invoke();
             }).Start();
         }
 
@@ -107,27 +107,37 @@ namespace RobotRuntime
         {
             InitializeNewRun();
 
-            var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
-            var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
-
-            var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
-
-            foreach (var fixture in fixtures)
+            new Thread(delegate ()
             {
-                RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
+                var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
+                var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 
-                foreach (var test in fixture.Tests)
+                // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
+                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
+
+                foreach (var fixture in fixtures)
                 {
-                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
+                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
+                    if (ShouldCancelRun.Value) return;
 
-                    RunnerFactory.PassDependencies(test, RunningCommandCallback, ShouldCancelRun);
-                    cachedScriptRunner.Run(test);
+                    foreach (var test in fixture.Tests)
+                    {
+                        RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
+                        if (ShouldCancelRun.Value) return;
 
-                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.TearDown);
+                        RunnerFactory.PassDependencies(test, RunningCommandCallback, ShouldCancelRun);
+                        cachedScriptRunner.Run(test);
+                        if (ShouldCancelRun.Value) return;
+
+                        RunScriptIfNotEmpty(cachedScriptRunner, fixture.TearDown);
+                        if (ShouldCancelRun.Value) return;
+                    }
+
+                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
                 }
 
-                RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
-            }
+                TestRunEnd?.Invoke();
+            }).Start();
         }
 
         private void RunScriptIfNotEmpty(IRunner scriptRunner, LightScript script)
