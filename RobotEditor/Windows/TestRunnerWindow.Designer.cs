@@ -38,16 +38,16 @@
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.RunAllButton = new System.Windows.Forms.ToolStripButton();
             this.RunDropdownButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.runSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runFailedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runNotRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StopRunButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -106,7 +106,7 @@
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
-            this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
+            this.treeListView.DoubleClick += new System.EventHandler(this.treeListView_DoubleClick);
             // 
             // toolStrip
             // 
@@ -125,6 +125,66 @@
             this.toolStrip.Size = new System.Drawing.Size(469, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
+            // 
+            // RunAllButton
+            // 
+            this.RunAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RunAllButton.Image = ((System.Drawing.Image)(resources.GetObject("RunAllButton.Image")));
+            this.RunAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RunAllButton.Name = "RunAllButton";
+            this.RunAllButton.Size = new System.Drawing.Size(49, 22);
+            this.RunAllButton.Text = "Run All";
+            this.RunAllButton.Click += new System.EventHandler(this.RunAllButton_Click);
+            // 
+            // RunDropdownButton
+            // 
+            this.RunDropdownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.RunDropdownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runSelectedToolStripMenuItem,
+            this.runFailedToolStripMenuItem,
+            this.runNotRunToolStripMenuItem});
+            this.RunDropdownButton.Image = ((System.Drawing.Image)(resources.GetObject("RunDropdownButton.Image")));
+            this.RunDropdownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RunDropdownButton.Name = "RunDropdownButton";
+            this.RunDropdownButton.Size = new System.Drawing.Size(50, 22);
+            this.RunDropdownButton.Text = "Run...";
+            // 
+            // runSelectedToolStripMenuItem
+            // 
+            this.runSelectedToolStripMenuItem.Name = "runSelectedToolStripMenuItem";
+            this.runSelectedToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runSelectedToolStripMenuItem.Text = "Run Selected Tests";
+            this.runSelectedToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
+            // 
+            // runFailedToolStripMenuItem
+            // 
+            this.runFailedToolStripMenuItem.Name = "runFailedToolStripMenuItem";
+            this.runFailedToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runFailedToolStripMenuItem.Text = "Run Failed Tests";
+            this.runFailedToolStripMenuItem.Click += new System.EventHandler(this.runFailedToolStripMenuItem_Click);
+            // 
+            // runNotRunToolStripMenuItem
+            // 
+            this.runNotRunToolStripMenuItem.Name = "runNotRunToolStripMenuItem";
+            this.runNotRunToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runNotRunToolStripMenuItem.Text = "Run Not Run tests";
+            this.runNotRunToolStripMenuItem.Click += new System.EventHandler(this.runNotRunToolStripMenuItem_Click);
+            // 
+            // StopRunButton
+            // 
+            this.StopRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.StopRunButton.Enabled = false;
+            this.StopRunButton.Image = ((System.Drawing.Image)(resources.GetObject("StopRunButton.Image")));
+            this.StopRunButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.StopRunButton.Name = "StopRunButton";
+            this.StopRunButton.Size = new System.Drawing.Size(35, 22);
+            this.StopRunButton.Text = "Stop";
+            this.StopRunButton.Click += new System.EventHandler(this.StopRunButton_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // ToolstripExpandAll
             // 
@@ -161,66 +221,6 @@
             this.ToolstripCollapseAll.Text = "toolStripButton3";
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // RunAllButton
-            // 
-            this.RunAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.RunAllButton.Image = ((System.Drawing.Image)(resources.GetObject("RunAllButton.Image")));
-            this.RunAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.RunAllButton.Name = "RunAllButton";
-            this.RunAllButton.Size = new System.Drawing.Size(49, 22);
-            this.RunAllButton.Text = "Run All";
-            this.RunAllButton.Click += new System.EventHandler(this.RunAllButton_Click);
-            // 
-            // RunDropdownButton
-            // 
-            this.RunDropdownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.RunDropdownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.runSelectedToolStripMenuItem,
-            this.runFailedToolStripMenuItem,
-            this.runNotRunToolStripMenuItem});
-            this.RunDropdownButton.Image = ((System.Drawing.Image)(resources.GetObject("RunDropdownButton.Image")));
-            this.RunDropdownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.RunDropdownButton.Name = "RunDropdownButton";
-            this.RunDropdownButton.Size = new System.Drawing.Size(50, 22);
-            this.RunDropdownButton.Text = "Run...";
-            // 
-            // runSelectedToolStripMenuItem
-            // 
-            this.runSelectedToolStripMenuItem.Name = "runSelectedToolStripMenuItem";
-            this.runSelectedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.runSelectedToolStripMenuItem.Text = "Run Selected Tests";
-            this.runSelectedToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
-            // 
-            // runFailedToolStripMenuItem
-            // 
-            this.runFailedToolStripMenuItem.Name = "runFailedToolStripMenuItem";
-            this.runFailedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.runFailedToolStripMenuItem.Text = "Run Failed Tests";
-            this.runFailedToolStripMenuItem.Click += new System.EventHandler(this.runFailedToolStripMenuItem_Click);
-            // 
-            // runNotRunToolStripMenuItem
-            // 
-            this.runNotRunToolStripMenuItem.Name = "runNotRunToolStripMenuItem";
-            this.runNotRunToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.runNotRunToolStripMenuItem.Text = "Run Not Run tests";
-            this.runNotRunToolStripMenuItem.Click += new System.EventHandler(this.runNotRunToolStripMenuItem_Click);
-            // 
-            // StopRunButton
-            // 
-            this.StopRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.StopRunButton.Enabled = false;
-            this.StopRunButton.Image = ((System.Drawing.Image)(resources.GetObject("StopRunButton.Image")));
-            this.StopRunButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.StopRunButton.Name = "StopRunButton";
-            this.StopRunButton.Size = new System.Drawing.Size(35, 22);
-            this.StopRunButton.Text = "Stop";
-            this.StopRunButton.Click += new System.EventHandler(this.StopRunButton_Click);
             // 
             // TestRunnerWindow
             // 

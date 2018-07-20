@@ -14,11 +14,10 @@ namespace RobotRuntime
     public class TestRunner : ITestRunner
     {
         public event CommandRunningCallback RunningCommandCallback;
+        private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
 
         public event Action TestRunStart;
         public event Action TestRunEnd;
-
-        private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
 
         private IAssetGuidManager AssetGuidManager;
         private IScreenStateThread ScreenStateThread;

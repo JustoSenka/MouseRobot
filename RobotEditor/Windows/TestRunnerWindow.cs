@@ -1,4 +1,4 @@
-﻿// #define ENABLE_UI_TESTING
+﻿#define ENABLE_UI_TESTING
 
 using System;
 using System.Windows.Forms;
@@ -52,7 +52,17 @@ namespace RobotEditor
             treeListView.ChildrenGetter = x => ((TestNode)x).Children;
 
             var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => x.ToString();
+            nameColumn.AspectGetter = x =>
+            {
+                // Using fixture or script name in order to avoid dirty flags, since test runner does not care about it.
+                var node = ((TestNode)x);
+                if (node.TestFixture != null)
+                    return node.TestFixture.Name;
+                else if (node.Script != null)
+                    return node.Script.Name;
+                else
+                    return node.ToString();
+            };
 
             nameColumn.ImageGetter += delegate (object x)
             {
@@ -95,6 +105,8 @@ namespace RobotEditor
 
             if (treeListView.Created)
                 treeListView.ExpandAll();
+
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         private void RefreshTreeListView()
@@ -149,12 +161,14 @@ namespace RobotEditor
             var fixtureNode = new TestNode(fixture);
             m_Nodes.Insert(position, fixtureNode);
             RefreshTreeListView();
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         private void OnTestFixtureRemoved(TestFixture fixture, int position)
         {
             m_Nodes.RemoveAt(position);
             RefreshTreeListView();
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         private void OnTestFixtureModified(TestFixture fixture, int position)
@@ -169,13 +183,19 @@ namespace RobotEditor
 
             if (expandState)
                 treeListView.Expand(fixtureNode);
+
+            ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         #endregion
 
-
-        private void treeListView_SelectionChanged(object sender, EventArgs e)
+        private void treeListView_DoubleClick(object sender, EventArgs e)
         {
+            var selected = treeListView.SelectedObject;
+            if (selected == null)
+                return;
+
+            runSelectedToolStripMenuItem_Click(this, null);
         }
 
         private void OnPlayingStateChanged(bool isPlaying)
@@ -249,15 +269,14 @@ namespace RobotEditor
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].Script == ScriptManager.LoadedScripts[i],
-                    string.Format("Hierarchy script missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
+                Debug.Assert(m_Nodes[i].TestFixture == TestRunnerManager.TestFixtures[i],
+                    string.Format("Fixture missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
 
-                // Will not work in nested scenarios
-                for (int j = 0; j < m_Nodes[i].Script.Commands.Count(); j++)
+                for (int j = 0; j < m_Nodes[i].TestFixture.Tests.Count; j++)
                 {
-                    Debug.Assert(m_Nodes[i].Children[j].Command == ScriptManager.LoadedScripts[i].Commands.GetChild(j).value,
-                        string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
-                        i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Script.Commands.GetChild(j).value.ToString()));
+                    Debug.Assert(m_Nodes[i].TestFixture.Tests[j] == TestRunnerManager.TestFixtures[i].Tests[j],
+                        string.Format("Fixture test missmatch: {0}:{1}, {2}:{3}",
+                        i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].TestFixture.Tests[j].ToString()));
                 }
             }
 #endif
