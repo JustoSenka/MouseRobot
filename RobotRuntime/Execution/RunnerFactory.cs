@@ -1,17 +1,15 @@
-﻿using RobotRuntime.Utils;
-using System;
+﻿using System;
 using System.Linq;
 using RobotRuntime.Abstractions;
 using System.Collections.Generic;
 using Unity;
+using RobotRuntime.Tests;
 
 namespace RobotRuntime.Execution
 {
     public class RunnerFactory : IRunnerFactory
     {
-        private LightScript m_TestFixture;
-        private CommandRunningCallback m_Callback;
-        private ValueWrapper<bool> m_ShouldCancelRun;
+        private TestData m_TestData;
 
         private Type[] m_NativeRunnerTypes;
         private Type[] m_UserRunnerTypes;
@@ -41,14 +39,13 @@ namespace RobotRuntime.Execution
             CollectUserRunners();
         }
 
-        public void PassDependencies(LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
+        public void PassDependencies(TestData TestData)
         {
-            m_TestFixture = TestFixture;
-            m_Callback = Callback;
-            m_ShouldCancelRun = ShouldCancelRun;
-
+            this.m_TestData = TestData;
+            TestData.RunnerFactory = this;
+                
             foreach (var pair in m_Runners)
-                pair.Value.PassDependencies(this, TestFixture, Callback, ShouldCancelRun);
+                pair.Value.TestData = TestData;
         }
 
         private void OnDomainReloaded()
@@ -62,7 +59,7 @@ namespace RobotRuntime.Execution
             m_NativeRunners = m_NativeRunnerTypes.Select(t => Container.Resolve(t)).Cast<IRunner>().ToArray();
 
             foreach (var runner in m_NativeRunners)
-                runner.PassDependencies(this, m_TestFixture, m_Callback, m_ShouldCancelRun);
+                runner.TestData = m_TestData;
         }
 
         private void CollectUserRunners()
@@ -72,7 +69,7 @@ namespace RobotRuntime.Execution
             m_UserRunners = m_UserRunnerTypes.TryResolveTypes(Container, Logger).Cast<IRunner>().ToArray();
 
             foreach (var runner in m_UserRunners)
-                runner.PassDependencies(this, m_TestFixture, m_Callback, m_ShouldCancelRun);
+                runner.TestData = m_TestData;
 
             m_RunnerTypes = m_NativeRunnerTypes.Concat(m_UserRunnerTypes).ToArray();
 

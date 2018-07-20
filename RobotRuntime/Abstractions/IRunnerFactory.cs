@@ -1,12 +1,12 @@
 ﻿using System;
-using RobotRuntime.Utils;
 using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 
 namespace RobotRuntime.Abstractions
 {
     public interface IRunnerFactory
     {
-        void PassDependencies(LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun);
+        void PassDependencies(TestData TestData);
 
         IRunner GetFor(Type type);
         bool DoesRunnerSupportType(Type runnerType, Type supportedType);

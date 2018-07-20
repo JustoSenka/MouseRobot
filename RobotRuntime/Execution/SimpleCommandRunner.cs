@@ -1,27 +1,20 @@
 ﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Utils;
+using RobotRuntime.Tests;
 
 namespace RobotRuntime.Execution
 {
     public class SimpleCommandRunner : IRunner
     {
-        private CommandRunningCallback m_Callback;
+        public TestData TestData { set; get; }
 
-        private IRunnerFactory RunnerFactory;
         public SimpleCommandRunner()
         {
             
         }
-
-        public void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
-        {
-            this.RunnerFactory = RunnerFactory;
-            m_Callback = Callback;
-        }
-
+        
         public void Run(IRunnable runnable)
         {
-            if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
+            if (!TestData.RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
             {
                 Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
                 return;
@@ -29,7 +22,7 @@ namespace RobotRuntime.Execution
 
             var command = runnable as Command;
 
-            m_Callback?.Invoke(command);
+            TestData.CommandRunningCallback?.Invoke(command);
             command.Run();
         }
     }

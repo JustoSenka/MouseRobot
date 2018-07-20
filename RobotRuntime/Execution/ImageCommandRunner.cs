@@ -1,27 +1,22 @@
 ﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Assets;
 using RobotRuntime.Commands;
 using RobotRuntime.Graphics;
-using RobotRuntime.Utils;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils.Win32;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity;
 
 namespace RobotRuntime.Execution
 {
     public class ImageCommandRunner : IRunner
     {
+        public TestData TestData { set; get; }
 
         // TODO: Whent test fixture or test class is introduced, replace this with Test. It needs to know test hierarchy, that's why it is like that
         // TODO: Or maybe it's fine to know just the script he command is on?
-        private LightScript m_TestFixture;
-        private CommandRunningCallback m_Callback;
-        private ValueWrapper<bool> m_ShouldCancelRun;
 
-        private IRunnerFactory RunnerFactory;
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
         public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
@@ -30,24 +25,16 @@ namespace RobotRuntime.Execution
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
 
-        public void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
-        {
-            this.RunnerFactory = RunnerFactory;
-            m_TestFixture = TestFixture;
-            m_Callback = Callback;
-            m_ShouldCancelRun = ShouldCancelRun;
-        }
-
         public void Run(IRunnable runnable)
         {
-            if (!RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
+            if (!TestData.RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
             {
                 Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
                 return;
             }
 
             var command = runnable as Command;
-            var commandNode = m_TestFixture.Commands.FirstOrDefault(node => node.value == command);
+            var commandNode = TestData.TestFixture.Commands.FirstOrDefault(node => node.value == command);
             RunCommand(commandNode);
         }
 
@@ -64,18 +51,18 @@ namespace RobotRuntime.Execution
 
             foreach (var p in points)
             {
-                m_Callback?.Invoke(node.value);
+                TestData.CommandRunningCallback?.Invoke(node.value);
                 node.value.Run();
 
                 foreach (var childNode in node)
                 {
-                    if (m_ShouldCancelRun.Value)
+                    if (TestData.ShouldCancelRun)
                         return;
 
                     OverrideCommandPropertiesIfExist(childNode.value, p.X, "X");
                     OverrideCommandPropertiesIfExist(childNode.value, p.Y, "Y");
 
-                    var runner = RunnerFactory.GetFor(childNode.value.GetType());
+                    var runner = TestData.RunnerFactory.GetFor(childNode.value.GetType());
                     runner.Run(childNode.value);
                 }
             }

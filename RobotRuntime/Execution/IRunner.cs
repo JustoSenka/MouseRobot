@@ -1,14 +1,11 @@
 ﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Utils;
-using System;
+using RobotRuntime.Tests;
 
 namespace RobotRuntime.Execution
 {
     public interface IRunner
     {
-        void PassDependencies(IRunnerFactory RunnerFactory, LightScript TestFixture, 
-            CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun);
-
+        TestData TestData { set; get; }
         void Run(IRunnable runnable);
     }
 

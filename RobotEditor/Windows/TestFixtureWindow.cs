@@ -50,7 +50,7 @@ namespace RobotEditor
             treeListView.Font = Fonts.Default;
 
             TestRunner.TestRunEnd += OnScriptsFinishedRunning;
-            TestRunner.RunningCommandCallback += OnCommandRunning;
+            TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
 
             treeListView.FormatCell += UpdateFontsTreeListView;
             HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
@@ -495,7 +495,7 @@ namespace RobotEditor
             UnsubscribeAllEvents(m_TestFixture);
 
             TestRunner.TestRunEnd -= OnScriptsFinishedRunning;
-            TestRunner.RunningCommandCallback -= OnCommandRunning;
+            TestRunner.TestData.CommandRunningCallback -= OnCommandRunning;
             CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
             treeListView.FormatCell -= UpdateFontsTreeListView;
         }

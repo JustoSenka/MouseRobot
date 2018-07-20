@@ -1,12 +1,12 @@
 ﻿using System;
-using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 
 namespace RobotRuntime.Abstractions
 {
     public interface ITestRunner
     {
+        TestData TestData { get; }
         event Action TestRunEnd;
-        event CommandRunningCallback RunningCommandCallback;
 
         void StartScript(string projectPath, string scriptName);
         void StartTests(string projectPath, string testFilter = ".");

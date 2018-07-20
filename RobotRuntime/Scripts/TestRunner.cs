@@ -13,8 +13,10 @@ namespace RobotRuntime
 {
     public class TestRunner : ITestRunner
     {
-        public event CommandRunningCallback RunningCommandCallback;
-        private ValueWrapper<bool> ShouldCancelRun = new ValueWrapper<bool>(false);
+        public TestData TestData { get; } = new TestData()
+        {
+            ShouldCancelRun = false
+        };
 
         public event Action TestRunStart;
         public event Action TestRunEnd;
@@ -52,7 +54,7 @@ namespace RobotRuntime
         private void InitializeNewRun()
         {
             TestRunStart?.Invoke();
-            ShouldCancelRun.Value = false;
+            TestData.ShouldCancelRun = false;
 
             AssetGuidManager.LoadMetaFiles();
             RuntimeAssetManager.CollectAllImporters();
@@ -88,7 +90,9 @@ namespace RobotRuntime
         {
             InitializeNewRun();
 
-            RunnerFactory.PassDependencies(lightScript, RunningCommandCallback, ShouldCancelRun);
+            TestData.TestFixture = lightScript;
+            RunnerFactory.PassDependencies(TestData);
+
             Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
 
             new Thread(delegate ()
@@ -116,15 +120,19 @@ namespace RobotRuntime
                 var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 
-                // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
-                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
+            // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
+            var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
 
                 foreach (var fixture in fixtures)
                 {
-                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
-                    if (ShouldCancelRun.Value) return;
-
                     var fixtureMathesFilter = Regex.IsMatch(fixture.Name, testFilter);
+
+                    var isThereASingleTestMatchingFilter = fixture.Tests.Any(test => Regex.IsMatch(test.Name, testFilter));
+                    if (!isThereASingleTestMatchingFilter && !fixtureMathesFilter)
+                        continue;
+
+                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
+                    if (TestData.ShouldCancelRun) return;
 
                     foreach (var test in fixture.Tests)
                     {
@@ -133,14 +141,14 @@ namespace RobotRuntime
                             continue;
 
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
-                        if (ShouldCancelRun.Value) return;
+                        if (TestData.ShouldCancelRun) return;
 
-                        RunnerFactory.PassDependencies(test, RunningCommandCallback, ShouldCancelRun);
+                        RunnerFactory.PassDependencies(TestData);
                         cachedScriptRunner.Run(test);
-                        if (ShouldCancelRun.Value) return;
+                        if (TestData.ShouldCancelRun) return;
 
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.TearDown);
-                        if (ShouldCancelRun.Value) return;
+                        if (TestData.ShouldCancelRun) return;
                     }
 
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
@@ -157,14 +165,14 @@ namespace RobotRuntime
         {
             if (script.Commands.Count() > 0)
             {
-                RunnerFactory.PassDependencies(script, RunningCommandCallback, ShouldCancelRun);
+                RunnerFactory.PassDependencies(TestData);
                 scriptRunner.Run(script);
             }
         }
 
         public void Stop()
         {
-            ShouldCancelRun.Value = true;
+            TestData.ShouldCancelRun = true;
         }
     }
 }
