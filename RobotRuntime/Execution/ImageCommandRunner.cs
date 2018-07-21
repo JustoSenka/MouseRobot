@@ -47,7 +47,10 @@ namespace RobotRuntime.Execution
             var path = AssetGuidManager.GetPath(imageGuid);
             var points = GetCoordinates(node, path, timeout);
             if (points == null || points.Length == 0)
+            {
+                TestData.ShouldFailTest = true;
                 return;
+            }
 
             foreach (var p in points)
             {

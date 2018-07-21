@@ -33,6 +33,9 @@ namespace RobotRuntime.Execution
 
                 var runner = TestData.RunnerFactory.GetFor(node.value.GetType());
                 runner.Run(node.value);
+
+                if (TestData.ShouldFailTest)
+                    return;
             }
         }
     }

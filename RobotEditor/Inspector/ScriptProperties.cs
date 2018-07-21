@@ -43,10 +43,7 @@ namespace RobotEditor.Inspector
 
         private bool IsSpecialScript(Script Script, BaseScriptManager BaseScriptManager)
         {
-            return (Script.Name == LightTestFixture.k_OneTimeSetup ||
-                Script.Name == LightTestFixture.k_OneTimeTeardown ||
-                Script.Name == LightTestFixture.k_Setup ||
-                Script.Name == LightTestFixture.k_TearDown) ||
+            return LightTestFixture.IsSpecialScript(Script) ||
                 BaseScriptManager is ScriptManager;
         }
 

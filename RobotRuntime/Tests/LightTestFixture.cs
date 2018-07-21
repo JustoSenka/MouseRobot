@@ -38,5 +38,13 @@ namespace RobotRuntime.Tests
             else
                 Tests.Add(s);
         }
+
+        public static bool IsSpecialScript(Script Script)
+        {
+            return (Script.Name == k_OneTimeSetup ||
+                Script.Name == k_OneTimeTeardown ||
+                Script.Name == k_Setup ||
+                Script.Name == k_TearDown);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Execution;
+using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
@@ -20,6 +21,11 @@ namespace RobotRuntime
 
         public event Action TestRunStart;
         public event Action TestRunEnd;
+
+        public event Action<LightTestFixture, Script> FixtureSpecialScripFailed;
+        public event Action<LightTestFixture, Script> FixtureSpecialScriptSucceded;
+        public event Action<LightTestFixture, Script> TestPassed;
+        public event Action<LightTestFixture, Script> TestFailed;
 
         private IAssetGuidManager AssetGuidManager;
         private IScreenStateThread ScreenStateThread;
@@ -120,8 +126,8 @@ namespace RobotRuntime
                 var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 
-            // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
-            var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
+                // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
+                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
 
                 foreach (var fixture in fixtures)
                 {
@@ -133,6 +139,7 @@ namespace RobotRuntime
 
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
                     if (TestData.ShouldCancelRun) return;
+                    CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeSetup);
 
                     foreach (var test in fixture.Tests)
                     {
@@ -140,18 +147,25 @@ namespace RobotRuntime
                         if (!fixtureMathesFilter && !testMathesFilter)
                             continue;
 
+                        // Setup
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
                         if (TestData.ShouldCancelRun) return;
+                        CheckIfTestFailedAndFireCallbacks(fixture, fixture.Setup);
 
+                        // Test 
                         RunnerFactory.PassDependencies(TestData);
                         cachedScriptRunner.Run(test);
                         if (TestData.ShouldCancelRun) return;
+                        CheckIfTestFailedAndFireCallbacks(fixture, test);
 
+                        // Teardown
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.TearDown);
                         if (TestData.ShouldCancelRun) return;
+                        CheckIfTestFailedAndFireCallbacks(fixture, fixture.TearDown);
                     }
 
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
+                    CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeTeardown);
                 }
 
                 ScreenStateThread.Stop();
@@ -168,6 +182,26 @@ namespace RobotRuntime
                 RunnerFactory.PassDependencies(TestData);
                 scriptRunner.Run(script);
             }
+        }
+
+        private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Script script)
+        {
+            var shouldFailTest = TestData.ShouldFailTest;
+
+            if (LightTestFixture.IsSpecialScript(script) && shouldFailTest)
+                FixtureSpecialScripFailed?.Invoke(fixture, script);
+
+            else if (LightTestFixture.IsSpecialScript(script) && !shouldFailTest)
+                FixtureSpecialScriptSucceded?.Invoke(fixture, script);
+
+            else if (shouldFailTest)
+                TestFailed?.Invoke(fixture, script);
+
+            else
+                TestPassed?.Invoke(fixture, script);
+
+            TestData.ShouldFailTest = false;
+            return shouldFailTest;
         }
 
         public void Stop()
