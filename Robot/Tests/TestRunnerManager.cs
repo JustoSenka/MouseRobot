@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Robot.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using Unity;
 
@@ -22,13 +24,15 @@ namespace Robot.Tests
         public IList<TestFixture> TestFixtures { get { return m_TestFixtures.ToList(); } }
         private IList<TestFixture> m_TestFixtures;
 
+        public Dictionary<Tuple<string, string>, TestStatus> TestStatusDictionary { get; } = new Dictionary<Tuple<string, string>, TestStatus>();
+
         public event Action<TestFixture, int> TestFixtureAdded;
         public event Action<TestFixture, int> TestFixtureRemoved;
         public event Action<TestFixture, int> TestFixtureModified;
 
         private IUnityContainer Container;
         private IAssetManager AssetManager;
-        public TestRunnerManager(IUnityContainer Container, IAssetManager AssetManager)
+        public TestRunnerManager(IUnityContainer Container, IAssetManager AssetManager, ITestRunner TestRunner)
         {
             this.Container = Container;
             this.AssetManager = AssetManager;
@@ -40,7 +44,32 @@ namespace Robot.Tests
             AssetManager.AssetDeleted += AddPathToList;
             AssetManager.AssetRenamed += AddPathToListForRenaming;
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
+
+            TestRunner.FixtureSpecialScripFailed += OnTestFailed;
+            TestRunner.FixtureSpecialScriptSucceded += OnTestPassed;
+            TestRunner.TestFailed += OnTestFailed;
+            TestRunner.TestPassed += OnTestPassed;
         }
+
+        #region TestRunner Callbacks
+
+        private void OnTestFailed(LightTestFixture fixture, Script script)
+        {
+            var tuple = CreateTuple(fixture, script);
+            if (TestStatusDictionary.ContainsKey(tuple))
+                TestStatusDictionary[tuple] = TestStatus.Failed;
+        }
+
+        private void OnTestPassed(LightTestFixture fixture, Script script)
+        {
+            var tuple = CreateTuple(fixture, script);
+            if (TestStatusDictionary.ContainsKey(tuple))
+                TestStatusDictionary[tuple] = TestStatus.Passed;
+        }
+
+        #endregion // TestRunner Callbacks
+
+        #region AssetManager Callbacks
 
         private void AddPathToList(string assetPath)
         {
@@ -65,7 +94,10 @@ namespace Robot.Tests
                 return;
 
             ReloadTestFixtures(firstReload);
+            UpdateTestStatus();
         }
+
+        #endregion // AssetManager Callbacks
 
         private void ReloadTestFixtures(bool firstReload = false)
         {
@@ -105,7 +137,7 @@ namespace Robot.Tests
             }
 
             var assetNames = fixtureAssets.Select(asset => asset.Name);
-            
+
             // Remove deleted test fixtures
             for (int i = m_TestFixtures.Count - 1; i >= 0; --i)
             {
@@ -119,5 +151,33 @@ namespace Robot.Tests
 
             m_ModifiedFilesSinceLastUpdate.Clear();
         }
+
+        private void UpdateTestStatus()
+        {
+            foreach (var fixture in m_TestFixtures)
+            {
+                foreach (var script in fixture.LoadedScripts)
+                {
+                    var tuple = CreateTuple(fixture, script);
+                    if (!TestStatusDictionary.ContainsKey(tuple))
+                        TestStatusDictionary.Add(tuple, TestStatus.None);
+                }
+            }
+        }
+
+        private Tuple<string, string> CreateTuple(TestFixture fixture, Script script)
+        {
+            return new Tuple<string, string>(fixture.Name, script.Name);
+        }
+
+        private Tuple<string, string> CreateTuple(LightTestFixture fixture, Script script)
+        {
+            return new Tuple<string, string>(fixture.Name, script.Name);
+        }
+    }
+
+    public enum TestStatus
+    {
+        None, Passed, Failed
     }
 }

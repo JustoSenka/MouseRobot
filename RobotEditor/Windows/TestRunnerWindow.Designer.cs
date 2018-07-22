@@ -85,9 +85,9 @@
             // 
             this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "Script_ICO_16.png");
-            this.imageList.Images.SetKeyName(1, "gear_ICO_512.png");
-            this.imageList.Images.SetKeyName(2, "Plugin_ICO_256.png");
+            this.imageList.Images.SetKeyName(0, "TestStatus_info_32.png");
+            this.imageList.Images.SetKeyName(1, "TestStatus_Pass_32.png");
+            this.imageList.Images.SetKeyName(2, "TestStatus_Fail_32.png");
             // 
             // treeListView
             // 

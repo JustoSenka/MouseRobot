@@ -12,6 +12,7 @@ using RobotEditor.Hierarchy;
 using RobotRuntime.Tests;
 using RobotRuntime.Abstractions;
 using System.Text;
+using Robot.Tests;
 
 namespace RobotEditor
 {
@@ -66,11 +67,18 @@ namespace RobotEditor
 
             nameColumn.ImageGetter += delegate (object x)
             {
-                var imageListIndex = -1;
                 var node = (TestNode)x;
-                imageListIndex = node.TestFixture != null ? 0 : imageListIndex;
-                imageListIndex = node.Script != null ? 1 : imageListIndex;
-                return imageListIndex;
+                var fixture = node.TestFixture == null ? node.Parent.TestFixture : node.TestFixture;
+
+                if (node.Script == null)
+                    return -1;
+
+                var tuple = new Tuple<string, string>(fixture.Name, node.Script.Name);
+
+                TestStatus status;
+                TestRunnerManager.TestStatusDictionary.TryGetValue(tuple, out status);
+
+                return (int)status;
             };
 
             treeListView.FormatCell += UpdateFontsTreeListView;

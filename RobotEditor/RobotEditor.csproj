@@ -407,6 +407,14 @@
     <Content Include="Resources\Icons\Plugin_ICO_256.png" />
     <Content Include="Resources\Icons\Script_ICO_128.png" />
     <Content Include="Resources\Icons\Script_ICO_16.png" />
+    <Content Include="Resources\Icons\TestStatus_Fail_16.png" />
+    <Content Include="Resources\Icons\TestStatus_Fail_32.png" />
+    <Content Include="Resources\Icons\TestStatus_info_16.png" />
+    <Content Include="Resources\Icons\TestStatus_info_32.png" />
+    <Content Include="Resources\Icons\TestStatus_Pass_16.png" />
+    <Content Include="Resources\Icons\TestStatus_Pass_32.png" />
+    <Content Include="Resources\Icons\TestStatus_Q_16.png" />
+    <Content Include="Resources\Icons\TestStatus_Q_32.png" />
     <Content Include="Resources\Icons\ToolButton_Pause_32.png" />
     <Content Include="Resources\Icons\X_ICO_256.png" />
     <Content Include="Resources\Images\LogoWhite.png" />
