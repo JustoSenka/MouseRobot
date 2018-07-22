@@ -40,8 +40,11 @@ namespace RobotEditor
             TestRunnerManager.TestFixtureRemoved += OnTestFixtureRemoved;
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;
 
-            MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
+            TestRunnerManager.TestStatusUpdated += UpdateTestStatusIcons;
+            TestRunner.TestRunEnd += UpdateTestStatusIcons;
 
+            MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
+            
             CreateColumns();
 
             UpdateHierarchy();
@@ -55,10 +58,9 @@ namespace RobotEditor
             var nameColumn = new OLVColumn("Name", "Name");
             nameColumn.AspectGetter = x =>
             {
-                // Using fixture or script name in order to avoid dirty flags, since test runner does not care about it.
                 var node = ((TestNode)x);
                 if (node.TestFixture != null)
-                    return node.TestFixture.Name;
+                    return node.TestFixture.Name + " (" + node.TestFixture.Tests.Count + ")";
                 else if (node.Script != null)
                     return node.Script.Name;
                 else
@@ -68,17 +70,20 @@ namespace RobotEditor
             nameColumn.ImageGetter += delegate (object x)
             {
                 var node = (TestNode)x;
-                var fixture = node.TestFixture == null ? node.Parent.TestFixture : node.TestFixture;
+                var fixture = node.TestFixture ?? node.Parent.TestFixture;
 
-                if (node.Script == null)
-                    return -1;
+                if (node.TestFixture != null)
+                {
+                    return (int) TestRunnerManager.GetFixtureStatus(fixture);
+                }
+                else
+                {
+                    var tuple = new Tuple<string, string>(fixture.Name, node.Script.Name);
 
-                var tuple = new Tuple<string, string>(fixture.Name, node.Script.Name);
+                    TestRunnerManager.TestStatusDictionary.TryGetValue(tuple, out TestStatus status);
 
-                TestStatus status;
-                TestRunnerManager.TestStatusDictionary.TryGetValue(tuple, out status);
-
-                return (int)status;
+                    return (int)status;
+                }
             };
 
             treeListView.FormatCell += UpdateFontsTreeListView;
@@ -120,11 +125,6 @@ namespace RobotEditor
         private void RefreshTreeListView()
         {
             treeListView.Roots = m_Nodes;
-
-            /* for (int i = 0; i < treeListView.Items.Count; ++i)
-             {
-                 treeListView.Items[i].ImageIndex = 0;
-             }*/
 
             if (treeListView.Created)
                 treeListView.Refresh();
@@ -193,6 +193,14 @@ namespace RobotEditor
                 treeListView.Expand(fixtureNode);
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
+        }
+
+        private void UpdateTestStatusIcons()
+        {
+            this.BeginInvoke(new MethodInvoker(delegate
+            {
+                RefreshTreeListView();
+            }));
         }
 
         #endregion

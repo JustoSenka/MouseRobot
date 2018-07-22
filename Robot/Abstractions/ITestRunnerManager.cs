@@ -13,5 +13,9 @@ namespace Robot.Abstractions
         event Action<TestFixture, int> TestFixtureAdded;
         event Action<TestFixture, int> TestFixtureRemoved;
         event Action<TestFixture, int> TestFixtureModified;
+
+        event Action TestStatusUpdated;
+
+        TestStatus GetFixtureStatus(TestFixture fixture);
     }
 }

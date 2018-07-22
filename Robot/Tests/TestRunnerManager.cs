@@ -30,6 +30,8 @@ namespace Robot.Tests
         public event Action<TestFixture, int> TestFixtureRemoved;
         public event Action<TestFixture, int> TestFixtureModified;
 
+        public event Action TestStatusUpdated;
+
         private IUnityContainer Container;
         private IAssetManager AssetManager;
         public TestRunnerManager(IUnityContainer Container, IAssetManager AssetManager, ITestRunner TestRunner)
@@ -51,20 +53,47 @@ namespace Robot.Tests
             TestRunner.TestPassed += OnTestPassed;
         }
 
+        public TestStatus GetFixtureStatus(TestFixture fixture)
+        {
+            var status = TestStatus.Passed;
+            foreach (var pair in TestStatusDictionary)
+            {
+                if (pair.Key.Item1 != fixture.Name)
+                    continue;
+
+                if (pair.Value == TestStatus.Failed)
+                {
+                    status = TestStatus.Failed;
+                    break;
+                }
+
+                if (pair.Value == TestStatus.None)
+                    status = TestStatus.None;
+            }
+
+            return status;
+        }
+
         #region TestRunner Callbacks
 
         private void OnTestFailed(LightTestFixture fixture, Script script)
         {
             var tuple = CreateTuple(fixture, script);
             if (TestStatusDictionary.ContainsKey(tuple))
+            {
                 TestStatusDictionary[tuple] = TestStatus.Failed;
+                TestStatusUpdated?.Invoke();
+            }
         }
 
         private void OnTestPassed(LightTestFixture fixture, Script script)
         {
             var tuple = CreateTuple(fixture, script);
             if (TestStatusDictionary.ContainsKey(tuple))
+            {
                 TestStatusDictionary[tuple] = TestStatus.Passed;
+                TestStatusUpdated?.Invoke();
+            }
         }
 
         #endregion // TestRunner Callbacks
@@ -163,6 +192,7 @@ namespace Robot.Tests
                         TestStatusDictionary.Add(tuple, TestStatus.None);
                 }
             }
+            TestStatusUpdated?.Invoke();
         }
 
         private Tuple<string, string> CreateTuple(TestFixture fixture, Script script)
