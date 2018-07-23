@@ -133,7 +133,7 @@ namespace RobotRuntime
                 {
                     var fixtureMathesFilter = Regex.IsMatch(fixture.Name, testFilter);
 
-                    var isThereASingleTestMatchingFilter = fixture.Tests.Any(test => Regex.IsMatch(test.Name, testFilter));
+                    var isThereASingleTestMatchingFilter = fixture.Tests.Any(test => Regex.IsMatch(fixture.Name + "." + test.Name, testFilter));
                     if (!isThereASingleTestMatchingFilter && !fixtureMathesFilter)
                         continue;
 
@@ -143,7 +143,7 @@ namespace RobotRuntime
 
                     foreach (var test in fixture.Tests)
                     {
-                        var testMathesFilter = Regex.IsMatch(test.Name, testFilter);
+                        var testMathesFilter = Regex.IsMatch(fixture.Name + "." + test.Name, testFilter);
                         if (!fixtureMathesFilter && !testMathesFilter)
                             continue;
 

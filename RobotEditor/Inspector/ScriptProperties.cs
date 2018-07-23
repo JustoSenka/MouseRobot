@@ -6,6 +6,8 @@ using RobotEditor.Utils;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace RobotEditor.Inspector
 {
@@ -57,6 +59,13 @@ namespace RobotEditor.Inspector
             }
             set
             {
+                if (BaseScriptManager.LoadedScripts.Any(Script => Script.Name == value))
+                {
+                    FlexibleMessageBox.Show("Property value is not valid.\nTest with this name already exists: " + value, 
+                        "Inspector Window", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 Script.Name = value;
             }
         }

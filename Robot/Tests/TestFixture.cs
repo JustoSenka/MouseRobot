@@ -67,9 +67,20 @@ namespace RobotRuntime.Tests
         public override Script NewScript(Script clone = null)
         {
             var s = base.NewScript(clone);
-            s.Name = DefaultTestName;
+            s.Name = GetUniqueTestName(DefaultTestName);
             m_IsDirty = true;
             return s;
+        }
+
+        private string GetUniqueTestName(string name)
+        {
+            var newName = name;
+            var i = 0;
+
+            while (LoadedScripts.Any(script => script.Name == newName))
+                newName = name + ++i;
+
+            return newName;
         }
 
         public override void RemoveScript(Script script)

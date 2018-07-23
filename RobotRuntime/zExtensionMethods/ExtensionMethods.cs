@@ -92,6 +92,17 @@ namespace RobotRuntime
                 action(item as K);
         }
 
+        public static int Count(this IEnumerable enumarable)
+        {
+            int result = 0;
+            var enumerator = enumarable.GetEnumerator();
+
+            while (enumerator.MoveNext())
+                result++;
+
+            return result;
+        }
+
         public static float Clamp(this float source, float min, float max)
         {
             source = source > min ? source : min;
