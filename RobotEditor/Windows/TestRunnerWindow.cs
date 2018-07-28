@@ -286,29 +286,32 @@ namespace RobotEditor
 
         private void runSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var builder = new StringBuilder();
+            var names = treeListView.SelectedObjects.Cast<TestNode>().Select(node =>
+                node.TestFixture != null ? node.TestFixture.Name : node.Parent.TestFixture.Name + "." + node.Script.Name);
 
-            foreach (var item in treeListView.SelectedObjects)
-            {
-                var node = (TestNode)item;
-                var itemString = node.TestFixture != null ? node.TestFixture.Name : node.Parent.TestFixture.Name + "." + node.Script.Name;
-                builder.Append("^" + itemString + "$|");
-            }
-
-            var filter = builder.ToString();
-            filter = filter.TrimEnd('|'); // removing last vertical bar symbol
-
-            StartTestsWithSafeChecks(filter);
+            var filter = BuildTestFilter(names);
+            if (filter != "")
+                StartTestsWithSafeChecks(filter);
         }
 
         private void runFailedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO:
+            var names = TestRunnerManager.TestStatusDictionary.Where(pair => pair.Value == TestStatus.Failed).
+                Select(pair => pair.Key.Item1 + "." + pair.Key.Item1);
+
+            var filter = BuildTestFilter(names);
+            if (filter != "")
+                StartTestsWithSafeChecks(filter);
         }
 
         private void runNotRunToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO:
+            var names = TestRunnerManager.TestStatusDictionary.Where(pair => pair.Value == TestStatus.None).
+                Select(pair => pair.Key.Item1 + "." + pair.Key.Item2);
+
+            var filter = BuildTestFilter(names);
+            if (filter != "")
+                StartTestsWithSafeChecks(filter);
         }
 
         private void StopRunButton_Click(object sender, EventArgs e)
@@ -327,6 +330,18 @@ namespace RobotEditor
                 TestRunner.StartTests();
             else
                 TestRunner.StartTests(testFilter);
+        }
+
+        private string BuildTestFilter(IEnumerable<string> names)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var name in names)
+                builder.Append("^" + name + "$|");
+
+            var filter = builder.ToString();
+            filter = filter.TrimEnd('|'); // removing last vertical bar symbol
+            return filter;
         }
 
         #endregion
