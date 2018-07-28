@@ -19,9 +19,11 @@ namespace RobotRuntime.Execution
 
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
-        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
+        private ILogger Logger;
+        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager, ILogger Logger)
         {
             this.AssetGuidManager = AssetGuidManager;
+            this.Logger = Logger;
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
 
@@ -29,7 +31,7 @@ namespace RobotRuntime.Execution
         {
             if (!TestData.RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
             {
-                Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
+                Logger.Logi(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
                 return;
             }
 
@@ -45,6 +47,9 @@ namespace RobotRuntime.Execution
             GetImageAndTimeout(node, out imageGuid, out timeout);
 
             var path = AssetGuidManager.GetPath(imageGuid);
+            if (Logger.AssertIf(path == "", "Image path is invalid: "))
+                return;
+
             var points = GetCoordinates(node, path, timeout);
             if (points == null || points.Length == 0)
             {

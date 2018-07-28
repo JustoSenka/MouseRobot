@@ -191,6 +191,7 @@
     <Compile Include="Hierarchy\HierarchyNodeStringConverter.cs" />
     <Compile Include="Hierarchy\HierarchyNode.cs" />
     <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
+    <Compile Include="PropertyUtils\ScriptGUIDStringConverter.cs" />
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />

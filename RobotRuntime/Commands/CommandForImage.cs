@@ -33,7 +33,7 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            return "For Each image: <" + Asset.ToString() + ">";
+            return "For Image: <" + Asset.ToString() + ">";
         }
     }
 }

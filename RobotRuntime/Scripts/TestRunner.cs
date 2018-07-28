@@ -64,6 +64,7 @@ namespace RobotRuntime
         {
             TestRunStart?.Invoke();
             TestData.ShouldCancelRun = false;
+            TestData.ShouldFailTest = false;
 
             AssetGuidManager.LoadMetaFiles();
             RuntimeAssetManager.CollectAllImporters();

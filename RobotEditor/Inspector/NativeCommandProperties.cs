@@ -48,6 +48,10 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Time");
             }
+            else if (Command is CommandRunScript)
+            {
+                AddProperty(dt, "Script");
+            }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -119,6 +123,25 @@ namespace RobotEditor.Inspector
             set
             {
                 Asset asset = AssetManager.GetAsset(Paths.ImageFolder, value);
+                if (asset != null)
+                    DynamicCast(Command).Asset = asset.Guid;
+            }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DisplayName("Referenced Script")]
+        [TypeConverter(typeof(ScriptGUIDStringConverter))]
+        public string Script
+        {
+            get
+            {
+                var guid = DynamicCast(Command).Asset;
+                var path = AssetGuidManager.GetPath(guid);
+                return (path == null || path == "") ? "..." : Paths.GetName(path);
+            }
+            set
+            {
+                Asset asset = AssetManager.GetAsset(Paths.ScriptFolder, value);
                 if (asset != null)
                     DynamicCast(Command).Asset = asset.Guid;
             }

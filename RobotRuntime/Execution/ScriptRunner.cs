@@ -8,26 +8,30 @@ namespace RobotRuntime.Execution
     {
         public TestData TestData { set; get; }
 
-        public ScriptRunner()
+        private ILogger Logger;
+        public ScriptRunner(ILogger Logger)
         {
-
+            this.Logger = Logger;
         }
 
         public void Run(IRunnable runnable)
         {
             var script = runnable as LightScript;
 
+            if (Logger.AssertIf(script == null, "Script is invalid: " + runnable))
+                return;
+
             TestData.TestFixture = script;
             TestData.RunnerFactory.PassDependencies(TestData);
 
-            Logger.Log(LogType.Debug, "Script is being run: " + script.Name);
+            Logger.Logi(LogType.Debug, "Script is being run: " + script.Name);
 
             // making shallow copy of commands collection, so it doesn't crash when test tries to modify itself while running
             foreach (var node in script.Commands.ToList())
             {
                 if (TestData.ShouldCancelRun)
                 {
-                    Logger.Log(LogType.Log, "Script run was cancelled.");
+                    Logger.Logi(LogType.Log, "Script run was cancelled.");
                     return;
                 }
 
