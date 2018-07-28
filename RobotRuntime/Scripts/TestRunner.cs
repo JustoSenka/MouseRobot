@@ -22,6 +22,9 @@ namespace RobotRuntime
         public event Action TestRunStart;
         public event Action TestRunEnd;
 
+        public event Action<LightTestFixture> FixtureIsBeingRun;
+        public event Action<LightTestFixture, Script> TestIsBeingRun;
+
         public event Action<LightTestFixture, Script> FixtureSpecialScripFailed;
         public event Action<LightTestFixture, Script> FixtureSpecialScriptSucceded;
         public event Action<LightTestFixture, Script> TestPassed;
@@ -137,6 +140,8 @@ namespace RobotRuntime
                     if (!isThereASingleTestMatchingFilter && !fixtureMathesFilter)
                         continue;
 
+                    FixtureIsBeingRun?.Invoke(fixture);
+
                     RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
                     if (TestData.ShouldCancelRun) return;
                     CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeSetup);
@@ -146,6 +151,8 @@ namespace RobotRuntime
                         var testMathesFilter = Regex.IsMatch(fixture.Name + "." + test.Name, testFilter);
                         if (!fixtureMathesFilter && !testMathesFilter)
                             continue;
+
+                        TestIsBeingRun?.Invoke(fixture, test);
 
                         // Setup
                         RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);

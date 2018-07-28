@@ -11,6 +11,9 @@ namespace RobotRuntime.Abstractions
         event Action TestRunStart;
         event Action TestRunEnd;
 
+        event Action<LightTestFixture> FixtureIsBeingRun;
+        event Action<LightTestFixture, Script> TestIsBeingRun;
+
         event Action<LightTestFixture, Script> FixtureSpecialScripFailed;
         event Action<LightTestFixture, Script> FixtureSpecialScriptSucceded;
         event Action<LightTestFixture, Script> TestPassed;

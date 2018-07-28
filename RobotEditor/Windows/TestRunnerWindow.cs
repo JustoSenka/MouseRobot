@@ -14,6 +14,8 @@ using RobotRuntime.Abstractions;
 using System.Text;
 using Robot.Tests;
 using System.Linq;
+using RobotRuntime.Scripts;
+using System.Drawing;
 
 namespace RobotEditor
 {
@@ -21,7 +23,7 @@ namespace RobotEditor
     {
         private List<TestNode> m_Nodes = new List<TestNode>();
 
-        // private TestNode m_HighlightedNode;
+        private TestNode m_HighlightedNode;
 
         bool m_FirstTimeUpdatingStatus = true;
 
@@ -44,7 +46,10 @@ namespace RobotEditor
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;
 
             TestRunnerManager.TestStatusUpdated += UpdateTestStatusIcons;
-            TestRunner.TestRunEnd += UpdateTestStatusIcons;
+
+            TestRunner.TestRunEnd += OnTestRunEnd;
+            TestRunner.FixtureIsBeingRun += OnFixtureIsBeingRun;
+            TestRunner.TestIsBeingRun += OnTestIsBeingRun;
 
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
 
@@ -100,14 +105,8 @@ namespace RobotEditor
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
         {
             var node = e.Model as TestNode;
-            if (node == null)
-                return;
-            /*
-            if (node.Command != null)
-            {
-                if (node == m_HighlightedNode)
-                    e.SubItem.BackColor = SystemColors.Highlight;
-            }*/
+            if (node == m_HighlightedNode)
+                e.SubItem.BackColor = SystemColors.Highlight;
         }
 
         private void UpdateHierarchy()
@@ -207,6 +206,12 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
+        private void OnTestRunEnd()
+        {
+            m_HighlightedNode = null;
+            UpdateTestStatusIcons();
+        }
+
         private void UpdateTestStatusIcons()
         {
             this.BeginInvoke(new MethodInvoker(delegate
@@ -215,6 +220,36 @@ namespace RobotEditor
                 RefreshTreeListView(m_FirstTimeUpdatingStatus);
                 m_FirstTimeUpdatingStatus = false;
             }));
+        }
+
+        private void OnFixtureIsBeingRun(LightTestFixture lightTestFixture)
+        {
+            var fixtureNode = m_Nodes.FirstOrDefault(node => node.TestFixture.Name == lightTestFixture.Name);
+            if (fixtureNode != null)
+            {
+                m_HighlightedNode = fixtureNode;
+                this.BeginInvoke(new MethodInvoker(delegate
+                {
+                    RefreshTreeListView(m_FirstTimeUpdatingStatus);
+                }));
+            }
+        }
+
+        private void OnTestIsBeingRun(LightTestFixture lightTestFixture, Script script)
+        {
+            var fixtureNode = m_Nodes.FirstOrDefault(node => node.TestFixture.Name == lightTestFixture.Name);
+            if (fixtureNode != null && fixtureNode.TestFixture != null)
+            {
+                var scriptNode = fixtureNode.Children.FirstOrDefault(node => node.Script?.Name == script.Name);
+                if (scriptNode != null)
+                {
+                    m_HighlightedNode = scriptNode;
+                    this.BeginInvoke(new MethodInvoker(delegate
+                    {
+                        RefreshTreeListView(m_FirstTimeUpdatingStatus);
+                    }));
+                }
+            }
         }
 
         #endregion
