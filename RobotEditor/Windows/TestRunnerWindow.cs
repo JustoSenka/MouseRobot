@@ -124,8 +124,13 @@ namespace RobotEditor
 
         private void RefreshTreeListView(bool performExpandAll = false)
         {
+            // If no test fixtures exist, reset m_FirstTimeUpdatingStatus. 
+            // If project is changed, it will think it's first time loading and will expand everything
             if (treeListView.Roots == null || treeListView.Roots.Count() == 0)
+            {
                 performExpandAll = true;
+                m_FirstTimeUpdatingStatus = true;
+            }
 
             treeListView.Roots = m_Nodes;
 

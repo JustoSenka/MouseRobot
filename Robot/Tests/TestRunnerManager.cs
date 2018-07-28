@@ -11,7 +11,8 @@ using Unity;
 namespace Robot.Tests
 {
     /// <summary>
-    /// Contains list of all tests and test fixtures in project
+    /// Contains list of all tests and test fixtures in project.
+    /// Also holds dictionary of TestStatus
     /// TestRunnerWindow relies on this class callbacks
     /// </summary>
     public class TestRunnerManager : ITestRunnerManager
@@ -25,6 +26,7 @@ namespace Robot.Tests
         private IList<TestFixture> m_TestFixtures;
 
         public Dictionary<Tuple<string, string>, TestStatus> TestStatusDictionary { get; } = new Dictionary<Tuple<string, string>, TestStatus>();
+        private readonly object m_TestStatusDictionaryLock = new object();
 
         public event Action<TestFixture, int> TestFixtureAdded;
         public event Action<TestFixture, int> TestFixtureRemoved;
@@ -34,10 +36,12 @@ namespace Robot.Tests
 
         private IUnityContainer Container;
         private IAssetManager AssetManager;
-        public TestRunnerManager(IUnityContainer Container, IAssetManager AssetManager, ITestRunner TestRunner)
+        private IProfiler Profiler;
+        public TestRunnerManager(IUnityContainer Container, IAssetManager AssetManager, ITestRunner TestRunner, IProfiler Profiler)
         {
             this.Container = Container;
             this.AssetManager = AssetManager;
+            this.Profiler = Profiler;
 
             m_TestFixtures = new List<TestFixture>();
 
@@ -55,8 +59,14 @@ namespace Robot.Tests
 
         public TestStatus GetFixtureStatus(TestFixture fixture)
         {
+            KeyValuePair<Tuple<string, string>, TestStatus>[] statusList;
+            lock (m_TestStatusDictionaryLock)
+            {
+                statusList = TestStatusDictionary.ToArray();
+            }
+
             var status = TestStatus.Passed;
-            foreach (var pair in TestStatusDictionary)
+            foreach (var pair in statusList)
             {
                 if (pair.Key.Item1 != fixture.Name)
                     continue;
@@ -74,24 +84,32 @@ namespace Robot.Tests
             return status;
         }
 
+        private void SetStatus(Tuple<string, string> tuple, TestStatus status)
+        {
+            if (TestStatusDictionary.ContainsKey(tuple))
+                TestStatusDictionary[tuple] = status;
+            else
+                TestStatusDictionary.Add(tuple, status);
+        }
+
         #region TestRunner Callbacks
 
         private void OnTestFailed(LightTestFixture fixture, Script script)
         {
-            var tuple = CreateTuple(fixture, script);
-            if (TestStatusDictionary.ContainsKey(tuple))
+            lock (m_TestStatusDictionaryLock)
             {
-                TestStatusDictionary[tuple] = TestStatus.Failed;
+                var tuple = CreateTuple(fixture, script);
+                SetStatus(tuple, TestStatus.Failed);
                 TestStatusUpdated?.Invoke();
             }
         }
 
         private void OnTestPassed(LightTestFixture fixture, Script script)
         {
-            var tuple = CreateTuple(fixture, script);
-            if (TestStatusDictionary.ContainsKey(tuple))
+            lock (m_TestStatusDictionaryLock)
             {
-                TestStatusDictionary[tuple] = TestStatus.Passed;
+                var tuple = CreateTuple(fixture, script);
+                SetStatus(tuple, TestStatus.Passed);
                 TestStatusUpdated?.Invoke();
             }
         }
@@ -130,6 +148,8 @@ namespace Robot.Tests
 
         private void ReloadTestFixtures(bool firstReload = false)
         {
+            Profiler.Start("TestRunnerManager.ReloadTestFixtures");
+
             var fixtureAssets = AssetManager.Assets.Where(asset => asset.Importer.HoldsType() == typeof(LightTestFixture));
 
             // Update test fixtures with modified values
@@ -145,6 +165,9 @@ namespace Robot.Tests
 
                 lightFixture.Name = asset.Name;
 
+                // Making a deep clone so modifying fixtures in other windows will not affect the status on TestRunner
+                lightFixture = (LightTestFixture) lightFixture.Clone();
+
                 var fixture = m_TestFixtures.FirstOrDefault(f => f.Name == asset.Name);
 
                 // Create new fixture if one does not exist
@@ -157,8 +180,10 @@ namespace Robot.Tests
                     m_TestFixtures.Add(fixture);
                     TestFixtureAdded?.Invoke(fixture, m_TestFixtures.Count - 1);
                 }
+                // Modify an existing one with new data from disk
                 else
                 {
+                    ResetTestStatusForModifiedTests(fixture, lightFixture);
                     fixture.ApplyLightFixtureValues(lightFixture);
                     fixture.Path = asset.Path;
                     TestFixtureModified?.Invoke(fixture, m_TestFixtures.IndexOf(fixture));
@@ -179,17 +204,55 @@ namespace Robot.Tests
             }
 
             m_ModifiedFilesSinceLastUpdate.Clear();
+
+            Profiler.Stop("TestRunnerManager.ReloadTestFixtures");
+        }
+
+        /// <summary>
+        /// This method constructs new dictionary from all tests in old fixture, then iterates new fixture to find matching scripts
+        /// Iterating both fixtures would result in O(n^2). With dictionary, it is only O(2n) with some temp memory allocations.
+        /// </summary>
+        private void ResetTestStatusForModifiedTests(TestFixture oldFixture, LightTestFixture newFixture)
+        {
+            // dictionary with count is faster on adding elements. Operation complexity is o(1)
+            var newScriptsDict = new Dictionary<string, Script>(oldFixture.Tests.Count);
+            foreach (var s in oldFixture.Tests)
+                newScriptsDict.Add(s.Name, s);
+
+            var oldScripts = newFixture.Tests;
+
+            for (int i = 0; i < oldScripts.Count; ++i)
+            {
+                var oldScript = oldScripts[i];
+                Script newScript;
+                newScriptsDict.TryGetValue(oldScript.Name, out newScript);
+
+                // if new script is different, mark it's status as None
+                if (!oldScript.Similar(newScript) && newScript != null)
+                {
+                    lock (m_TestStatusDictionaryLock)
+                    {
+                        var tuple = CreateTuple(oldFixture, newScript);
+                        SetStatus(tuple, TestStatus.None);
+
+                        TestStatusUpdated?.Invoke();
+                    }
+                }
+            }
         }
 
         private void UpdateTestStatus()
         {
-            foreach (var fixture in m_TestFixtures)
+            lock (m_TestStatusDictionaryLock)
             {
-                foreach (var script in fixture.LoadedScripts)
+                foreach (var fixture in m_TestFixtures)
                 {
-                    var tuple = CreateTuple(fixture, script);
-                    if (!TestStatusDictionary.ContainsKey(tuple))
-                        TestStatusDictionary.Add(tuple, TestStatus.None);
+                    foreach (var script in fixture.LoadedScripts)
+                    {
+                        var tuple = CreateTuple(fixture, script);
+                        if (!TestStatusDictionary.ContainsKey(tuple))
+                            TestStatusDictionary.Add(tuple, TestStatus.None);
+                    }
                 }
             }
             TestStatusUpdated?.Invoke();

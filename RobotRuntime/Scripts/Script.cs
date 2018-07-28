@@ -9,7 +9,7 @@ using System.Linq;
 namespace RobotRuntime.Scripts
 {
     [PropertyDesignerType("ScriptProperties")]
-    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>
+    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>, ISimilar
     {
         private bool m_IsDirty;
         private string m_Path = "";
@@ -177,12 +177,12 @@ namespace RobotRuntime.Scripts
 
         public object Clone()
         {
-            var script = new Script();
-
-            script.Commands = (TreeNode<Command>)Commands.Clone();
-
-            script.m_IsDirty = true;
-            return script;
+            return new Script
+            {
+                Name = Name,
+                Commands = (TreeNode<Command>)Commands.Clone(),
+                m_IsDirty = true
+            };
         }
 
         public override string ToString()
@@ -231,6 +231,21 @@ namespace RobotRuntime.Scripts
                 m_IsDirty = value;
             }
             get { return m_IsDirty; }
+        }
+
+        public bool Similar(object obj)
+        {
+            var s = obj as Script;
+            if (s == null)
+                return false;
+
+            if (s.Name != Name)
+                return false;
+
+            var allCommands1 = s.Commands.GetAllNodes().Select(node => node.value);
+            var allCommands2 = Commands.GetAllNodes().Select(node => node.value);
+
+            return allCommands1.SequenceEqual(allCommands2, new SimilarEqualityComparer());
         }
 
         // Inheritence

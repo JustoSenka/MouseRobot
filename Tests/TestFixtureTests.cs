@@ -11,6 +11,7 @@ using RobotRuntime;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using Robot.Tests;
+using RobotRuntime.Commands;
 
 namespace Tests
 {
@@ -134,6 +135,67 @@ namespace Tests
             fixture.ApplyLightFixtureValues(lightFixture);
 
             Assert.AreEqual(lightFixture.Name, fixture.Name, "Names should be the same");
+        }
+
+        [TestMethod]
+        public void TestFixture_EqualsOperator_ForNewFixtures_ReturnsTrue()
+        {
+            var fixture1 = TestFixtureManager.NewTestFixture();
+            var fixture2 = TestFixtureManager.NewTestFixture();
+
+            Assert.IsTrue(fixture1.Similar(fixture2), "Fixture.Equals returned false for similar two new identical fixtures");
+        }
+
+        [TestMethod]
+        public void TestFixture_EqualsOperator_ForIdenticalFixtures_ReturnsTrue()
+        {
+            var fixture1 = TestFixtureManager.NewTestFixture();
+            var fixture2 = TestFixtureManager.NewTestFixture();
+
+            fixture1.ApplyLightFixtureValues(LightTestFixture);
+            fixture2.ApplyLightFixtureValues(LightTestFixture);
+
+            Assert.IsTrue(fixture1.Similar(fixture2), "Fixture.Equals returned false for similar two new identical fixtures");
+        }
+
+        [TestMethod]
+        public void TestFixture_EqualsOperator_ForFixturesWithDifferentScripts_ReturnsFalse()
+        {
+            var fixture1 = TestFixtureManager.NewTestFixture();
+            var fixture2 = TestFixtureManager.NewTestFixture();
+
+            fixture1.ApplyLightFixtureValues(LightTestFixture);
+            fixture2.ApplyLightFixtureValues(LightTestFixture);
+
+            fixture1.Tests[1].Name = "Some new name";
+
+            Assert.IsFalse(fixture1.Similar(fixture2), "Fixture.Equals returned true for for different fixtures");
+        }
+
+        [TestMethod]
+        public void TestFixture_EqualsOperator_ForFixturesWithDifferentCommands_ReturnsFalse()
+        {
+            var fixture1 = TestFixtureManager.NewTestFixture();
+            var fixture2 = TestFixtureManager.NewTestFixture();
+
+            fixture1.ApplyLightFixtureValues(LightTestFixture);
+            fixture2.ApplyLightFixtureValues(LightTestFixture);
+
+            fixture1.Tests[1].AddCommand(new CommandSleep(5));
+
+            Assert.IsFalse(fixture1.Similar(fixture2), "Fixture.Equals returned true for for different fixtures");
+        }
+
+        [TestMethod]
+        public void TestFixture_EqualsOperator_ForDifferentFixtures_ReturnsFalse()
+        {
+            var fixture1 = TestFixtureManager.NewTestFixture();
+            var fixture2 = TestFixtureManager.NewTestFixture();
+
+            fixture2.ApplyLightFixtureValues(LightTestFixture);
+
+            Assert.IsFalse(fixture1.Similar(fixture2), "Fixture1.Equals returned true for for different fixtures");
+            Assert.IsFalse(fixture2.Similar(fixture1), "Fixture2.Equals returned true for for different fixtures");
         }
 
         private void CheckIfLightTestFixturesAreEqual(LightTestFixture a, LightTestFixture b)

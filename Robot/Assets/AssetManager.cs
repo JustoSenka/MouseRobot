@@ -113,6 +113,18 @@ namespace Robot
             RefreshFinished?.Invoke();
         }
 
+        public void SaveExistngAsset(Asset existingAsset, object newValue)
+        {
+            existingAsset.Importer.Value = newValue;
+            existingAsset.Importer.SaveAsset();
+            existingAsset.Update();
+            AssetUpdated?.Invoke(existingAsset.Path);
+
+            AssetGuidManager.AddNewGuid(existingAsset.Guid, existingAsset.Path, existingAsset.Hash);
+            if (!IsEditingAssets)
+                AssetGuidManager.Save();
+        }
+
         public Asset CreateAsset(object assetValue, string path)
         {
             path = Paths.GetProjectRelativePath(path);

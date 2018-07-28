@@ -4,7 +4,7 @@ using System;
 namespace RobotRuntime
 {
     [Serializable]
-    public abstract class Command : IRunnable, ICloneable
+    public abstract class Command : IRunnable, ICloneable, ISimilar
     {
         public abstract string Name { get; }
         public abstract bool CanBeNested { get; }
@@ -15,6 +15,15 @@ namespace RobotRuntime
         public void Run(IRunner runner)
         {
             runner.Run(this);
+        }
+
+        public bool Similar(object obj)
+        {
+            var c = obj as Command;
+            if (c == null)
+                return false;
+
+            return this.ToString() == c.ToString();
         }
     }
 }

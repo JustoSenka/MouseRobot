@@ -18,16 +18,20 @@ namespace RobotRuntime.Assets
 
         private bool m_PreloadedAssetsUpToDate = false;
 
-        private ILogger Logger;
         private IAssetGuidManager AssetGuidManager;
-        public RuntimeAssetManager(IAssetGuidManager AssetGuidManager, ILogger Logger)
+        private ILogger Logger;
+        private IProfiler Profiler;
+        public RuntimeAssetManager(IAssetGuidManager AssetGuidManager, ILogger Logger, IProfiler Profiler)
         {
-            this.Logger = Logger;
             this.AssetGuidManager = AssetGuidManager;
+            this.Logger = Logger;
+            this.Profiler = Profiler;
         }
 
         public void CollectAllImporters()
         {
+            Profiler.Start("RuntimeAssetManager.CollectAllImporters");
+
             m_GuidImporterMap.Clear();
 
             m_PreloadedAssetsUpToDate = false;
@@ -44,10 +48,14 @@ namespace RobotRuntime.Assets
 
                 m_GuidImporterMap.Add(guid, importer);
             }
+
+            Profiler.Stop("RuntimeAssetManager.CollectAllImporters");
         }
 
         public void PreloadAllAssets()
         {
+            Profiler.Start("RuntimeAssetManager.PreloadAllAssets");
+
             if (m_GuidImporterMap.Count == 0)
                 CollectAllImporters();
 
@@ -64,6 +72,8 @@ namespace RobotRuntime.Assets
             }
 
             m_PreloadedAssetsUpToDate = true;
+
+            Profiler.Stop("RuntimeAssetManager.PreloadAllAssets");
         }
 
         public AssetImporter GetImporterForAsset(Guid guid)

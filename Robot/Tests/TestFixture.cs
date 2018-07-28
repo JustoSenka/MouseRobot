@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace RobotRuntime.Tests
 {
-    public class TestFixture : BaseScriptManager
+    public class TestFixture : BaseScriptManager, ISimilar
     {
         public const string DefaultTestFixtureName = "New Fixture";
         public const string DefaultTestName = "New Test";
@@ -117,6 +117,25 @@ namespace RobotRuntime.Tests
             RemoveScript(s);
             AddScript(s);
             MoveScriptBefore(addedScriptIndex, instertIntoIndex);
+        }
+
+        public bool Similar(object obj)
+        {
+            var f = obj as TestFixture;
+            if (f == null)
+                return false;
+
+            if (f.Name != Name)
+                return false;
+
+            return LoadedScripts.SequenceEqual(f.LoadedScripts, new SimilarEqualityComparer());
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = Name.GetHashCode();
+            hash += LoadedScripts.Select(script => script.GetHashCode()).Sum();
+            return hash;
         }
 
         private IList<Script> GetAllTests()

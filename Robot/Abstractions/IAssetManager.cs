@@ -19,6 +19,8 @@ namespace Robot.Abstractions
         event Action RefreshFinished;
 
         void BeginAssetEditing();
+
+        void SaveExistngAsset(Asset existingAsset, object newValue);
         Asset CreateAsset(object assetValue, string path);
         void DeleteAsset(string path);
         void EditAssets(Action ac);

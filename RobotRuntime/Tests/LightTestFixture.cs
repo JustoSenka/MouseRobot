@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RobotRuntime.Tests
 {
-    public class LightTestFixture
+    public class LightTestFixture : ICloneable
     {
         public Script Setup { get; set; }
         public Script TearDown { get; set; }
@@ -45,6 +45,22 @@ namespace RobotRuntime.Tests
                 Script.Name == k_OneTimeTeardown ||
                 Script.Name == k_Setup ||
                 Script.Name == k_TearDown);
+        }
+
+        public object Clone()
+        {
+            var fixture = new LightTestFixture();
+            fixture.Name = Name;
+
+            fixture.Setup = (Script)Setup.Clone();
+            fixture.TearDown = (Script)TearDown.Clone();
+            fixture.OneTimeSetup = (Script)OneTimeSetup.Clone();
+            fixture.OneTimeTeardown = (Script)OneTimeTeardown.Clone();
+
+            foreach (var test in Tests)
+                fixture.Tests.Add((Script)test.Clone());
+
+            return fixture;
         }
     }
 }
