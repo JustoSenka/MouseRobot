@@ -2,11 +2,14 @@
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Threading;
+using WindowsInput;
 
 namespace RobotRuntime.Utils.Win32
 {
     public static class WinAPI
     {
+        #region Mouse Input
+
         public const int TimeBetweenActions = 5;
 
         [Flags]
@@ -66,8 +69,26 @@ namespace RobotRuntime.Utils.Win32
             Thread.Sleep(TimeBetweenActions);
         }
 
-        
-        // Console show / hide
+        #endregion
+
+        #region Keyboard Input
+
+        private static InputSimulator InputSimulator = new InputSimulator();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern bool PostMessage(IntPtr hWnd, UInt32 Msg, int wParam, int lParam);
+
+        public static void SimulateTextEntry(string text)
+        {
+            InputSimulator.Keyboard.TextEntry(text);
+        }
+
+        #endregion
+
+        #region Console show / hide
 
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
@@ -87,5 +108,7 @@ namespace RobotRuntime.Utils.Win32
         {
             return ShowWindow(hWnd, nCmdShow);
         }
+
+        #endregion
     }
 }

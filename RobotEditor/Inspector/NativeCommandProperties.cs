@@ -52,6 +52,10 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Script");
             }
+            else if (Command is CommandWriteText)
+            {
+                AddProperty(dt, "Text");
+            }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -145,6 +149,15 @@ namespace RobotEditor.Inspector
                 if (asset != null)
                     DynamicCast(Command).Asset = asset.Guid;
             }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("")]
+        [DisplayName("Text")]
+        public string Text
+        {
+            get { return DynamicCast(Command).Text; }
+            set { DynamicCast(Command).Text = value; }
         }
     }
 }

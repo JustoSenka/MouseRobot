@@ -154,6 +154,9 @@
       <HintPath>..\packages\Unity.5.5.6\lib\net45\Unity.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
+      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    </Reference>
     <Reference Include="YamlDotNet, Version=4.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
@@ -182,6 +185,7 @@
     <Compile Include="Commands\CommandMove.cs" />
     <Compile Include="Commands\CommandPress.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
+    <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
     <Compile Include="Execution\RunScriptCommandRunner.cs" />
     <Compile Include="Execution\IRunnable.cs" />
