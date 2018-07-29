@@ -19,6 +19,6 @@ namespace RobotRuntime.Abstractions
         event Action<Point[][]> PositionFound;
 
         //void Init();
-        void StartNewImageSearch(string path);
+        void StartNewImageSearch(Bitmap sampleImage);
     }
 }

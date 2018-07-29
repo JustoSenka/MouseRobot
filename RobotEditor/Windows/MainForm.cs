@@ -19,6 +19,7 @@ using Unity;
 using RobotRuntime.Tests;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 
 namespace RobotEditor
 {
@@ -210,7 +211,7 @@ namespace RobotEditor
         {
             m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
             if (MouseRobot.IsVisualizationOn)
-                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Path);
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
         }
 
         private void ShowSelectedObjectInInspector(BaseScriptManager BaseScriptManager, object obj)

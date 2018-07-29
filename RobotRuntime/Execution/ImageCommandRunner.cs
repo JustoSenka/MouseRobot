@@ -17,12 +17,12 @@ namespace RobotRuntime.Execution
         // TODO: Whent test fixture or test class is introduced, replace this with Test. It needs to know test hierarchy, that's why it is like that
         // TODO: Or maybe it's fine to know just the script he command is on?
 
-        private IAssetGuidManager AssetGuidManager;
+        private IRuntimeAssetManager RuntimeAssetManager;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ILogger Logger;
-        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager, ILogger Logger)
+        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager AssetGuidManager, ILogger Logger)
         {
-            this.AssetGuidManager = AssetGuidManager;
+            this.RuntimeAssetManager = AssetGuidManager;
             this.Logger = Logger;
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
@@ -46,11 +46,17 @@ namespace RobotRuntime.Execution
             int timeout;
             GetImageAndTimeout(node, out imageGuid, out timeout);
 
-            var path = AssetGuidManager.GetPath(imageGuid);
-            if (Logger.AssertIf(path == "", "Image path is invalid: "))
+            if (Logger.AssertIf(imageGuid.IsDefault(), "Command does not have valid image referenced: " + node.ToString()))
                 return;
 
-            var points = GetCoordinates(node, path, timeout);
+            var image = RuntimeAssetManager.GetAsset<Bitmap>(imageGuid);
+            if (image == null)
+            {
+                TestData.ShouldFailTest = true;
+                return;
+            }
+
+            var points = GetCoordinates(node, image, timeout);
             if (points == null || points.Length == 0)
             {
                 TestData.ShouldFailTest = true;
@@ -76,7 +82,7 @@ namespace RobotRuntime.Execution
             }
         }
 
-        private Point[] GetCoordinates(TreeNode<Command> node, string imagePath, int timeout)
+        private Point[] GetCoordinates(TreeNode<Command> node, Bitmap image, int timeout)
         {
             var command = node.value;
 
@@ -87,7 +93,7 @@ namespace RobotRuntime.Execution
             int x1 = WinAPI.GetCursorPosition().X;
             int y1 = WinAPI.GetCursorPosition().Y;
 
-            FeatureDetectionThread.StartNewImageSearch(imagePath);
+            FeatureDetectionThread.StartNewImageSearch(image);
             while (timeout > FeatureDetectionThread.TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution

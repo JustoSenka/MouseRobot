@@ -97,19 +97,17 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name);
         }
 
-        public void StartNewImageSearch(string path)
+        public void StartNewImageSearch(Bitmap sampleImage)
         {
-            if (path.EndsWith(FileExtensions.Image))
+            lock (m_SampleImageLock)
             {
-                lock (m_SampleImageLock)
-                {
-                    m_SampleImage = AssetImporter.FromPath(path).Load<Bitmap>();
-                    WasLastCheckSuccess = false;
-                    WasImageFound = false;
-                    LastKnownPositions = null;
-                    TimeSinceLastFind = 0;
-                    m_Watch.Restart();
-                }
+                var clonedSampleImage = new Bitmap(sampleImage.Width, sampleImage.Height);
+                m_SampleImage = BitmapUtility.Clone32BPPBitmap(sampleImage, clonedSampleImage);
+                WasLastCheckSuccess = false;
+                WasImageFound = false;
+                LastKnownPositions = null;
+                TimeSinceLastFind = 0;
+                m_Watch.Restart();
             }
         }
 
