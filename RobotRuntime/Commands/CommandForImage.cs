@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using System;
 
 namespace RobotRuntime.Commands
@@ -26,10 +27,7 @@ namespace RobotRuntime.Commands
             return new CommandForImage(Asset, Timeout);
         }
 
-        public override void Run()
-        {
-
-        }
+        public override void Run(TestData TestData) { }
 
         public override string ToString()
         {

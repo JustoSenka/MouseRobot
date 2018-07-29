@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils.Win32;
 using System;
 
@@ -25,7 +26,7 @@ namespace RobotRuntime.Commands
             return new CommandWriteText(Text);
         }
 
-        public override void Run()
+        public override void Run(TestData TestData)
         {
             WinAPI.SimulateTextEntry(Text);
         }

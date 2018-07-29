@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils.Win32;
 using System;
 
@@ -27,7 +28,7 @@ namespace RobotRuntime.Commands
             return new CommandMove(X, Y);
         }
 
-        public override void Run()
+        public override void Run(TestData TestData)
         {
             int x1, y1;
             x1 = WinAPI.GetCursorPosition().X;

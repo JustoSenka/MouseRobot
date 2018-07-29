@@ -1,7 +1,9 @@
-﻿namespace RobotRuntime.Execution
+﻿using RobotRuntime.Tests;
+
+namespace RobotRuntime.Execution
 {
     public interface IRunnable
     {
-        void Run(IRunner runner);
+        void Run(TestData TestData);
     }
 }

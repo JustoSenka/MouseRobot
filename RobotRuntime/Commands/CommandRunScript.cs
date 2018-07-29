@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using System;
 
 namespace RobotRuntime.Commands
@@ -24,7 +25,7 @@ namespace RobotRuntime.Commands
             return new CommandRunScript(Asset);
         }
 
-        public override void Run() { }
+        public override void Run(TestData TestData) { }
 
         public override string ToString()
         {

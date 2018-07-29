@@ -14,15 +14,12 @@ namespace RobotRuntime.Execution
     {
         public TestData TestData { set; get; }
 
-        // TODO: Whent test fixture or test class is introduced, replace this with Test. It needs to know test hierarchy, that's why it is like that
-        // TODO: Or maybe it's fine to know just the script he command is on?
-
         private IRuntimeAssetManager RuntimeAssetManager;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ILogger Logger;
-        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager AssetGuidManager, ILogger Logger)
+        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
-            this.RuntimeAssetManager = AssetGuidManager;
+            this.RuntimeAssetManager = RuntimeAssetManager;
             this.Logger = Logger;
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
@@ -66,7 +63,7 @@ namespace RobotRuntime.Execution
             foreach (var p in points)
             {
                 TestData.CommandRunningCallback?.Invoke(node.value);
-                node.value.Run();
+                node.value.Run(TestData);
 
                 foreach (var childNode in node)
                 {

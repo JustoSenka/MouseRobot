@@ -1,5 +1,5 @@
 ﻿using RobotRuntime.Execution;
-using RobotRuntime.Utils;
+using RobotRuntime.Tests;
 using System;
 namespace RobotRuntime
 {
@@ -7,7 +7,6 @@ namespace RobotRuntime
     [RunnerType(typeof(ScriptRunner))] 
     public class LightScript : IRunnable
     {
-
         public LightScript() { }
 
         public LightScript(TreeNode<Command> commands)
@@ -18,9 +17,6 @@ namespace RobotRuntime
         public virtual string Name { get; set; }
         public TreeNode<Command> Commands { get; protected set; }
 
-        public void Run(IRunner runner)
-        {
-            runner.Run(this);
-        }
+        public void Run(TestData TestData) { }
     }
 }

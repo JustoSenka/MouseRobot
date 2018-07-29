@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using System;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace RobotRuntime.Commands
             return new CommandSleep(Time);
         }
 
-        public override void Run()
+        public override void Run(TestData TestData)
         {
             Task.Delay(Time).Wait();
         }

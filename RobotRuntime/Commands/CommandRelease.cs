@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Execution;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils.Win32;
 using System;
 
@@ -29,7 +30,7 @@ namespace RobotRuntime.Commands
             return new CommandRelease(X, Y, DontMove);
         }
 
-        public override void Run()
+        public override void Run(TestData TestData)
         {
             if (!DontMove)
                 WinAPI.MouseMoveTo(X, Y);
