@@ -5,6 +5,7 @@ using RobotEditor.Utils;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Utils;
+using RobotRuntime.Utils.Win32;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -33,6 +34,10 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
                 AddProperty(dt, "DontMove");
+            }
+            if (Command is CommandDown || Command is CommandPress)
+            {
+                AddProperty(dt, "MouseButton");
             }
             else if (Command is CommandMove)
             {
@@ -158,6 +163,15 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).Text; }
             set { DynamicCast(Command).Text = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue(MouseButton.Left)]
+        [DisplayName("Mouse Button")]
+        public MouseButton MouseButton
+        {
+            get { return DynamicCast(Command).MouseButton; }
+            set { DynamicCast(Command).MouseButton = value; }
         }
     }
 }

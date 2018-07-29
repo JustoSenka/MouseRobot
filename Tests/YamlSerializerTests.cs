@@ -6,6 +6,7 @@ using RobotRuntime.IO;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
+using RobotRuntime.Utils.Win32;
 using System;
 using System.Linq;
 
@@ -40,11 +41,12 @@ namespace Tests
 
 
 
-        private readonly Command command = new CommandPress(50, 70, false);
+        private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left);
         private const string serializedCommand = @"CommandPress: 
   <X>k__BackingField: 50
   <Y>k__BackingField: 70
-  <DontMove>k__BackingField: False";
+  <DontMove>k__BackingField: False
+  <MouseButton>k__BackingField: Left";
 
         [TestMethod]
         public void Command_ProducesCorrect_YamlString()
@@ -91,7 +93,7 @@ namespace Tests
                 s.Name = "TestName";
                 var imageCommand = new CommandForImage(new Guid(), 1850);
                 s.AddCommand(imageCommand);
-                s.AddCommand(new CommandPress(55, 66, true), imageCommand);
+                s.AddCommand(new CommandPress(55, 66, true, MouseButton.Left), imageCommand);
                 s.AddCommand(new CommandMove(10, 20));
                 return s;
             }
@@ -105,6 +107,7 @@ namespace Tests
       <X>k__BackingField: 55
       <Y>k__BackingField: 66
       <DontMove>k__BackingField: True
+      <MouseButton>k__BackingField: Left
   CommandMove: 
     <X>k__BackingField: 10
     <Y>k__BackingField: 20";

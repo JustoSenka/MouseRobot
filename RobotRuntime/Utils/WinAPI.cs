@@ -63,6 +63,22 @@ namespace RobotRuntime.Utils.Win32
             Thread.Sleep(TimeBetweenActions);
         }
 
+        public static void PerformActionDown(MouseButton value)
+        {
+            var flags = value == MouseButton.Left ? MouseEventFlags.LeftDown : 
+                value == MouseButton.Right ? MouseEventFlags.RightDown :
+                MouseEventFlags.MiddleDown;
+            PerformAction(flags);
+        }
+
+        public static void PerformActionUp(MouseButton value)
+        {
+            var flags = value == MouseButton.Left ? MouseEventFlags.LeftUp :
+                value == MouseButton.Right ? MouseEventFlags.RightUp :
+                MouseEventFlags.MiddleUp;
+            PerformAction(flags);
+        }
+
         public static void MouseMoveTo(int x, int y)
         {
             SetCursorPosition(x, y);
@@ -110,5 +126,10 @@ namespace RobotRuntime.Utils.Win32
         }
 
         #endregion
+    }
+
+    public enum MouseButton
+    {
+        Left, Right, Middle
     }
 }

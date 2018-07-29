@@ -82,11 +82,29 @@ namespace RobotEditor.Settings
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.LButton)]
-        [DisplayName("Mouse Down Key")]
-        public Keys MouseDownButton
+        [DisplayName("Left Mouse Down Key")]
+        public Keys LeftMouseDownButton
         {
-            get { return m_Settings.MouseDownButton; }
-            set { m_Settings.MouseDownButton = value; }
+            get { return m_Settings.LeftMouseDownButton; }
+            set { m_Settings.LeftMouseDownButton = value; }
+        }
+
+        [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.RButton)]
+        [DisplayName("Right Mouse Down Key")]
+        public Keys RightMouseDownButton
+        {
+            get { return m_Settings.RightMouseDownButton; }
+            set { m_Settings.RightMouseDownButton = value; }
+        }
+
+        [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
+        [DefaultValue(Keys.MButton)]
+        [DisplayName("Middle Mouse Down Key")]
+        public Keys MiddleMouseDownButton
+        {
+            get { return m_Settings.MiddleMouseDownButton; }
+            set { m_Settings.MiddleMouseDownButton = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]

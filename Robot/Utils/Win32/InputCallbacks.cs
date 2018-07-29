@@ -25,8 +25,10 @@ namespace Robot.Utils.Win32
         //private static readonly IntPtr WM_MOUSEMOVE = (IntPtr)0x0200;
         private static readonly IntPtr WM_LBUTTONDOWN = (IntPtr)0x0201;
         private static readonly IntPtr WM_LBUTTONUP = (IntPtr)0x0202;
-        private static readonly IntPtr WM_RBUTTONDOWN = (IntPtr)00204;
+        private static readonly IntPtr WM_RBUTTONDOWN = (IntPtr)0x0204;
         private static readonly IntPtr WM_RBUTTONUP = (IntPtr)0x0205;
+        private static readonly IntPtr WM_MBUTTONDOWN = (IntPtr)0x0207;
+        private static readonly IntPtr WM_MBUTTONUP = (IntPtr)0x0208;
         //private static readonly IntPtr WM_MOUSEWHEEL = (IntPtr)0x020A;
 
         private static IntPtr m_KeyboardHook = IntPtr.Zero;
@@ -84,12 +86,14 @@ namespace Robot.Utils.Win32
         {
             if (nCode >= 0)
                 if (wParam == WM_LBUTTONDOWN || wParam == WM_LBUTTONUP ||
-                    wParam == WM_RBUTTONDOWN || wParam == WM_RBUTTONUP)
+                    wParam == WM_RBUTTONDOWN || wParam == WM_RBUTTONUP ||
+                    wParam == WM_MBUTTONDOWN || wParam == WM_MBUTTONUP )
                 {
-                    var keyAction = (wParam == WM_RBUTTONDOWN || wParam == WM_LBUTTONDOWN) ?
+                    var keyAction = (wParam == WM_RBUTTONDOWN || wParam == WM_LBUTTONDOWN || wParam == WM_MBUTTONDOWN) ?
                         KeyAction.KeyDown : KeyAction.KeyUp;
-                    var key = (wParam == WM_LBUTTONDOWN || wParam == WM_LBUTTONUP) ?
-                        Keys.LButton : Keys.RButton;
+                    var key = (wParam == WM_LBUTTONDOWN || wParam == WM_LBUTTONUP) ? Keys.LButton :
+                        (wParam == WM_RBUTTONDOWN || wParam == WM_RBUTTONUP) ? Keys.RButton :
+                        Keys.MButton;
 
                     var hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 

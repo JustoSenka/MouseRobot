@@ -82,6 +82,14 @@ namespace Robot.Recording
 
         private void RecordCommand(KeyEvent e, Script activeScript, RecordingSettings props)
         {
+            var isMouseButtonUsed = e.keyCode == props.LeftMouseDownButton ||
+                e.keyCode == props.RightMouseDownButton ||
+                e.keyCode == props.MiddleMouseDownButton;
+
+            var mouseButton = e.keyCode == props.LeftMouseDownButton ? MouseButton.Left :
+                e.keyCode == props.RightMouseDownButton ? MouseButton.Right :
+                MouseButton.Middle;
+
             if (e.IsKeyDown())
             {
                 if (e.keyCode == props.DefaultSleepKey)
@@ -97,15 +105,15 @@ namespace Robot.Recording
                     // TODO: TIME ?
                 }
 
-                if (e.keyCode == props.MouseDownButton)
+                if (isMouseButtonUsed)
                 {
                     if (!m_ForImage && props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
                         AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
                     if (props.TreatMouseDownAsMouseClick)
-                        AddCommand(new CommandPress(e.X, e.Y, false));
+                        AddCommand(new CommandPress(e.X, e.Y, false, mouseButton));
                     else
-                        AddCommand(new CommandDown(e.X, e.Y, false));
+                        AddCommand(new CommandDown(e.X, e.Y, false, mouseButton));
 
                     m_LastClickPos = e.Point;
                 }
@@ -118,7 +126,7 @@ namespace Robot.Recording
                     AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
                 }
 
-                if (e.keyCode == props.MouseDownButton && !props.TreatMouseDownAsMouseClick)
+                if (isMouseButtonUsed && !props.TreatMouseDownAsMouseClick)
                 {
                     if (props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
                         AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?

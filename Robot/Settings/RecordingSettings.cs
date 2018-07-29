@@ -14,7 +14,10 @@ namespace Robot.Settings
         public Keys SmoothMouseMoveKey { get; set; } = Keys.F;
         public int SmoothMoveLengthInTime { get; set; } = 100;
 
-        public Keys MouseDownButton { get; set; } = Keys.LButton;
+        public Keys LeftMouseDownButton { get; set; } = Keys.LButton;
+        public Keys RightMouseDownButton { get; set; } = Keys.RButton;
+        public Keys MiddleMouseDownButton { get; set; } = Keys.MButton;
+
         public bool TreatMouseDownAsMouseClick { get; set; } = false;
         public int ThresholdBetweenMouseDownAndMouseUp { get; set; } = 20;
 

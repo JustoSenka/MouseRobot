@@ -15,33 +15,34 @@ namespace RobotRuntime.Commands
         public int X { get; set; }
         public int Y { get; set; }
         public bool DontMove { get; set; }
+        public MouseButton MouseButton { get; set; }
 
         public CommandDown() { }
-        public CommandDown(int x, int y, bool DontMove)
+        public CommandDown(int x, int y, bool DontMove, MouseButton MouseButton)
         {
             X = x;
             Y = y;
             this.DontMove = DontMove;
+            this.MouseButton = MouseButton;
         }
 
         public override object Clone()
         {
-            return new CommandDown(X, Y, DontMove);
+            return new CommandDown(X, Y, DontMove, MouseButton);
         }
 
         public override void Run()
         {
             if (!DontMove)
                 WinAPI.MouseMoveTo(X, Y);
-            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftDown);
+            WinAPI.PerformActionDown(MouseButton);
         }
 
         public override string ToString()
         {
-            if (DontMove)
-                return "Hold Mouse Down";
-            else
-                return "Down on: (" + X + ", " + Y + ")";
+            var str = DontMove ? "Hold Mouse Down" : "Down on: (" + X + ", " + Y + ")";
+            str = MouseButton.ToString() + " " + str;
+            return str;
         }
     }
 }

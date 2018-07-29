@@ -15,34 +15,35 @@ namespace RobotRuntime.Commands
         public int X { get; set; }
         public int Y { get; set; }
         public bool DontMove { get; set; }
+        public MouseButton MouseButton { get; set; }
 
         public CommandPress() { }
-        public CommandPress(int x, int y, bool DontMove)
+        public CommandPress(int x, int y, bool DontMove, MouseButton MouseButton)
         {
             X = x;
             Y = y;
             this.DontMove = DontMove;
+            this.MouseButton = MouseButton;
         }
 
         public override object Clone()
         {
-            return new CommandPress(X, Y, DontMove);
+            return new CommandPress(X, Y, DontMove, MouseButton);
         }
 
         public override void Run()
         {
             if (!DontMove)
                 WinAPI.MouseMoveTo(X, Y);
-            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftDown);
-            WinAPI.PerformAction(WinAPI.MouseEventFlags.LeftUp);
+            WinAPI.PerformActionDown(MouseButton);
+            WinAPI.PerformActionUp(MouseButton);
         }
 
         public override string ToString()
         {
-            if (DontMove)
-                return "Click Mouse Here";
-            else
-                return "Click on: (" + X + ", " + Y + ")";
+            var str = DontMove ? "Click Mouse Here" : "Click on: (" + X + ", " + Y + ")";
+            str = MouseButton.ToString() + " " + str;
+            return str;
         }
     }
 }
