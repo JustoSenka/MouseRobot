@@ -297,7 +297,7 @@ namespace RobotEditor
         private void runFailedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var names = TestRunnerManager.TestStatusDictionary.Where(pair => pair.Value == TestStatus.Failed).
-                Select(pair => pair.Key.Item1 + "." + pair.Key.Item1);
+                Select(pair => pair.Key.Item1 + "." + pair.Key.Item2);
 
             var filter = BuildTestFilter(names);
             if (filter != "")

@@ -178,6 +178,7 @@
     <Compile Include="Assets\PluginImporter.cs" />
     <Compile Include="Assets\LightScriptImporter.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandFail.cs" />
     <Compile Include="Commands\CommandDown.cs" />
     <Compile Include="Commands\CommandForeachImage.cs" />
     <Compile Include="Commands\CommandIfImageVisible.cs" />

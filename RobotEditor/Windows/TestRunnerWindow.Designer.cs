@@ -61,23 +61,24 @@
             this.toolStripMenuItem1,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(169, 54);
+            this.contextMenuStrip.Size = new System.Drawing.Size(181, 76);
             // 
             // runSelectedTestsToolStripMenuItem
             // 
             this.runSelectedTestsToolStripMenuItem.Name = "runSelectedTestsToolStripMenuItem";
-            this.runSelectedTestsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.runSelectedTestsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.runSelectedTestsToolStripMenuItem.Text = "Run selected tests";
+            this.runSelectedTestsToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
             // 
             // showInExplorerToolStripMenuItem
             // 
             this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
-            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showInExplorerToolStripMenuItem.Text = "Show in explorer";
             this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
             // 
