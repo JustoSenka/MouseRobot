@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RobotRuntime.Graphics
 {
@@ -109,6 +110,22 @@ namespace RobotRuntime.Graphics
                 TimeSinceLastFind = 0;
                 m_Watch.Restart();
             }
+        }
+
+        /// <summary>
+        /// Returns center points of all found images
+        /// </summary>
+        public Point[] FindImageSync(Bitmap sampleImage, int timeout)
+        {
+            StartNewImageSearch(sampleImage);
+            while (timeout > TimeSinceLastFind)
+            {
+                Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
+                if (WasImageFound)
+                    return LastKnownPositions.Select(p => p.FindCenter()).ToArray();
+            }
+
+            return null;
         }
 
         private Point[][] FindImagePositions()

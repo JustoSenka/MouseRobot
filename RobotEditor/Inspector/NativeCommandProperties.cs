@@ -44,7 +44,7 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
             }
-            else if (Command is CommandForImage || Command is CommandForeachImage)
+            else if (Command is CommandForImage || Command is CommandForeachImage || Command is CommandIfImageVisible)
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
@@ -60,6 +60,10 @@ namespace RobotEditor.Inspector
             else if (Command is CommandWriteText)
             {
                 AddProperty(dt, "Text");
+            }
+            if (Command is CommandIfImageVisible)
+            {
+                AddProperty(dt, "ExpectTrue");
             }
         }
 
@@ -172,6 +176,15 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).MouseButton; }
             set { DynamicCast(Command).MouseButton = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue(true)]
+        [DisplayName("Expect True")]
+        public bool ExpectTrue
+        {
+            get { return DynamicCast(Command).ExpectTrue; }
+            set { DynamicCast(Command).ExpectTrue = value; }
         }
     }
 }

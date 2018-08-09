@@ -68,7 +68,14 @@ namespace Robot.Scripts
 
             m_CommandTypes = new Dictionary<string, Type>();
             foreach (var command in dummyCommands)
+            {
+                if (Logger.AssertIf(m_CommandTypes.ContainsKey(command.Name),
+                    "Command of type '" + command.GetType() + 
+                    "' cannot be added because other command with same name already exists: " + command.Name))
+                    continue;
+
                 m_CommandTypes.Add(command.Name, command.GetType());
+            }
 
             NewUserCommands?.Invoke();
         }

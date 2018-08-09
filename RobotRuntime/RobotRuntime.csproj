@@ -180,6 +180,7 @@
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDown.cs" />
     <Compile Include="Commands\CommandForeachImage.cs" />
+    <Compile Include="Commands\CommandIfImageVisible.cs" />
     <Compile Include="Commands\CommandRunScript.cs" />
     <Compile Include="Commands\CommandForImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
+    <Compile Include="Execution\CommandIfImageVisibleRunner.cs" />
     <Compile Include="Execution\RunScriptCommandRunner.cs" />
     <Compile Include="Execution\IRunnable.cs" />
     <Compile Include="Execution\IRunner.cs" />

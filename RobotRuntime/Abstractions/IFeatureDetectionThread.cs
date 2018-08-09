@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using RobotRuntime.Settings;
 
 namespace RobotRuntime.Abstractions
 {
@@ -18,7 +17,7 @@ namespace RobotRuntime.Abstractions
 
         event Action<Point[][]> PositionFound;
 
-        //void Init();
         void StartNewImageSearch(Bitmap sampleImage);
+        Point[] FindImageSync(Bitmap sampleImage, int timeout);
     }
 }

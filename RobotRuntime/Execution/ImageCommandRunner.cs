@@ -39,9 +39,7 @@ namespace RobotRuntime.Execution
 
         private void RunCommand(TreeNode<Command> node)
         {
-            Guid imageGuid;
-            int timeout;
-            GetImageAndTimeout(node, out imageGuid, out timeout);
+            GetImageAndTimeout(node, out Guid imageGuid, out int timeout);
 
             if (Logger.AssertIf(imageGuid.IsDefault(), "Command does not have valid image referenced: " + node.ToString()))
                 return;
@@ -53,7 +51,7 @@ namespace RobotRuntime.Execution
                 return;
             }
 
-            var points = GetCoordinates(node, image, timeout);
+            var points = FeatureDetectionThread.FindImageSync(image, timeout);
             if (points == null || points.Length == 0)
             {
                 TestData.ShouldFailTest = true;
@@ -77,31 +75,6 @@ namespace RobotRuntime.Execution
                     runner.Run(childNode.value);
                 }
             }
-        }
-
-        private Point[] GetCoordinates(TreeNode<Command> node, Bitmap image, int timeout)
-        {
-            var command = node.value;
-
-            //if (node.value.CommandType != CommandType.ForeachImage && node.value.CommandType != CommandType.ForImage)
-            if (!command.CanBeNested)
-                return null;
-
-            int x1 = WinAPI.GetCursorPosition().X;
-            int y1 = WinAPI.GetCursorPosition().Y;
-
-            FeatureDetectionThread.StartNewImageSearch(image);
-            while (timeout > FeatureDetectionThread.TimeSinceLastFind)
-            {
-                Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
-                if (FeatureDetectionThread.WasImageFound)
-                    break;
-            }
-
-            if (FeatureDetectionThread.WasImageFound)
-                return FeatureDetectionThread.LastKnownPositions.Select(p => p.FindCenter()).ToArray();
-            else
-                return null;
         }
 
         private static void GetImageAndTimeout(TreeNode<Command> node, out Guid image, out int timeout)
