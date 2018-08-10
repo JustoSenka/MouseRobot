@@ -6,6 +6,7 @@ using Robot.Abstractions;
 using Unity.Lifetime;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Scripts;
 
 namespace Tests
 {
@@ -236,6 +237,39 @@ namespace Tests
 
             Assert.IsFalse(s.Select(n => n.value).Contains(c2));
             Assert.IsFalse(s.Select(n => n.value).Contains(c22));
+        }
+
+        [TestMethod]
+        public void Guid_ToLightScriptIsCorrect()
+        {
+            var script = new Script();
+            var guid = script.Guid;
+
+            var lightScript = script.ToLightScript();
+
+            Assert.AreEqual(guid, lightScript.Guid, "Guids should be the same");
+        }
+
+        [TestMethod]
+        public void Guid_FromLightScriptIsCorrect()
+        {
+            var script = new Script();
+
+            var lightScript = script.ToLightScript();
+            var newScript = Script.FromLightScript(lightScript);
+
+            Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
+        }
+
+        [TestMethod]
+        public void Guid_FromLightScriptCtorIsCorrect()
+        {
+            var script = new Script();
+
+            var lightScript = script.ToLightScript();
+            var newScript = new Script(lightScript);
+
+            Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
         }
 
         [TestInitialize]

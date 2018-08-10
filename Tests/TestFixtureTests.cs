@@ -12,6 +12,7 @@ using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using Robot.Tests;
 using RobotRuntime.Commands;
+using System;
 
 namespace Tests
 {
@@ -135,6 +136,32 @@ namespace Tests
             fixture.ApplyLightFixtureValues(lightFixture);
 
             Assert.AreEqual(lightFixture.Name, fixture.Name, "Names should be the same");
+        }
+
+        [TestMethod]
+        public void ApplyLightFixtureValues_CorrectlyAppliesFixtureGuid()
+        {
+            var fixture = TestFixtureManager.NewTestFixture();
+            var lightFixture = LightTestFixture;
+            var guid = lightFixture.Guid;
+
+            fixture.ApplyLightFixtureValues(lightFixture);
+
+            Assert.AreEqual(guid, fixture.Guid, "Guids should be the same");
+        }
+
+        [TestMethod]
+        public void ToLightFixtureValues_CorrectlySetsFixtureGuid()
+        {
+            var fixture = TestFixtureManager.NewTestFixture();
+            var lightFixture = LightTestFixture;
+            fixture.ApplyLightFixtureValues(lightFixture);
+
+            var guid = fixture.Guid;
+
+            var newLightTestFixture = fixture.ToLightTestFixture();
+
+            Assert.AreEqual(guid, newLightTestFixture.Guid, "Guids should be the same");
         }
 
         [TestMethod]
