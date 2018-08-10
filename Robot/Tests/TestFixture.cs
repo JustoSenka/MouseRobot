@@ -26,6 +26,8 @@ namespace RobotRuntime.Tests
         public IList<Script> Tests { get { return GetAllTests(); } }
         public IList<Script> Hooks { get { return GetAllHooks(); } }
 
+        public Guid Guid { get; protected set; }
+
         public string Name { get; set; } = DefaultTestFixtureName;
         public string Path { get; set; } = "";
 
@@ -62,6 +64,8 @@ namespace RobotRuntime.Tests
             AddScript(new Script() { Name = k_TearDown });
             AddScript(new Script() { Name = k_OneTimeSetup });
             AddScript(new Script() { Name = k_OneTimeTeardown });
+
+            Guid = Guid.NewGuid();
         }
 
         public override Script NewScript(Script clone = null)
@@ -152,14 +156,15 @@ namespace RobotRuntime.Tests
 
         public LightTestFixture ToLightTestFixture()
         {
-            var t = new LightTestFixture();
-            t.Tests = Tests;
-            t.Setup = Setup;
-            t.OneTimeSetup = OneTimeSetup;
-            t.TearDown = TearDown;
-            t.OneTimeTeardown = OneTimeTeardown;
-            t.Name = Name;
-            return t;
+            return new LightTestFixture(Guid)
+            {
+                Tests = Tests,
+                Setup = Setup,
+                OneTimeSetup = OneTimeSetup,
+                TearDown = TearDown,
+                OneTimeTeardown = OneTimeTeardown,
+                Name = Name
+            };
         }
 
         public TestFixture ApplyLightFixtureValues(LightTestFixture t)
@@ -167,6 +172,7 @@ namespace RobotRuntime.Tests
             m_LoadedScripts.Clear();
 
             Name = t.Name;
+            Guid = t.Guid == default(Guid) ? Guid : t.Guid;
             
             AddScript(t.Setup);
             AddScript(t.TearDown);

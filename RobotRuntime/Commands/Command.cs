@@ -10,15 +10,25 @@ namespace RobotRuntime
     {
         private const BindingFlags k_BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
+        public Guid Guid { get; protected set; } = Guid.NewGuid();
+
         public abstract string Name { get; }
         public abstract bool CanBeNested { get; }
 
         public abstract void Run(TestData TestData);
+
+        public Command(Guid guid = default(Guid))
+        {
+            Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
+        }
+
         public virtual object Clone()
         {
-            var newInstance = Activator.CreateInstance(this.GetType());
+            object newInstance = null;
             try
             {
+                newInstance = Activator.CreateInstance(this.GetType());
+
                 var fields = this.GetType().GetFields(k_BindingFlags);
                 foreach (var field in fields)
                     field.SetValue(newInstance, field.GetValue(this));

@@ -13,11 +13,12 @@ namespace RobotRuntime.Commands
         public override string Name { get { return "Fail"; } }
         public override bool CanBeNested { get { return false; } }
 
-        public CommandFail() { }
-        
+        public CommandFail() : base() { }
+        public CommandFail(Guid guid) : base(guid) { }
+
         public override object Clone()
         {
-            return new CommandFail();
+            return new CommandFail(Guid);
         }
 
         public override void Run(TestData TestData)

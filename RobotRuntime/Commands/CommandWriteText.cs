@@ -15,15 +15,16 @@ namespace RobotRuntime.Commands
 
         public string Text { get; set; }
 
-        public CommandWriteText() { }
-        public CommandWriteText(string Text)
+        public CommandWriteText() : base() { }
+        public CommandWriteText(Guid guid) : base(guid) { }
+        public CommandWriteText(string Text, Guid guid = default(Guid)) : base(guid)
         {
             this.Text = Text;
         }
 
         public override object Clone()
         {
-            return new CommandWriteText(Text);
+            return new CommandWriteText(Text, Guid);
         }
 
         public override void Run(TestData TestData)

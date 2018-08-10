@@ -22,7 +22,7 @@ namespace RobotRuntime.Scripts
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
-        public Script()
+        public Script(Guid guid = default(Guid)) : base(guid)
         {
             Commands = new TreeNode<Command>();
         }
@@ -181,7 +181,8 @@ namespace RobotRuntime.Scripts
             {
                 Name = Name,
                 Commands = (TreeNode<Command>)Commands.Clone(),
-                m_IsDirty = true
+                m_IsDirty = true,
+                Guid = Guid
             };
         }
 
@@ -254,18 +255,19 @@ namespace RobotRuntime.Scripts
 
         public LightScript ToLightScript()
         {
-            return new LightScript(Commands) { Name = Name };
+            return new LightScript(Commands, Guid) { Name = Name };
         }
 
         public Script(LightScript lightScript)
         {
             Commands = lightScript.Commands;
             m_Name = lightScript.Name;
+            Guid = lightScript.Guid;
         }
 
         public static Script FromLightScript(LightScript lightScript)
         {
-            return new Script(lightScript) { Name = lightScript.Name };
+            return new Script(lightScript) { Name = lightScript.Name, Guid = lightScript.Guid };
         }
 
 

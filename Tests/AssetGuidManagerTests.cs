@@ -29,6 +29,8 @@ namespace Tests
         private const string k_ScriptBPath = "Scripts\\B.mrb";
         private const string k_ScriptCPath = "Scripts\\C.mrb";
 
+        private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
+
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IAssetGuidManager AssetGuidManager;
@@ -69,8 +71,8 @@ namespace Tests
         [TestMethod]
         public void RenamedAssets_UponRefresh_AreRenamedInGuidTable()
         {
-            var assetA = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var assetA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             File.Move(k_ScriptBPath, k_ScriptCPath);
             AssetManager.Refresh();
@@ -88,8 +90,8 @@ namespace Tests
         [TestMethod]
         public void RenamedAssets_UponRefresh_AreGivenSameGuid()
         {
-            var guidA = AssetManager.CreateAsset(new Script(), k_ScriptAPath).Guid;
-            var guidB = AssetManager.CreateAsset(new Script(), k_ScriptBPath).Guid;
+            var guidA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath).Guid;
+            var guidB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath).Guid;
 
             CleanupScriptsDirectory();
             AssetManager.Refresh();
@@ -112,8 +114,8 @@ namespace Tests
         [TestMethod]
         public void Refresh_GivesAssetsSameGuid_IfTheyWereAlreadyKnown()
         {
-            var guidA = AssetManager.CreateAsset(new Script(), k_ScriptAPath).Guid;
-            var guidB = AssetManager.CreateAsset(new Script(), k_ScriptBPath).Guid;
+            var guidA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath).Guid;
+            var guidB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath).Guid;
 
             File.Delete(k_ScriptBPath);
             AssetManager.Refresh();
@@ -131,8 +133,8 @@ namespace Tests
         [TestMethod]
         public void DeletingAndRestoringAsset_WillGiveItSameGuid_AsItHadOriginally()
         {
-            var guidA = AssetManager.CreateAsset(new Script(), k_ScriptAPath).Guid;
-            var guidB = AssetManager.CreateAsset(new Script(), k_ScriptBPath).Guid;
+            var guidA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath).Guid;
+            var guidB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath).Guid;
 
             AssetManager.DeleteAsset(k_ScriptBPath);
 
@@ -149,8 +151,8 @@ namespace Tests
         [TestMethod]
         public void CreateAsset_AddsItToGuidTable()
         {
-            var asset = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var asset2 = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset count missmatch");
             Assert.AreEqual(asset.Guid, AssetGuidManager.GetGuid(k_ScriptAPath), "Asset guid missmatch");
@@ -160,8 +162,8 @@ namespace Tests
         [TestMethod]
         public void DeleteAsset_DoesNotRemoveIt_FromGuidTable()
         {
-            var asset = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var asset2 = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             AssetManager.DeleteAsset(k_ScriptAPath);
 
@@ -175,8 +177,8 @@ namespace Tests
         [TestMethod]
         public void RenameAsset_RenamesItInGuidTable()
         {
-            var asset = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var asset2 = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             AssetManager.RenameAsset(k_ScriptAPath, k_ScriptCPath);
 
@@ -191,7 +193,7 @@ namespace Tests
         private static void CreateDummyScriptWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
-            importer.Value = new Script();
+            importer.Value = new Script(guid);
             importer.SaveAsset();
         }
 

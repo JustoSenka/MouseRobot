@@ -18,8 +18,9 @@ namespace RobotRuntime.Commands
         public bool DontMove { get; set; }
         public MouseButton MouseButton { get; set; }
 
-        public CommandPress() { }
-        public CommandPress(int x, int y, bool DontMove, MouseButton MouseButton)
+        public CommandPress() : base() { }
+        public CommandPress(Guid guid) : base(guid) { }
+        public CommandPress(int x, int y, bool DontMove, MouseButton MouseButton, Guid guid = default(Guid)) : base(guid)
         {
             X = x;
             Y = y;
@@ -29,7 +30,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandPress(X, Y, DontMove, MouseButton);
+            return new CommandPress(X, Y, DontMove, MouseButton, Guid);
         }
 
         public override void Run(TestData TestData)

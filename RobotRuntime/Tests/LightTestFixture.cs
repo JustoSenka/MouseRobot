@@ -18,11 +18,14 @@ namespace RobotRuntime.Tests
 
         public IList<Script> Tests { get; set; }
 
+        public Guid Guid { get; protected set; } = new Guid();
+
         public string Name { get; set; }
 
-        public LightTestFixture()
+        public LightTestFixture(Guid guid = default(Guid))
         {
             Tests = new List<Script>();
+            Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
         }
 
         public void AddScript(Script s)
@@ -59,6 +62,8 @@ namespace RobotRuntime.Tests
 
             foreach (var test in Tests)
                 fixture.Tests.Add((Script)test.Clone());
+
+            fixture.Guid = Guid;
 
             return fixture;
         }

@@ -15,15 +15,16 @@ namespace RobotRuntime.Commands
 
         public int Time { get; set; }
 
-        public CommandSleep() { }
-        public CommandSleep(int millis)
+        public CommandSleep() : base() { }
+        public CommandSleep(Guid guid) : base(guid) { }
+        public CommandSleep(int millis, Guid guid = default(Guid)) : base(guid)
         {
             Time = millis;
         }
 
         public override object Clone()
         {
-            return new CommandSleep(Time);
+            return new CommandSleep(Time, Guid);
         }
 
         public override void Run(TestData TestData)

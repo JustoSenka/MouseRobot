@@ -15,8 +15,9 @@ namespace RobotRuntime.Commands
         public Guid Asset { get; set; }
         public int Timeout { get; set; }
 
-        public CommandForImage() { }
-        public CommandForImage(Guid asset, int timeOut)
+        public CommandForImage() : base() { }
+        public CommandForImage(Guid guid) : base(guid) { }
+        public CommandForImage(Guid asset, int timeOut, Guid guid = default(Guid)) : base(guid)
         {
             Asset = asset;
             Timeout = timeOut;
@@ -24,7 +25,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandForImage(Asset, Timeout);
+            return new CommandForImage(Asset, Timeout, Guid);
         }
 
         public override void Run(TestData TestData) { }

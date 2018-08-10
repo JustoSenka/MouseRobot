@@ -39,8 +39,17 @@ namespace RobotRuntime.IO
 
             foreach (var propNode in tree)
             {
-                var field = objToWrite.GetType().GetField(propNode.value.property, k_BindingFlags);
-                var fieldType = field != null ? field.FieldType : null;
+                var type = objToWrite.GetType();
+                var field = type.GetField(propNode.value.property, k_BindingFlags);
+
+                // If field == null, property lives in base type
+                if (field == null)
+                {
+                    type = objToWrite.GetType().BaseType;
+                    field = type.GetField(propNode.value.property, k_BindingFlags);
+                }
+
+                var fieldType = field?.FieldType;
 
                 if (fieldType == null)
                     continue;

@@ -17,8 +17,9 @@ namespace RobotRuntime.Commands
         public int Y { get; set; }
         public bool DontMove { get; set; }
 
-        public CommandRelease() { }
-        public CommandRelease(int x, int y, bool DontMove)
+        public CommandRelease() : base() { }
+        public CommandRelease(Guid guid) : base(guid) { }
+        public CommandRelease(int x, int y, bool DontMove, Guid guid = default(Guid)) : base(guid)
         {
             X = x;
             Y = y;
@@ -27,7 +28,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandRelease(X, Y, DontMove);
+            return new CommandRelease(X, Y, DontMove, Guid);
         }
 
         public override void Run(TestData TestData)

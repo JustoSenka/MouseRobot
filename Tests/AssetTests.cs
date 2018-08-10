@@ -11,6 +11,7 @@ using Unity.Lifetime;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Scripts;
+using System;
 
 namespace Tests
 {
@@ -30,6 +31,8 @@ namespace Tests
         private const string k_ScriptCPath = "Scripts\\C.mrb";
         private const string k_ScriptDPath = "Scripts\\D.mrb";
 
+        private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
+
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IScriptManager ScriptManager;
@@ -37,8 +40,8 @@ namespace Tests
         [TestMethod]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
-            var asset = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var asset2 = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
@@ -47,7 +50,7 @@ namespace Tests
         [TestMethod]
         public void CreateAsset_CreatesFile_AndAddsToAssetManager()
         {
-            var script = new Script();
+            var script = new Script(guid);
             AssetManager.CreateAsset(script, k_ScriptAPath);
 
             Assert.IsTrue(File.Exists(k_ScriptAPath), "File was not created");
@@ -71,7 +74,7 @@ namespace Tests
         [TestMethod]
         public void RenameAsset_RenamesFile_AndKeepsAllReferencesIntact()
         {
-            var script = new Script();
+            var script = new Script(guid);
             var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
 
             AssetManager.RenameAsset(k_ScriptAPath, k_ScriptBPath);
@@ -88,7 +91,7 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithFileBeingRenamedOnFileSystem_AcceptsRenameAndKeepsAllReferences()
         {
-            var script = new Script();
+            var script = new Script(guid);
             var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
 
             File.Move(k_ScriptAPath, k_ScriptBPath);
@@ -106,9 +109,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithDeletedFiles_RemovesThemFromManager()
         {
-            AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            AssetManager.CreateAsset(new Script(), k_ScriptBPath);
-            AssetManager.CreateAsset(new Script(), k_ScriptCPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
 
             File.Delete(k_ScriptAPath);
             File.Delete(k_ScriptCPath);
@@ -127,7 +130,7 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithNewFiles_AddsThemToManager()
         {
-            AssetManager.CreateAsset(new Script(), k_ScriptAPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
 
             CreateDummyScriptWithImporter(k_ScriptBPath);
             CreateDummyScriptWithImporter(k_ScriptCPath);
@@ -146,9 +149,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithRenamedFiles_HavingOtherFilesWithSameHash_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Script(), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
+            var assetC = AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
 
             File.Move(k_ScriptBPath, k_ScriptDPath);
             AssetManager.Refresh();
@@ -163,9 +166,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithRenamedFiles_AndOneBeingDeleted_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Script(), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Script(), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
+            var assetC = AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
 
             // This will actually think that A was renamed to D, and B deleted
             // this is due to having the same hash
@@ -183,8 +186,8 @@ namespace Tests
         [TestMethod]
         public void DeleteAsset_RemovesFromManager_AndFromDisk()
         {
-            AssetManager.CreateAsset(new Script(), k_ScriptAPath);
-            AssetManager.CreateAsset(new Script(), k_ScriptBPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
 
             AssetManager.DeleteAsset(k_ScriptAPath);
 
@@ -197,7 +200,7 @@ namespace Tests
         private static void CreateDummyScriptWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
-            importer.Value = new Script();
+            importer.Value = new Script(guid);
             importer.SaveAsset();
         }
 

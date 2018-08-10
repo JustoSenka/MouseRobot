@@ -40,9 +40,10 @@ namespace Tests
         }
 
 
-
-        private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left);
+        private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
+        private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left, guid);
         private const string serializedCommand = @"CommandPress: 
+  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
   <X>k__BackingField: 50
   <Y>k__BackingField: 70
   <DontMove>k__BackingField: False
@@ -63,7 +64,7 @@ namespace Tests
 
             var props = yamlObj.ToArray();
             Assert.AreEqual("CommandPress", yamlObj.value.property, "Command object had incorrect command type indicator.");
-            Assert.AreEqual(3, props.Length, "Command object should have 3 properties.");
+            Assert.AreEqual(5, props.Length, "Command object should have 3 properties.");
         }
 
         [TestMethod]
@@ -81,7 +82,7 @@ namespace Tests
             var props = tree.ToArray();
 
             Assert.AreEqual("CommandPress", tree.value.property, "Command object had incorrect command type indicator.");
-            Assert.AreEqual(3, props.Length, "Command object should have 3 properties.");
+            Assert.AreEqual(5, props.Length, "Command object should have 5 properties.");
         }
 
 
@@ -89,26 +90,30 @@ namespace Tests
         {
             get
             {
-                var s = new Script();
+                var s = new Script(guid);
                 s.Name = "TestName";
-                var imageCommand = new CommandForImage(new Guid(), 1850);
+                var imageCommand = new CommandForImage(new Guid(), 1850, guid);
                 s.AddCommand(imageCommand);
-                s.AddCommand(new CommandPress(55, 66, true, MouseButton.Left), imageCommand);
-                s.AddCommand(new CommandMove(10, 20));
+                s.AddCommand(new CommandPress(55, 66, true, MouseButton.Left, guid), imageCommand);
+                s.AddCommand(new CommandMove(10, 20, guid));
                 return s;
             }
         }
         private const string serializedScript = @"LightScript: 
+  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
   <Name>k__BackingField: TestName
   CommandForImage: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
     <Timeout>k__BackingField: 1850
     CommandPress: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 55
       <Y>k__BackingField: 66
       <DontMove>k__BackingField: True
       <MouseButton>k__BackingField: Left
   CommandMove: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <X>k__BackingField: 10
     <Y>k__BackingField: 20";
 
@@ -125,14 +130,16 @@ namespace Tests
         {
             var yamlObj = YamlScriptIO.Serialize(Script.ToLightScript());
             var children = yamlObj.ToArray();
-            Assert.AreEqual(3, children.Length, "only two root commands should be in the script and a name.");
-            Assert.AreEqual("TestName", children[0].value.value, "Image command has also three childs, timeout CommandPress, and guid");
-            Assert.AreEqual(3, children[1].ToArray().Length, "Image command has also three childs, timeout CommandPress, and guid");
-            Assert.AreEqual(2, children[2].ToArray().Length, "Command move has also two childs, X and Y.");
+            Assert.AreEqual(4, children.Length, "only two root commands should be in the script and a name.");
 
-            var commandPress = children[1].ToArray()[2];
+            Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
+            Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
+            Assert.AreEqual(4, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
+            Assert.AreEqual(3, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
+
+            var commandPress = children[2].ToArray()[3];
             Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
-            Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
+            Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
         [TestMethod]
@@ -141,14 +148,16 @@ namespace Tests
             var yamlObj = YamlSerializer.DeserializeYamlTree(serializedScript);
 
             var children = yamlObj.ToArray();
-            Assert.AreEqual(3, children.Length, "only two root commands should be in the script and a name.");
-            Assert.AreEqual("TestName", children[0].value.value, "Image command has also three childs, timeout CommandPress, and guid");
-            Assert.AreEqual(3, children[1].ToArray().Length, "Image command has also three childs, timeout CommandPress, and guid");
-            Assert.AreEqual(2, children[2].ToArray().Length, "Command move has also two childs, X and Y.");
+            Assert.AreEqual(4, children.Length, "only two root commands should be in the script and a name.");
 
-            var commandPress = children[1].ToArray()[2];
+            Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
+            Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
+            Assert.AreEqual(4, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
+            Assert.AreEqual(3, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
+
+            var commandPress = children[2].ToArray()[3];
             Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
-            Assert.AreEqual(3, commandPress.ToArray().Length, "CommandPress has also three childs, X Y DontMove");
+            Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
         [TestMethod]
@@ -198,7 +207,7 @@ namespace Tests
         {
             get
             {
-                var f = new LightTestFixture();
+                var f = new LightTestFixture(guid);
                 f.Name = "TestName";
                 f.Setup = Script;
                 f.TearDown = Script;
@@ -215,65 +224,91 @@ namespace Tests
 
         #region private const string serializedFixture = @"LightTestFixture: 
         private const string serializedFixture = @"LightTestFixture: 
+  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
   <Name>k__BackingField: TestName
   LightScript: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: Setup
     CommandForImage: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
       <Timeout>k__BackingField: 1850
       CommandPress: 
+        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
         <X>k__BackingField: 55
         <Y>k__BackingField: 66
         <DontMove>k__BackingField: True
+        <MouseButton>k__BackingField: Left
     CommandMove: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
   LightScript: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: TearDown
     CommandForImage: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
       <Timeout>k__BackingField: 1850
       CommandPress: 
+        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
         <X>k__BackingField: 55
         <Y>k__BackingField: 66
         <DontMove>k__BackingField: True
+        <MouseButton>k__BackingField: Left
     CommandMove: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
   LightScript: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: OneTimeSetup
     CommandForImage: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
       <Timeout>k__BackingField: 1850
       CommandPress: 
+        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
         <X>k__BackingField: 55
         <Y>k__BackingField: 66
         <DontMove>k__BackingField: True
+        <MouseButton>k__BackingField: Left
     CommandMove: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
   LightScript: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: OneTimeTeardown
     CommandForImage: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
       <Timeout>k__BackingField: 1850
       CommandPress: 
+        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
         <X>k__BackingField: 55
         <Y>k__BackingField: 66
         <DontMove>k__BackingField: True
+        <MouseButton>k__BackingField: Left
     CommandMove: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
   LightScript: 
+    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: TestName
     CommandForImage: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
       <Timeout>k__BackingField: 1850
       CommandPress: 
+        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
         <X>k__BackingField: 55
         <Y>k__BackingField: 66
         <DontMove>k__BackingField: True
+        <MouseButton>k__BackingField: Left
     CommandMove: 
+      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20";
         #endregion
@@ -291,9 +326,10 @@ namespace Tests
         {
             var yamlObj = YamlTestFixtureIO.Serialize(Fixture);
             var children = yamlObj.ToArray();
-            Assert.AreEqual(6, children.Length, "6 Childs. Name + 5 scripts");
-            Assert.AreEqual("TestName", children[0].value.value, "Names missmatched");
-            Assert.AreEqual("LightScript", children[1].value.property, "Script type missmatched");
+            Assert.AreEqual(7, children.Length, "6 Childs. Name + 5 scripts");
+            Assert.AreEqual(guid.ToString(), children[0].value.value, "Guids missmatched");
+            Assert.AreEqual("TestName", children[1].value.value, "Names missmatched");
+            Assert.AreEqual("LightScript", children[2].value.property, "Script type missmatched");
         }
 
         [TestMethod]
@@ -302,9 +338,10 @@ namespace Tests
             var yamlObj = YamlSerializer.DeserializeYamlTree(serializedFixture);
 
             var children = yamlObj.ToArray();
-            Assert.AreEqual(6, children.Length, "6 Childs. Name + 5 scripts");
-            Assert.AreEqual("TestName", children[0].value.value, "Names missmatched");
-            Assert.AreEqual("LightScript", children[1].value.property, "Script type missmatched");
+            Assert.AreEqual(7, children.Length, "7 Childs. Name + guid + 5 scripts");
+            Assert.AreEqual(guid.ToString(), children[0].value.value, "Guids missmatched");
+            Assert.AreEqual("TestName", children[1].value.value, "Names missmatched");
+            Assert.AreEqual("LightScript", children[2].value.property, "Script type missmatched");
         }
 
         [TestMethod]
