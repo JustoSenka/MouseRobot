@@ -39,6 +39,17 @@ namespace Tests
             Assert.AreEqual(PropertyValue.ToString(), obj.value, "Property value missmatched");
         }
 
+        [TestMethod]
+        public void CommandWith_Enumerations_AreReadFine()
+        {
+            var command = new CommandPress(5, 5, false, MouseButton.Right);
+            var yamlObj = YamlCommandIO.Serialize(command, 0);
+
+            var newCommand = YamlCommandIO.Deserialize(yamlObj) as CommandPress;
+
+            Assert.AreEqual(command.MouseButton, newCommand.MouseButton, "MouseButton property did not match on command");
+        }
+
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
         private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left, guid);

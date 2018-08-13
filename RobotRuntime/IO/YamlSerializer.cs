@@ -57,7 +57,9 @@ namespace RobotRuntime.IO
                 try
                 {
                     object newVal = null;
-                    if (IsConvertibleType(fieldType))
+                    if (fieldType.IsEnum) // Enums do implement IConvertable, but Convert.ChangeType fails to do its job so order of execution is important
+                        newVal = Enum.Parse(fieldType, propNode.value.value);
+                    else if (IsConvertibleType(fieldType))
                         newVal = Convert.ChangeType(propNode.value.value, fieldType);
                     else if (IsSimpleType(fieldType))
                         newVal = TypeDescriptor.GetConverter(fieldType).ConvertFromInvariantString(propNode.value.value);
