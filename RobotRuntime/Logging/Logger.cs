@@ -38,6 +38,9 @@ namespace RobotRuntime
                 if (File.Exists(LogPath))
                     File.Delete(LogPath);
 
+                if (!Directory.Exists(Paths.RoamingAppdataPath))
+                    Directory.CreateDirectory(Paths.RoamingAppdataPath);
+
                 File.Create(LogPath);
             }
         }

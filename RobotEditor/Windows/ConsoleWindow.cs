@@ -94,10 +94,10 @@ namespace RobotEditor.Windows
 
         private void UpdateHierarchy()
         {
-            if (!m_ControlCreated || !this.Created)
+            if (!m_ControlCreated)
                 return;
 
-            this.BeginInvoke(new MethodInvoker(delegate
+            this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
                 var activeLogTypeBits = LogType.None;
                 activeLogTypeBits = (m_InfoFilter.Active) ? activeLogTypeBits | LogType.Log : activeLogTypeBits;

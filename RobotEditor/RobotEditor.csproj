@@ -200,6 +200,7 @@
     <Compile Include="PropertyUtils\DetectorNameStringConverter.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
+    <Compile Include="Utils\FormExtensionMethods.cs" />
     <Compile Include="Utils\HierarchyUtils.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />
     <Compile Include="Windows\AboutDialog.cs">

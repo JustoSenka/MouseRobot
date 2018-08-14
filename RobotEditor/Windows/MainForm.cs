@@ -163,8 +163,7 @@ namespace RobotEditor
 
         private void OnPlayingStateChanged(bool isPlaying)
         {
-            // Since Playing State can be changed from ScriptThread, we need to make sure we run this on UI thread
-            this.BeginInvoke(new MethodInvoker(delegate
+            this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
                 if (isPlaying && actionOnPlay.SelectedIndex == 0)
                 {
@@ -476,13 +475,13 @@ namespace RobotEditor
 
         private void recordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_PropertiesWindow).Show(m_DockPanel);
+            ((PropertiesWindow)m_PropertiesWindow).Show(m_DockPanel);
             m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
         private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Form)m_PropertiesWindow).Show(m_DockPanel);
+            ((PropertiesWindow)m_PropertiesWindow).Show(m_DockPanel);
             m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
         }
 

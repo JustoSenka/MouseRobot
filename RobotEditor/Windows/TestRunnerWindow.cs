@@ -214,7 +214,7 @@ namespace RobotEditor
 
         private void UpdateTestStatusIcons()
         {
-            this.BeginInvoke(new MethodInvoker(delegate
+            this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
                 // m_FirstTimeUpdatingStatus is a hack to expand all items after TestFixture in TestRunnerManager have been completely build for the first time
                 RefreshTreeListView(m_FirstTimeUpdatingStatus);
@@ -228,7 +228,7 @@ namespace RobotEditor
             if (fixtureNode != null)
             {
                 m_HighlightedNode = fixtureNode;
-                this.BeginInvoke(new MethodInvoker(delegate
+                this.BeginInvokeIfCreated(new MethodInvoker(delegate
                 {
                     RefreshTreeListView(m_FirstTimeUpdatingStatus);
                 }));
@@ -244,7 +244,7 @@ namespace RobotEditor
                 if (scriptNode != null)
                 {
                     m_HighlightedNode = scriptNode;
-                    this.BeginInvoke(new MethodInvoker(delegate
+                    this.BeginInvokeIfCreated(new MethodInvoker(delegate
                     {
                         RefreshTreeListView(m_FirstTimeUpdatingStatus);
                     }));
@@ -265,11 +265,7 @@ namespace RobotEditor
 
         private void OnPlayingStateChanged(bool isPlaying)
         {
-            if (!Created || IsDisposed || Disposing)
-                return;
-
-            // Since Playing State can be changed from ScriptThread, we need to make sure we run this on UI thread
-            this.BeginInvoke(new MethodInvoker(delegate
+            this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
                 RunAllButton.Enabled = !MouseRobot.IsRecording && !MouseRobot.IsPlaying;
                 RunDropdownButton.Enabled = !MouseRobot.IsRecording && !MouseRobot.IsPlaying;
