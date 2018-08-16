@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace RobotRuntime.Tests
 {
-    public class TestFixture : BaseScriptManager, ISimilar
+    public class TestFixture : BaseScriptManager, ISimilar, IHaveGuid
     {
         public const string DefaultTestFixtureName = "New Fixture";
         public const string DefaultTestName = "New Test";
@@ -133,6 +133,15 @@ namespace RobotRuntime.Tests
                 return false;
 
             return LoadedScripts.SequenceEqual(f.LoadedScripts, new SimilarEqualityComparer());
+        }
+
+        /// <summary>
+        /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
+        /// As of this time, only scripts need to regenerate guids for commands (2018.08.15)
+        /// </summary>
+        void IHaveGuid.RegenerateGuid()
+        {
+            Guid = Guid.NewGuid();
         }
 
         public override int GetHashCode()

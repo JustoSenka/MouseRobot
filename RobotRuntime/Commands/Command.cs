@@ -6,7 +6,7 @@ using System.Reflection;
 namespace RobotRuntime
 {
     [Serializable]
-    public abstract class Command : IRunnable, ICloneable, ISimilar
+    public abstract class Command : IRunnable, ICloneable, ISimilar, IHaveGuid
     {
         private const BindingFlags k_BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
@@ -42,8 +42,7 @@ namespace RobotRuntime
 
         public bool Similar(object obj)
         {
-            var c = obj as Command;
-            if (c == null)
+            if (!(obj is Command c))
                 return false;
 
             return this.ToString() == c.ToString();
@@ -52,6 +51,15 @@ namespace RobotRuntime
         public override string ToString()
         {
             return Name;
+        }
+
+        /// <summary>
+        /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
+        /// As of this time, only scripts need to regenerate guids for commands (2018.08.15)
+        /// </summary>
+        void IHaveGuid.RegenerateGuid()
+        {
+            Guid = Guid.NewGuid();
         }
     }
 }

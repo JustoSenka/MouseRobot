@@ -9,7 +9,7 @@ using System.Linq;
 namespace RobotRuntime.Scripts
 {
     [PropertyDesignerType("ScriptProperties")]
-    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>, ISimilar
+    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>, ISimilar, IHaveGuid
     {
         private bool m_IsDirty;
         private string m_Path = "";
@@ -21,6 +21,8 @@ namespace RobotRuntime.Scripts
         public event Action<Script, Command, Command, int> CommandInsertedInScript;
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
+
+        private readonly HashSet<Guid> m_CommandGuidMap = new HashSet<Guid>();
 
         public Script(Guid guid = default(Guid)) : base(guid)
         {
@@ -44,6 +46,8 @@ namespace RobotRuntime.Scripts
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
+            m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(command);
+
             nodeToAddCommand.AddChild(command);
             CommandAddedToScript?.Invoke(this, parentCommand, command);
             return command;
@@ -58,6 +62,9 @@ namespace RobotRuntime.Scripts
             Debug.Assert(!Commands.GetAllNodes().Contains(commandNode), "Command Node should not exist on script. Did you forget to remove it?");
 
             m_IsDirty = true;
+
+            foreach(var node in commandNode.GetAllNodes(true))
+                m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
@@ -78,6 +85,10 @@ namespace RobotRuntime.Scripts
             m_IsDirty = true;
 
             var node = Commands.GetNodeFromValue(originalCommand);
+
+            m_CommandGuidMap.RemoveGuidFromMap(node.value);
+            m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(newCommand);
+
             node.value = newCommand;
 
             CommandModifiedOnScript?.Invoke(this, originalCommand, newCommand);
@@ -93,6 +104,8 @@ namespace RobotRuntime.Scripts
 
             var treeNodeToInsert = (parentCommand == null) ? Commands : Commands.GetNodeFromValue(parentCommand);
             treeNodeToInsert.Insert(position, command);
+
+            m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(command);
 
             m_IsDirty = true;
             CommandInsertedInScript?.Invoke(this, parentCommand, command, position);
@@ -114,6 +127,56 @@ namespace RobotRuntime.Scripts
 
             m_IsDirty = true;
             return sourceCommand;
+        }
+
+        /// <summary>
+        /// Inserts non existant command node after specified command with all its children.
+        /// Calls CommandInserted event
+        /// </summary>
+        public Command InsertCommandNodeAfter(TreeNode<Command> commandNode, Command commandAfter)
+        {
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on script");
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on script");
+
+            var nodeAfter = Commands.GetNodeFromValue(commandAfter);
+            var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+
+            foreach (var node in commandNode.GetAllNodes())
+                m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
+
+            var nodeToAddCommand = nodeAfter.parent;
+            nodeToAddCommand.Join(commandNode);
+            Commands.MoveAfter(commandNode.value, commandAfter);
+
+            CommandInsertedInScript?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
+
+            m_IsDirty = true;
+            return commandNode.value;
+        }
+
+        /// <summary>
+        /// Inserts non existant command node before specified command with all its children.
+        /// Calls CommandInserted event
+        /// </summary>
+        public Command InsertCommandNodeBefore(TreeNode<Command> commandNode, Command commandAfter)
+        {
+            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on script");
+            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on script");
+
+            var nodeAfter = Commands.GetNodeFromValue(commandAfter);
+            var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+
+            foreach (var node in commandNode.GetAllNodes())
+                m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
+
+            var nodeToAddCommand = nodeAfter.parent;
+            nodeToAddCommand.Join(commandNode);
+            Commands.MoveBefore(commandNode.value, commandAfter);
+
+            CommandInsertedInScript?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
+
+            m_IsDirty = true;
+            return commandNode.value;
         }
 
         /// <summary>
@@ -156,14 +219,21 @@ namespace RobotRuntime.Scripts
             m_IsDirty = true;
         }
 
+        /// <summary>
+        /// Removes node containing command. All child commands are also removed from script
+        /// </summary>
         public void RemoveCommand(Command command)
         {
             Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should exist on script");
 
             var oldIndex = GetIndex(command);
-            var parentCommand = Commands.GetNodeFromValue(command).parent.value;
+            var commandNode = Commands.GetNodeFromValue(command);
+            var parentCommand = commandNode.parent.value;
 
-            Commands.Remove(command);
+            Commands.Remove(commandNode);
+
+            foreach(var node in commandNode.GetAllNodes(true))
+                m_CommandGuidMap.RemoveGuidFromMap(command);
 
             CommandRemovedFromScript?.Invoke(this, parentCommand, oldIndex);
             m_IsDirty = true;
@@ -251,7 +321,13 @@ namespace RobotRuntime.Scripts
 
         // Inheritence
 
-        public Script(TreeNode<Command> commands) : base(commands) { Commands = commands; }
+        public Script(TreeNode<Command> commands) : base(commands)
+        {
+            Commands = commands;
+
+            foreach (var node in Commands.GetAllNodes(false))
+                m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
+        }
 
         public LightScript ToLightScript()
         {
@@ -263,6 +339,9 @@ namespace RobotRuntime.Scripts
             Commands = lightScript.Commands;
             m_Name = lightScript.Name;
             Guid = lightScript.Guid;
+
+            foreach(var node in Commands.GetAllNodes(false))
+                m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
         }
 
         public static Script FromLightScript(LightScript lightScript)
@@ -281,6 +360,15 @@ namespace RobotRuntime.Scripts
         IEnumerator IEnumerable.GetEnumerator()
         {
             return Commands.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
+        /// As of this time, only scripts need to regenerate guids for commands (2018.08.15)
+        /// </summary>
+        void IHaveGuid.RegenerateGuid()
+        {
+            Guid = Guid.NewGuid();
         }
     }
 }

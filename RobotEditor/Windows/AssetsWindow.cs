@@ -1,6 +1,5 @@
 ﻿using Robot;
 using Robot.Abstractions;
-using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Scripts;
@@ -143,9 +142,12 @@ namespace RobotEditor
                 if (!TestFixtureManager.Contains(asset.Name))
                 {
                     var lightTestFixture = asset.Importer.Load<LightTestFixture>();
-                    lightTestFixture.Name = asset.Name;
-                    var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
-                    fixture.Path = asset.Path;
+                    if (lightTestFixture != null)
+                    {
+                        lightTestFixture.Name = asset.Name;
+                        var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
+                        fixture.Path = asset.Path;
+                    }
                 }
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }

@@ -26,6 +26,7 @@ namespace RobotRuntime.IO
 
         public static Command Deserialize(TreeNode<YamlObject> tree)
         {
+            // TODO: These two lines take a lot of time, and they will be called a lot of times!!!
             var allCommandTypes = AppDomain.CurrentDomain.GetAllTypesWhichImplementInterface(typeof(Command));
             var commandType = allCommandTypes.FirstOrDefault(type => type.Name.Equals(tree.value.property));
 

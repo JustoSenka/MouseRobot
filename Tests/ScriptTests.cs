@@ -240,6 +240,93 @@ namespace Tests
         }
 
         [TestMethod]
+        public void Script_InsertCommandNode_AfterTopLevelCommand()
+        {
+            var s = ScriptManager.LoadedScripts[0];
+            var c0 = s.AddCommand(new CommandSleep(1));
+            var c1 = s.AddCommand(new CommandSleep(1));
+            var c12 = s.AddCommand(new CommandSleep(2), c1);
+
+            var node = s.Commands.GetNodeFromValue(c1);
+
+            s.RemoveCommand(c1);
+            s.InsertCommandNodeAfter(node, c0);
+
+            Assert.AreEqual(2, s.Commands.Count());
+            Assert.AreEqual(c0, s.Commands.GetChild(0).value);
+            Assert.AreEqual(c1, s.Commands.GetChild(1).value);
+            Assert.AreEqual(c12, s.Commands.GetChild(1).GetChild(0).value);
+        }
+
+        [TestMethod]
+        public void Script_InsertCommandNode_BeforeTopLevelCommand()
+        {
+            var s = ScriptManager.LoadedScripts[0];
+            var c0 = s.AddCommand(new CommandSleep(1));
+            var c1 = s.AddCommand(new CommandSleep(1));
+            var c12 = s.AddCommand(new CommandSleep(2), c1);
+
+            var node = s.Commands.GetNodeFromValue(c1);
+
+            s.RemoveCommand(c1);
+            s.InsertCommandNodeBefore(node, c0);
+
+            Assert.AreEqual(2, s.Commands.Count());
+            Assert.AreEqual(c0, s.Commands.GetChild(1).value);
+            Assert.AreEqual(c1, s.Commands.GetChild(0).value);
+            Assert.AreEqual(c12, s.Commands.GetChild(0).GetChild(0).value);
+        }
+
+        [TestMethod]
+        public void Script_InsertCommandNode_AfterBottomLevelCommand()
+        {
+            var s = ScriptManager.LoadedScripts[0];
+            var c1 = s.AddCommand(new CommandSleep(1));
+            var c11 = s.AddCommand(new CommandSleep(2), c1);
+            var c2 = s.AddCommand(new CommandSleep(3));
+            var c21 = s.AddCommand(new CommandSleep(4), c2);
+
+            var node = s.Commands.GetNodeFromValue(c2);
+
+            s.RemoveCommand(c2);
+            s.InsertCommandNodeAfter(node, c11);
+
+            Assert.AreEqual(1, s.Commands.Count());
+            var child = s.Commands.GetChild(0);
+
+            Assert.AreEqual(2, child.Count());
+            Assert.AreEqual(c1, child.value);
+            Assert.AreEqual(c11, child.GetChild(0).value);
+            Assert.AreEqual(c2, child.GetChild(1).value);
+            Assert.AreEqual(c21, child.GetChild(1).GetChild(0).value);
+        }
+
+        [TestMethod]
+        public void Script_InsertCommandNode_BeforeBottomLevelCommand()
+        {
+            var s = ScriptManager.LoadedScripts[0];
+            var c1 = s.AddCommand(new CommandSleep(1));
+            var c11 = s.AddCommand(new CommandSleep(2), c1);
+            var c2 = s.AddCommand(new CommandSleep(3));
+            var c21 = s.AddCommand(new CommandSleep(4), c2);
+
+            var node = s.Commands.GetNodeFromValue(c2);
+
+            s.RemoveCommand(c2);
+            s.InsertCommandNodeBefore(node, c11);
+
+            Assert.AreEqual(1, s.Commands.Count());
+            var child = s.Commands.GetChild(0);
+
+            Assert.AreEqual(2, child.Count());
+            Assert.AreEqual(c1, child.value);
+            Assert.AreEqual(c11, child.GetChild(1).value);
+            Assert.AreEqual(c2, child.GetChild(0).value);
+            Assert.AreEqual(c21, child.GetChild(0).GetChild(0).value);
+        }
+
+
+        [TestMethod]
         public void Guid_ToLightScriptIsCorrect()
         {
             var script = new Script();

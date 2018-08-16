@@ -24,6 +24,8 @@ namespace Robot.Scripts
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
+        protected readonly HashSet<Guid> CommandGuidMap = new HashSet<Guid>();
+
         private ICommandFactory CommandFactory;
         private IProfiler Profiler;
         public BaseScriptManager(ICommandFactory CommandFactory, IProfiler Profiler)
@@ -100,7 +102,9 @@ namespace Robot.Scripts
             else
                 script = (Script)clone.Clone();
 
+            CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
             m_LoadedScripts.Add(script);
+
             SubscribeToScriptEvents(script);
             script.IsDirty = true;
 
@@ -112,6 +116,7 @@ namespace Robot.Scripts
         {
             var position = m_LoadedScripts.IndexOf(script);
 
+            CommandGuidMap.RemoveGuidFromMap(script);
             m_LoadedScripts.Remove(script);
             UnsubscribeToScriptEvents(script);
 
@@ -121,6 +126,8 @@ namespace Robot.Scripts
         public virtual void RemoveScript(int position)
         {
             UnsubscribeToScriptEvents(m_LoadedScripts[position]);
+
+            CommandGuidMap.RemoveGuidFromMap(m_LoadedScripts[position]);
             m_LoadedScripts.RemoveAt(position);
 
             ScriptRemoved?.Invoke(position);
@@ -139,12 +146,16 @@ namespace Robot.Scripts
                 var index = m_LoadedScripts.IndexOf(oldScript);
                 UnsubscribeToScriptEvents(oldScript);
 
+                CommandGuidMap.RemoveGuidFromMap(m_LoadedScripts[index]);
+                CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
+
                 m_LoadedScripts[index] = script;
                 ScriptModified?.Invoke(script);
             }
             else
             {
                 // Load New Script
+                CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
                 m_LoadedScripts.Add(script);
                 ScriptAdded?.Invoke(script);
             }
@@ -155,54 +166,44 @@ namespace Robot.Scripts
 
         public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
+            var script = m_LoadedScripts[scriptIndex];
+
             if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-            {
-                var script = m_LoadedScripts[scriptIndex];
                 script.MoveCommandAfter(source, after);
-            }
+
             else // Move between two different scripts
             {
                 var destScript = m_LoadedScripts[destinationScriptIndex];
-                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(after).parent;
-                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
+                var sourceNode = script.Commands.GetNodeFromValue(source);
 
-                m_LoadedScripts[scriptIndex].RemoveCommand(source);
-
-                destParentNode.Join(sourceNode);
-                destScript.Commands.MoveAfter(source, after);
-
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, GetCommandIndex(source));
+                script.RemoveCommand(source);
+                destScript.InsertCommandNodeAfter(sourceNode, after);
 
                 destScript.IsDirty = true;
             }
 
-            m_LoadedScripts[scriptIndex].IsDirty = true;
+            script.IsDirty = true;
         }
 
         public void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
+            var script = m_LoadedScripts[scriptIndex];
+
             if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-            {
-                var script = m_LoadedScripts[scriptIndex];
                 script.MoveCommandBefore(source, before);
-            }
+
             else // Move between two different scripts
             {
                 var destScript = m_LoadedScripts[destinationScriptIndex];
-                var destParentNode = m_LoadedScripts[destinationScriptIndex].Commands.GetNodeFromValue(before).parent;
                 var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
 
-                m_LoadedScripts[scriptIndex].RemoveCommand(source);
-
-                destParentNode.Join(sourceNode);
-                destScript.Commands.MoveBefore(source, before);
-
-                CommandInsertedInScript?.Invoke(destScript, destParentNode.value, source, GetCommandIndex(source));
+                script.RemoveCommand(source);
+                destScript.InsertCommandNodeBefore(sourceNode, before);
 
                 destScript.IsDirty = true;
             }
 
-            m_LoadedScripts[scriptIndex].IsDirty = true;
+            script.IsDirty = true;
         }
 
         public void MoveScriptAfter(int index, int after)

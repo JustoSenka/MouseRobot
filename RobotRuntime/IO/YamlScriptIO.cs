@@ -1,5 +1,4 @@
-﻿using RobotRuntime.Utils;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 
@@ -84,7 +83,11 @@ namespace RobotRuntime.IO
             var addedCommandNode = commandRoot.AddChild(command);
 
             foreach (var yamlChildCommand in yamlCommandNode)
-                DeserializeCommandsRecursively(addedCommandNode, yamlChildCommand);
+            {
+                // Don't call Deserialize for non-command properties. In Yaml tree Command properties don't have any value, just property name.
+                if (yamlChildCommand.value.value == "" || yamlChildCommand.value.value == string.Empty)
+                    DeserializeCommandsRecursively(addedCommandNode, yamlChildCommand);
+            }
         }
     }
 }
