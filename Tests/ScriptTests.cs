@@ -362,13 +362,7 @@ namespace Tests
         [TestInitialize]
         public void Initialize()
         {
-            var container = new UnityContainer();
-            RobotRuntime.Program.RegisterInterfaces(container);
-            Robot.Program.RegisterInterfaces(container);
-
-            container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = container.Resolve<ILogger>();
-
+            var container = TestBase.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
             ScriptManager = container.Resolve<IScriptManager>();
         }

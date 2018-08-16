@@ -8,8 +8,9 @@ namespace RobotEditor
     {
         public static void BeginInvokeIfCreated<T>(this T control, MethodInvoker MethodInvoker) where T : Control
         {
-            if (!control.Created || control.IsDisposed || control.Disposing)
+            if (!control.IsCreatedAndFuctional())
                 return;
+
             try
             {
                 control.BeginInvoke(MethodInvoker);
@@ -18,6 +19,11 @@ namespace RobotEditor
             {
                 Logger.Log(LogType.Error, "Exception in BeginInvoke for control: " + e.Message);
             }
+        }
+
+        public static bool IsCreatedAndFuctional<T>(this T control) where T : Control
+        {
+            return control.Created && !control.IsDisposed && !control.Disposing;
         }
     }
 }

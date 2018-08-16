@@ -31,7 +31,8 @@ namespace Robot
 
         private IAssetManager AssetManager;
         private IProfiler Profiler;
-        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler) : base(CommandFactory, Profiler)
+        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
+            : base(CommandFactory, Profiler, Logger)
         {
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;

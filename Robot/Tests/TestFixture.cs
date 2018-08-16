@@ -56,7 +56,8 @@ namespace RobotRuntime.Tests
         public event Action<TestFixture> DirtyChanged;
 
         private ILogger Logger;
-        public TestFixture(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger) : base(CommandFactory, Profiler)
+        public TestFixture(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
+            : base(CommandFactory, Profiler, Logger)
         {
             this.Logger = Logger;
 

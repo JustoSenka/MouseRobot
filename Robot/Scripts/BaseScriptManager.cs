@@ -28,10 +28,12 @@ namespace Robot.Scripts
 
         private ICommandFactory CommandFactory;
         private IProfiler Profiler;
-        public BaseScriptManager(ICommandFactory CommandFactory, IProfiler Profiler)
+        private ILogger Logger;
+        public BaseScriptManager(ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
         {
             this.CommandFactory = CommandFactory;
             this.Profiler = Profiler;
+            this.Logger = Logger;
 
             CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
 
@@ -164,6 +166,10 @@ namespace Robot.Scripts
             return script;
         }
 
+        /// <summary>
+        /// Moves existing command from script to different place and/or between scripts.
+        /// Also moves all child commands altogether.
+        /// </summary>
         public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
             var script = m_LoadedScripts[scriptIndex];
@@ -176,6 +182,10 @@ namespace Robot.Scripts
                 var destScript = m_LoadedScripts[destinationScriptIndex];
                 var sourceNode = script.Commands.GetNodeFromValue(source);
 
+                if (Logger.AssertIf(sourceNode == null,
+                    "Cannot find node in script '" + destScript.Name + "' for command: " + source))
+                    return;
+
                 script.RemoveCommand(source);
                 destScript.InsertCommandNodeAfter(sourceNode, after);
 
@@ -185,6 +195,10 @@ namespace Robot.Scripts
             script.IsDirty = true;
         }
 
+        /// <summary>
+        /// Moves existing command from script to different place and/or between scripts.
+        /// Also moves all child commands altogether.
+        /// </summary>
         public void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
         {
             var script = m_LoadedScripts[scriptIndex];
@@ -196,6 +210,10 @@ namespace Robot.Scripts
             {
                 var destScript = m_LoadedScripts[destinationScriptIndex];
                 var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
+
+                if (Logger.AssertIf(sourceNode == null,
+                    "Cannot find node in script '" + destScript.Name + "' for command: " + source))
+                    return;
 
                 script.RemoveCommand(source);
                 destScript.InsertCommandNodeBefore(sourceNode, before);

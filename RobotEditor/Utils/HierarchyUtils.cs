@@ -1,14 +1,13 @@
-﻿using System;
-using RobotEditor.Abstractions;
-using System.Windows.Forms;
-using RobotRuntime;
-using BrightIdeasSoftware;
-using System.Collections.Generic;
+﻿using BrightIdeasSoftware;
 using Robot.Abstractions;
-using RobotEditor.Hierarchy;
-using RobotRuntime.Scripts;
 using Robot.Scripts;
+using RobotEditor.Abstractions;
+using RobotEditor.Hierarchy;
+using RobotRuntime;
+using RobotRuntime.Scripts;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace RobotEditor.Utils
 {
@@ -43,38 +42,41 @@ namespace RobotEditor.Utils
         public static void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, int createMenuItemIndex,
             TreeListView treeListView, BaseScriptManager baseScriptManager)
         {
-            var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[createMenuItemIndex];
-
-            createMenuItem.DropDownItems.Clear();
-            foreach (var name in CommandFactory.CommandNames)
+            contextMenuStrip.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
-                var item = new ToolStripMenuItem(name);
-                item.Click += (sender, eventArgs) =>
+                var createMenuItem = (ToolStripMenuItem)contextMenuStrip.Items[createMenuItemIndex];
+
+                createMenuItem.DropDownItems.Clear();
+                foreach (var name in CommandFactory.CommandNames)
                 {
-                    var newCommand = CommandFactory.Create(name);
-                    if (treeListView.SelectedObject is HierarchyNode selectedNode)
+                    var item = new ToolStripMenuItem(name);
+                    item.Click += (sender, eventArgs) =>
                     {
-                        if (selectedNode.Script != null)
-                            selectedNode.Script.AddCommand(newCommand);
-                        else if (selectedNode.Command != null)
+                        var newCommand = CommandFactory.Create(name);
+                        if (treeListView.SelectedObject is HierarchyNode selectedNode)
                         {
-                            var parentCommand = selectedNode.Command;
-                            var script = baseScriptManager.GetScriptFromCommand(parentCommand);
-                            if (parentCommand.CanBeNested)
-                                script.AddCommand(newCommand, parentCommand);
+                            if (selectedNode.Script != null)
+                                selectedNode.Script.AddCommand(newCommand);
+                            else if (selectedNode.Command != null)
+                            {
+                                var parentCommand = selectedNode.Command;
+                                var script = baseScriptManager.GetScriptFromCommand(parentCommand);
+                                if (parentCommand.CanBeNested)
+                                    script.AddCommand(newCommand, parentCommand);
+                                else
+                                    script.InsertCommandAfter(newCommand, parentCommand);
+                            }
                             else
-                                script.InsertCommandAfter(newCommand, parentCommand);
+                                baseScriptManager.LoadedScripts.Last().AddCommand(newCommand);
                         }
                         else
+                        {
                             baseScriptManager.LoadedScripts.Last().AddCommand(newCommand);
-                    }
-                    else
-                    {
-                        baseScriptManager.LoadedScripts.Last().AddCommand(newCommand);
-                    }
-                };
-                createMenuItem.DropDownItems.Add(item);
-            }
+                        }
+                    };
+                    createMenuItem.DropDownItems.Add(item);
+                }
+            }));
         }
 
         public static void OnCommandAddedToScript(List<HierarchyNode> nodes, Script script, Command parentCommand, Command command)
