@@ -9,6 +9,7 @@ using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Tests
 {
@@ -133,7 +134,12 @@ namespace Tests
         {
             var yamlObj = YamlScriptIO.Serialize(Script.ToLightScript());
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
-            StringAssert.Contains(serializedScript, yamlString, "Strings missmatched.");
+
+            // Needed to ignore randomly generated guids
+            var expected = Regex.Replace(serializedScript, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            var actual = Regex.Replace(yamlString, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
         [TestMethod]
@@ -324,12 +330,18 @@ namespace Tests
       <Y>k__BackingField: 20";
         #endregion
 
+
         [TestMethod]
         public void Fixture_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlTestFixtureIO.Serialize(Fixture);
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
-            StringAssert.Contains(serializedFixture, yamlString, "Strings missmatched.");
+
+            // Needed to ignore randomly generated guids
+            var expected = Regex.Replace(serializedFixture, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            var actual = Regex.Replace(yamlString, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
         [TestMethod]
@@ -369,7 +381,12 @@ namespace Tests
 
             var yamlObj2 = YamlTestFixtureIO.Serialize(newFixture);
             var text = YamlSerializer.SerializeYamlTree(yamlObj2);
-            StringAssert.Contains(serializedFixture, text, "Strings missmatched.");
+
+            // Needed to ignore randomly generated guids
+            var expected = Regex.Replace(text, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            var actual = Regex.Replace(serializedFixture, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
         [TestMethod]

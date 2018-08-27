@@ -54,9 +54,13 @@ namespace Robot
                 RemoveScript(0);
 
             Script newScript = asset.Importer.ReloadAsset<Script>();
-            newScript.Path = asset.Path;
-
-            AddScript(newScript, true);
+            if (newScript != null)
+            {
+                newScript.Path = asset.Path;
+                AddScript(newScript, true);
+            }
+            else
+                Logger.Log(LogType.Error, "Failed to load script: " + asset.Path);
 
             Profiler.Stop("ScriptManager_LoadScript");
             return newScript;

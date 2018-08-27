@@ -1,14 +1,13 @@
-﻿using System;
+﻿using RobotRuntime.Utils;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Collections;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using RobotRuntime.Utils;
-using System.ComponentModel;
 using System.Threading;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace RobotRuntime
 {
@@ -58,6 +57,26 @@ namespace RobotRuntime
             if (collection.ElementAt(index) != element)
                 throw new Exception("Index not found for: " + element.ToString());
             return index;
+        }
+
+        public static IEnumerable<K> CastAndRemoveNullsTree<K>(this TreeNode<Command> tree) where K : class
+        {
+            foreach (var node in tree)
+            {
+                var casted = node.value as K;
+                if (casted != null)
+                    yield return casted;
+            }
+        }
+
+        public static IEnumerable<K> CastAndRemoveNulls<K, T>(this IEnumerable<T> collection) where K : class where T : class
+        {
+            foreach (var node in collection)
+            {
+                var casted = node as K;
+                if (casted != null)
+                    yield return casted;
+            }
         }
 
         public static LinkedListNode<T> NodeAt<T>(this LinkedList<T> list, int index)

@@ -63,6 +63,12 @@ namespace RobotRuntime.Tests
             foreach (var test in Tests)
                 fixture.Tests.Add((Script)test.Clone());
 
+            ((IHaveGuid)fixture.Setup).RegenerateGuid();
+            ((IHaveGuid)fixture.TearDown).RegenerateGuid();
+            ((IHaveGuid)fixture.OneTimeSetup).RegenerateGuid();
+            ((IHaveGuid)fixture.OneTimeTeardown).RegenerateGuid();
+            fixture.Tests.RegenerateGuids();
+
             fixture.Guid = Guid;
 
             return fixture;

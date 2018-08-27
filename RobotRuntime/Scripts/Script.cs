@@ -48,8 +48,11 @@ namespace RobotRuntime.Scripts
 
             m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(command);
 
+
             nodeToAddCommand.AddChild(command);
             CommandAddedToScript?.Invoke(this, parentCommand, command);
+
+            CheckCommandGuidConsistency();
             return command;
         }
 
@@ -63,13 +66,16 @@ namespace RobotRuntime.Scripts
 
             m_IsDirty = true;
 
-            foreach(var node in commandNode.GetAllNodes(true))
+            foreach (var node in commandNode.GetAllNodes(true))
                 m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
             nodeToAddCommand.Join(commandNode);
+
             CommandAddedToScript?.Invoke(this, parentCommand, commandNode.value);
+
+            CheckCommandGuidConsistency();
             return commandNode.value;
         }
 
@@ -92,6 +98,8 @@ namespace RobotRuntime.Scripts
             node.value = newCommand;
 
             CommandModifiedOnScript?.Invoke(this, originalCommand, newCommand);
+
+            CheckCommandGuidConsistency();
             return newCommand;
         }
 
@@ -109,6 +117,8 @@ namespace RobotRuntime.Scripts
 
             m_IsDirty = true;
             CommandInsertedInScript?.Invoke(this, parentCommand, command, position);
+
+            CheckCommandGuidConsistency();
             return command;
         }
 
@@ -123,10 +133,7 @@ namespace RobotRuntime.Scripts
 
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
             var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
-            InsertCommand(sourceCommand, indexAfter + 1, nodeAfter.parent.value);
-
-            m_IsDirty = true;
-            return sourceCommand;
+            return InsertCommand(sourceCommand, indexAfter + 1, nodeAfter.parent.value);
         }
 
         /// <summary>
@@ -151,6 +158,8 @@ namespace RobotRuntime.Scripts
             CommandInsertedInScript?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
 
             m_IsDirty = true;
+            CheckCommandGuidConsistency();
+
             return commandNode.value;
         }
 
@@ -176,6 +185,8 @@ namespace RobotRuntime.Scripts
             CommandInsertedInScript?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
 
             m_IsDirty = true;
+            CheckCommandGuidConsistency();
+
             return commandNode.value;
         }
 
@@ -197,6 +208,8 @@ namespace RobotRuntime.Scripts
             CommandRemovedFromScript?.Invoke(this, sourceParentCommand, oldIndex);
             CommandInsertedInScript?.Invoke(this, destParentCommand, source, GetIndex(source));
             m_IsDirty = true;
+
+            CheckCommandGuidConsistency();
         }
 
         /// <summary>
@@ -217,6 +230,8 @@ namespace RobotRuntime.Scripts
             CommandRemovedFromScript?.Invoke(this, sourceParentCommand, oldIndex);
             CommandInsertedInScript?.Invoke(this, destParentCommand, source, GetIndex(source));
             m_IsDirty = true;
+
+            CheckCommandGuidConsistency();
         }
 
         /// <summary>
@@ -232,11 +247,13 @@ namespace RobotRuntime.Scripts
 
             Commands.Remove(commandNode);
 
-            foreach(var node in commandNode.GetAllNodes(true))
+            foreach (var node in commandNode.GetAllNodes(true))
                 m_CommandGuidMap.RemoveGuidFromMap(command);
 
             CommandRemovedFromScript?.Invoke(this, parentCommand, oldIndex);
             m_IsDirty = true;
+
+            CheckCommandGuidConsistency();
         }
 
         public int GetIndex(Command command)
@@ -247,10 +264,9 @@ namespace RobotRuntime.Scripts
 
         public object Clone()
         {
-            return new Script
+            return new Script((TreeNode<Command>)Commands.Clone())
             {
                 Name = Name,
-                Commands = (TreeNode<Command>)Commands.Clone(),
                 m_IsDirty = true,
                 Guid = Guid
             };
@@ -327,6 +343,8 @@ namespace RobotRuntime.Scripts
 
             foreach (var node in Commands.GetAllNodes(false))
                 m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
+
+            CheckCommandGuidConsistency();
         }
 
         public LightScript ToLightScript()
@@ -340,8 +358,10 @@ namespace RobotRuntime.Scripts
             m_Name = lightScript.Name;
             Guid = lightScript.Guid;
 
-            foreach(var node in Commands.GetAllNodes(false))
+            foreach (var node in Commands.GetAllNodes(false))
                 m_CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
+
+            CheckCommandGuidConsistency();
         }
 
         public static Script FromLightScript(LightScript lightScript)
@@ -369,6 +389,17 @@ namespace RobotRuntime.Scripts
         void IHaveGuid.RegenerateGuid()
         {
             Guid = Guid.NewGuid();
+        }
+
+        [Conditional("DEBUG")]
+        private void CheckCommandGuidConsistency()
+        {
+            var allCommands = Commands.GetAllNodes(false).Select(node => node.value);
+            foreach (var c in allCommands)
+            {
+                if (!m_CommandGuidMap.Contains(c.Guid))
+                    Logger.Log(LogType.Error, "Command is not registered to guid map: " + c.ToString());
+            }
         }
     }
 }

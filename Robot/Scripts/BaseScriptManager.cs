@@ -5,6 +5,7 @@ using RobotRuntime.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Robot.Scripts
@@ -24,7 +25,7 @@ namespace Robot.Scripts
         public event Action<Script, Command, int> CommandRemovedFromScript;
         public event Action<Script, Command, Command> CommandModifiedOnScript;
 
-        protected readonly HashSet<Guid> CommandGuidMap = new HashSet<Guid>();
+        protected readonly HashSet<Guid> ScriptGuidMap = new HashSet<Guid>();
 
         private ICommandFactory CommandFactory;
         private IProfiler Profiler;
@@ -102,9 +103,12 @@ namespace Robot.Scripts
             if (clone == null)
                 script = new Script();
             else
+            {
                 script = (Script)clone.Clone();
+                ((IHaveGuid)script).RegenerateGuid();
+            }
 
-            CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
+            ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
             m_LoadedScripts.Add(script);
 
             SubscribeToScriptEvents(script);
@@ -118,7 +122,7 @@ namespace Robot.Scripts
         {
             var position = m_LoadedScripts.IndexOf(script);
 
-            CommandGuidMap.RemoveGuidFromMap(script);
+            ScriptGuidMap.RemoveGuidFromMap(script);
             m_LoadedScripts.Remove(script);
             UnsubscribeToScriptEvents(script);
 
@@ -129,7 +133,7 @@ namespace Robot.Scripts
         {
             UnsubscribeToScriptEvents(m_LoadedScripts[position]);
 
-            CommandGuidMap.RemoveGuidFromMap(m_LoadedScripts[position]);
+            ScriptGuidMap.RemoveGuidFromMap(m_LoadedScripts[position]);
             m_LoadedScripts.RemoveAt(position);
 
             ScriptRemoved?.Invoke(position);
@@ -148,8 +152,8 @@ namespace Robot.Scripts
                 var index = m_LoadedScripts.IndexOf(oldScript);
                 UnsubscribeToScriptEvents(oldScript);
 
-                CommandGuidMap.RemoveGuidFromMap(m_LoadedScripts[index]);
-                CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
+                ScriptGuidMap.RemoveGuidFromMap(m_LoadedScripts[index]);
+                ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
 
                 m_LoadedScripts[index] = script;
                 ScriptModified?.Invoke(script);
@@ -157,7 +161,7 @@ namespace Robot.Scripts
             else
             {
                 // Load New Script
-                CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
+                ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
                 m_LoadedScripts.Add(script);
                 ScriptAdded?.Invoke(script);
             }
@@ -261,6 +265,16 @@ namespace Robot.Scripts
         IEnumerator IEnumerable.GetEnumerator()
         {
             return m_LoadedScripts.GetEnumerator();
+        }
+
+        [Conditional("DEBUG")]
+        private void CheckCommandGuidConsistency()
+        {
+            foreach (var s in m_LoadedScripts)
+            {
+                if (!ScriptGuidMap.Contains(s.Guid))
+                    Logger.Logi(LogType.Error, "Script is not registered to guid map: " + s.ToString());
+            }
         }
     }
 }

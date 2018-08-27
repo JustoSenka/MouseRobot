@@ -1,5 +1,7 @@
-﻿using System;
+﻿using RobotRuntime.Scripts;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RobotRuntime
 {
@@ -9,7 +11,7 @@ namespace RobotRuntime
         {
             if (map.Contains(objectWithGuid.Guid))
             {
-                Logger.Log(LogType.Warning, "Object '" + objectWithGuid.ToString() + "' has duplicate guid. Regenerating.");
+               // TODO: Logger.Log(LogType.Warning, "Object '" + objectWithGuid.ToString() + "' has duplicate guid. Regenerating.");
                 objectWithGuid.RegenerateGuid();
             }
 
@@ -21,11 +23,25 @@ namespace RobotRuntime
             if (map.Contains(objectWithGuid.Guid))
                 map.Remove(objectWithGuid.Guid);
         }
-        /*
-        public static void CheckGuidUniqueness(this HashSet<Guid> map, IEnumerable<IHaveGuid> objectWithGuid)
+
+        public static void RegenerateGuids(this TreeNode<IHaveGuid> tree)
         {
-            if (map.Contains(objectWithGuid.Guid))
-                map.Remove(objectWithGuid.Guid);
-        }*/
+            var allNodes = tree.GetAllNodes().Select(n => n.value);
+            allNodes.RegenerateGuids();
+        }
+
+        public static void RegenerateGuids(this IEnumerable<IHaveGuid> list)
+        {
+            foreach (var node in list)
+            {
+                if (node == null)
+                    continue;
+
+                node.RegenerateGuid();
+
+                if (node is Script s)
+                    s.Commands.CastAndRemoveNullsTree<IHaveGuid>().RegenerateGuids();
+            }
+        }
     }
 }

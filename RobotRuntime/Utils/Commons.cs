@@ -25,6 +25,7 @@ namespace RobotRuntime
         public const string GetImageNameFromPath = GetNameWithDot + FileExtensions.Image;
         public const string GetPluginNameFromPath = GetNameWithDot + FileExtensions.Plugin;
         public const string GetTestNameFromPath = GetNameWithDot + FileExtensions.Test;
+        public const string Guid = @"[{(]?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?";
     }
 
     public static class Fonts
