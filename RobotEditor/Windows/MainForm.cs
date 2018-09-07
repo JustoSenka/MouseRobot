@@ -485,6 +485,12 @@ namespace RobotEditor
             m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
         }
 
+        private void compilerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((PropertiesWindow)m_PropertiesWindow).Show(m_DockPanel);
+            m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<CompilerSettings>());
+        }
+
         #endregion
 
         #region Toolstrip item clicks

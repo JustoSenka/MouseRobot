@@ -200,6 +200,7 @@
     <Compile Include="Settings\BaseProperties.cs" />
     <Compile Include="PropertyUtils\CommandNameStringConverter.cs" />
     <Compile Include="PropertyUtils\DetectorNameStringConverter.cs" />
+    <Compile Include="Settings\CompilerProperties.cs" />
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
     <Compile Include="Utils\FormExtensionMethods.cs" />

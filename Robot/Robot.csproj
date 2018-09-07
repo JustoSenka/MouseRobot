@@ -146,6 +146,7 @@
     <Compile Include="Abstractions\ISettingsManager.cs" />
     <Compile Include="Abstractions\ICommandFactory.cs" />
     <Compile Include="Scripts\BaseScriptManager.cs" />
+    <Compile Include="Settings\CompilerSettings.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

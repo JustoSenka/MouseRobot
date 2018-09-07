@@ -79,6 +79,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.compilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -392,7 +393,8 @@
             // 
             this.commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.recordingToolStripMenuItem,
-            this.imageDetectionToolStripMenuItem});
+            this.imageDetectionToolStripMenuItem,
+            this.compilerToolStripMenuItem});
             this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
             this.commandsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.commandsToolStripMenuItem.Text = "Settings";
@@ -400,14 +402,14 @@
             // recordingToolStripMenuItem
             // 
             this.recordingToolStripMenuItem.Name = "recordingToolStripMenuItem";
-            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.recordingToolStripMenuItem.Text = "Recording";
             this.recordingToolStripMenuItem.Click += new System.EventHandler(this.recordingToolStripMenuItem_Click);
             // 
             // imageDetectionToolStripMenuItem
             // 
             this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
-            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.imageDetectionToolStripMenuItem.Text = "Image Detection";
             this.imageDetectionToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionToolStripMenuItem_Click);
             // 
@@ -471,9 +473,16 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // compilerToolStripMenuItem
+            // 
+            this.compilerToolStripMenuItem.Name = "compilerToolStripMenuItem";
+            this.compilerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compilerToolStripMenuItem.Text = "Compiler";
+            this.compilerToolStripMenuItem.Click += new System.EventHandler(this.compilerToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -552,5 +561,6 @@
         private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newTestFixtureToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem compilerToolStripMenuItem;
     }
 }

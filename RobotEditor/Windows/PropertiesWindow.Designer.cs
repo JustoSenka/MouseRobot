@@ -34,6 +34,7 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.recordingSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageDetectionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compilerSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,9 +56,10 @@
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.recordingSettingsToolStripMenuItem,
-            this.imageDetectionSettingsToolStripMenuItem});
+            this.imageDetectionSettingsToolStripMenuItem,
+            this.compilerSettingsToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(207, 70);
+            this.contextMenuStrip.Size = new System.Drawing.Size(207, 92);
             // 
             // recordingSettingsToolStripMenuItem
             // 
@@ -72,6 +74,13 @@
             this.imageDetectionSettingsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.imageDetectionSettingsToolStripMenuItem.Text = "Image Detection Settings";
             this.imageDetectionSettingsToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionSettingsToolStripMenuItem_Click);
+            // 
+            // compilerSettingsToolStripMenuItem
+            // 
+            this.compilerSettingsToolStripMenuItem.Name = "compilerSettingsToolStripMenuItem";
+            this.compilerSettingsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.compilerSettingsToolStripMenuItem.Text = "Compiler Settings";
+            this.compilerSettingsToolStripMenuItem.Click += new System.EventHandler(this.compilerSettingsToolStripMenuItem_Click);
             // 
             // PropertiesWindow
             // 
@@ -94,5 +103,6 @@
         private System.Windows.Forms.ToolStripMenuItem recordingSettingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageDetectionSettingsToolStripMenuItem;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem compilerSettingsToolStripMenuItem;
     }
 }

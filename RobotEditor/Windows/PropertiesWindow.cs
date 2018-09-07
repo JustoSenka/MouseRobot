@@ -52,6 +52,12 @@ namespace RobotEditor
                 return new FeatureDetectionProperties(settings);
             }
 
+            if (settings is CompilerSettings)
+            {
+                type = typeof(CompilerProperties);
+                return new CompilerProperties(settings);
+            }
+
             throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");
         }
 
@@ -74,6 +80,11 @@ namespace RobotEditor
         private void imageDetectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
+        }
+
+        private void compilerSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowSettings(SettingsManager.GetSettings<CompilerSettings>());
         }
 
         #endregion
