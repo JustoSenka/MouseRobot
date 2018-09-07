@@ -40,6 +40,7 @@ namespace Robot.Plugins
             CompilerParams.ReferencedAssemblies.Add("System.dll");
             CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
             CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
+            CompilerParams.ReferencedAssemblies.Add("System.Core.dll");
             //CompilerParams.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
         }
 

@@ -117,8 +117,7 @@ namespace RobotEditor
 
             RefreshTreeListView();
 
-            if (treeListView.Created)
-                treeListView.ExpandAll();
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.ExpandAll()));
         }
 
         private void RefreshTreeListView()
@@ -130,8 +129,7 @@ namespace RobotEditor
                 treeListView.Items[i].ImageIndex = 0;
             }
 
-            if (treeListView.Created)
-                treeListView.Refresh();
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
         private void OnNewUserCommandsAppeared()
@@ -424,16 +422,14 @@ namespace RobotEditor
             var commandNode = scriptNode.GetNodeFromValue(command);
             m_HighlightedNode = commandNode;
 
-            if (treeListView.Created)
-                treeListView.Invoke(new Action(() => treeListView.Refresh()));
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
         private void OnScriptsFinishedRunning()
         {
             m_HighlightedNode = null;
 
-            if (treeListView.Created)
-                treeListView.Invoke(new Action(() => treeListView.Refresh()));
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
         #endregion
