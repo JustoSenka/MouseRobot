@@ -8,6 +8,9 @@ using System.Threading;
 using RobotRuntime.Logging;
 using System.Drawing;
 using RobotRuntime.Utils;
+using System.Collections.Generic;
+using System.Linq;
+using Robot.Settings;
 
 namespace Robot.Plugins
 {
@@ -22,31 +25,33 @@ namespace Robot.Plugins
 
         public event Action ScriptsRecompiled;
 
+        private readonly HashSet<string> m_DefaultReferencedAssemblies = new HashSet<string>();
+
         private bool m_IsCompiling = false;
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
 
         private IProfiler Profiler;
         private IStatusManager StatusManager;
-        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager)
+        private ISettingsManager SettingsManager;
+        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager, ISettingsManager SettingsManager)
         {
             this.Profiler = Profiler;
             this.StatusManager = StatusManager;
-
+            this.SettingsManager = SettingsManager;
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
 
-            CompilerParams.ReferencedAssemblies.Add("System.dll");
-            CompilerParams.ReferencedAssemblies.Add("System.Drawing.dll");
-            CompilerParams.ReferencedAssemblies.Add("System.Windows.Forms.dll");
-            CompilerParams.ReferencedAssemblies.Add("System.Core.dll");
-            //CompilerParams.ReferencedAssemblies.Add("Microsoft.CSharp.dll");
+            m_DefaultReferencedAssemblies.Add("System.dll");
+            m_DefaultReferencedAssemblies.Add("System.Drawing.dll");
+            m_DefaultReferencedAssemblies.Add("System.Windows.Forms.dll");
+            m_DefaultReferencedAssemblies.Add("System.Core.dll");
         }
 
         public void AddReferencedAssemblies(params string[] paths)
         {
-            CompilerParams.ReferencedAssemblies.AddRange(paths);
+            m_DefaultReferencedAssemblies.UnionWith(paths);
         }
 
         public void CompileCode(params string[] sources)
@@ -69,7 +74,13 @@ namespace Robot.Plugins
             StatusManager.Add("PluginCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
 
             Profiler.Start("PluginCompiler_CompileCode");
+
+            CompilerParams.ReferencedAssemblies.Clear();
+            CompilerParams.ReferencedAssemblies.AddRange(m_DefaultReferencedAssemblies.ToArray());
+            CompilerParams.ReferencedAssemblies.AddRange(SettingsManager.GetSettings<CompilerSettings>().CompilerReferences);
+
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
+
             Profiler.Stop("PluginCompiler_CompileCode");
 
             m_IsCompiling = false;
