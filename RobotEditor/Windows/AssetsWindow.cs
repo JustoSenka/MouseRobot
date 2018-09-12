@@ -19,11 +19,13 @@ namespace RobotEditor
         private IAssetManager AssetManager;
         private IScriptManager ScriptManager;
         private ITestFixtureManager TestFixtureManager;
-        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager)
+        private IPluginManager PluginManager;
+        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager, IPluginManager PluginManager)
         {
             this.AssetManager = AssetManager;
             this.ScriptManager = ScriptManager;
             this.TestFixtureManager = TestFixtureManager;
+            this.PluginManager = PluginManager;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -166,6 +168,11 @@ namespace RobotEditor
         {
             if (treeView.SelectedNode != null && treeView.SelectedNode.Level == 1)
                 AssetSelected?.Invoke();
+        }
+
+        private void recompileScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PluginManager.CompileScriptsAndReloadUserDomain();
         }
 
         #region Context Menu Items

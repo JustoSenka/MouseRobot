@@ -77,7 +77,10 @@ namespace Robot.Plugins
 
             CompilerParams.ReferencedAssemblies.Clear();
             CompilerParams.ReferencedAssemblies.AddRange(m_DefaultReferencedAssemblies.ToArray());
-            CompilerParams.ReferencedAssemblies.AddRange(SettingsManager.GetSettings<CompilerSettings>().CompilerReferences);
+
+            var settings = SettingsManager.GetSettings<CompilerSettings>();
+            if (settings != null && settings.CompilerReferences != null && settings.CompilerReferences.Length > 0)
+                CompilerParams.ReferencedAssemblies.AddRange(settings.CompilerReferences);
 
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
 

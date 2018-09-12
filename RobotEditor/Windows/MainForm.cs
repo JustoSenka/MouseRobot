@@ -221,7 +221,7 @@ namespace RobotEditor
         private void OnStatusUpdated(Status status)
         {
             if (!this.Created || !statusStrip.Created || this.Disposing || this.IsDisposed || 
-                statusStrip.Created || statusStrip.IsDisposed || statusStrip.Disposing)
+                !statusStrip.Created || statusStrip.IsDisposed || statusStrip.Disposing)
                 return;
 
             this.Invoke(new MethodInvoker(() =>

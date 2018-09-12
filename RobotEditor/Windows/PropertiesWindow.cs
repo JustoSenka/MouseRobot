@@ -16,9 +16,12 @@ namespace RobotEditor
         private Type m_CurrentObjectType;
 
         private ISettingsManager SettingsManager;
-        public PropertiesWindow(ISettingsManager SettingsManager)
+        private IPluginManager PluginManager;
+        public PropertiesWindow(ISettingsManager SettingsManager, IPluginManager PluginManager)
         {
             this.SettingsManager = SettingsManager;
+            this.PluginManager = PluginManager;
+
             InitializeComponent();
             ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
@@ -38,7 +41,7 @@ namespace RobotEditor
             propertyGrid_PropertyValueChanged(this, null);
         }
 
-        private static BaseProperties WrapSettingsToProperties<T>(T settings, ref Type type) where T : BaseSettings
+        private BaseProperties WrapSettingsToProperties<T>(T settings, ref Type type) where T : BaseSettings
         {
             if (settings is RecordingSettings)
             {
@@ -55,7 +58,7 @@ namespace RobotEditor
             if (settings is CompilerSettings)
             {
                 type = typeof(CompilerProperties);
-                return new CompilerProperties(settings);
+                return new CompilerProperties(settings, PluginManager);
             }
 
             throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");

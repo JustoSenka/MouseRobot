@@ -65,6 +65,7 @@ namespace RobotRuntime.Plugins
                 Assembly assembly = null;
                 try
                 {
+                    // This is done in this particular way so we do not keep the file locked
                     var bytes = File.ReadAllBytes(path);
                     assembly = Assembly.Load(bytes);
                 }

@@ -62,15 +62,15 @@ namespace Robot.Plugins
             if (m_ModifiedFilesSinceLastRecompilation.Count == 0)
                 return;
 
-            RecompileScripts();
+            CompileScriptsAndReloadUserDomain();
         }
 
-        private void RecompileScripts()
+        public void CompileScriptsAndReloadUserDomain()
         {
             PluginCompiler.SetOutputPath(CustomAssemblyPath);
 
             PluginLoader.UserAssemblyPath = CustomAssemblyPath;
-            PluginLoader.UserAssemblyName= CustomAssemblyName;
+            PluginLoader.UserAssemblyName = CustomAssemblyName;
             PluginLoader.DestroyUserAppDomain();
 
             var scriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));

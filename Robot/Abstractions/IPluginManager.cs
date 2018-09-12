@@ -2,5 +2,6 @@
 {
     public interface IPluginManager
     {
+        void CompileScriptsAndReloadUserDomain();
     }
 }
