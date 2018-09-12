@@ -36,7 +36,8 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
-            AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
+            UserDomainReloading?.Invoke();
+            //AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
 
             if (m_PluginDomain != null)
                 AppDomain.Unload(m_PluginDomain);
@@ -63,7 +64,8 @@ namespace RobotRuntime.Plugins
 
             LoadUserAssemblies(); // User assemblies must be loaded before UserDomainReloaded event fires
 
-            AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
+            UserDomainReloaded?.Invoke();
+            // AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
         }
 
         public void LoadUserAssemblies()

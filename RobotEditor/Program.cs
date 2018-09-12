@@ -30,8 +30,6 @@ namespace RobotEditor
             Robot.Program.RegisterInterfaces(container);
             RegisterInterfaces(container);
 
-            container.Resolve<PluginManager>(); // Create PluginManager, since nobody uses it, runs on callbacks from AssetManager
-
             container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
 
             Logger.Instance = container.Resolve<ILogger>();

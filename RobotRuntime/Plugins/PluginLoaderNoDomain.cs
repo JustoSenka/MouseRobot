@@ -29,7 +29,8 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
-            AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
+            //UserDomainReloading?.Invoke();
+            //AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
             Assemblies = null;
         }
 
@@ -37,9 +38,12 @@ namespace RobotRuntime.Plugins
         {
             Profiler.Start("PluginLoader.ReloadAppDomain");
 
-            DestroyUserAppDomain();
+            if (Assemblies != null)
+                DestroyUserAppDomain();
+
             LoadUserAssemblies();
-            AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
+            UserDomainReloaded?.Invoke();
+            // AsyncOperationOnUI?.Post(() => UserDomainReloaded?.Invoke());
 
             Profiler.Stop("PluginLoader.ReloadAppDomain");
         }

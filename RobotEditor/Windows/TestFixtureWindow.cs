@@ -161,14 +161,17 @@ namespace RobotEditor
 
         private void RefreshTreeListView()
         {
-            this.Text = m_TestFixture.ToString();
-            treeListView.Roots = m_Nodes;
-
-            for (int i = 0; i < treeListView.Items.Count; ++i)
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
-                treeListView.Items[i].ImageIndex = 0;
-            }
-            treeListView.Refresh();
+                this.Text = m_TestFixture.ToString();
+                treeListView.Roots = m_Nodes;
+
+                for (int i = 0; i < treeListView.Items.Count; ++i)
+                {
+                    treeListView.Items[i].ImageIndex = 0;
+                }
+                treeListView.Refresh();
+            }));
         }
 
         #region ScriptManager Callbacks

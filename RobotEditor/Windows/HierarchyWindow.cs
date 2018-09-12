@@ -122,14 +122,17 @@ namespace RobotEditor
 
         private void RefreshTreeListView()
         {
-            treeListView.Roots = m_Nodes;
-
-            for (int i = 0; i < treeListView.Items.Count; ++i)
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
-                treeListView.Items[i].ImageIndex = 0;
-            }
+                treeListView.Roots = m_Nodes;
 
-            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
+                for (int i = 0; i < treeListView.Items.Count; ++i)
+                {
+                    treeListView.Items[i].ImageIndex = 0;
+                }
+
+                treeListView.Refresh();
+            }));
         }
 
         private void OnNewUserCommandsAppeared()
