@@ -46,7 +46,7 @@ namespace Robot.Plugins
             m_DefaultReferencedAssemblies.Add("System.dll");
             m_DefaultReferencedAssemblies.Add("System.Drawing.dll");
             m_DefaultReferencedAssemblies.Add("System.Windows.Forms.dll");
-            m_DefaultReferencedAssemblies.Add("System.Core.dll");
+            //m_DefaultReferencedAssemblies.Add("System.Core.dll");
         }
 
         public void AddReferencedAssemblies(params string[] paths)

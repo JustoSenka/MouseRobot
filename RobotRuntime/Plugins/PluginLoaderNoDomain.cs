@@ -29,7 +29,7 @@ namespace RobotRuntime.Plugins
 
         public void DestroyUserAppDomain()
         {
-            //UserDomainReloading?.Invoke();
+            UserDomainReloading?.Invoke();
             //AsyncOperationOnUI?.Post(() => UserDomainReloading?.Invoke());
             Assemblies = null;
         }

@@ -1,12 +1,12 @@
-﻿using RobotEditor.Abstractions;
+﻿using Robot.Abstractions;
 using Robot.Settings;
+using RobotEditor.Abstractions;
+using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
 using System;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using Robot.Abstractions;
-using RobotEditor.Settings;
 
 namespace RobotEditor
 {
@@ -14,6 +14,7 @@ namespace RobotEditor
     {
         private BaseProperties m_CurrentObject;
         private Type m_CurrentObjectType;
+        private Type m_CurrentSettingsType;
 
         private ISettingsManager SettingsManager;
         private IPluginManager PluginManager;
@@ -22,27 +23,43 @@ namespace RobotEditor
             this.SettingsManager = SettingsManager;
             this.PluginManager = PluginManager;
 
+            SettingsManager.SettingsRestored += OnSettingsRestored;
+
             InitializeComponent();
             ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
+        private void OnSettingsRestored()
+        {
+            if (m_CurrentObject == null || m_CurrentSettingsType == null)
+                return;
+
+            var newSettings = SettingsManager.GetSettingsFromType(m_CurrentSettingsType);
+            ShowSettings(newSettings);
+        }
+
         public void ShowProperties<T>(T properties) where T : BaseProperties
         {
-            m_CurrentObject = properties;
-            m_CurrentObjectType = properties.GetType();
-            this.Text = properties.Title;
-            propertyGrid_PropertyValueChanged(this, null);
+            /* not used. Might be useful in future
+             m_CurrentObject = properties;
+             m_CurrentObjectType = properties.GetType();
+             this.Text = properties.Title;
+             propertyGrid_PropertyValueChanged(this, null);*/
         }
 
         public void ShowSettings<T>(T settings) where T : BaseSettings
         {
             m_CurrentObject = WrapSettingsToProperties(settings, ref m_CurrentObjectType);
             this.Text = m_CurrentObject.Title;
-            propertyGrid_PropertyValueChanged(this, null);
+
+            // Putting null as sender so we don't call properties modified callback. But we want to update dt
+            propertyGrid_PropertyValueChanged(null, null);
         }
 
         private BaseProperties WrapSettingsToProperties<T>(T settings, ref Type type) where T : BaseSettings
         {
+            m_CurrentSettingsType = settings.GetType();
+
             if (settings is RecordingSettings)
             {
                 type = typeof(RecordingProperties);
@@ -69,8 +86,14 @@ namespace RobotEditor
             DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
 
             m_CurrentObject.HideProperties(ref dt);
-            m_CurrentObject.OnPropertiesModified();
-            propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
+
+            if (sender != null) // If it was modified from UI, call the callback. In other cases we don't want to do that.
+                m_CurrentObject.OnPropertiesModified();
+
+            propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
+            }));
         }
 
         #region Context Menu Items

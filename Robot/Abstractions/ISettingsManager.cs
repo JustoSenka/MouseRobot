@@ -13,6 +13,8 @@ namespace Robot.Abstractions
         BaseSettings GetSettingsFromType(Type type);
         BaseSettings GetSettingsFromName(string fullTypeName);
 
+        event Action SettingsRestored;
+
         void RestoreDefaults();
         void RestoreSettings();
         void SaveSettings();

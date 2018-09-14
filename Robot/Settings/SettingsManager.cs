@@ -17,6 +17,8 @@ namespace Robot.Settings
     {
         public IEnumerable<BaseSettings> Settings { get { return m_Settings; } }
 
+        public event Action SettingsRestored;
+
         private BaseSettings[] m_NativeSettings;
         private BaseSettings[] m_UserSettings;
         private BaseSettings[] m_Settings;
@@ -59,6 +61,7 @@ namespace Robot.Settings
         {
             CollectDefaultNativeSettings();
             CollectDefaultUserSettings();
+            SettingsRestored?.Invoke();
         }
 
         private void CollectDefaultNativeSettings()
@@ -91,6 +94,8 @@ namespace Robot.Settings
         {
             for(int i = 0; i < m_Settings.Length; i++)
                 m_Settings[i] = RestoreSettingFromFile(m_Settings[i]);
+
+            SettingsRestored?.Invoke();
         }
 
         public T GetSettings<T>() where T : BaseSettings
