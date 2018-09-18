@@ -61,7 +61,7 @@ namespace RobotEditor
             TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
 
             CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
-            AddNewCommandsToCreateMenu();
+            treeListView.HandleCreated += (sender, events) => AddNewCommandsToCreateMenu();
 
             treeListView.FormatCell += UpdateFontsTreeListView;
             HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);

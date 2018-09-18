@@ -16,6 +16,8 @@ namespace Robot.Plugins
     /// </summary>
     public class PluginManager : IPluginManager
     {
+        private bool m_FirstRefresh = true;
+
         private IList<string> m_ModifiedFilesSinceLastRecompilation = new List<string>();
 
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
@@ -59,9 +61,10 @@ namespace Robot.Plugins
 
         private void OnAssetRefreshFinished()
         {
-            if (m_ModifiedFilesSinceLastRecompilation.Count == 0)
+            if (m_ModifiedFilesSinceLastRecompilation.Count == 0 && !m_FirstRefresh)
                 return;
 
+            m_FirstRefresh = false;
             CompileScriptsAndReloadUserDomain();
         }
 

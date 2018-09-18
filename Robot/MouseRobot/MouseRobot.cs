@@ -107,6 +107,7 @@ namespace Robot
                         return;
                     }
 
+                    InputCallbacks.Init();
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
                     RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
