@@ -37,6 +37,8 @@ namespace RobotEditor
             AssetManager.RefreshFinished += OnRefreshFinished;
             AssetManager.AssetCreated += OnAssetCreated;
             AssetManager.AssetDeleted += OnAssetDeleted;
+
+            treeView.HandleCreated += OnRefreshFinished;
         }
 
         public Asset GetSelectedAsset()
@@ -64,46 +66,55 @@ namespace RobotEditor
             UpdateIcons();
         }
 
+        private void OnRefreshFinished(object sender, EventArgs args)
+        {
+            OnRefreshFinished();
+        }
+
         private void OnRefreshFinished()
         {
-            treeView.Nodes.Clear();
-
-            var scriptNode = new TreeNode(Paths.ScriptFolder);
-            var imageNode = new TreeNode(Paths.ImageFolder);
-            var pluginNode = new TreeNode(Paths.PluginFolder);
-            var testsNode = new TreeNode(Paths.TestsFolder);
-
-            treeView.Nodes.Add(scriptNode);
-            treeView.Nodes.Add(imageNode);
-            treeView.Nodes.Add(pluginNode);
-            treeView.Nodes.Add(testsNode);
-
-            foreach (var asset in AssetManager.Assets)
+            treeView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
-                TreeNode assetNode = new TreeNode(asset.Name)
+                treeView.Nodes.Clear();
+
+                var scriptNode = new TreeNode(Paths.ScriptFolder);
+                var imageNode = new TreeNode(Paths.ImageFolder);
+                var pluginNode = new TreeNode(Paths.PluginFolder);
+                var testsNode = new TreeNode(Paths.TestsFolder);
+
+                treeView.Nodes.Add(scriptNode);
+                treeView.Nodes.Add(imageNode);
+                treeView.Nodes.Add(pluginNode);
+                treeView.Nodes.Add(testsNode);
+
+                foreach (var asset in AssetManager.Assets)
                 {
-                    ImageIndex = 0,
-                    SelectedImageIndex = 0
-                };
+                    TreeNode assetNode = new TreeNode(asset.Name)
+                    {
+                        ImageIndex = 0,
+                        SelectedImageIndex = 0
+                    };
 
-                if (asset.Path.EndsWith(FileExtensions.Image))
-                    imageNode.Nodes.Add(assetNode);
+                    if (asset.Path.EndsWith(FileExtensions.Image))
+                        imageNode.Nodes.Add(assetNode);
 
-                else if (asset.Path.EndsWith(FileExtensions.Script))
-                    scriptNode.Nodes.Add(assetNode);
+                    else if (asset.Path.EndsWith(FileExtensions.Script))
+                        scriptNode.Nodes.Add(assetNode);
 
-                else if (asset.Path.EndsWith(FileExtensions.Plugin))
-                    pluginNode.Nodes.Add(assetNode);
+                    else if (asset.Path.EndsWith(FileExtensions.Plugin))
+                        pluginNode.Nodes.Add(assetNode);
 
-                else if (asset.Path.EndsWith(FileExtensions.Test))
-                    testsNode.Nodes.Add(assetNode);
+                    else if (asset.Path.EndsWith(FileExtensions.Test))
+                        testsNode.Nodes.Add(assetNode);
 
-                else
-                    Logger.Log(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
-            }
+                    else
+                        Logger.Log(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
+                }
 
-            treeView.ExpandAll();
-            UpdateIcons();
+                treeView.Refresh();
+                treeView.ExpandAll();
+                UpdateIcons();
+            }));
         }
 
         private void UpdateIcons()

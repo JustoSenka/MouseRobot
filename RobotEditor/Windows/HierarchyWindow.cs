@@ -68,7 +68,7 @@ namespace RobotEditor
             treeListView.FormatCell += UpdateFontsTreeListView;
             HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
-            UpdateHierarchy();
+            treeListView.HandleCreated += UpdateHierarchy;
         }
 
         private void AddNewCommandsToCreateMenu(object sender, EventArgs e)
@@ -115,7 +115,7 @@ namespace RobotEditor
             }
         }
 
-        private void UpdateHierarchy()
+        private void UpdateHierarchy(object sender, EventArgs args)
         {
             m_Nodes.Clear();
 
@@ -487,6 +487,7 @@ namespace RobotEditor
             treeListView.HandleCreated -= AddNewCommandsToCreateMenu;
             contextMenuStrip.HandleCreated -= AddNewCommandsToCreateMenu;
             treeListView.FormatCell -= UpdateFontsTreeListView;
+            treeListView.HandleCreated -= UpdateHierarchy;
         }
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()
