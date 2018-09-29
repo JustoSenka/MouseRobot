@@ -60,13 +60,20 @@ namespace RobotEditor
             TestRunner.TestRunEnd += OnScriptsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
 
+            // subscribing for both treeListView and contextMenuStrip creation, since it's not clear which will be created first
+            treeListView.HandleCreated += AddNewCommandsToCreateMenu;
+            contextMenuStrip.HandleCreated += AddNewCommandsToCreateMenu;
             CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
-            treeListView.HandleCreated += (sender, events) => AddNewCommandsToCreateMenu();
 
             treeListView.FormatCell += UpdateFontsTreeListView;
             HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
             UpdateHierarchy();
+        }
+
+        private void AddNewCommandsToCreateMenu(object sender, EventArgs e)
+        {
+            AddNewCommandsToCreateMenu();
         }
 
         private void AddNewCommandsToCreateMenu()
@@ -470,6 +477,16 @@ namespace RobotEditor
             {
                 OnSelectionChanged?.Invoke((BaseScriptManager)ScriptManager, node.Value);
             }
+        }
+
+        private void TestFixtureWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            TestRunner.TestRunEnd -= OnScriptsFinishedRunning;
+            TestRunner.TestData.CommandRunningCallback -= OnCommandRunning;
+            CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
+            treeListView.HandleCreated -= AddNewCommandsToCreateMenu;
+            contextMenuStrip.HandleCreated -= AddNewCommandsToCreateMenu;
+            treeListView.FormatCell -= UpdateFontsTreeListView;
         }
 
         private void ASSERT_TreeViewIsTheSameAsInScriptManager()

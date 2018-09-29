@@ -23,7 +23,7 @@ namespace RobotEditor
 
         public static bool IsCreatedAndFuctional<T>(this T control) where T : Control
         {
-            return control.Created && !control.IsDisposed && !control.Disposing;
+            return control.IsHandleCreated && !control.IsDisposed && !control.Disposing;
         }
     }
 }

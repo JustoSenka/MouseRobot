@@ -55,16 +55,33 @@ namespace RobotEditor
             treeListView.FormatCell += UpdateFontsTreeListView;
             HierarchyUtils.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
+            // subscribing for both treeListView and contextMenuStrip creation, since it's not clear which will be created first
+            treeListView.HandleCreated += AddNewCommandsToCreateMenu;
+            contextMenuStrip.HandleCreated += AddNewCommandsToCreateMenu;
+            CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
+
             UpdateHierarchy();
+        }
+
+        private void AddNewCommandsToCreateMenu(object sender, EventArgs e)
+        {
+            AddNewCommandsToCreateMenu();
         }
 
         private void AddNewCommandsToCreateMenu()
         {
-            if (CommandFactory == null || contextMenuStrip == null || treeListView == null || m_TestFixture == null)
+            if (CommandFactory == null || contextMenuStrip == null || treeListView == null)
             {
                 Logger.Log(LogType.Error, "TestFixtureWindow.AddNewCommandsToCreateMenu() was called to early. Creating commands will not be possible. Please report a bug.",
                     "CommandFactory " + (CommandFactory == null) + ", contextMenuStrip " + (contextMenuStrip == null) + 
                     ", treeListView " + (treeListView == null) + ", TestFixture " + (m_TestFixture == null));
+                return;
+            }
+
+            if (m_TestFixture == null)
+            {
+                // Sometimes this will be called with m_TestFixture not assigned yet. It depends how fast ui elements are created.
+                // So it is easier to just early return here. New user commands will be added upon other callback
                 return;
             }
                 
@@ -501,6 +518,8 @@ namespace RobotEditor
             TestRunner.TestRunEnd -= OnScriptsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback -= OnCommandRunning;
             CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
+            treeListView.HandleCreated -= AddNewCommandsToCreateMenu;
+            contextMenuStrip.HandleCreated -= AddNewCommandsToCreateMenu;
             treeListView.FormatCell -= UpdateFontsTreeListView;
         }
 
