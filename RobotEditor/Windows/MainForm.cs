@@ -156,7 +156,7 @@ namespace RobotEditor
             else
             {
                 var firstWindow = m_Windows[0];
-                dockContent.Show(firstWindow.Pane, DockAlignment.Right, 0.5); // Dock to the right to first window in list ([0] is HierarhcyWindows)
+                dockContent.Show(firstWindow.Pane, DockAlignment.Right, 0.5); // Dock to the right to first window in list ([0] is HierarhcyWindow)
             }
             TestFixtureWindows.Add(window);
         }

@@ -1,23 +1,23 @@
 ﻿#define ENABLE_UI_TESTING
 
-using System;
-using RobotEditor.Abstractions;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
-using RobotRuntime;
 using BrightIdeasSoftware;
-using System.Collections.Generic;
-using System.Linq;
-using System.Diagnostics;
-using System.Drawing;
 using Robot.Abstractions;
-using RobotRuntime.Abstractions;
+using Robot.Scripts;
+using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
+using RobotEditor.Utils;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
-using RobotEditor.Utils;
-using Robot.Scripts;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
@@ -73,7 +73,7 @@ namespace RobotEditor
             if (CommandFactory == null || contextMenuStrip == null || treeListView == null)
             {
                 Logger.Log(LogType.Error, "TestFixtureWindow.AddNewCommandsToCreateMenu() was called to early. Creating commands will not be possible. Please report a bug.",
-                    "CommandFactory " + (CommandFactory == null) + ", contextMenuStrip " + (contextMenuStrip == null) + 
+                    "CommandFactory " + (CommandFactory == null) + ", contextMenuStrip " + (contextMenuStrip == null) +
                     ", treeListView " + (treeListView == null) + ", TestFixture " + (m_TestFixture == null));
                 return;
             }
@@ -84,7 +84,7 @@ namespace RobotEditor
                 // So it is easier to just early return here. New user commands will be added upon other callback
                 return;
             }
-                
+
             HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 5,
                 treeListView, m_TestFixture);
         }
@@ -172,13 +172,12 @@ namespace RobotEditor
             m_Nodes.Add(m_HooksNode);
             m_Nodes.Add(m_TestsNode);
 
-            RefreshTreeListView();
-            treeListView.ExpandAll();
+            RefreshTreeListViewAsync(() => treeListView.ExpandAll());
         }
 
-        private void RefreshTreeListView()
+        private IAsyncResult RefreshTreeListViewAsync(Action callbackAfterRefresh = null)
         {
-            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
+            return treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
                 this.Text = m_TestFixture.ToString();
                 treeListView.Roots = m_Nodes;
@@ -188,6 +187,8 @@ namespace RobotEditor
                     treeListView.Items[i].ImageIndex = 0;
                 }
                 treeListView.Refresh();
+
+                callbackAfterRefresh?.Invoke();
             }));
         }
 
@@ -197,10 +198,11 @@ namespace RobotEditor
         {
             var node = new HierarchyNode(script);
             m_TestsNode.AddHierarchyNode(node);
-            RefreshTreeListView();
-
-            treeListView.SelectedObject = node;
-            treeListView.Expand(node);
+            RefreshTreeListViewAsync(() =>
+            {
+                treeListView.SelectedObject = node;
+                treeListView.Expand(node);
+            });
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -210,7 +212,7 @@ namespace RobotEditor
             var node = new HierarchyNode(script);
             m_Nodes.ReplaceNodeWithNewOne(node);
 
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -220,10 +222,11 @@ namespace RobotEditor
             var oldSelectedObject = treeListView.SelectedObject;
 
             m_Nodes.RemoveAtIndexRemoving4(index);
-            RefreshTreeListView();
-
-            if (treeListView.SelectedObject != oldSelectedObject)
-                OnSelectionChanged?.Invoke(m_TestFixture, null);
+            RefreshTreeListViewAsync(() =>
+            {
+                if (treeListView.SelectedObject != oldSelectedObject)
+                    OnSelectionChanged?.Invoke(m_TestFixture, null);
+            });
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -244,34 +247,33 @@ namespace RobotEditor
                 m_HooksNode.Children.MoveBefore(index, m_TestFixture.GetScriptIndex(script));
             }
 
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
         private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
             HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
         }
 
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
         {
             HierarchyUtils.OnCommandRemovedFromScript(m_Nodes, script, parentCommand, commandIndex);
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
         }
 
         private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
         {
             HierarchyUtils.OnCommandModifiedOnScript(m_Nodes, script, oldCommand, newCommand);
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
         }
 
         // Will not work with multi dragging
         private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
         {
             var node = HierarchyUtils.OnCommandInsertedInScript(m_Nodes, script, parentCommand, command, pos);
-            RefreshTreeListView();
-            treeListView.SelectedObject = node;
+            RefreshTreeListViewAsync(() => treeListView.SelectedObject = node);
         }
 
         #endregion
@@ -281,7 +283,7 @@ namespace RobotEditor
         private void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             m_TestFixture.NewScript();
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -308,7 +310,7 @@ namespace RobotEditor
                 //selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(clone, selectedNode.Command);
             }
 
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
             treeListView.Focus();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
@@ -325,7 +327,7 @@ namespace RobotEditor
             else if (selectedNode.Command != null)
                 m_TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
 
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
@@ -342,7 +344,7 @@ namespace RobotEditor
             else
                 SaveFixtureWithDialog(false);
 
-            RefreshTreeListView();
+            RefreshTreeListViewAsync();
         }
 
         public void SaveFixtureWithDialog(bool updateUI = true)
@@ -359,7 +361,7 @@ namespace RobotEditor
             {
                 TestFixtureManager.SaveTestFixture(m_TestFixture, saveDialog.FileName);
                 if (updateUI)
-                    RefreshTreeListView();
+                    RefreshTreeListViewAsync();
             }
         }
         #endregion

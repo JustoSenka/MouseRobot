@@ -35,7 +35,7 @@ namespace RobotRuntime
             }
             catch (Exception)
             {
-                Logger.Log(LogType.Error, "Command type throws exception when cloning. Cloning method must be incorrect: " + this.GetType());
+                Logger.Log(LogType.Error, "Command throws exception when cloning. Cloning method must be incorrect: " + this.GetType());
             }
             return newInstance;
         }

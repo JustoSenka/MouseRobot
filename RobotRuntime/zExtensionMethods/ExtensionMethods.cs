@@ -61,7 +61,7 @@ namespace RobotRuntime
 
         public static IEnumerable<K> CastAndRemoveNullsTree<K>(this TreeNode<Command> tree) where K : class
         {
-            foreach (var node in tree)
+            foreach (var node in tree.GetAllNodes())
             {
                 var casted = node.value as K;
                 if (casted != null)

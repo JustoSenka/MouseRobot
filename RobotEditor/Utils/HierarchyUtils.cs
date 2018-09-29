@@ -98,7 +98,7 @@ namespace RobotEditor.Utils
                 parentHierarchyNode.Children.Add(nodeToAdd);
             else
                 parentHierarchyNode.Children.Insert(pos, nodeToAdd);
-
+            // TODOOOOOOO: Assert that commandNOde and nodeToAdd is equal
             var commandNode = script.Commands.GetNodeFromValue(command);
             foreach (var childNode in commandNode)
                 AddCommandToParentRecursive(script, childNode.value, nodeToAdd);

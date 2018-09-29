@@ -11,7 +11,7 @@ namespace RobotRuntime
         {
             if (map.Contains(objectWithGuid.Guid))
             {
-               // TODO: Logger.Log(LogType.Warning, "Object '" + objectWithGuid.ToString() + "' has duplicate guid. Regenerating.");
+                Logger.Log(LogType.Warning, "Object '" + objectWithGuid.ToString() + "' has duplicate guid. Regenerating.");
                 objectWithGuid.RegenerateGuid();
             }
 

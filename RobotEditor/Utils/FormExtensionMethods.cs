@@ -6,18 +6,34 @@ namespace RobotEditor
 {
     public static class FormExtensionMethods
     {
-        public static void BeginInvokeIfCreated<T>(this T control, MethodInvoker MethodInvoker) where T : Control
+        public static IAsyncResult BeginInvokeIfCreated<T>(this T control, MethodInvoker MethodInvoker) where T : Control
+        {
+            if (!control.IsCreatedAndFuctional())
+                return default(IAsyncResult);
+
+            try
+            {
+                return control.BeginInvoke(MethodInvoker);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogType.Error, "Exception in BeginInvoke for control: " + e.Message);
+            }
+            return default(IAsyncResult);
+        }
+
+        public static void InvokeIfCreated<T>(this T control, MethodInvoker MethodInvoker) where T : Control
         {
             if (!control.IsCreatedAndFuctional())
                 return;
 
             try
             {
-                control.BeginInvoke(MethodInvoker);
+                control.Invoke(MethodInvoker);
             }
             catch (Exception e)
             {
-                Logger.Log(LogType.Error, "Exception in BeginInvoke for control: " + e.Message);
+                Logger.Log(LogType.Error, "Exception in Invoke for control: " + e.Message);
             }
         }
 
