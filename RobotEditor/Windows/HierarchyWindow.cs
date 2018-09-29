@@ -212,8 +212,10 @@ namespace RobotEditor
 
         private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
         {
-            HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
-            RefreshTreeListViewAsync();
+            var addedNode = HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
+            var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => treeListView.Expand(addedNode.Parent) : default(Action);
+
+            RefreshTreeListViewAsync(postRefreshAction);
         }
 
         private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)

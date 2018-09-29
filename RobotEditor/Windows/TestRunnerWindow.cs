@@ -1,21 +1,21 @@
 ﻿#define ENABLE_UI_TESTING
 
-using System;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
-using RobotRuntime;
 using BrightIdeasSoftware;
+using Robot.Abstractions;
+using Robot.Tests;
+using RobotEditor.Hierarchy;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Scripts;
+using RobotRuntime.Tests;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Robot.Abstractions;
-using RobotEditor.Hierarchy;
-using RobotRuntime.Tests;
-using RobotRuntime.Abstractions;
-using System.Text;
-using Robot.Tests;
-using System.Linq;
-using RobotRuntime.Scripts;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
@@ -24,8 +24,6 @@ namespace RobotEditor
         private List<TestNode> m_Nodes = new List<TestNode>();
 
         private TestNode m_HighlightedNode;
-
-        bool m_FirstTimeUpdatingStatus = true;
 
         private IMouseRobot MouseRobot;
         private ITestRunnerManager TestRunnerManager;
@@ -45,7 +43,7 @@ namespace RobotEditor
             TestRunnerManager.TestFixtureRemoved += OnTestFixtureRemoved;
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;
 
-            TestRunnerManager.TestStatusUpdated += UpdateTestStatusIcons;
+            TestRunnerManager.TestStatusUpdated += UpdateTestStatusIconsAsync;
 
             TestRunner.TestRunEnd += OnTestRunEnd;
             TestRunner.FixtureIsBeingRun += OnFixtureIsBeingRun;
@@ -53,9 +51,10 @@ namespace RobotEditor
 
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
 
-            CreateColumns();
+            treeListView.HandleCreated += (sender, args) => UpdateHierarchyAsync();
 
-            UpdateHierarchy();
+            CreateColumns();
+            UpdateHierarchyAsync();
         }
 
         private void CreateColumns()
@@ -109,31 +108,27 @@ namespace RobotEditor
                 e.SubItem.BackColor = SystemColors.Highlight;
         }
 
-        private void UpdateHierarchy()
+        private void UpdateHierarchyAsync()
         {
-            m_Nodes.Clear();
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                m_Nodes.Clear();
 
-            foreach (var f in TestRunnerManager.TestFixtures)
-                m_Nodes.Add(new TestNode(f));
+                foreach (var f in TestRunnerManager.TestFixtures)
+                    m_Nodes.Add(new TestNode(f));
 
-            RefreshTreeListView();
+                RefreshTreeListView();
+                treeListView.ExpandAll();
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+                ASSERT_TreeViewIsTheSameAsInScriptManager();
+            }));
         }
 
         private void RefreshTreeListView(bool performExpandAll = false)
         {
-            // If no test fixtures exist, reset m_FirstTimeUpdatingStatus. 
-            // If project is changed, it will think it's first time loading and will expand everything
-            if (treeListView.Roots == null || treeListView.Roots.Count() == 0)
-            {
-                performExpandAll = true;
-                m_FirstTimeUpdatingStatus = true;
-            }
-
             treeListView.Roots = m_Nodes;
 
-            if (treeListView.Created)
+            if (treeListView.IsCreatedAndFuctional())
             {
                 treeListView.Refresh();
                 if (performExpandAll)
@@ -180,6 +175,8 @@ namespace RobotEditor
             var fixtureNode = new TestNode(fixture);
             m_Nodes.Insert(position, fixtureNode);
             RefreshTreeListView();
+            treeListView.Expand(fixtureNode.Parent);
+
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
@@ -209,16 +206,14 @@ namespace RobotEditor
         private void OnTestRunEnd()
         {
             m_HighlightedNode = null;
-            UpdateTestStatusIcons();
+            UpdateTestStatusIconsAsync();
         }
 
-        private void UpdateTestStatusIcons()
+        private void UpdateTestStatusIconsAsync()
         {
             this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
-                // m_FirstTimeUpdatingStatus is a hack to expand all items after TestFixture in TestRunnerManager have been completely build for the first time
-                RefreshTreeListView(m_FirstTimeUpdatingStatus);
-                m_FirstTimeUpdatingStatus = false;
+                RefreshTreeListView();
             }));
         }
 
@@ -230,7 +225,7 @@ namespace RobotEditor
                 m_HighlightedNode = fixtureNode;
                 this.BeginInvokeIfCreated(new MethodInvoker(delegate
                 {
-                    RefreshTreeListView(m_FirstTimeUpdatingStatus);
+                    RefreshTreeListView();
                 }));
             }
         }
@@ -246,7 +241,7 @@ namespace RobotEditor
                     m_HighlightedNode = scriptNode;
                     this.BeginInvokeIfCreated(new MethodInvoker(delegate
                     {
-                        RefreshTreeListView(m_FirstTimeUpdatingStatus);
+                        RefreshTreeListView();
                     }));
                 }
             }
