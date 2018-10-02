@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Robot.Scripts
 {
-    public abstract class BaseScriptManager : IEnumerable<Script>
+    public abstract class BaseScriptManager : IEnumerable<Script>, IHaveGuidMap
     {
         protected readonly IList<Script> m_LoadedScripts;
         public IList<Script> LoadedScripts { get { return m_LoadedScripts; } }
@@ -255,6 +255,11 @@ namespace Robot.Scripts
         public int GetScriptIndex(Script script)
         {
             return LoadedScripts.IndexOf(script);
+        }
+
+        public bool HasRegisteredGuid(Guid guid)
+        {
+            return ScriptGuidMap.Contains(guid);
         }
 
         public IEnumerator<Script> GetEnumerator()

@@ -7,6 +7,11 @@ namespace RobotRuntime
 {
     public static class IHaveGuidExtension
     {
+        /// <summary>
+        /// Adds guid to map. If map already contains guid, regenerate and print warning.
+        /// Do not use this method if it is expeced for map to have duplicate guid.
+        /// Regenerate is only supposed to happen on exceptions so it doesn't crash.
+        /// </summary>
         public static void AddGuidToMapAndGenerateUniqueIfNeeded(this HashSet<Guid> map, IHaveGuid objectWithGuid)
         {
             if (map.Contains(objectWithGuid.Guid))
@@ -18,6 +23,9 @@ namespace RobotRuntime
             map.Add(objectWithGuid.Guid);
         }
 
+        /// <summary>
+        /// Safely removes guid from map. If guid does not exist, does nothing.
+        /// </summary>
         public static void RemoveGuidFromMap(this HashSet<Guid> map, IHaveGuid objectWithGuid)
         {
             if (map.Contains(objectWithGuid.Guid))

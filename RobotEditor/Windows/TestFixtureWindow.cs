@@ -303,13 +303,12 @@ namespace RobotEditor
             else if (selectedNode.Command != null)
             {
                 var script = selectedNode.TopLevelScriptNode.Script;
+
                 var node = script.Commands.GetNodeFromValue(selectedNode.Command);
-                var clone = (TreeNode<Command>)node.Clone();
-                clone.CastAndRemoveNullsTree<IHaveGuid>().RegenerateGuids();
+                var clone = script.CloneCommandStub(selectedNode.Command);
 
                 script.AddCommandNode(clone, node.parent.value);
                 script.MoveCommandAfter(clone.value, selectedNode.Command);
-                //selectedNode.TopLevelScriptNode.Script.InsertCommandAfter(clone, selectedNode.Command);
             }
 
             RefreshTreeListViewAsync();

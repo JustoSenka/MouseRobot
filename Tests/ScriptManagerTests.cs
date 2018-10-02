@@ -3,6 +3,10 @@ using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Scripts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Unity;
 
 namespace Tests
@@ -140,6 +144,79 @@ namespace Tests
             Assert.AreEqual(2, s1.Commands.Count());
             Assert.AreEqual(c1, s1.Commands.GetChild(1).value);
             Assert.AreEqual(c11, s1.Commands.GetChild(0).value);
+        }
+
+        [TestMethod]
+        public void Scripts_HaveCorrectGuids_AfterMovingCommandToOtherScript()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = NewTestScript(out Command c2, out Command c22);
+
+            ScriptManager.MoveCommandBefore(c2, c1, 2, 1);
+
+            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+        }
+
+        [TestMethod]
+        public void Scrips_HaveCorrectGuids_AfterDuplicatingCommand()
+        {
+            var s = NewTestScript(out Command c1, out Command c11);
+
+            var clone = s.CloneCommandStub(c1);
+            s.AddCommandNode(clone);
+
+            CheckIfScriptsHasAllCorrectGuids(s);
+        }
+
+        [TestMethod]
+        public void Scripts_HaveCorrectGuids_AfterDuplicatingCommand_AndMovingBackAndForthBetweenScripts()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = NewTestScript(out Command c2, out Command c22);
+
+            var clone = s1.CloneCommandStub(c1);
+            var command = s1.AddCommandNode(clone);
+
+            ScriptManager.MoveCommandBefore(command, c2, 1, 2);
+            ScriptManager.MoveCommandBefore(command, c1, 2, 1);
+
+            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+        }
+
+        [TestMethod]
+        public void Scripts_HaveCorrectGuids_AfterDuplicatingScript()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = ScriptManager.NewScript(s1);
+
+            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+        }
+
+        [TestMethod]
+        public void Scripts_HaveCorrectGuids_AfterDuplicatingScript_AndMovingCommandsToIt()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = ScriptManager.NewScript(s1);
+
+            var node = s1.Commands.GetNodeFromValue(c1);
+            s2.AddCommandNode(node);
+
+            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+        }
+
+        private void CheckIfScriptsHasAllCorrectGuids(params Script[] scripts)
+        {
+            var hashmapField = typeof(Script).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            foreach (var s in scripts)
+            {
+                var commands = s.Commands.GetAllNodes(false).Select(node => node.value);
+                var hashmap = (HashSet<Guid>)hashmapField.GetValue(s);
+
+                Assert.AreEqual(commands.Count(), hashmap.Count, $"Hashmap guid count missmatched with command count: {s.Name}");
+                foreach (var c in commands)
+                    Assert.IsTrue(s.HasRegisteredGuid(c.Guid), $"Command {c.Name} is not registered in script {s.Name}");
+            }
         }
 
         [TestInitialize]
