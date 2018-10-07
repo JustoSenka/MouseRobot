@@ -11,7 +11,11 @@ namespace Robot
 {
     public class ProjectManager : IProjectManager
     {
+        public string ProjectName => Path.GetFileName(Environment.CurrentDirectory);
+
         public IList<string> LastKnownProjectPaths { get; private set; }
+
+        public event Action<string> NewProjectOpened;
 
         private ObjectIO m_Serializer;
 
@@ -59,6 +63,8 @@ namespace Robot
 
             AssetGuidManager.LoadMetaFiles();
             AssetManager.Refresh();
+
+            NewProjectOpened?.Invoke(path);
         }
 
         public bool IsPathAProject(string path)

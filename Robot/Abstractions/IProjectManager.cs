@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Robot
 {
     public interface IProjectManager
     {
+        string ProjectName { get; }
         IList<string> LastKnownProjectPaths { get; }
 
         void RestoreAndRemovePathsOfDeletedProjects();
@@ -14,5 +16,7 @@ namespace Robot
         void RestoreSettings();
         void SaveSettings();
         void RememberPathInSettings(string path);
+
+        event Action<string> NewProjectOpened;
     }
 }

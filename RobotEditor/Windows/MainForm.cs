@@ -20,6 +20,7 @@ using RobotRuntime.Tests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
+using Robot;
 
 namespace RobotEditor
 {
@@ -53,6 +54,7 @@ namespace RobotEditor
         private IStatusManager StatusManager;
         private ITestFixtureManager TestFixtureManager;
         private ITestRunner TestRunner;
+        private IProjectManager ProjectManager;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
@@ -60,7 +62,7 @@ namespace RobotEditor
             IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
-            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner)
+            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager)
         {
             this.Container = Container;
 
@@ -75,6 +77,7 @@ namespace RobotEditor
             this.StatusManager = StatusManager;
             this.TestFixtureManager = TestFixtureManager;
             this.TestRunner = TestRunner;
+            this.ProjectManager = ProjectManager;
 
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
@@ -122,9 +125,17 @@ namespace RobotEditor
             TestFixtureManager.FixtureAdded += OnFixtureAdded;
             TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
 
-            this.Activated += (x, y) => AssetManager.Refresh();
+            this.Activated += OnFormActivated;
 
             ((Form)ScreenPaintForm).Show();
+        }
+
+        private void OnFormActivated(object sender, EventArgs e)
+        {
+            AssetManager.Refresh();
+
+            this.BeginInvokeIfCreated(new MethodInvoker(() => 
+                this.Text = Paths.AppName + " - " + ProjectManager.ProjectName));
         }
 
         private void OnFixtureAdded(TestFixture fixture)
