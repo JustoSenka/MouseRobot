@@ -214,6 +214,28 @@ namespace Tests
             TestBase.CheckThatPtrsAreNotSame(s1, s2);
         }
 
+        [TestMethod]
+        public void ScriptManager_GetScriptFromCommand_FindsCorrectScript()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = NewTestScript(out Command c2, out Command c22);
+
+            var script = ScriptManager.GetScriptFromCommand(c22);
+
+            Assert.AreEqual(s2, script, "Scripts missmatched");
+        }
+
+        [TestMethod]
+        public void ScriptManager_GetScriptFromCommandGuid_FindsCorrectScript()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = NewTestScript(out Command c2, out Command c22);
+
+            var script = ScriptManager.GetScriptFromCommandGuid(c22.Guid);
+
+            Assert.AreEqual(s2, script, "Scripts missmatched");
+        }
+
         private void CheckIfScriptsHasAllCorrectGuids(params Script[] scripts)
         {
             var hashmapField = typeof(Script).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);

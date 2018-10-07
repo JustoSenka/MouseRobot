@@ -1,5 +1,6 @@
 ﻿using RobotRuntime;
 using RobotRuntime.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +112,17 @@ namespace RobotEditor.Hierarchy
         public HierarchyNode GetNodeFromValue(Command command)
         {
             return GetAllNodes().FirstOrDefault(n => n.Value.Equals(command));
+        }
+
+        public HierarchyNode GetNode(Guid guid)
+        {
+            return GetAllNodes(true).FirstOrDefault(n =>
+            {
+                if (n.Value is IHaveGuid guidObj)
+                    return guidObj.Guid == guid;
+
+                return false;
+            });
         }
 
         /// <summary>

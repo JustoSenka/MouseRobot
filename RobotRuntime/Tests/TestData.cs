@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Execution;
+using System;
 
 namespace RobotRuntime.Tests
 {
@@ -7,7 +8,7 @@ namespace RobotRuntime.Tests
     {
         public IRunnerFactory RunnerFactory;
         public LightScript TestFixture;
-        public CommandRunningCallback CommandRunningCallback;
+        public event CommandRunningCallback CommandRunningCallback;
         public bool ShouldCancelRun;
         public bool ShouldFailTest;
 
@@ -21,6 +22,11 @@ namespace RobotRuntime.Tests
             this.CommandRunningCallback = Callback;
             this.ShouldCancelRun = ShouldCancelRun;
             this.ShouldFailTest = ShouldFailTest;
+        }
+
+        public void InvokeCallback(Guid guid)
+        {
+            CommandRunningCallback?.Invoke(guid);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Robot.Abstractions
 
         IEnumerator<Script> GetEnumerator();
         Script GetScriptFromCommand(Command command);
+        Script GetScriptFromCommandGuid(Guid guid);
         Script LoadScript(string path);
         void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1);
         void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1);

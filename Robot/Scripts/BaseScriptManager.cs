@@ -242,7 +242,12 @@ namespace Robot.Scripts
 
         public Script GetScriptFromCommand(Command command)
         {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes().Select(n => n.value).Contains(command));
+            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
+        }
+
+        public Script GetScriptFromCommandGuid(Guid guid)
+        {
+            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
         }
 
         public int GetCommandIndex(Command command)

@@ -271,6 +271,11 @@ namespace RobotRuntime.Scripts
             return CommandGuidMap.Contains(guid);
         }
 
+        public TreeNode<Command> GetCommandNode(Guid guid)
+        {
+            return Commands.GetAllNodes(false).FirstOrDefault(c => c.value.Guid == guid);
+        }
+
         public int GetIndex(Command command)
         {
             var node = Commands.GetNodeFromValue(command);

@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Tests;
+using System;
 
 namespace RobotRuntime.Execution
 {
@@ -9,5 +10,5 @@ namespace RobotRuntime.Execution
         void Run(IRunnable runnable);
     }
 
-    public delegate void CommandRunningCallback(Command command);
+    public delegate void CommandRunningCallback(Guid commandGuid);
 }

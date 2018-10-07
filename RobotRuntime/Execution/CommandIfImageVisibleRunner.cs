@@ -45,7 +45,7 @@ namespace RobotRuntime.Execution
                 return;
             }
 
-            TestData.CommandRunningCallback?.Invoke(commandNode.value);
+            TestData.InvokeCallback(commandNode.value.Guid);
             var points = FeatureDetectionThread.FindImageSync(image, command.Timeout);
 
             // Image was not found

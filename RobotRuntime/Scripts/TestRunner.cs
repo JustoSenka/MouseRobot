@@ -14,7 +14,7 @@ namespace RobotRuntime
 {
     public class TestRunner : ITestRunner
     {
-        public TestData TestData { get; } = new TestData()
+        public TestData TestData { get; private set; } = new TestData()
         {
             ShouldCancelRun = false
         };

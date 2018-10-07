@@ -448,23 +448,19 @@ namespace RobotEditor
 
         #region ScriptRunner Callbacks
 
-        // TODO: Not tested if works.
         // TODO: Also mark parent commands/scripts/tests
-        private void OnCommandRunning(Command command)
+        private void OnCommandRunning(Guid guid)
         {
-            var script = m_TestFixture.GetScriptFromCommand(command);
+            var script = m_TestFixture.GetScriptFromCommandGuid(guid);
             if (script == null)
                 return;
 
-            var scriptNode = m_Nodes.FindRecursively(script);
-            if (scriptNode == null)
+            var commandNode = m_Nodes.Select(node => node.GetNode(guid)).FirstOrDefault(node => node != null);
+            if (commandNode == null)
                 return;
 
-            var commandNode = scriptNode.GetNodeFromValue(command);
             m_HighlightedNode = commandNode;
-
-            if (treeListView.Created)
-                treeListView.Invoke(new Action(() => treeListView.Refresh()));
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
         private void OnScriptsFinishedRunning()

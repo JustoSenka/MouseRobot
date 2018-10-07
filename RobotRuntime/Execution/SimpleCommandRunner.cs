@@ -22,7 +22,7 @@ namespace RobotRuntime.Execution
 
             var command = runnable as Command;
 
-            TestData.CommandRunningCallback?.Invoke(command);
+            TestData.InvokeCallback(command.Guid);
             command.Run(TestData);
         }
     }

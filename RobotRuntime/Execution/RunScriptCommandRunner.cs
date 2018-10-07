@@ -24,7 +24,7 @@ namespace RobotRuntime.Execution
 
             if (runnable is CommandRunScript command)
             {
-                TestData.CommandRunningCallback?.Invoke(command);
+                TestData.InvokeCallback(command.Guid);
                 var runner = TestData.RunnerFactory.GetFor(typeof(LightScript));
 
                 var oldScript = TestData.TestFixture;

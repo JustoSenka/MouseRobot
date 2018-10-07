@@ -60,7 +60,7 @@ namespace RobotRuntime.Execution
 
             foreach (var p in points)
             {
-                TestData.CommandRunningCallback?.Invoke(node.value);
+                TestData.InvokeCallback(node.value.Guid);
                 node.value.Run(TestData);
 
                 foreach (var childNode in node)

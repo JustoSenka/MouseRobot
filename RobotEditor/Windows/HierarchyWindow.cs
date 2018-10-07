@@ -421,9 +421,9 @@ namespace RobotEditor
 
         #region ScriptRunner Callbacks
 
-        private void OnCommandRunning(Command command)
+        private void OnCommandRunning(Guid guid)
         {
-            var script = ScriptManager.GetScriptFromCommand(command);
+            var script = ScriptManager.GetScriptFromCommandGuid(guid);
             if (script == null)
                 return;
 
@@ -431,9 +431,9 @@ namespace RobotEditor
             if (scriptNode == null)
                 return;
 
-            var commandNode = scriptNode.GetNodeFromValue(command);
-            m_HighlightedNode = commandNode;
+            var commandNode = scriptNode.GetNode(guid);
 
+            m_HighlightedNode = commandNode;
             treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
