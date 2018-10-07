@@ -359,6 +359,16 @@ namespace Tests
             Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
         }
 
+        [TestMethod]
+        public void Guids_AfterCloningScript_AreSame()
+        {
+            var s1 = new Script();
+            var s2 = (Script) s1.Clone();
+
+            TestBase.CheckThatGuidsAreSame(s1, s2);
+            TestBase.CheckThatPtrsAreNotSame(s1, s2);
+        }
+
         [TestInitialize]
         public void Initialize()
         {

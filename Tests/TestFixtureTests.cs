@@ -225,6 +225,20 @@ namespace Tests
             Assert.IsFalse(fixture2.Similar(fixture1), "Fixture2.Equals returned true for for different fixtures");
         }
 
+        [TestMethod]
+        public void TestFixture_FromLightTestFixture_KeepsSameCommandAndScriptGuids()
+        {
+            var cachedLightTestFixture = LightTestFixture;
+
+            var fixture1 = TestFixtureManager.NewTestFixture(cachedLightTestFixture);
+            var fixture2 = TestFixtureManager.NewTestFixture(cachedLightTestFixture);
+
+            Assert.AreEqual(fixture1.Guid, fixture2.Guid, "Fixtures should have same guids");
+
+            TestBase.CheckThatGuidsAreSame(fixture1.Setup, fixture2.Setup);
+            TestBase.CheckThatPtrsAreSame(fixture1.Setup, fixture2.Setup);
+        }
+
         private void CheckIfLightTestFixturesAreEqual(LightTestFixture a, LightTestFixture b)
         {
             Assert.AreEqual(a.Name, b.Name, "Names missmatched");

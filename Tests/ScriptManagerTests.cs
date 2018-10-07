@@ -204,6 +204,16 @@ namespace Tests
             CheckIfScriptsHasAllCorrectGuids(s1, s2);
         }
 
+        [TestMethod]
+        public void ScriptManager_CloneNewScript_RegeneratesCommandAndScriptGuids()
+        {
+            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s2 = ScriptManager.NewScript(s1);
+
+            TestBase.CheckThatGuidsAreNotSame(s1, s2);
+            TestBase.CheckThatPtrsAreNotSame(s1, s2);
+        }
+
         private void CheckIfScriptsHasAllCorrectGuids(params Script[] scripts)
         {
             var hashmapField = typeof(Script).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);
