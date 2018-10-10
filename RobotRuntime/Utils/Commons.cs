@@ -16,6 +16,12 @@ namespace RobotRuntime
 
         public const string Test = "mrt";
         public const string TestD = ".mrt";
+
+        public const string Dll = "dll";
+        public const string DllD = ".dll";
+
+        public const string Exe = "exe";
+        public const string ExeD = ".exe";
     }
 
     public static class RegexExpression

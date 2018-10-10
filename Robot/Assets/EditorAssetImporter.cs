@@ -8,17 +8,20 @@ namespace Robot
 
         public static new AssetImporter FromPath(string path)
         {
-            if (path.EndsWith(FileExtensions.Image))
+            if (path.EndsWith(FileExtensions.ImageD))
                 return new ImageImporter(path);
 
-            else if (path.EndsWith(FileExtensions.Script))
+            else if (path.EndsWith(FileExtensions.ScriptD))
                 return new ScriptImporter(path);
 
-            else if (path.EndsWith(FileExtensions.Plugin))
+            else if (path.EndsWith(FileExtensions.PluginD))
                 return new PluginImporter(path);
 
-            else if (path.EndsWith(FileExtensions.Test))
+            else if (path.EndsWith(FileExtensions.TestD))
                 return new LightTestFixtureImporter(path);
+
+            else if (path.EndsWith(FileExtensions.DllD) || path.EndsWith(FileExtensions.ExeD))
+                return new ExtensionImporter(path);
 
             else
                 return null;

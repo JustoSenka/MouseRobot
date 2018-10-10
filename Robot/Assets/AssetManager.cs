@@ -217,7 +217,14 @@ namespace Robot
         public Asset GetAsset(string folder, string name)
         {
             var path = folder + "\\" + name + "." + Paths.GetExtensionFromFolder(folder);
-            return GetAsset(path);
+
+            // TODO: This is VERY BAD. Need to remove this method. It does not allow same names with different extenstions
+            // to live. Maybe after Free Asset Structure is introduces.
+            // Really bad hack so executables are shown in asset db.
+            var asset = GetAsset(path);
+            asset = asset ?? GetAsset(path.Replace(".dll", ".exe"));
+
+            return asset;
         }
 
         public void BeginAssetEditing()

@@ -131,22 +131,22 @@ namespace RobotRuntime
 
         public static TreeNode FindChildRegex(this TreeView treeView, string regex)
         {
-            return treeView.Nodes.Cast<TreeNode>().Where(r => Regex.IsMatch(r.Text, regex)).FirstOrDefault();
+            return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => Regex.IsMatch(r.Text, regex));
         }
 
         public static TreeNode FindChildRegex(this TreeNode treeView, string regex)
         {
-            return treeView.Nodes.Cast<TreeNode>().Where(r => Regex.IsMatch(r.Text, regex)).FirstOrDefault();
+            return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => Regex.IsMatch(r.Text, regex));
         }
 
         public static TreeNode FindChild(this TreeView treeView, string name)
         {
-            return treeView.Nodes.Cast<TreeNode>().Where(r => r.Text == name).FirstOrDefault();
+            return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => r.Text == name);
         }
 
         public static TreeNode FindChild(this TreeNode treeView, string name)
         {
-            return treeView.Nodes.Cast<TreeNode>().Where(r => r.Text == name).FirstOrDefault();
+            return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => r.Text == name);
         }
 
         public static TreeNode FindNode(this TreeView treeView, string path)

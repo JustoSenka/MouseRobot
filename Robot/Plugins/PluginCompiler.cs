@@ -66,7 +66,6 @@ namespace Robot.Plugins
 
             m_IsCompiling = true;
 
-            //new Thread(new ThreadStart(() => CompileCodeSync(sources))).Start();
             new Thread(() => CompileCodeSync(sources)).Start();
         }  
 

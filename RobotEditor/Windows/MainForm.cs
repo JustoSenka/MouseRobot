@@ -219,7 +219,11 @@ namespace RobotEditor
 
         private void OnAssetSelected()
         {
-            m_ScreenPreviewWindow.Preview(m_AssetsWindow.GetSelectedAsset());
+            var asset = m_AssetsWindow.GetSelectedAsset();
+            if (asset == null)
+                return;
+
+            m_ScreenPreviewWindow.Preview(asset);
             if (MouseRobot.IsVisualizationOn)
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
         }

@@ -12,12 +12,14 @@ namespace RobotRuntime.Utils
         public static string PluginFolder { get { return "Plugins"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
         public static string TestsFolder { get { return "Tests"; } }
+        public static string ExtensionFolder { get { return "Extensions"; } }
 
         public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
         public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
         public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
+        public static string ExtensionPath { get { return Path.Combine(Environment.CurrentDirectory, ExtensionFolder); } }
 
         public static string AppName { get { return "MouseRobot"; } }
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
@@ -25,7 +27,7 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath, TestsFolder }; }
+            get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath, TestsFolder, ExtensionFolder }; }
         }
 
         public static string GetName(string path)
@@ -40,10 +42,13 @@ namespace RobotRuntime.Utils
             return Path.GetFileNameWithoutExtension(path);
         }
 
-        public static IEnumerable<string> GetAllFilePaths()
+        public static IEnumerable<string> GetAllFilePaths(bool ignoreMetada = true)
         {
             foreach (var path in ProjectPathArray)
             {
+                if (ignoreMetada && path == MetadataPath)
+                    continue;
+
                 foreach (string filePath in Directory.GetFiles(path))
                 {
                     var folder = GetFolderFromExtension(filePath);
@@ -88,6 +93,8 @@ namespace RobotRuntime.Utils
                 return FileExtensions.Plugin;
             else if (folder == TestsFolder)
                 return FileExtensions.Test;
+            else if (folder == ExtensionFolder)
+                return FileExtensions.Dll;
             else
                 return "";
         }
@@ -102,6 +109,8 @@ namespace RobotRuntime.Utils
                 return PluginFolder;
             else if (path.EndsWith(FileExtensions.Test))
                 return TestsFolder;
+            else if (path.EndsWith(FileExtensions.Dll) || path.EndsWith(FileExtensions.Exe))
+                return ExtensionFolder;
             else
                 return "";
         }

@@ -2,6 +2,7 @@
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
@@ -20,12 +21,15 @@ namespace RobotEditor
         private IScriptManager ScriptManager;
         private ITestFixtureManager TestFixtureManager;
         private IPluginManager PluginManager;
-        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager, IPluginManager PluginManager)
+        private ILogger Logger;
+        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager,
+            IPluginManager PluginManager, ILogger Logger)
         {
             this.AssetManager = AssetManager;
             this.ScriptManager = ScriptManager;
             this.TestFixtureManager = TestFixtureManager;
             this.PluginManager = PluginManager;
+            this.Logger = Logger;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -43,7 +47,14 @@ namespace RobotEditor
 
         public Asset GetSelectedAsset()
         {
-            return AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+
+            if (asset == null)
+                Logger.Logi(LogType.Error,
+                    "AssetWindow has asset selected, but the AssetManager has no such asset registered. Something went wrong, please report a bug.",
+                    $"Asset folder: '{treeView.SelectedNode.Parent.Text}' Asset Name: '{treeView.SelectedNode.Text}'");
+
+            return asset;
         }
 
         private void OnAfterRenameNode(NodeLabelEditEventArgs e)
@@ -55,15 +66,26 @@ namespace RobotEditor
 
         private void OnAssetDeleted(string path)
         {
-            treeView.FindNode(path).Remove();
+            treeView.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                var node = treeView.FindNode(path);
+                if (Logger.AssertIf(node == null,
+                    @"Asset was deleted from database, but it was never added to AssetWindow TreeView. Please report a bug if this is a constant thing."))
+                    return;
+
+                treeView.FindNode(path).Remove();
+            }));
         }
 
         private void OnAssetCreated(string path)
         {
-            var folderNode = treeView.FindChild(Paths.GetFolder(path));
-            var node = new TreeNode(Paths.GetName(path));
-            folderNode.Nodes.Add(node);
-            UpdateIcons();
+            treeView.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                var folderNode = treeView.FindChild(Paths.GetFolder(path));
+                var node = new TreeNode(Paths.GetName(path));
+                folderNode.Nodes.Add(node);
+                UpdateIcons();
+            }));
         }
 
         private void OnRefreshFinished(object sender, EventArgs args)
@@ -81,11 +103,13 @@ namespace RobotEditor
                 var imageNode = new TreeNode(Paths.ImageFolder);
                 var pluginNode = new TreeNode(Paths.PluginFolder);
                 var testsNode = new TreeNode(Paths.TestsFolder);
+                var dllNode = new TreeNode(Paths.ExtensionFolder);
 
                 treeView.Nodes.Add(scriptNode);
                 treeView.Nodes.Add(imageNode);
                 treeView.Nodes.Add(pluginNode);
                 treeView.Nodes.Add(testsNode);
+                treeView.Nodes.Add(dllNode);
 
                 foreach (var asset in AssetManager.Assets)
                 {
@@ -95,20 +119,23 @@ namespace RobotEditor
                         SelectedImageIndex = 0
                     };
 
-                    if (asset.Path.EndsWith(FileExtensions.Image))
+                    if (asset.Path.EndsWith(FileExtensions.ImageD))
                         imageNode.Nodes.Add(assetNode);
 
-                    else if (asset.Path.EndsWith(FileExtensions.Script))
+                    else if (asset.Path.EndsWith(FileExtensions.ScriptD))
                         scriptNode.Nodes.Add(assetNode);
 
-                    else if (asset.Path.EndsWith(FileExtensions.Plugin))
+                    else if (asset.Path.EndsWith(FileExtensions.PluginD))
                         pluginNode.Nodes.Add(assetNode);
 
-                    else if (asset.Path.EndsWith(FileExtensions.Test))
+                    else if (asset.Path.EndsWith(FileExtensions.TestD))
                         testsNode.Nodes.Add(assetNode);
 
+                    else if (asset.Path.EndsWith(FileExtensions.Dll) || asset.Path.EndsWith(FileExtensions.ExeD))
+                        dllNode.Nodes.Add(assetNode);
+
                     else
-                        Logger.Log(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
+                        Logger.Logi(LogType.Error, "Unknown item appeared in asset database:" + asset.Path);
                 }
 
                 treeView.Refresh();
@@ -124,6 +151,7 @@ namespace RobotEditor
             UpdateIconForFolder(Paths.ImageFolder, 2);
             UpdateIconForFolder(Paths.PluginFolder, 3);
             UpdateIconForFolder(Paths.TestsFolder, 3);
+            UpdateIconForFolder(Paths.ExtensionFolder, 3);
         }
 
         private void UpdateIconForFolder(string folder, int iconIndex)
