@@ -16,26 +16,23 @@ namespace Robot.Plugins
     /// </summary>
     public class PluginManager : IPluginManager
     {
-        private bool m_FirstRefresh = true;
-
-        private IList<string> m_ModifiedFilesSinceLastRecompilation = new List<string>();
-
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
         private IPluginCompiler PluginCompiler;
         private IPluginLoader PluginLoader;
         private IAssetManager AssetManager;
-        public PluginManager(IPluginCompiler PluginCompiler, IPluginLoader PluginLoader, IAssetManager AssetManager)
+        private IModifiedAssetCollector ModifiedAssetCollector;
+        public PluginManager(IPluginCompiler PluginCompiler, IPluginLoader PluginLoader, IAssetManager AssetManager,
+            IModifiedAssetCollector ModifiedAssetCollector)
         {
             this.PluginCompiler = PluginCompiler;
             this.PluginLoader = PluginLoader;
             this.AssetManager = AssetManager;
+            this.ModifiedAssetCollector = ModifiedAssetCollector;
 
-            AssetManager.AssetCreated += AddPathToList;
-            AssetManager.AssetUpdated += AddPathToList;
-            AssetManager.AssetDeleted += AddPathToList;
-            AssetManager.RefreshFinished += OnAssetRefreshFinished;
+            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);
+            ModifiedAssetCollector.AssetsModified += OnAssetsModified;
 
             PluginCompiler.ScriptsRecompiled += OnScriptsRecompiled;
 
@@ -47,24 +44,9 @@ namespace Robot.Plugins
             var assemblies = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory();
             PluginCompiler.AddReferencedAssemblies(assemblies.Distinct().ToArray());
         }
-        
-        private void AddPathToList(string assetPath)
+
+        private void OnAssetsModified(IList<string> modifiedAssets)
         {
-            if (assetPath.EndsWith(FileExtensions.PluginD))
-                m_ModifiedFilesSinceLastRecompilation.Add(assetPath);
-
-            // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
-            // but something has already changed from within app. Call refresh callback manually.
-            if (!AssetManager.IsEditingAssets)
-                OnAssetRefreshFinished();
-        }
-
-        private void OnAssetRefreshFinished()
-        {
-            if (m_ModifiedFilesSinceLastRecompilation.Count == 0 && !m_FirstRefresh)
-                return;
-
-            m_FirstRefresh = false;
             CompileScriptsAndReloadUserDomain();
         }
 
@@ -84,10 +66,7 @@ namespace Robot.Plugins
 
         private void OnScriptsRecompiled()
         {
-            PluginLoader.CreateUserAppDomain();
-            //PluginLoader.LoadUserAssemblies();
-
-            m_ModifiedFilesSinceLastRecompilation.Clear();
+            PluginLoader.CreateUserAppDomain(); // This also loads the assemblies
         }
     }
 }

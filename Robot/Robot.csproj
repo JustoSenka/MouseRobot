@@ -123,7 +123,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\ModifiedAssetCollector.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Abstractions\IAssetManager.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Abstractions\IPluginManager.cs" />
     <Compile Include="Plugins\PluginCompiler.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\SolutionManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Recording\CroppingManager.cs" />
     <Compile Include="Abstractions\ICroppingManager.cs" />
