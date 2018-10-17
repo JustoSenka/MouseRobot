@@ -256,6 +256,7 @@
     <Compile Include="zExtensionMethods\CommandExtension.cs" />
     <Compile Include="Utils\Commons.cs" />
     <Compile Include="zCustomDataTypes\CustomStack.cs" />
+    <Compile Include="zExtensionMethods\DictionaryExtension.cs" />
     <Compile Include="zExtensionMethods\ExtensionMethods.cs" />
     <Compile Include="IO\BinaryObjectIO.cs" />
     <Compile Include="IO\ObjectIO.cs" />

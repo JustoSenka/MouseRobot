@@ -65,7 +65,7 @@ namespace RobotRuntime
             else if (path.EndsWith(FileExtensions.Test))
                 return new LightTestFixtureImporter(path);
 
-            else if (path.EndsWith(FileExtensions.Dll))
+            else if (path.EndsWith(FileExtensions.Dll) || path.EndsWith(FileExtensions.Exe))
                 return new ExtensionImporter(path);
 
             else

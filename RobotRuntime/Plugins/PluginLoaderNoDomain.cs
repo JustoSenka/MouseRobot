@@ -18,26 +18,27 @@ namespace RobotRuntime.Plugins
         public event Action UserDomainReloaded;
         public event Action UserDomainReloading;
 
-        private Assembly[] Assemblies;
+        private Dictionary<string, Assembly> m_Assemblies = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
+        private IRuntimeAssetManager RuntimeAssetManager;
         private IProfiler Profiler;
-        public PluginLoaderNoDomain(IProfiler Profiler)
+        public PluginLoaderNoDomain(IRuntimeAssetManager RuntimeAssetManager, IProfiler Profiler)
         {
+            this.RuntimeAssetManager = RuntimeAssetManager;
             this.Profiler = Profiler;
-            // TODO: Runtime
         }
 
         public void DestroyUserAppDomain()
         {
             UserDomainReloading?.Invoke();
-            Assemblies = null;
+            m_Assemblies.Clear();
         }
 
         public void CreateUserAppDomain()
         {
             Profiler.Start("PluginLoader.ReloadAppDomain");
 
-            if (Assemblies != null)
+            if (m_Assemblies.Count != 0)
                 DestroyUserAppDomain();
 
             LoadUserAssemblies();
@@ -48,19 +49,27 @@ namespace RobotRuntime.Plugins
 
         public void LoadUserAssemblies()
         {
-            Assemblies = LoadAssemblies(new[] { UserAssemblyPath }).ToArray();
+            // TODO: Currently it is slow and should be fixed somehow.
+            RuntimeAssetManager.CollectAllImporters();
+
+            var userAssemblies = new[] { UserAssemblyPath };
+            var userExtensions = RuntimeAssetManager.AssetImporters.
+                Where(i => i.HoldsType() == typeof(Assembly)).Select(i => i.Path).ToArray();
+
+            LoadAssemblies(m_Assemblies, userAssemblies);
+            LoadAssemblies(m_Assemblies, userExtensions);
         }
 
         public IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func)
         {
-            if (Assemblies == null)
+            if (m_Assemblies.Count == 0)
                 yield break;
 
-            foreach (var assembly in Assemblies)
-                yield return func(assembly);
+            foreach (var pair in m_Assemblies)
+                yield return func(pair.Value);
         }
 
-        private IEnumerable<Assembly> LoadAssemblies(string[] paths)
+        private static void LoadAssemblies(Dictionary<string, Assembly> dict, string[] paths)
         {
             foreach (var path in paths)
             {
@@ -77,7 +86,7 @@ namespace RobotRuntime.Plugins
                 }
 
                 if (assembly != null)
-                    yield return assembly;
+                    dict.AddOrOverride(path, assembly);
             }
         }
     }
