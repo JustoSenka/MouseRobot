@@ -35,14 +35,6 @@ namespace Robot.Plugins
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
 
             PluginCompiler.ScriptsRecompiled += OnScriptsRecompiled;
-
-            AddReferencesForCompilerParameter();
-        }
-
-        private void AddReferencesForCompilerParameter()
-        {
-            var assemblies = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory();
-            PluginCompiler.AddReferencedAssemblies(assemblies.Distinct().ToArray());
         }
 
         private void OnAssetsModified(IList<string> modifiedAssets)

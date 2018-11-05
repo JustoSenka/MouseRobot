@@ -10,8 +10,6 @@ namespace RobotRuntime.Plugins
 {
     public class PluginLoaderNoDomain : IPluginLoader
     {
-        public AsyncOperation AsyncOperationOnUI { private get; set; }
-
         public string UserAssemblyName { get; set; }
         public string UserAssemblyPath { get; set; }
 

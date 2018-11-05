@@ -29,7 +29,6 @@ namespace Robot
             {
                 m_AsyncOperationOnUI = value;
                 InputCallbacks.AsyncOperationOnUI = value;
-                PluginLoader.AsyncOperationOnUI = value;
             }
         }
         private AsyncOperation m_AsyncOperationOnUI;
@@ -42,11 +41,10 @@ namespace Robot
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
-        private IPluginLoader PluginLoader;
         private IStatusManager StatusManager;
         public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IInputCallbacks InputCallbacks, IPluginLoader PluginLoader, IStatusManager StatusManager)
+            IInputCallbacks InputCallbacks, IStatusManager StatusManager)
         {
             this.ScriptManager = ScriptManager;
             this.TestRunner = TestRunner;
@@ -56,7 +54,6 @@ namespace Robot
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
-            this.PluginLoader = PluginLoader;
             this.StatusManager = StatusManager;
             
             ScriptManager.NewScript();

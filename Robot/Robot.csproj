@@ -135,10 +135,16 @@
     <Compile Include="MouseRobot\ProjectManager.cs" />
     <Compile Include="Abstractions\IPluginCompiler.cs" />
     <Compile Include="Abstractions\IPluginManager.cs" />
+    <Compile Include="Abstractions\ISolutionManager.cs" />
     <Compile Include="Plugins\PluginCompiler.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\SolutionManager.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Recording\CroppingManager.cs" />
     <Compile Include="Abstractions\ICroppingManager.cs" />
     <Compile Include="Abstractions\IRecordingManager.cs" />
@@ -173,7 +179,12 @@
       <Name>RobotRuntime</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

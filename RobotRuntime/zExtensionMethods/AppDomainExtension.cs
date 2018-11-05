@@ -35,7 +35,7 @@ namespace RobotRuntime
         {
             foreach (var path in Directory.GetFiles(appDomain.BaseDirectory))
             {
-                if (path.EndsWith(".dll") || path.EndsWith(".exe"))
+                if (path.EndsWith(FileExtensions.ExeD) || path.EndsWith(FileExtensions.DllD))
                     yield return path;
             }
         }

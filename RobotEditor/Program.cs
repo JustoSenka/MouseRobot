@@ -11,6 +11,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotEditor.Hierarchy;
 using RobotEditor.PropertyUtils;
+using Robot.Abstractions;
 
 namespace RobotEditor
 {
@@ -31,6 +32,7 @@ namespace RobotEditor
             RegisterInterfaces(container);
 
             container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
+            container.Resolve<ISolutionManager>(); // not references by anything
 
             Logger.Instance = container.Resolve<ILogger>();
 

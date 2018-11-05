@@ -9,7 +9,6 @@ namespace Robot.Abstractions
         CSharpCodeProvider CodeProvider { get; }
         CompilerParameters CompilerParams { get; }
 
-        void AddReferencedAssemblies(params string[] paths);
         void CompileCode(params string[] sources);
         void SetOutputPath(string customAssemblyPath);
 

@@ -30,6 +30,7 @@ namespace Robot
             Container.RegisterType<ICommandFactory, CommandFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestFixtureManager, TestFixtureManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestRunnerManager, TestRunnerManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ISolutionManager, SolutionManager>(new ContainerControlledLifetimeManager());
 
             // non singletons
             Container.RegisterType<IModifiedAssetCollector, ModifiedAssetCollector>();

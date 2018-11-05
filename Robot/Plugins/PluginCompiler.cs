@@ -1,21 +1,19 @@
-﻿using Robot.Abstractions;
+﻿using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
+using Robot.Abstractions;
+using Robot.Settings;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Logging;
+using RobotRuntime.Utils;
 using System;
 using System.CodeDom.Compiler;
-using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
-using System.Threading;
-using RobotRuntime.Logging;
 using System.Drawing;
-using RobotRuntime.Utils;
-using System.Collections.Generic;
-using System.Linq;
-using Robot.Settings;
+using System.Threading;
 
 namespace Robot.Plugins
 {
     /// <summary>
-    /// PluginCompiler lives in base robot assemblies. Its purpose is to compile files in project folder into user dlls.
+    /// PluginCompiler lives in base robot domain. Its purpose is to compile files in project folder into user dlls.
     /// Used by PLuginManager
     /// </summary>
     public class PluginCompiler : IPluginCompiler
@@ -25,8 +23,6 @@ namespace Robot.Plugins
 
         public event Action ScriptsRecompiled;
 
-        private readonly HashSet<string> m_DefaultReferencedAssemblies = new HashSet<string>();
-
         private bool m_IsCompiling = false;
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
@@ -34,24 +30,16 @@ namespace Robot.Plugins
         private IProfiler Profiler;
         private IStatusManager StatusManager;
         private ISettingsManager SettingsManager;
-        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager, ISettingsManager SettingsManager)
+        private ILogger Logger;
+        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager, ISettingsManager SettingsManager, ILogger Logger)
         {
             this.Profiler = Profiler;
             this.StatusManager = StatusManager;
             this.SettingsManager = SettingsManager;
+            this.Logger = Logger;
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
-
-            m_DefaultReferencedAssemblies.Add("System.dll");
-            m_DefaultReferencedAssemblies.Add("System.Drawing.dll");
-            m_DefaultReferencedAssemblies.Add("System.Windows.Forms.dll");
-            //m_DefaultReferencedAssemblies.Add("System.Core.dll");
-        }
-
-        public void AddReferencedAssemblies(params string[] paths)
-        {
-            m_DefaultReferencedAssemblies.UnionWith(paths);
         }
 
         public void CompileCode(params string[] sources)
@@ -67,7 +55,7 @@ namespace Robot.Plugins
             m_IsCompiling = true;
 
             new Thread(() => CompileCodeSync(sources)).Start();
-        }  
+        }
 
         private bool CompileCodeSync(string[] sources)
         {
@@ -76,11 +64,16 @@ namespace Robot.Plugins
             Profiler.Start("PluginCompiler_CompileCode");
 
             CompilerParams.ReferencedAssemblies.Clear();
-            CompilerParams.ReferencedAssemblies.AddRange(m_DefaultReferencedAssemblies.ToArray());
+            CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultRobotReferences);
+            CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultCompilerReferences);
 
             var settings = SettingsManager.GetSettings<CompilerSettings>();
+
             if (settings != null && settings.CompilerReferences != null && settings.CompilerReferences.Length > 0)
                 CompilerParams.ReferencedAssemblies.AddRange(settings.CompilerReferences);
+
+            if (settings == null || settings.CompilerReferences == null)
+                Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
 
@@ -99,19 +92,19 @@ namespace Robot.Plugins
             if (results.Errors.HasErrors)
             {
                 foreach (CompilerError error in results.Errors)
-                    Logger.Log(LogType.Error,
+                    Logger.Logi(LogType.Error,
                         string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
                         string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
 
                 ScriptsRecompiled?.Invoke();
-                Logger.Log(LogType.Error, "Scripts have compilation errors.");
+                Logger.Logi(LogType.Error, "Scripts have compilation errors.");
                 StatusManager.Add("PluginCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
                 ScriptsRecompiled?.Invoke();
-                Logger.Log(LogType.Log, "Scripts successfully compiled.");
+                Logger.Logi(LogType.Log, "Scripts successfully compiled.");
                 StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default(Color)));
                 return true;
             }
