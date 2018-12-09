@@ -1,8 +1,10 @@
-﻿using RobotRuntime;
+﻿using Robot.Assets;
+using RobotRuntime;
+using RobotRuntime.Assets;
 
 namespace Robot
 {
-    public abstract partial class EditorAssetImporter : AssetImporter
+    public abstract class EditorAssetImporter : AssetImporter
     {
         public EditorAssetImporter(string path) : base(path) { }
 

@@ -2,34 +2,31 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace RobotRuntime
+namespace RobotRuntime.Assets
 {
-    public abstract partial class AssetImporter
+    public class ImageImporter : AssetImporter
     {
-        protected class ImageImporter : AssetImporter
+        public ImageImporter(string path) : base(path) { }
+
+        protected override object LoadAsset()
         {
-            public ImageImporter(string path) : base(path) { }
-
-            protected override object LoadAsset()
+            Bitmap bmp;
+            // This will load bitmap without keeping a lock on the file
+            using (var bmpTemp = new Bitmap(Path))
             {
-                Bitmap bmp;
-                // This will load bitmap without keeping a lock on the file
-                using (var bmpTemp = new Bitmap(Path))
-                {
-                    bmp = new Bitmap(bmpTemp);
-                }
-                return bmp; 
+                bmp = new Bitmap(bmpTemp);
             }
+            return bmp;
+        }
 
-            public override void SaveAsset()
-            {
-                ((Bitmap)Value).Save(Path, ImageFormat.Png);
-            }
+        public override void SaveAsset()
+        {
+            ((Bitmap)Value).Save(Path, ImageFormat.Png);
+        }
 
-            public override Type HoldsType()
-            {
-                return typeof(Bitmap);
-            }
+        public override Type HoldsType()
+        {
+            return typeof(Bitmap);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using RobotRuntime.Assets;
+using System;
 
 namespace RobotRuntime
 {
-    public abstract partial class AssetImporter
+    public abstract class AssetImporter
     {
         public AssetImporter(string path)
         {

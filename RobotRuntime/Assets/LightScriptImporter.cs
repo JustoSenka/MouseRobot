@@ -1,28 +1,25 @@
 ﻿using RobotRuntime.IO;
 using System;
 
-namespace RobotRuntime
+namespace RobotRuntime.Assets
 {
-    public abstract partial class AssetImporter
+    public class LightScriptImporter : AssetImporter
     {
-        protected class LightScriptImporter : AssetImporter
+        public LightScriptImporter(string path) : base(path) { }
+
+        protected override object LoadAsset()
         {
-            public LightScriptImporter(string path) : base(path) { }
+            return new YamlScriptIO().LoadObject<LightScript>(Path);
+        }
 
-            protected override object LoadAsset()
-            {
-                return new YamlScriptIO().LoadObject<LightScript>(Path);
-            }
+        public override void SaveAsset()
+        {
+            new YamlScriptIO().SaveObject(Path, (LightScript)Value);
+        }
 
-            public override void SaveAsset()
-            {
-                new YamlScriptIO().SaveObject(Path, (LightScript)Value);
-            }
-
-            public override Type HoldsType()
-            {
-                return typeof(LightScript);
-            }
+        public override Type HoldsType()
+        {
+            return typeof(LightScript);
         }
     }
 }
