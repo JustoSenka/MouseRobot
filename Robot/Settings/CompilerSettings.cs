@@ -19,6 +19,9 @@ namespace Robot.Settings
             "System.Core.dll"
         };
 
+        public bool HasValidReferences => CompilerReferences != null && CompilerReferences.Any(r => r.Trim() != "");
+        public string[] NonEmptyCompilerReferences => CompilerReferences?.Where(r => r.Trim() != "").ToArray();
+
         public string[] CompilerReferences { get; set; } = new string[0];
     }
 }

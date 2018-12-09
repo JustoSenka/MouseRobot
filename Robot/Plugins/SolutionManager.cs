@@ -54,22 +54,21 @@ namespace Robot.Plugins
             GenerateNewSolution();
         }
 
-        public void GenerateNewSolution(bool forceGenerate = false)
+        public void GenerateNewSolution()
         {
             var slnPath = CSharpSolutionName + ".sln";
-            var slnExists = File.Exists(slnPath);
 
-            if (slnExists && !forceGenerate)
-                return;
+            var upperProjGuid = m_ProjectGuid.ToUpper();
+            var upperSlnGuid = m_SolutionGuid.ToUpper();
 
             var newSln = string.Format(Resources.SolutionTemplate,
                 CSharpProjectName, // ProjectName
                 CSharpProjectName + ".csproj",  // Project Path
-                m_ProjectGuid, // Project GUID
-                m_SolutionGuid); // Solution GUID
+                upperProjGuid, // Project GUID
+                upperSlnGuid); // Solution GUID
 
-            var currentSln = (slnExists) ? File.ReadAllText(slnPath) : "";
-            if (newSln.Trim() == currentSln.Trim())
+            var currentSln = (File.Exists(slnPath)) ? File.ReadAllText(slnPath) : "";
+            if (newSln.Trim().Equals(currentSln.Trim(), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
             File.WriteAllText(slnPath, newSln);
@@ -94,7 +93,7 @@ namespace Robot.Plugins
                 sourcesString); // Source files
 
             var currentProj = File.Exists(projPath) ? File.ReadAllText(projPath) : "";
-            if (newProj.Trim() == currentProj.Trim())
+            if (newProj.Trim().Equals(currentProj.Trim(), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
             File.WriteAllText(projPath, newProj);
@@ -109,9 +108,12 @@ namespace Robot.Plugins
                 yield return r;
 
             var settings = SettingsManager.GetSettings<CompilerSettings>();
-            if (settings != null && settings.CompilerReferences != null)
-                foreach (var r in settings.CompilerReferences)
-                    yield return r;
+            if (settings != null)
+            {
+                if (settings.HasValidReferences)
+                    foreach (var r in settings.NonEmptyCompilerReferences)
+                        yield return r;
+            }
         }
     }
 }

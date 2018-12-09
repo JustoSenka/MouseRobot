@@ -124,7 +124,7 @@
   &lt;PropertyGroup&gt;
     &lt;Configuration Condition=" '$(Configuration)' == '' "&gt;Debug&lt;/Configuration&gt;
     &lt;Platform Condition=" '$(Platform)' == '' "&gt;AnyCPU&lt;/Platform&gt;
-    &lt;ProjectGuid&gt;{0}&lt;/ProjectGuid&gt;
+    &lt;ProjectGuid&gt;{{{0}}}&lt;/ProjectGuid&gt;
     &lt;OutputType&gt;Library&lt;/OutputType&gt;
     &lt;AppDesignerFolder&gt;Properties&lt;/AppDesignerFolder&gt;
     &lt;RootNamespace&gt;{1}&lt;/RootNamespace&gt;
@@ -183,6 +183,7 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {{{3}}}
 	EndGlobalSection
-EndGlobal</value>
+EndGlobal
+</value>
   </data>
 </root>

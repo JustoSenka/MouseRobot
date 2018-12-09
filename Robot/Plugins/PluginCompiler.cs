@@ -68,15 +68,15 @@ namespace Robot.Plugins
             CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultCompilerReferences);
 
             var settings = SettingsManager.GetSettings<CompilerSettings>();
-
-            if (settings == null)
+            if (settings != null)
+            {
+                if (settings.HasValidReferences)
+                    CompilerParams.ReferencedAssemblies.AddRange(settings.NonEmptyCompilerReferences);
+            }
+            else
                 Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
-            if (settings != null && settings.CompilerReferences != null && settings.CompilerReferences.Length > 0)
-                CompilerParams.ReferencedAssemblies.AddRange(settings.CompilerReferences);
-
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
-
             Profiler.Stop("PluginCompiler_CompileCode");
 
             m_IsCompiling = false;

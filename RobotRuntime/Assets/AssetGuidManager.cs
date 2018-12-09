@@ -24,7 +24,7 @@ namespace RobotRuntime.Assets
 
         public AssetGuidManager()
         {
-            m_Serializer = new YamlObjectIO();
+            m_Serializer = new YamlDotNetIO();
         }
 
         public void AddNewGuid(Guid guid, string path, Int64 hash)

@@ -3,6 +3,6 @@
     public interface ISolutionManager
     {
         void GenerateNewProject();
-        void GenerateNewSolution(bool forceGenerate = false);
+        void GenerateNewSolution();
     }
 }

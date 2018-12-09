@@ -29,7 +29,7 @@ namespace Robot
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
 
-            m_Serializer = new YamlObjectIO();
+            m_Serializer = new YamlDotNetIO();
 
             RestoreAndRemovePathsOfDeletedProjects();
         }

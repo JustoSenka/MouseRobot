@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace RobotRuntime.IO
 {
-    public class YamlObjectIO : ObjectIO
+    public class YamlDotNetIO : ObjectIO
     {
         public override T LoadObject<T>(string path)
         {
@@ -25,7 +25,7 @@ namespace RobotRuntime.IO
         { 
             try
             {
-                var serializer = new SerializerBuilder().EmitDefaults().Build();
+                var serializer = new SerializerBuilder().EnsureRoundtrip().EmitDefaults().Build();
                 var text = serializer.Serialize(objToWrite);
                 File.WriteAllText(path, text);
             }

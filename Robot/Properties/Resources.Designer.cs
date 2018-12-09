@@ -67,7 +67,7 @@ namespace Robot.Properties {
         ///  &lt;PropertyGroup&gt;
         ///    &lt;Configuration Condition=&quot; &apos;$(Configuration)&apos; == &apos;&apos; &quot;&gt;Debug&lt;/Configuration&gt;
         ///    &lt;Platform Condition=&quot; &apos;$(Platform)&apos; == &apos;&apos; &quot;&gt;AnyCPU&lt;/Platform&gt;
-        ///    &lt;ProjectGuid&gt;{0}&lt;/Proj [rest of string was truncated]&quot;;.
+        ///    &lt;ProjectGuid&gt;{{{0}}}&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProjectTemplate {
             get {
