@@ -69,11 +69,11 @@ namespace Robot.Plugins
 
             var settings = SettingsManager.GetSettings<CompilerSettings>();
 
+            if (settings == null)
+                Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
+
             if (settings != null && settings.CompilerReferences != null && settings.CompilerReferences.Length > 0)
                 CompilerParams.ReferencedAssemblies.AddRange(settings.CompilerReferences);
-
-            if (settings == null || settings.CompilerReferences == null)
-                Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
 

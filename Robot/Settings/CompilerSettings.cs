@@ -19,6 +19,6 @@ namespace Robot.Settings
             "System.Core.dll"
         };
 
-        public string[] CompilerReferences { get; set; }
+        public string[] CompilerReferences { get; set; } = new string[0];
     }
 }

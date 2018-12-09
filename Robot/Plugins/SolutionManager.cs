@@ -34,43 +34,50 @@ namespace Robot.Plugins
             this.ModifiedAssetCollector = ModifiedAssetCollector;
             this.SettingsManager = SettingsManager;
 
-            //TODO: Fix me. Generate project only when Scripts and Plugins are ADDED/REMOVED
-            //TODO: Fix me. Generate solution only once in a lifetime
+            m_SolutionGuid = Guid.NewGuid().ToString();
+            m_ProjectGuid = Guid.NewGuid().ToString();
+
+            //TODO: Fix me. Generate project only when Scripts and Plugins are ADDED/REMOVED // If project is identical, it will not be overwritten
             //TODO: Add menu in assets window to regenerate everything
+            //TODO: Changing compiler settings should regenerate project
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.DllD);
-            ModifiedAssetCollector.AssetsModified += OnAssetsModified;
+            ModifiedAssetCollector.AssetsModified += (assets) => RegenerateEverything();
+
+            ProjectManager.NewProjectOpened += (path) => RegenerateEverything();
+            SettingsManager.SettingsRestored += RegenerateEverything;
         }
 
-        private void OnAssetsModified(IList<string> modifiedAssets)
+        private void RegenerateEverything()
         {
             GenerateNewProject();
             GenerateNewSolution();
         }
 
-        public void GenerateNewSolution()
+        public void GenerateNewSolution(bool forceGenerate = false)
         {
-            if (m_ProjectGuid == Guid.Empty.ToString())
-            {
-                GenerateNewProject();
-                Logger.Log(LogType.Warning, "Trying to generate solution without first generating project file. " +
-                    "It should be other way around, this might not be supported in future releases.");
-            }
+            var slnPath = CSharpSolutionName + ".sln";
+            var slnExists = File.Exists(slnPath);
 
-            m_SolutionGuid = Guid.NewGuid().ToString();
+            if (slnExists && !forceGenerate)
+                return;
 
-            var sln = string.Format(Resources.SolutionTemplate,
+            var newSln = string.Format(Resources.SolutionTemplate,
                 CSharpProjectName, // ProjectName
                 CSharpProjectName + ".csproj",  // Project Path
                 m_ProjectGuid, // Project GUID
                 m_SolutionGuid); // Solution GUID
 
-            File.WriteAllText(CSharpSolutionName + ".sln", sln);
+            var currentSln = (slnExists) ? File.ReadAllText(slnPath) : "";
+            if (newSln.Trim() == currentSln.Trim())
+                return;
+
+            File.WriteAllText(slnPath, newSln);
         }
 
         public void GenerateNewProject()
         {
-            m_ProjectGuid = Guid.NewGuid().ToString();
+            var projPath = CSharpProjectName + ".csproj";
 
             var refs = CollectAllCompilerReferences().Distinct().Select((s) => string.Format(k_ReferenceWrapper, s));
             var refString = string.Join("\n", refs).Trim('\n');
@@ -78,7 +85,7 @@ namespace Robot.Plugins
             var sources = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD)).Distinct().Select((s) => string.Format(k_CompileWrapper, s.Path));
             var sourcesString = string.Join("\n", sources).Trim('\n');
 
-            var proj = string.Format(Resources.ProjectTemplate,
+            var newProj = string.Format(Resources.ProjectTemplate,
                 m_ProjectGuid, // Project GUID
                 ProjectManager.ProjectName, // RootNamespace
                 CSharpProjectName, // AssemblyName
@@ -86,7 +93,11 @@ namespace Robot.Plugins
                 refString, // References
                 sourcesString); // Source files
 
-            File.WriteAllText(CSharpProjectName + ".csproj", proj);
+            var currentProj = File.Exists(projPath) ? File.ReadAllText(projPath) : "";
+            if (newProj.Trim() == currentProj.Trim())
+                return;
+
+            File.WriteAllText(projPath, newProj);
         }
 
         private IEnumerable<string> CollectAllCompilerReferences()
