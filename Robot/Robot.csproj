@@ -81,6 +81,9 @@
       <HintPath>..\packages\Unity.5.5.6\lib\net45\CommonServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -123,6 +126,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\ICodeEditor.cs" />
     <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\ModifiedAssetCollector.cs" />
@@ -167,6 +171,7 @@
     <Compile Include="Tests\TestFixture.cs" />
     <Compile Include="Tests\TestFixtureManager.cs" />
     <Compile Include="Tests\TestRunnerManager.cs" />
+    <Compile Include="Utils\CodeEditorVS.cs" />
     <Compile Include="Utils\Win32\InputCallbacks.cs" />
     <Compile Include="Utils\Win32\KeyEvent.cs" />
   </ItemGroup>
