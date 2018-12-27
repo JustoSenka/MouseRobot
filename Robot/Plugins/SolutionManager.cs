@@ -12,6 +12,9 @@ namespace Robot.Plugins
 {
     public class SolutionManager : ISolutionManager
     {
+        public string CSharpSolutionPath => CSharpSolutionName + ".sln";
+        public string CSharpProjectPath => CSharpProjectName + ".proj";
+
         private string m_ProjectGuid;
         private string m_SolutionGuid;
 
@@ -56,8 +59,6 @@ namespace Robot.Plugins
 
         public void GenerateNewSolution()
         {
-            var slnPath = CSharpSolutionName + ".sln";
-
             var upperProjGuid = m_ProjectGuid.ToUpper();
             var upperSlnGuid = m_SolutionGuid.ToUpper();
 
@@ -67,17 +68,15 @@ namespace Robot.Plugins
                 upperProjGuid, // Project GUID
                 upperSlnGuid); // Solution GUID
 
-            var currentSln = (File.Exists(slnPath)) ? File.ReadAllText(slnPath) : "";
+            var currentSln = (File.Exists(CSharpSolutionPath)) ? File.ReadAllText(CSharpSolutionPath) : "";
             if (newSln.Trim().Equals(currentSln.Trim(), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
-            File.WriteAllText(slnPath, newSln);
+            File.WriteAllText(CSharpSolutionPath, newSln);
         }
 
         public void GenerateNewProject()
         {
-            var projPath = CSharpProjectName + ".csproj";
-
             var refs = CollectAllCompilerReferences().Distinct().Select((s) => string.Format(k_ReferenceWrapper, s));
             var refString = string.Join("\n", refs).Trim('\n');
 
@@ -92,11 +91,11 @@ namespace Robot.Plugins
                 refString, // References
                 sourcesString); // Source files
 
-            var currentProj = File.Exists(projPath) ? File.ReadAllText(projPath) : "";
+            var currentProj = File.Exists(CSharpProjectPath) ? File.ReadAllText(CSharpProjectPath) : "";
             if (newProj.Trim().Equals(currentProj.Trim(), StringComparison.InvariantCultureIgnoreCase))
                 return;
 
-            File.WriteAllText(projPath, newProj);
+            File.WriteAllText(CSharpProjectPath, newProj);
         }
 
         private IEnumerable<string> CollectAllCompilerReferences()

@@ -89,6 +89,12 @@
       <HintPath>..\packages\EMGU.CV.3.3.0.2824\lib\net35\Emgu.CV.World.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="envdte100, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -143,6 +149,7 @@
     <Compile Include="AssetGuidManagerTests.cs" />
     <Compile Include="Base\TestBase.cs" />
     <Compile Include="Base\TestData.cs" />
+    <Compile Include="DteTests.cs" />
     <Compile Include="ScriptManagerTests.cs" />
     <Compile Include="TestRunnerManagerTests.cs" />
     <Compile Include="TestFixtureTests.cs" />

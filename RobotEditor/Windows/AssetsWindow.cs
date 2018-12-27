@@ -3,6 +3,7 @@ using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
@@ -21,14 +22,16 @@ namespace RobotEditor
         private IScriptManager ScriptManager;
         private ITestFixtureManager TestFixtureManager;
         private IPluginManager PluginManager;
+        private ISolutionManager SolutionManager;
         private ILogger Logger;
         public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager,
-            IPluginManager PluginManager, ILogger Logger)
+            IPluginManager PluginManager, ISolutionManager SolutionManager, ILogger Logger)
         {
             this.AssetManager = AssetManager;
             this.ScriptManager = ScriptManager;
             this.TestFixtureManager = TestFixtureManager;
             this.PluginManager = PluginManager;
+            this.SolutionManager = SolutionManager;
             this.Logger = Logger;
 
             InitializeComponent();
@@ -166,12 +169,12 @@ namespace RobotEditor
 
         private void treeView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 ||
-                treeView.SelectedNode.Parent.Text != Paths.ScriptFolder &&
-                treeView.SelectedNode.Parent.Text != Paths.TestsFolder)
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1)
                 return;
 
             var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
+            if (Logger.AssertIf(asset == null, $"Asset in database was not found but is visible in Assets Window: {treeView.SelectedNode.Text}. Please report a bug."))
+                return;
 
             if (asset.HoldsTypeOf(typeof(Script)))
             {
@@ -192,6 +195,21 @@ namespace RobotEditor
                 }
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
+            else if (asset.Importer.GetType() == typeof(PluginImporter))
+            {
+               /* try
+                {
+                    EnvDTE80.DTE2 dte2;
+                    dte2 = (EnvDTE80.DTE2)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE");
+                    dte2.MainWindow.Activate();
+                    EnvDTE.Window w = dte2.ItemOperations.OpenFile("CustomCommand.cs");
+                    ((EnvDTE.TextSelection)dte2.ActiveDocument.Selection).GotoLine(10, true);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logi(LogType.Error, ex.Message);
+                }*/
+            }
         }
 
         private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
@@ -207,11 +225,6 @@ namespace RobotEditor
         {
             if (treeView.SelectedNode != null && treeView.SelectedNode.Level == 1)
                 AssetSelected?.Invoke();
-        }
-
-        private void recompileScriptsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PluginManager.CompileScriptsAndReloadUserDomain();
         }
 
         #region Context Menu Items
@@ -252,6 +265,17 @@ namespace RobotEditor
         {
             if (treeView.SelectedNode.Level == 1)
                 treeView.SelectedNode.BeginEdit();
+        }
+
+        private void recompileScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PluginManager.CompileScriptsAndReloadUserDomain();
+        }
+
+        private void regenerateSolutionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SolutionManager.GenerateNewProject();
+            SolutionManager.GenerateNewSolution();
         }
 
         #endregion

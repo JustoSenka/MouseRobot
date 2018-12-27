@@ -135,7 +135,7 @@ namespace RobotEditor
             AssetManager.Refresh();
 
             this.BeginInvokeIfCreated(new MethodInvoker(() => 
-                this.Text = Paths.AppName + " - " + ProjectManager.ProjectName));
+                this.Text = ProjectManager.ProjectName + " - " + Paths.AppName));
         }
 
         private void OnFixtureAdded(TestFixture fixture)
