@@ -28,7 +28,7 @@ namespace Robot.Utils
 
             try
             {
-                list = GetListOfMonikerFromROT(out bindCtx, out rot, out enumMonikers);
+                list = GetMonikerListFromROT(out bindCtx, out rot, out enumMonikers);
                 //var dtes = list.Select(t => t.Item2).Cast<DTE>();
 
                 var first = list.FirstOrDefault(t => t.Item1.Contains(m_ProcessID.ToString()));
@@ -58,13 +58,15 @@ namespace Robot.Utils
         {
             foreach (var t in monikerList)
             {
-                rot.GetObject(t.Item2, out object runningObject);
-                if (runningObject != null && runningObject is DTE dte)
+                object runningObject;
+                rot.GetObject(t.Item2, out runningObject);
+                var dte = runningObject as DTE;
+                if (dte != null)
                     yield return new Tuple<string, DTE>(t.Item1, dte);
             }
         }
 
-        private IEnumerable<Tuple<string, IMoniker>> GetListOfMonikerFromROT(out IBindCtx bindCtx, out IRunningObjectTable rot, out IEnumMoniker enumMonikers)
+        private IEnumerable<Tuple<string, IMoniker>> GetMonikerListFromROT(out IBindCtx bindCtx, out IRunningObjectTable rot, out IEnumMoniker enumMonikers)
         {
             Marshal.ThrowExceptionForHR(CreateBindCtx(reserved: 0, ppbc: out bindCtx));
             bindCtx.GetRunningObjectTable(out rot);

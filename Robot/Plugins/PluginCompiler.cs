@@ -8,6 +8,8 @@ using RobotRuntime.Utils;
 using System;
 using System.CodeDom.Compiler;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace Robot.Plugins
@@ -37,6 +39,16 @@ namespace Robot.Plugins
             this.StatusManager = StatusManager;
             this.SettingsManager = SettingsManager;
             this.Logger = Logger;
+            
+            // hack to change path
+            var settings = typeof(CSharpCodeProvider)
+                .GetField("_compilerSettings", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(CodeProvider);
+
+            settings.GetType()
+                .GetField("_compilerFullPath", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(settings, Path.Combine(Paths.ApplicationInstallPath, "roslyn", "csc.exe"));
+            
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
