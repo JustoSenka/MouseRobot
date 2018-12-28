@@ -117,7 +117,7 @@ namespace Robot.Plugins
             {
                 ScriptsRecompiled?.Invoke();
                 Logger.Logi(LogType.Log, "Scripts successfully compiled.");
-                StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default(Color)));
+                StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default));
                 return true;
             }
 

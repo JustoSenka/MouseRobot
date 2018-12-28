@@ -24,18 +24,16 @@ namespace Robot.Utils
             IBindCtx bindCtx = null;
             IRunningObjectTable rot = null;
             IEnumMoniker enumMonikers = null;
-            IEnumerable<Tuple<string, IMoniker>> list = null;
+            IEnumerable<(string, IMoniker)> list = null;
 
             try
             {
                 list = GetMonikerListFromROT(out bindCtx, out rot, out enumMonikers);
-                //var dtes = list.Select(t => t.Item2).Cast<DTE>();
 
                 var first = list.FirstOrDefault(t => t.Item1.Contains(m_ProcessID.ToString()));
-                Debug.Assert(first != null);
+                Debug.Assert(first == default);
 
-                object runningObject;
-                Marshal.ThrowExceptionForHR(rot.GetObject(first.Item2, out runningObject));
+                Marshal.ThrowExceptionForHR(rot.GetObject(first.Item2, out object runningObject));
 
                 dte = runningObject as DTE;
                 Debug.Assert(dte != null);
@@ -54,19 +52,17 @@ namespace Robot.Utils
             return dte;
         }
 
-        private IEnumerable<Tuple<string, DTE>> GetDteListfromROT(IEnumerable<Tuple<string, IMoniker>> monikerList, IRunningObjectTable rot)
+        private IEnumerable<(string, DTE)> GetDteListfromROT(IEnumerable<(string, IMoniker)> monikerList, IRunningObjectTable rot)
         {
             foreach (var t in monikerList)
             {
-                object runningObject;
-                rot.GetObject(t.Item2, out runningObject);
-                var dte = runningObject as DTE;
-                if (dte != null)
-                    yield return new Tuple<string, DTE>(t.Item1, dte);
+                rot.GetObject(t.Item2, out object runningObject);
+                if (runningObject is DTE dte)
+                    yield return (t.Item1, dte);
             }
         }
 
-        private IEnumerable<Tuple<string, IMoniker>> GetMonikerListFromROT(out IBindCtx bindCtx, out IRunningObjectTable rot, out IEnumMoniker enumMonikers)
+        private IEnumerable<(string, IMoniker)> GetMonikerListFromROT(out IBindCtx bindCtx, out IRunningObjectTable rot, out IEnumMoniker enumMonikers)
         {
             Marshal.ThrowExceptionForHR(CreateBindCtx(reserved: 0, ppbc: out bindCtx));
             bindCtx.GetRunningObjectTable(out rot);
@@ -75,7 +71,7 @@ namespace Robot.Utils
             IMoniker[] moniker = new IMoniker[1];
             IntPtr numberFetched = IntPtr.Zero;
 
-            var list = new List<Tuple<string, IMoniker>>();
+            var list = new List<(string, IMoniker)>();
 
             while (enumMonikers.Next(1, moniker, numberFetched) == 0)
             {
@@ -94,7 +90,7 @@ namespace Robot.Utils
                 Debug.WriteLine("Name: " + name);
 
                 if (Regex.IsMatch(name, VS_DTE_ID_REGEX))
-                    list.Add(new Tuple<string, IMoniker>(name, runningObjectMoniker));
+                    list.Add((name, runningObjectMoniker));
             }
 
             return list;
