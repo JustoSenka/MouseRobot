@@ -17,7 +17,7 @@ namespace Robot
 
         public event Action<string> NewProjectOpened;
 
-        private ObjectIO m_Serializer;
+        private ObjectIO m_Serializer = new JsonObjectIO();
 
         private const string k_FileName = "LastKnownProjectPaths.config";
         private string FilePath { get { return Path.Combine(Paths.RoamingAppdataPath, k_FileName); } }
@@ -28,8 +28,6 @@ namespace Robot
         {
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
-
-            m_Serializer = new YamlDotNetIO();
 
             RestoreAndRemovePathsOfDeletedProjects();
         }

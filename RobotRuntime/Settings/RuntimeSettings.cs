@@ -21,7 +21,7 @@ namespace RobotRuntime.Settings
         public void LoadSettingsHardcoded()
         {
             var path = Path.Combine(Paths.RoamingAppdataPath, "FeatureDetectionSettings.config");
-            var settings = new YamlDotNetIO().LoadObject<FeatureDetectionSettings>(path);
+            var settings = new JsonObjectIO().LoadObject<FeatureDetectionSettings>(path);
             ApplySettings(settings);
         }
 

@@ -18,13 +18,13 @@ namespace RobotRuntime.Assets
         private Dictionary<Guid, string> m_GuidPathMap = new Dictionary<Guid, string>();
         private Dictionary<Guid, Int64> m_GuidHashMap = new Dictionary<Guid, Int64>();
 
-        private ObjectIO m_Serializer;
+        private ObjectIO m_Serializer = new JsonObjectIO();
         private bool m_GuidPathMapDirty;
         private bool m_GuidHashMapDirty;
 
         public AssetGuidManager()
         {
-            m_Serializer = new YamlDotNetIO();
+            
         }
 
         public void AddNewGuid(Guid guid, string path, Int64 hash)

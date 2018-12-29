@@ -23,6 +23,8 @@ namespace Robot.Settings
         private BaseSettings[] m_UserSettings;
         private BaseSettings[] m_Settings;
 
+        private ObjectIO m_Serializer = new JsonObjectIO();
+
         private ILogger Logger;
         private IPluginLoader PluginLoader;
         private IUnityContainer Container;
@@ -117,7 +119,7 @@ namespace Robot.Settings
         private void WriteToSettingFile<T>(T settings) where T : BaseSettings
         {
             string filePath = RoamingAppdataPathFromType(settings);
-            new YamlDotNetIO().SaveObject(filePath, settings);
+            m_Serializer.SaveObject(filePath, settings);
         }
 
         private T RestoreSettingFromFile<T>(T settings) where T : BaseSettings
@@ -130,9 +132,9 @@ namespace Robot.Settings
                 // so deserializer will look for BaseSettings.
                 // Using reflection it is possible to Invoke deserializer with T as actual type and not base type.
 
-                MethodInfo method = typeof(YamlDotNetIO).GetMethod("LoadObject");
+                MethodInfo method = m_Serializer.GetType().GetMethod("LoadObject");
                 MethodInfo generic = method.MakeGenericMethod(settings.GetType());
-                var newSettings = generic.Invoke(new YamlDotNetIO(), new[] { filePath });
+                var newSettings = generic.Invoke(m_Serializer, new[] { filePath });
 
                 // If deserializing from file fails, restore defaults
                 if (newSettings == null)
