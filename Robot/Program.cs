@@ -8,6 +8,7 @@ using Robot.Plugins;
 using Robot.Scripts;
 using Robot.Tests;
 using Robot.Assets;
+using Robot.Utils;
 
 namespace Robot
 {
@@ -31,6 +32,7 @@ namespace Robot
             Container.RegisterType<ITestFixtureManager, TestFixtureManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestRunnerManager, TestRunnerManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ISolutionManager, SolutionManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ICodeEditor, CodeEditorVS>(new ContainerControlledLifetimeManager());
 
             // non singletons
             Container.RegisterType<IModifiedAssetCollector, ModifiedAssetCollector>();

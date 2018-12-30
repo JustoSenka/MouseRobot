@@ -23,15 +23,17 @@ namespace RobotEditor
         private ITestFixtureManager TestFixtureManager;
         private IPluginManager PluginManager;
         private ISolutionManager SolutionManager;
+        private ICodeEditor CodeEditor;
         private ILogger Logger;
         public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager,
-            IPluginManager PluginManager, ISolutionManager SolutionManager, ILogger Logger)
+            IPluginManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
         {
             this.AssetManager = AssetManager;
             this.ScriptManager = ScriptManager;
             this.TestFixtureManager = TestFixtureManager;
             this.PluginManager = PluginManager;
             this.SolutionManager = SolutionManager;
+            this.CodeEditor = CodeEditor;
             this.Logger = Logger;
 
             InitializeComponent();
@@ -197,18 +199,7 @@ namespace RobotEditor
             }
             else if (asset.Importer.GetType() == typeof(PluginImporter))
             {
-               /* try
-                {
-                    EnvDTE80.DTE2 dte2;
-                    dte2 = (EnvDTE80.DTE2)System.Runtime.InteropServices.Marshal.GetActiveObject("VisualStudio.DTE");
-                    dte2.MainWindow.Activate();
-                    EnvDTE.Window w = dte2.ItemOperations.OpenFile("CustomCommand.cs");
-                    ((EnvDTE.TextSelection)dte2.ActiveDocument.Selection).GotoLine(10, true);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Logi(LogType.Error, ex.Message);
-                }*/
+                CodeEditor.FocusFile(asset.Importer.Path);
             }
         }
 

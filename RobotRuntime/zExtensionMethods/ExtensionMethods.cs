@@ -155,11 +155,6 @@ namespace RobotRuntime
             return folderNode.FindChild(Paths.GetName(path));
         }
 
-        public static bool IsDefault<T>(this T value) where T : struct
-        {
-            return value.Equals(default(T));
-        }
-
         public static void Post(this AsyncOperation async, Action ac)
         {
             async?.Post(new SendOrPostCallback(delegate (object state)
@@ -167,5 +162,18 @@ namespace RobotRuntime
                 ac.Invoke();
             }), null);
         }
+    }
+}
+
+public static class GlobalExtensionMethods
+{
+    public static bool IsDefault<T>(this T value)
+    {
+        return value == default;
+    }
+
+    public static bool IsEmpty(this string str)
+    {
+        return str == null || str == "" || str == string.Empty;
     }
 }

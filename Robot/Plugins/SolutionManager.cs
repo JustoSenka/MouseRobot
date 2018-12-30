@@ -15,11 +15,11 @@ namespace Robot.Plugins
         public string CSharpSolutionPath => CSharpSolutionName + ".sln";
         public string CSharpProjectPath => CSharpProjectName + ".proj";
 
+        public string CSharpSolutionName => ProjectManager.ProjectName + "_Solution";
+        public string CSharpProjectName => ProjectManager.ProjectName + "_Project";
+
         private string m_ProjectGuid;
         private string m_SolutionGuid;
-
-        private string CSharpSolutionName => ProjectManager.ProjectName + "_Solution";
-        private string CSharpProjectName => ProjectManager.ProjectName + "_Project";
 
         private const string k_DotNetVersion = "v4.6.1";
         private const string k_ReferenceWrapper = "\t<Reference Include=\"{0}\"/>";
