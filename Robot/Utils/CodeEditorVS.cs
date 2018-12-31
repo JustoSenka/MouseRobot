@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using Robot.Abstractions;
+using RobotRuntime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +18,6 @@ namespace Robot.Utils
         private const string VS_DTE_ID_REGEX = @"(?i)(!VisualStudio\.DTE\.\d+\.\d+:)";
 
         private string m_VsProgID = "";
-        private int m_VsProcessID;
 
         private ISolutionManager SolutionManager;
         public CodeEditorVS(ISolutionManager SolutionManager)
@@ -37,26 +37,58 @@ namespace Robot.Utils
                 return false;
 
             var dte = GetDteFromProgID(m_VsProgID);
-            dte.StatusBar.Text = "Focus File!";
+            var processId = GetProcessIdFromProgID(m_VsProgID);
+            if (dte == null && processId != 0 && !IsProcessRunning(processId))
+            {
+                // DTE is null but processID was not empty, that means we have already interacted with VS before
+                // This can happen if user closes VS himself, lets check if he reopened it
+                m_VsProgID = GetProgIdFromSolutionName(SolutionManager.CSharpSolutionName);
 
-            dte.ItemOperations.OpenFile(filePath);
+                if (m_VsProgID.IsEmpty()) // If he didd't reopened it, open one ourself
+                    StartEditor(SolutionManager.CSharpSolutionPath);
+
+                dte = GetDteFromProgID(m_VsProgID);
+            }
+
+            try
+            {
+                dte.ItemOperations.OpenFile(Path.Combine(Environment.CurrentDirectory, filePath));
+            }
+            catch (Exception e)
+            {
+                // NOTE: dte can still be null here, if process is up and running, but we failed to find correct progID. Or COM exception was thrown
+                Logger.Log(LogType.Error, "Cannot focus file in Code Editor (VS): " + filePath, e.Message);
+                return false;
+            }
 
             return true;
         }
 
         public bool StartEditor(string solutionPath)
         {
-            m_VsProcessID = Process.Start(@"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe",
-                Path.Combine(Environment.CurrentDirectory, solutionPath)).Id;
+            m_VsProgID = "";
 
-            WaitForVsToAppearInRotAndGetProgID();
+            /*m_VsProcessID = Process.Start(@"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\devenv.exe",
+                Path.Combine(Environment.CurrentDirectory, solutionPath)).Id;*/
 
-            WaitForVsToBeInitialized();
+            var processId = Process.Start(Path.Combine(Environment.CurrentDirectory, solutionPath)).Id;
+
+            if (!WaitForVsToAppearInRotAndGetProgID(processId))
+            {
+                Logger.Log(LogType.Error, "Cannot get ProgID from visual studio process");
+                return false;
+            }
+
+            if (!WaitForVsToBeInitialized(m_VsProgID))
+            {
+                Logger.Log(LogType.Error, "VS DTE rejects calls with Exception from HRESULT: 0x80010001 (RPC_E_CALL_REJECTED)");
+                return false;
+            }
 
             return true;
         }
 
-        private void WaitForVsToAppearInRotAndGetProgID()
+        private bool WaitForVsToAppearInRotAndGetProgID(int processId)
         {
             var numOfTries = 100;
 
@@ -65,15 +97,22 @@ namespace Robot.Utils
                 numOfTries--;
 
                 System.Threading.Thread.Sleep(60);
-                m_VsProgID = GetProgIDFromProccessID(m_VsProcessID);
+                m_VsProgID = GetProgIDFromProccessID(processId);
             }
+
+            return !m_VsProgID.IsEmpty();
         }
 
-        private bool WaitForVsToBeInitialized()
+        private bool WaitForVsToBeInitialized(string progID)
         {
-            var dte = GetDteFromProgID(m_VsProgID);
+            var dte = GetDteFromProgID(progID);
+            if (dte == null)
+            {
+                Logger.Log(LogType.Error, "Could not find Visual Studio instance from progID: " + progID);
+                return false;
+            }
 
-            var numOfTries = 10;
+            var numOfTries = 100;
 
             var vsInitialized = false;
             while (!vsInitialized && numOfTries > 0)
@@ -82,7 +121,7 @@ namespace Robot.Utils
 
                 try
                 {
-                    System.Threading.Thread.Sleep(60); 
+                    System.Threading.Thread.Sleep(60);
                     dte.StatusBar.Text = "Launched from Mouse Robot!";
                     vsInitialized = true;
                 }
@@ -99,92 +138,72 @@ namespace Robot.Utils
 
         private string GetProgIdFromSolutionName(string solutionName)
         {
-            IBindCtx bindCtx = null;
-            IRunningObjectTable rot = null;
-            IEnumMoniker enumMonikers = null;
-
-            try
+            var obj = ExecuteActionInTryFinallyWithComObjectCleanup((bindCtx, rot, enumMonikers) =>
             {
                 var list = GetMonikerListFromROT(out bindCtx, out rot, out enumMonikers);
                 var dteList = GetDteListFromROT(list, rot);
 
-                var tuple = dteList.FirstOrDefault(t =>
-                    Path.GetFileName(t.Item2.Solution.FullName).Equals(solutionName, StringComparison.InvariantCultureIgnoreCase));
+                // dteList.FirstOrDefault(t =>
+                // Path.GetFileName(t.Item2.Solution.FullName).Equals(solutionName, StringComparison.InvariantCultureIgnoreCase));
+
+                var tuple = FirstOrDefaultInTryCatch(dteList, (dte) =>
+                {
+                    return Path.GetFileNameWithoutExtension(dte.Solution.FullName).Equals(solutionName, StringComparison.InvariantCultureIgnoreCase);
+                });
+
+                foreach (var dte in dteList)
+                    Marshal.ReleaseComObject(dte.Item2);
 
                 return tuple.Item1;
-            }
-            finally
-            {
-                if (enumMonikers != null)
-                    Marshal.ReleaseComObject(enumMonikers);
+            });
 
-                if (rot != null)
-                    Marshal.ReleaseComObject(rot);
-
-                if (bindCtx != null)
-                    Marshal.ReleaseComObject(bindCtx);
-            }
+            return obj as string;
         }
 
-        private DTE GetDteFromProgID2(string progId)
+        private static (string, DTE) FirstOrDefaultInTryCatch(IEnumerable<(string, DTE)> dteList, Func<DTE, bool> predicate)
         {
-            var visualStudioType = Type.GetTypeFromProgID(progId);
-            return Activator.CreateInstance(visualStudioType) as DTE;
+            foreach (var tuple in dteList)
+            {
+                try
+                {
+                    if (predicate(tuple.Item2))
+                        return tuple;
+                }
+                catch { } // DTE might refuse to talk if VS is busy, debuggin or has a popup dielog open
+            }
+
+            return default;
         }
 
         private DTE GetDteFromProgID(string progId)
         {
-            IBindCtx bindCtx = null;
-            IRunningObjectTable rot = null;
-            IEnumMoniker enumMonikers = null;
-
-            try
+            var obj = ExecuteActionInTryFinallyWithComObjectCleanup((bindCtx, rot, enumMonikers) =>
             {
                 var list = GetMonikerListFromROT(out bindCtx, out rot, out enumMonikers);
 
-                var tuple = list.FirstOrDefault(t =>
-                    t.Item1.Equals(progId, StringComparison.InvariantCultureIgnoreCase));
+                var tuple = list.FirstOrDefault(t => t.Item1.Equals(progId, StringComparison.InvariantCultureIgnoreCase));
+
+                if (tuple.Item2 == null)
+                    return null;
 
                 Marshal.ThrowExceptionForHR(rot.GetObject(tuple.Item2, out object runningObject));
-                return runningObject as DTE;
-            }
-            finally
-            {
-                if (enumMonikers != null)
-                    Marshal.ReleaseComObject(enumMonikers);
+                return runningObject;
+            });
 
-                if (rot != null)
-                    Marshal.ReleaseComObject(rot);
-
-                if (bindCtx != null)
-                    Marshal.ReleaseComObject(bindCtx);
-            }
+            return obj as DTE;
         }
 
         private string GetProgIDFromProccessID(int processID)
         {
-            IBindCtx bindCtx = null;
-            IRunningObjectTable rot = null;
-            IEnumMoniker enumMonikers = null;
-
-            try
+            var obj = ExecuteActionInTryFinallyWithComObjectCleanup((bindCtx, rot, enumMonikers) =>
             {
                 var list = GetMonikerListFromROT(out bindCtx, out rot, out enumMonikers);
 
                 var first = list.FirstOrDefault(t => t.Item1.Contains(processID.ToString()));
                 return first.Item1;
-            }
-            finally
-            {
-                if (enumMonikers != null)
-                    Marshal.ReleaseComObject(enumMonikers);
+            });
 
-                if (rot != null)
-                    Marshal.ReleaseComObject(rot);
-
-                if (bindCtx != null)
-                    Marshal.ReleaseComObject(bindCtx);
-            }
+            return obj as string;
         }
 
         private IEnumerable<(string, DTE)> GetDteListFromROT(IEnumerable<(string, IMoniker)> monikerList, IRunningObjectTable rot)
@@ -231,6 +250,55 @@ namespace Robot.Utils
             }
 
             return list;
+        }
+
+        private object ExecuteActionInTryFinallyWithComObjectCleanup(Func<IBindCtx, IRunningObjectTable, IEnumMoniker, object> func)
+        {
+            IBindCtx bindCtx = null;
+            IRunningObjectTable rot = null;
+            IEnumMoniker enumMonikers = null;
+
+            try
+            {
+                return func(bindCtx, rot, enumMonikers);
+            }
+            finally
+            {
+                if (enumMonikers != null)
+                    Marshal.ReleaseComObject(enumMonikers);
+
+                if (rot != null)
+                    Marshal.ReleaseComObject(rot);
+
+                if (bindCtx != null)
+                    Marshal.ReleaseComObject(bindCtx);
+            }
+        }
+
+        public static bool IsProcessRunning(int processID)
+        {
+            try
+            {
+                Process.GetProcessById(processID);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static int GetProcessIdFromProgID(string progID)
+        {
+            try
+            {
+                return int.Parse(progID.Split(':').Last().Trim());
+            }
+            catch
+            {
+                Logger.Log(LogType.Error, "Cannot parse process ID from prog ID: " + progID);
+                return 0;
+            }
         }
 
         [DllImport("ole32.dll")]
