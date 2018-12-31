@@ -9,6 +9,7 @@ using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -199,7 +200,7 @@ namespace RobotEditor
             }
             else if (asset.Importer.GetType() == typeof(PluginImporter))
             {
-                CodeEditor.FocusFile(asset.Importer.Path);
+                Task.Run(() => CodeEditor.FocusFile(asset.Importer.Path));
             }
         }
 

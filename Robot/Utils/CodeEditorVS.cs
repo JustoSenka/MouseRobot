@@ -18,6 +18,7 @@ namespace Robot.Utils
         private const string VS_DTE_ID_REGEX = @"(?i)(!VisualStudio\.DTE\.\d+\.\d+:)";
 
         private string m_VsProgID = "";
+        private object VsProgIDLcok = new object();
 
         private ISolutionManager SolutionManager;
         public CodeEditorVS(ISolutionManager SolutionManager)
@@ -27,44 +28,55 @@ namespace Robot.Utils
 
         public bool FocusFile(string filePath)
         {
-            if (m_VsProgID.IsEmpty()) // VS ProgID is unknown. Lets check if user opened VS himself and try to find exact instance.
-                m_VsProgID = GetProgIdFromSolutionName(SolutionManager.CSharpSolutionName);
-
-            if (m_VsProgID.IsEmpty()) // VS ProgID is still unknown, lets open VS on our own
-                StartEditor(SolutionManager.CSharpSolutionPath);
-
-            if (m_VsProgID.IsEmpty()) // Opening failed
-                return false;
-
-            var dte = GetDteFromProgID(m_VsProgID);
-            var processId = GetProcessIdFromProgID(m_VsProgID);
-            if (dte == null && processId != 0 && !IsProcessRunning(processId))
+            lock (VsProgIDLcok)
             {
-                // DTE is null but processID was not empty, that means we have already interacted with VS before
-                // This can happen if user closes VS himself, lets check if he reopened it
-                m_VsProgID = GetProgIdFromSolutionName(SolutionManager.CSharpSolutionName);
+                if (m_VsProgID.IsEmpty()) // VS ProgID is unknown. Lets check if user opened VS himself and try to find exact instance.
+                    m_VsProgID = GetProgIdFromSolutionName(SolutionManager.CSharpSolutionName);
 
-                if (m_VsProgID.IsEmpty()) // If he didd't reopened it, open one ourself
-                    StartEditor(SolutionManager.CSharpSolutionPath);
+                if (m_VsProgID.IsEmpty()) // VS ProgID is still unknown, lets open VS on our own
+                    StartEditorInternal(SolutionManager.CSharpSolutionPath);
 
-                dte = GetDteFromProgID(m_VsProgID);
-            }
+                if (m_VsProgID.IsEmpty()) // Opening failed
+                    return false;
 
-            try
-            {
-                dte.ItemOperations.OpenFile(Path.Combine(Environment.CurrentDirectory, filePath));
-            }
-            catch (Exception e)
-            {
-                // NOTE: dte can still be null here, if process is up and running, but we failed to find correct progID. Or COM exception was thrown
-                Logger.Log(LogType.Error, "Cannot focus file in Code Editor (VS): " + filePath, e.Message);
-                return false;
+                var dte = GetDteFromProgID(m_VsProgID);
+                var processId = GetProcessIdFromProgID(m_VsProgID);
+                if (dte == null && processId != 0 && !IsProcessRunning(processId))
+                {
+                    // DTE is null but processID was not empty, that means we have already interacted with VS before
+                    // This can happen if user closes VS himself, lets check if he reopened it
+                    m_VsProgID = GetProgIdFromSolutionName(SolutionManager.CSharpSolutionName);
+
+                    if (m_VsProgID.IsEmpty()) // If he didd't reopened it, open one ourself
+                        StartEditorInternal(SolutionManager.CSharpSolutionPath);
+
+                    dte = GetDteFromProgID(m_VsProgID);
+                }
+
+                try
+                {
+                    dte.ItemOperations.OpenFile(Path.Combine(Environment.CurrentDirectory, filePath));
+                }
+                catch (Exception e)
+                {
+                    // NOTE: dte can still be null here, if process is up and running, but we failed to find correct progID. Or COM exception was thrown
+                    Logger.Log(LogType.Error, "Cannot focus file in Code Editor (VS): " + filePath, e.Message);
+                    return false;
+                }
             }
 
             return true;
         }
 
         public bool StartEditor(string solutionPath)
+        {
+            lock (VsProgIDLcok)
+            {
+                return StartEditorInternal(solutionPath);
+            }
+        }
+
+        private bool StartEditorInternal(string solutionPath)
         {
             m_VsProgID = "";
 
