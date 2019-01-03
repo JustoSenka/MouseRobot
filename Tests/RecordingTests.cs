@@ -6,14 +6,14 @@ using Robot.Abstractions;
 using Unity.Lifetime;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 
 namespace Tests
 {
     [TestClass]
-    public class ScriptTests
+    public class RecordingTests
     {
-        IScriptManager ScriptManager;
+        IHierarchyManager ScriptManager;
 
         [TestMethod]
         public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
@@ -329,7 +329,7 @@ namespace Tests
         [TestMethod]
         public void Guid_ToLightScriptIsCorrect()
         {
-            var script = new Script();
+            var script = new Recording();
             var guid = script.Guid;
 
             var lightScript = script.ToLightScript();
@@ -340,10 +340,10 @@ namespace Tests
         [TestMethod]
         public void Guid_FromLightScriptIsCorrect()
         {
-            var script = new Script();
+            var script = new Recording();
 
             var lightScript = script.ToLightScript();
-            var newScript = Script.FromLightScript(lightScript);
+            var newScript = Recording.FromLightScript(lightScript);
 
             Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
         }
@@ -351,10 +351,10 @@ namespace Tests
         [TestMethod]
         public void Guid_FromLightScriptCtorIsCorrect()
         {
-            var script = new Script();
+            var script = new Recording();
 
             var lightScript = script.ToLightScript();
-            var newScript = new Script(lightScript);
+            var newScript = new Recording(lightScript);
 
             Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
         }
@@ -362,8 +362,8 @@ namespace Tests
         [TestMethod]
         public void Guids_AfterCloningScript_AreSame()
         {
-            var s1 = new Script();
-            var s2 = (Script) s1.Clone();
+            var s1 = new Recording();
+            var s2 = (Recording) s1.Clone();
 
             TestBase.CheckThatGuidsAreSame(s1, s2);
             TestBase.CheckThatPtrsAreNotSame(s1, s2);
@@ -374,7 +374,7 @@ namespace Tests
         {
             var container = TestBase.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
-            ScriptManager = container.Resolve<IScriptManager>();
+            ScriptManager = container.Resolve<IHierarchyManager>();
         }
 
         [TestCleanup]

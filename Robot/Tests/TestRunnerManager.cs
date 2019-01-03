@@ -4,7 +4,7 @@ using System.Linq;
 using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using Unity;
 
@@ -94,7 +94,7 @@ namespace Robot.Tests
 
         #region TestRunner Callbacks
 
-        private void OnTestFailed(LightTestFixture fixture, Script script)
+        private void OnTestFailed(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
         {
             lock (m_TestStatusDictionaryLock)
             {
@@ -104,7 +104,7 @@ namespace Robot.Tests
             }
         }
 
-        private void OnTestPassed(LightTestFixture fixture, Script script)
+        private void OnTestPassed(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
         {
             lock (m_TestStatusDictionaryLock)
             {
@@ -215,7 +215,7 @@ namespace Robot.Tests
         private void ResetTestStatusForModifiedTests(TestFixture oldFixture, LightTestFixture newFixture)
         {
             // dictionary with count is faster on adding elements. Operation complexity is o(1)
-            var newScriptsDict = new Dictionary<string, Script>(oldFixture.Tests.Count);
+            var newScriptsDict = new Dictionary<string, RobotRuntime.Recordings.Recording>(oldFixture.Tests.Count);
             foreach (var s in oldFixture.Tests)
                 newScriptsDict.Add(s.Name, s);
 
@@ -224,7 +224,7 @@ namespace Robot.Tests
             for (int i = 0; i < oldScripts.Count; ++i)
             {
                 var oldScript = oldScripts[i];
-                Script newScript;
+                RobotRuntime.Recordings.Recording newScript;
                 newScriptsDict.TryGetValue(oldScript.Name, out newScript);
 
                 // if new script is different, mark it's status as None
@@ -258,12 +258,12 @@ namespace Robot.Tests
             TestStatusUpdated?.Invoke();
         }
 
-        private Tuple<string, string> CreateTuple(TestFixture fixture, Script script)
+        private Tuple<string, string> CreateTuple(TestFixture fixture, RobotRuntime.Recordings.Recording script)
         {
             return new Tuple<string, string>(fixture.Name, script.Name);
         }
 
-        private Tuple<string, string> CreateTuple(LightTestFixture fixture, Script script)
+        private Tuple<string, string> CreateTuple(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
         {
             return new Tuple<string, string>(fixture.Name, script.Name);
         }

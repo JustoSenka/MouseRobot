@@ -1,4 +1,4 @@
-﻿using Robot.Scripts;
+﻿using Robot.Recordings;
 using RobotEditor.Utils;
 using System;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ namespace RobotEditor.Settings
 
         [Browsable(false)]
         [NonSerialized]
-        public BaseScriptManager BaseScriptManager;
+        public BaseHierarchyManager BaseScriptManager;
 
         public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {

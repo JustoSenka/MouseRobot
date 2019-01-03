@@ -2,7 +2,7 @@
 using System.Linq;
 using Robot;
 using RobotRuntime.Commands;
-using Robot.Scripts;
+using Robot.Recordings;
 using System.IO;
 using Robot.Abstractions;
 using Unity;
@@ -10,7 +10,7 @@ using RobotRuntime.Utils;
 using Unity.Lifetime;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System;
 
 namespace Tests
@@ -35,13 +35,13 @@ namespace Tests
 
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
-        IScriptManager ScriptManager;
+        IHierarchyManager ScriptManager;
 
         [TestMethod]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
-            var asset = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            var asset2 = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
 
             Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
@@ -50,11 +50,11 @@ namespace Tests
         [TestMethod]
         public void CreateAsset_CreatesFile_AndAddsToAssetManager()
         {
-            var script = new Script(guid);
+            var script = new Recording(guid);
             AssetManager.CreateAsset(script, k_ScriptAPath);
 
             Assert.IsTrue(File.Exists(k_ScriptAPath), "File was not created");
-            Assert.AreEqual(AssetManager.GetAsset(k_ScriptAPath).Importer.Load<Script>(), script, "Asset value did not match the script");
+            Assert.AreEqual(AssetManager.GetAsset(k_ScriptAPath).Importer.Load<Recording>(), script, "Asset value did not match the script");
         }
 
         [TestMethod]
@@ -74,13 +74,13 @@ namespace Tests
         [TestMethod]
         public void RenameAsset_RenamesFile_AndKeepsAllReferencesIntact()
         {
-            var script = new Script(guid);
+            var script = new Recording(guid);
             var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
 
             AssetManager.RenameAsset(k_ScriptAPath, k_ScriptBPath);
 
             var newAsset = AssetManager.GetAsset(k_ScriptBPath);
-            var newScript = newAsset.Importer.Load<Script>();
+            var newScript = newAsset.Importer.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
             Assert.AreEqual(script, newScript, "Script reference should be the same after renaming asset");
@@ -91,14 +91,14 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithFileBeingRenamedOnFileSystem_AcceptsRenameAndKeepsAllReferences()
         {
-            var script = new Script(guid);
+            var script = new Recording(guid);
             var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
 
             File.Move(k_ScriptAPath, k_ScriptBPath);
             AssetManager.Refresh();
 
             var newAsset = AssetManager.GetAsset(k_ScriptBPath);
-            var newScript = newAsset.Importer.Load<Script>();
+            var newScript = newAsset.Importer.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
             Assert.AreEqual(script, newScript, "Script reference should be the same after renaming asset");
@@ -109,9 +109,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithDeletedFiles_RemovesThemFromManager()
         {
-            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
-            AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
-            AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
 
             File.Delete(k_ScriptAPath);
             File.Delete(k_ScriptCPath);
@@ -130,7 +130,7 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithNewFiles_AddsThemToManager()
         {
-            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
 
             CreateDummyScriptWithImporter(k_ScriptBPath);
             CreateDummyScriptWithImporter(k_ScriptCPath);
@@ -149,9 +149,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithRenamedFiles_HavingOtherFilesWithSameHash_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
+            var assetC = AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
 
             File.Move(k_ScriptBPath, k_ScriptDPath);
             AssetManager.Refresh();
@@ -166,9 +166,9 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithRenamedFiles_AndOneBeingDeleted_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Script(guid), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            var assetB = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
+            var assetC = AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
 
             // This will actually think that A was renamed to D, and B deleted
             // this is due to having the same hash
@@ -186,8 +186,8 @@ namespace Tests
         [TestMethod]
         public void DeleteAsset_RemovesFromManager_AndFromDisk()
         {
-            AssetManager.CreateAsset(new Script(guid), k_ScriptAPath);
-            AssetManager.CreateAsset(new Script(guid), k_ScriptBPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
 
             AssetManager.DeleteAsset(k_ScriptAPath);
 
@@ -200,7 +200,7 @@ namespace Tests
         private static void CreateDummyScriptWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
-            importer.Value = new Script(guid);
+            importer.Value = new Recording(guid);
             importer.SaveAsset();
         }
 
@@ -217,7 +217,7 @@ namespace Tests
             MouseRobot = container.Resolve<IMouseRobot>();
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
-            ScriptManager = container.Resolve<IScriptManager>();
+            ScriptManager = container.Resolve<IHierarchyManager>();
 
             ProjectManager.InitProject(TempProjectPath);
         }

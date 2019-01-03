@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity;
 
-namespace Robot.Scripts
+namespace Robot.Recordings
 {
     public class CommandFactory : ICommandFactory
     {

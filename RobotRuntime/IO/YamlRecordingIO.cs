@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace RobotRuntime.IO
 {
-    public class YamlScriptIO : ObjectIO
+    public class YamlRecordingIO : ObjectIO
     {
         private const BindingFlags k_BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
@@ -28,7 +28,7 @@ namespace RobotRuntime.IO
         {
             try
             {
-                var yamlTree = Serialize(objToWrite as LightScript, 0);
+                var yamlTree = Serialize(objToWrite as LightRecording, 0);
                 var text = YamlSerializer.SerializeYamlTree(yamlTree);
                 File.WriteAllText(path, text);
             }
@@ -38,7 +38,7 @@ namespace RobotRuntime.IO
             }
         }
 
-        public static TreeNode<YamlObject> Serialize(LightScript script, int level = 0)
+        public static TreeNode<YamlObject> Serialize(LightRecording script, int level = 0)
         {
             var scriptObject = new YamlObject(level, script.GetType().Name, "");
             var tree = new TreeNode<YamlObject>(scriptObject);
@@ -61,14 +61,14 @@ namespace RobotRuntime.IO
                 SerializeCommandsRecursively(commandYamlObject, childNode, level + 1);
         }
 
-        public static LightScript Deserialize(TreeNode<YamlObject> tree)
+        public static LightRecording Deserialize(TreeNode<YamlObject> tree)
         {
             var commandRoot = new TreeNode<Command>();
 
             foreach (var yamlCommandNode in tree)
                 DeserializeCommandsRecursively(commandRoot, yamlCommandNode);
 
-            var lightScript = new LightScript(commandRoot);
+            var lightScript = new LightRecording(commandRoot);
             YamlSerializer.DeserializeSimpleProperties(lightScript, tree);
 
             return lightScript;

@@ -8,7 +8,7 @@ using RobotRuntime.Utils;
 using Unity.Lifetime;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using Robot.Tests;
 using RobotRuntime.Commands;
@@ -42,15 +42,15 @@ namespace Tests
             {
                 var f = new LightTestFixture();
                 f.Name = "TestName";
-                f.Setup = new Script();
-                f.TearDown = new Script();
-                f.OneTimeSetup = new Script();
-                f.OneTimeTeardown = new Script();
+                f.Setup = new Recording();
+                f.TearDown = new Recording();
+                f.OneTimeSetup = new Recording();
+                f.OneTimeTeardown = new Recording();
                 f.Setup.Name = LightTestFixture.k_Setup;
                 f.TearDown.Name = LightTestFixture.k_TearDown;
                 f.OneTimeSetup.Name = LightTestFixture.k_OneTimeSetup;
                 f.OneTimeTeardown.Name = LightTestFixture.k_OneTimeTeardown;
-                f.Tests = new Script[] { new Script(), new Script() }.ToList();
+                f.Tests = new Recording[] { new Recording(), new Recording() }.ToList();
                 return f;
             }
         }

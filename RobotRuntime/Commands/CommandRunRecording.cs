@@ -5,25 +5,25 @@ using System;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    [RunnerType(typeof(RunScriptCommandRunner))] 
+    [RunnerType(typeof(RunRecordingCommandRunner))] 
     [PropertyDesignerType("NativeCommandProperties")]
-    public class CommandRunScript : Command
+    public class CommandRunRecording : Command
     {
         public override string Name { get { return "Run Script"; } }
         public override bool CanBeNested { get { return false; } }
 
         public Guid Asset { get; set; }
 
-        public CommandRunScript() : base() { }
-        public CommandRunScript(Guid guid) : base(guid) { }
-        public CommandRunScript(Guid script, Guid guid = default(Guid)) : base(guid)
+        public CommandRunRecording() : base() { }
+        public CommandRunRecording(Guid guid) : base(guid) { }
+        public CommandRunRecording(Guid script, Guid guid = default(Guid)) : base(guid)
         {
             Asset = script;
         }
 
         public override object Clone()
         {
-            return new CommandRunScript(Asset, Guid);
+            return new CommandRunRecording(Asset, Guid);
         }
 
         public override void Run(TestData TestData) { }

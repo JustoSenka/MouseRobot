@@ -33,7 +33,7 @@ namespace Robot
         }
         private AsyncOperation m_AsyncOperationOnUI;
 
-        private IScriptManager ScriptManager;
+        private IHierarchyManager ScriptManager;
         private ITestRunner TestRunner;
         private IRecordingManager RecordingManager;
         private IRuntimeSettings RuntimeSettings;
@@ -42,7 +42,7 @@ namespace Robot
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
         private IStatusManager StatusManager;
-        public MouseRobot(IScriptManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
+        public MouseRobot(IHierarchyManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IInputCallbacks InputCallbacks, IStatusManager StatusManager)
         {

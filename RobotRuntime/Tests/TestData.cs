@@ -7,14 +7,14 @@ namespace RobotRuntime.Tests
     public class TestData
     {
         public IRunnerFactory RunnerFactory;
-        public LightScript TestFixture;
+        public LightRecording TestFixture;
         public event CommandRunningCallback CommandRunningCallback;
         public bool ShouldCancelRun;
         public bool ShouldFailTest;
 
         public TestData() { }
 
-        public TestData(IRunnerFactory RunnerFactory, LightScript TestFixture, CommandRunningCallback Callback,
+        public TestData(IRunnerFactory RunnerFactory, LightRecording TestFixture, CommandRunningCallback Callback,
             bool ShouldCancelRun, bool ShouldFailTest)
         {
             this.RunnerFactory = RunnerFactory;

@@ -9,9 +9,9 @@ using System;
 using Unity;
 using System.Linq;
 using RobotRuntime.Execution;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotEditor.Settings;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 
 namespace RobotEditor.Windows
 {
@@ -63,7 +63,7 @@ namespace RobotEditor.Windows
             m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 
-        public void ShowObject(object obj, BaseScriptManager BaseScriptManager = null)
+        public void ShowObject(object obj, BaseHierarchyManager BaseScriptManager = null)
         {
             if (obj == null)
             {
@@ -72,8 +72,8 @@ namespace RobotEditor.Windows
             }
 
             var type = obj.GetType();
-            if (typeof(Script).IsAssignableFrom(type))
-                ShowScript((Script)obj);
+            if (typeof(Recording).IsAssignableFrom(type))
+                ShowScript((Recording)obj);
 
             else if (typeof(Command).IsAssignableFrom(type))
                 ShowCommand((Command)obj, BaseScriptManager);
@@ -85,15 +85,15 @@ namespace RobotEditor.Windows
             }
         }
 
-        private void ShowScript<T>(T script) where T : Script
+        private void ShowScript<T>(T script) where T : Recording
         {
-            var scriptProperties = Container.Resolve<ScriptProperties>();
+            var scriptProperties = Container.Resolve<Inspector.RecordingProperties>();
             scriptProperties.Script = script;
 
             m_CurrentObject = scriptProperties;
         }
 
-        private void ShowCommand<T>(T command, BaseScriptManager BaseScriptManager) where T : Command
+        private void ShowCommand<T>(T command, BaseHierarchyManager BaseScriptManager) where T : Command
         {
             var designerType = GetDesignerTypeForCommand(command.GetType());
 
@@ -108,7 +108,7 @@ namespace RobotEditor.Windows
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            if (m_CurrentObject is ScriptProperties scriptProperties)
+            if (m_CurrentObject is Inspector.RecordingProperties scriptProperties)
             {
                 ApplyDynamicTypeDescriptorToPropertyView();
             }

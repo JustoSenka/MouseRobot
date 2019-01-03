@@ -1,5 +1,5 @@
 ﻿using System;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 
 namespace RobotRuntime.Abstractions
@@ -12,17 +12,17 @@ namespace RobotRuntime.Abstractions
         event Action TestRunEnd;
 
         event Action<LightTestFixture> FixtureIsBeingRun;
-        event Action<LightTestFixture, Script> TestIsBeingRun;
+        event Action<LightTestFixture, Recording> TestIsBeingRun;
 
-        event Action<LightTestFixture, Script> FixtureSpecialScripFailed;
-        event Action<LightTestFixture, Script> FixtureSpecialScriptSucceded;
-        event Action<LightTestFixture, Script> TestPassed;
-        event Action<LightTestFixture, Script> TestFailed;
+        event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
+        event Action<LightTestFixture, Recording> FixtureSpecialScriptSucceded;
+        event Action<LightTestFixture, Recording> TestPassed;
+        event Action<LightTestFixture, Recording> TestFailed;
 
         void StartScript(string projectPath, string scriptName);
         void StartTests(string projectPath, string testFilter = ".");
 
-        void StartScript(LightScript lightScript);
+        void StartScript(LightRecording lightScript);
         void StartTests(string testFilter = ".");
 
         void Stop();

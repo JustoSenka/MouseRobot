@@ -1,5 +1,5 @@
 ﻿using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,12 +14,12 @@ namespace RobotEditor.Hierarchy
         public object Value { get; private set; }
 
         public TestFixture TestFixture { get; private set; }
-        public Script Script { get; private set; }
+        public Recording Script { get; private set; }
 
         public List<TestNode> Children { get; private set; }
         public TestNode Parent { get; set; }
 
-        public TestNode(Script script, TestNode parent)
+        public TestNode(Recording script, TestNode parent)
         {
             Value = script;
             Script = script;
@@ -66,7 +66,7 @@ namespace RobotEditor.Hierarchy
             }
         }
 
-        public void Update(Script script)
+        public void Update(Recording script)
         {
             Script = script;
             Value = script;

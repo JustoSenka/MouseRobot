@@ -6,25 +6,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace RobotRuntime.Scripts
+namespace RobotRuntime.Recordings
 {
     [PropertyDesignerType("ScriptProperties")]
-    public class Script : LightScript, ICloneable, IEnumerable<TreeNode<Command>>, ISimilar, IHaveGuid, IHaveGuidMap
+    public class Recording : LightRecording, ICloneable, IEnumerable<TreeNode<Command>>, ISimilar, IHaveGuid, IHaveGuidMap
     {
         private bool m_IsDirty;
         private string m_Path = "";
 
-        public event Action<Script> DirtyChanged;
+        public event Action<Recording> DirtyChanged;
         public const string DefaultScriptName = "New Script";
 
-        public event Action<Script, Command, Command> CommandAddedToScript;
-        public event Action<Script, Command, Command, int> CommandInsertedInScript;
-        public event Action<Script, Command, int> CommandRemovedFromScript;
-        public event Action<Script, Command, Command> CommandModifiedOnScript;
+        public event Action<Recording, Command, Command> CommandAddedToScript;
+        public event Action<Recording, Command, Command, int> CommandInsertedInScript;
+        public event Action<Recording, Command, int> CommandRemovedFromScript;
+        public event Action<Recording, Command, Command> CommandModifiedOnScript;
 
         protected readonly HashSet<Guid> CommandGuidMap = new HashSet<Guid>();
 
-        public Script(Guid guid = default(Guid)) : base(guid)
+        public Recording(Guid guid = default(Guid)) : base(guid)
         {
             Commands = new TreeNode<Command>();
         }
@@ -284,7 +284,7 @@ namespace RobotRuntime.Scripts
 
         public object Clone()
         {
-            return new Script((TreeNode<Command>)Commands.Clone())
+            return new Recording((TreeNode<Command>)Commands.Clone())
             {
                 Name = Name,
                 m_IsDirty = true,
@@ -342,7 +342,7 @@ namespace RobotRuntime.Scripts
 
         public bool Similar(object obj)
         {
-            var s = obj as Script;
+            var s = obj as Recording;
             if (s == null)
                 return false;
 
@@ -357,7 +357,7 @@ namespace RobotRuntime.Scripts
 
         // Inheritence
 
-        public Script(TreeNode<Command> commands) : base(commands)
+        public Recording(TreeNode<Command> commands) : base(commands)
         {
             Commands = commands;
 
@@ -367,12 +367,12 @@ namespace RobotRuntime.Scripts
             DEBUG_CheckCommandGuidConsistency();
         }
 
-        public LightScript ToLightScript()
+        public LightRecording ToLightScript()
         {
-            return new LightScript(Commands, Guid) { Name = Name };
+            return new LightRecording(Commands, Guid) { Name = Name };
         }
 
-        public Script(LightScript lightScript)
+        public Recording(LightRecording lightScript)
         {
             Commands = lightScript.Commands;
             m_Name = lightScript.Name;
@@ -384,9 +384,9 @@ namespace RobotRuntime.Scripts
             DEBUG_CheckCommandGuidConsistency();
         }
 
-        public static Script FromLightScript(LightScript lightScript)
+        public static Recording FromLightScript(LightRecording lightScript)
         {
-            return new Script(lightScript) { Name = lightScript.Name, Guid = lightScript.Guid };
+            return new Recording(lightScript) { Name = lightScript.Name, Guid = lightScript.Guid };
         }
 
 

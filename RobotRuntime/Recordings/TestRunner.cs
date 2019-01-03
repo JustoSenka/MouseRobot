@@ -1,6 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Execution;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
@@ -23,12 +23,12 @@ namespace RobotRuntime
         public event Action TestRunEnd;
 
         public event Action<LightTestFixture> FixtureIsBeingRun;
-        public event Action<LightTestFixture, Script> TestIsBeingRun;
+        public event Action<LightTestFixture, Recording> TestIsBeingRun;
 
-        public event Action<LightTestFixture, Script> FixtureSpecialScripFailed;
-        public event Action<LightTestFixture, Script> FixtureSpecialScriptSucceded;
-        public event Action<LightTestFixture, Script> TestPassed;
-        public event Action<LightTestFixture, Script> TestFailed;
+        public event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
+        public event Action<LightTestFixture, Recording> FixtureSpecialScriptSucceded;
+        public event Action<LightTestFixture, Recording> TestPassed;
+        public event Action<LightTestFixture, Recording> TestFailed;
 
         private IAssetGuidManager AssetGuidManager;
         private IScreenStateThread ScreenStateThread;
@@ -84,7 +84,7 @@ namespace RobotRuntime
             InitializeProject(projectPath);
 
             var importer = AssetImporter.FromPath(Path.Combine(Paths.ScriptPath, scriptName) + FileExtensions.ScriptD);
-            StartScript(importer.Load<LightScript>());
+            StartScript(importer.Load<LightRecording>());
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace RobotRuntime
             StartTests(testFilter);
         }
 
-        public void StartScript(LightScript lightScript)
+        public void StartScript(LightRecording lightScript)
         {
             InitializeNewRun();
 
@@ -133,7 +133,7 @@ namespace RobotRuntime
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 
                 // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
-                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightScript));
+                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightRecording));
 
                 foreach (var fixture in fixtures)
                 {
@@ -185,7 +185,7 @@ namespace RobotRuntime
             }).Start();
         }
 
-        private void RunScriptIfNotEmpty(IRunner scriptRunner, LightScript script)
+        private void RunScriptIfNotEmpty(IRunner scriptRunner, LightRecording script)
         {
             if (script.Commands.Count() > 0)
             {
@@ -194,7 +194,7 @@ namespace RobotRuntime
             }
         }
 
-        private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Script script)
+        private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Recording script)
         {
             var shouldFailTest = TestData.ShouldFailTest;
 

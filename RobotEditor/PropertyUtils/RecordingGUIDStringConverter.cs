@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using Robot.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 
 namespace RobotEditor.PropertyUtils
 {
     /// <summary>
     /// This will add a selection dropdown for Asset in property view
     /// </summary>
-    public class ScriptGUIDStringConverter : StringConverter
+    public class RecordingGUIDStringConverter : StringConverter
     {
         private static IAssetManager AssetManager { get; set; }
 
@@ -16,7 +16,7 @@ namespace RobotEditor.PropertyUtils
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(AssetManager.Assets.Where(a => a.HoldsTypeOf(typeof(Script))).Select(a => a.Name).ToList());
+            return new StandardValuesCollection(AssetManager.Assets.Where(a => a.HoldsTypeOf(typeof(Recording))).Select(a => a.Name).ToList());
         }
     }
 }

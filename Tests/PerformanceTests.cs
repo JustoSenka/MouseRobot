@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Robot;
-using Robot.Scripts;
+using Robot.Recordings;
 using System.IO;
 using Robot.Abstractions;
 using RobotRuntime.Abstractions;
@@ -9,7 +9,7 @@ using Unity;
 using RobotRuntime.Utils;
 using Unity.Lifetime;
 using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 
 namespace Tests
 {
@@ -78,7 +78,7 @@ namespace Tests
         private static void CreateDummyScriptWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
-            importer.Value = new Script();
+            importer.Value = new Recording();
             importer.SaveAsset();
         }
 

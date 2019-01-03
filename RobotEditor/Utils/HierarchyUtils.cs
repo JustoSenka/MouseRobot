@@ -1,10 +1,10 @@
 ﻿using BrightIdeasSoftware;
 using Robot.Abstractions;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -40,7 +40,7 @@ namespace RobotEditor.Utils
         }
 
         public static void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, int createMenuItemIndex,
-            TreeListView treeListView, BaseScriptManager baseScriptManager)
+            TreeListView treeListView, BaseHierarchyManager baseScriptManager)
         {
             contextMenuStrip.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
@@ -79,7 +79,7 @@ namespace RobotEditor.Utils
             }));
         }
 
-        public static HierarchyNode OnCommandAddedToScript(List<HierarchyNode> nodes, Script script, Command parentCommand, Command command)
+        public static HierarchyNode OnCommandAddedToScript(List<HierarchyNode> nodes, Recording script, Command parentCommand, Command command)
         {
             var parentNode = script.Commands.GetNodeFromValue(command).parent;
             System.Diagnostics.Debug.Assert(parentNode.value == parentCommand, "parentCommand and parentNode missmatched");
@@ -90,7 +90,7 @@ namespace RobotEditor.Utils
             return AddCommandToParentRecursive(script, command, parentHierarchyNode);
         }
 
-        public static HierarchyNode AddCommandToParentRecursive(Script script, Command command, HierarchyNode parentHierarchyNode, int pos = -1)
+        public static HierarchyNode AddCommandToParentRecursive(Recording script, Command command, HierarchyNode parentHierarchyNode, int pos = -1)
         {
             var nodeToAdd = new HierarchyNode(command, parentHierarchyNode);
 
@@ -106,7 +106,7 @@ namespace RobotEditor.Utils
             return nodeToAdd;
         }
 
-        public static void OnCommandRemovedFromScript(List<HierarchyNode> nodes, Script script, Command parentCommand, int commandIndex)
+        public static void OnCommandRemovedFromScript(List<HierarchyNode> nodes, Recording script, Command parentCommand, int commandIndex)
         {
             var scriptNode = nodes.FindRecursively(script);
             var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);
@@ -114,7 +114,7 @@ namespace RobotEditor.Utils
             parentNode.Children.RemoveAt(commandIndex);
         }
 
-        public static void OnCommandModifiedOnScript(List<HierarchyNode> nodes, Script script, Command oldCommand, Command newCommand)
+        public static void OnCommandModifiedOnScript(List<HierarchyNode> nodes, Recording script, Command oldCommand, Command newCommand)
         {
             var scriptNode = nodes.FindRecursively(script);
             var commandNode = scriptNode.GetNodeFromValue(oldCommand);
@@ -123,7 +123,7 @@ namespace RobotEditor.Utils
         }
 
         // Will not work with multi dragging
-        public static HierarchyNode OnCommandInsertedInScript(List<HierarchyNode> nodes, Script script, Command parentCommand, Command command, int pos)
+        public static HierarchyNode OnCommandInsertedInScript(List<HierarchyNode> nodes, Recording script, Command parentCommand, Command command, int pos)
         {
             var scriptNode = nodes.FindRecursively(script);
             var parentNode = parentCommand == null ? scriptNode : scriptNode.GetNodeFromValue(parentCommand);

@@ -1,4 +1,4 @@
-﻿using RobotRuntime.Scripts;
+﻿using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using System;
 using System.IO;
@@ -50,31 +50,31 @@ namespace RobotRuntime.IO
             foreach (var n in YamlSerializer.SerializeSimpleProperties(fixture, level + 1))
                 tree.AddChild(n);
             
-            tree.Join(YamlScriptIO.Serialize(fixture.Setup.ToLightScript(), level + 1));
-            tree.Join(YamlScriptIO.Serialize(fixture.TearDown.ToLightScript(), level + 1));
-            tree.Join(YamlScriptIO.Serialize(fixture.OneTimeSetup.ToLightScript(), level + 1));
-            tree.Join(YamlScriptIO.Serialize(fixture.OneTimeTeardown.ToLightScript(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.Setup.ToLightScript(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.TearDown.ToLightScript(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeSetup.ToLightScript(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeTeardown.ToLightScript(), level + 1));
 
             foreach(var t in fixture.Tests)
-                tree.Join(YamlScriptIO.Serialize(t.ToLightScript(), level + 1));
+                tree.Join(YamlRecordingIO.Serialize(t.ToLightScript(), level + 1));
 
             return tree;
         }
 
         public static LightTestFixture Deserialize(TreeNode<YamlObject> tree)
         {
-            var root = new TreeNode<LightScript>();
+            var root = new TreeNode<LightRecording>();
 
             var fixture = new LightTestFixture();
             YamlSerializer.DeserializeSimpleProperties(fixture, tree);
 
             foreach (var yamlScriptNode in tree)
             {
-                var s = YamlScriptIO.Deserialize(yamlScriptNode);
+                var s = YamlRecordingIO.Deserialize(yamlScriptNode);
                 if (s == null || s.Name == null && s.Commands.Count() == 0) // Test fixture name is also part of the tree, so skip it
                     continue;
 
-                fixture.AddScript(Script.FromLightScript(s));
+                fixture.AddScript(Recording.FromLightScript(s));
             }
 
             return fixture;

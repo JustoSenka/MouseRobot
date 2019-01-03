@@ -8,7 +8,7 @@ using Unity.Lifetime;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Tests;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System.Linq;
 using RobotRuntime.IO;
 
@@ -42,15 +42,15 @@ namespace Tests
             {
                 var f = new LightTestFixture();
                 f.Name = "TestName";
-                f.Setup = new Script();
-                f.TearDown = new Script();
-                f.OneTimeSetup = new Script();
-                f.OneTimeTeardown = new Script();
+                f.Setup = new Recording();
+                f.TearDown = new Recording();
+                f.OneTimeSetup = new Recording();
+                f.OneTimeTeardown = new Recording();
                 f.Setup.Name = LightTestFixture.k_Setup;
                 f.TearDown.Name = LightTestFixture.k_TearDown;
                 f.OneTimeSetup.Name = LightTestFixture.k_OneTimeSetup;
                 f.OneTimeTeardown.Name = LightTestFixture.k_OneTimeTeardown;
-                f.Tests = new Script[] { }.ToList();
+                f.Tests = new Recording[] { }.ToList();
                 return f;
             }
         }
@@ -60,7 +60,7 @@ namespace Tests
         {
             var fixture = TestFixtureManager.NewTestFixture();
             fixture.ApplyLightFixtureValues(LightTestFixture);
-            fixture.AddScript(new Script() { Name = "Test" });
+            fixture.AddScript(new Recording() { Name = "Test" });
 
             TestFixtureManager.SaveTestFixture(fixture, k_TestAPath);
 
@@ -72,7 +72,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Script() { Name = "Test" });
+            lightFixture.AddScript(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
 
@@ -84,7 +84,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager_IfTwoFixturesAreSaved()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Script() { Name = "Test" });
+            lightFixture.AddScript(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);
@@ -96,7 +96,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaFileSystem()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Script() { Name = "Test" });
+            lightFixture.AddScript(new Recording() { Name = "Test" });
 
             new YamlTestFixtureIO().SaveObject(k_TestAPath, lightFixture);
             AssetManager.Refresh();
@@ -109,7 +109,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyRemovesFixtures_WhenDeletingThemOnDisk()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Script() { Name = "Test" });
+            lightFixture.AddScript(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);
@@ -127,7 +127,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyHandlesFixtures_WhenRenamingThemOnDisk()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Script() { Name = "Test" });
+            lightFixture.AddScript(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);

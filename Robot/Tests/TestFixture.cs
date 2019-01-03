@@ -1,14 +1,14 @@
 ﻿using Robot.Abstractions;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RobotRuntime.Tests
 {
-    public class TestFixture : BaseScriptManager, ISimilar, IHaveGuid
+    public class TestFixture : BaseHierarchyManager, ISimilar, IHaveGuid
     {
         public const string DefaultTestFixtureName = "New Fixture";
         public const string DefaultTestName = "New Test";
@@ -18,13 +18,13 @@ namespace RobotRuntime.Tests
         public const string k_OneTimeSetup = "OneTimeSetup";
         public const string k_OneTimeTeardown = "OneTimeTeardown";
 
-        public Script Setup { get { return GetScriptWithName(k_Setup); } set { ReplaceScriptWithName(k_Setup, value); } }
-        public Script TearDown { get { return GetScriptWithName(k_TearDown); } set { ReplaceScriptWithName(k_TearDown, value); } }
-        public Script OneTimeSetup { get { return GetScriptWithName(k_OneTimeSetup); } set { ReplaceScriptWithName(k_OneTimeSetup, value); } }
-        public Script OneTimeTeardown { get { return GetScriptWithName(k_OneTimeTeardown); } set { ReplaceScriptWithName(k_OneTimeTeardown, value); } }
+        public Recording Setup { get { return GetScriptWithName(k_Setup); } set { ReplaceScriptWithName(k_Setup, value); } }
+        public Recording TearDown { get { return GetScriptWithName(k_TearDown); } set { ReplaceScriptWithName(k_TearDown, value); } }
+        public Recording OneTimeSetup { get { return GetScriptWithName(k_OneTimeSetup); } set { ReplaceScriptWithName(k_OneTimeSetup, value); } }
+        public Recording OneTimeTeardown { get { return GetScriptWithName(k_OneTimeTeardown); } set { ReplaceScriptWithName(k_OneTimeTeardown, value); } }
 
-        public IList<Script> Tests { get { return GetAllTests(); } }
-        public IList<Script> Hooks { get { return GetAllHooks(); } }
+        public IList<Recording> Tests { get { return GetAllTests(); } }
+        public IList<Recording> Hooks { get { return GetAllHooks(); } }
 
         public Guid Guid { get; protected set; }
 
@@ -61,15 +61,15 @@ namespace RobotRuntime.Tests
         {
             this.Logger = Logger;
 
-            AddScript(new Script() { Name = k_Setup });
-            AddScript(new Script() { Name = k_TearDown });
-            AddScript(new Script() { Name = k_OneTimeSetup });
-            AddScript(new Script() { Name = k_OneTimeTeardown });
+            AddScript(new Recording() { Name = k_Setup });
+            AddScript(new Recording() { Name = k_TearDown });
+            AddScript(new Recording() { Name = k_OneTimeSetup });
+            AddScript(new Recording() { Name = k_OneTimeTeardown });
 
             Guid = Guid.NewGuid();
         }
 
-        public override Script NewScript(Script clone = null)
+        public override Recording NewScript(Recording clone = null)
         {
             var s = base.NewScript(clone);
             s.Name = GetUniqueTestName(DefaultTestName);
@@ -88,7 +88,7 @@ namespace RobotRuntime.Tests
             return newName;
         }
 
-        public override void RemoveScript(Script script)
+        public override void RemoveScript(Recording script)
         {
             base.RemoveScript(script);
             m_IsDirty = true;
@@ -100,18 +100,18 @@ namespace RobotRuntime.Tests
             m_IsDirty = true;
         }
 
-        public override Script AddScript(Script script, bool removeScriptWithSamePath = false)
+        public override Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
         {
             m_IsDirty = true;
             return base.AddScript(script, removeScriptWithSamePath);
         }
 
-        private Script GetScriptWithName(string name)
+        private Recording GetScriptWithName(string name)
         {
             return LoadedScripts.FirstOrDefault(s => s.Name == name);
         }
 
-        private void ReplaceScriptWithName(string name, Script value)
+        private void ReplaceScriptWithName(string name, Recording value)
         {
             var s = GetScriptWithName(name);
             if (s == null)
@@ -152,12 +152,12 @@ namespace RobotRuntime.Tests
             return hash;
         }
 
-        private IList<Script> GetAllTests()
+        private IList<Recording> GetAllTests()
         {
             return LoadedScripts.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
         }
 
-        private IList<Script> GetAllHooks()
+        private IList<Recording> GetAllHooks()
         {
             return LoadedScripts.Where(s => s.Name == k_Setup || s.Name == k_TearDown || s.Name == k_OneTimeSetup || s.Name == k_OneTimeTeardown).ToList();
         }

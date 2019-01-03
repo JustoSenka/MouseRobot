@@ -2,7 +2,7 @@
 using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Commands;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +12,9 @@ using Unity;
 namespace Tests
 {
     [TestClass]
-    public class ScriptManagerTests
+    public class HierarchyManagerTests
     {
-        IScriptManager ScriptManager;
+        IHierarchyManager ScriptManager;
 
         [TestMethod]
         public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
@@ -29,7 +29,7 @@ namespace Tests
             Assert.AreEqual(2, ScriptManager.LoadedScripts.Count);
         }
 
-        private Script NewTestScript(out Command topCommand, out Command childCommand)
+        private Recording NewTestScript(out Command topCommand, out Command childCommand)
         {
             var s = ScriptManager.NewScript();
             topCommand = s.AddCommand(new CommandSleep(1));
@@ -236,9 +236,9 @@ namespace Tests
             Assert.AreEqual(s2, script, "Scripts missmatched");
         }
 
-        private void CheckIfScriptsHasAllCorrectGuids(params Script[] scripts)
+        private void CheckIfScriptsHasAllCorrectGuids(params Recording[] scripts)
         {
-            var hashmapField = typeof(Script).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);
+            var hashmapField = typeof(Recording).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);
 
             foreach (var s in scripts)
             {
@@ -256,7 +256,7 @@ namespace Tests
         {
             var container = TestBase.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
-            ScriptManager = container.Resolve<IScriptManager>();
+            ScriptManager = container.Resolve<IHierarchyManager>();
         }
 
         [TestCleanup]

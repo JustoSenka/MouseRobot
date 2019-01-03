@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
@@ -98,11 +98,11 @@ namespace Tests
         }
 
 
-        private Script Script
+        private Recording Script
         {
             get
             {
-                var s = new Script(guid);
+                var s = new Recording(guid);
                 s.Name = "TestName";
                 var imageCommand = new CommandForImage(new Guid(), 1850, guid);
                 s.AddCommand(imageCommand);
@@ -132,7 +132,7 @@ namespace Tests
         [TestMethod]
         public void Script_ProducesCorrect_YamlString()
         {
-            var yamlObj = YamlScriptIO.Serialize(Script.ToLightScript());
+            var yamlObj = YamlRecordingIO.Serialize(Script.ToLightScript());
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
 
             // Needed to ignore randomly generated guids
@@ -145,7 +145,7 @@ namespace Tests
         [TestMethod]
         public void Script_ProducesCorrect_YamlObj()
         {
-            var yamlObj = YamlScriptIO.Serialize(Script.ToLightScript());
+            var yamlObj = YamlRecordingIO.Serialize(Script.ToLightScript());
             var children = yamlObj.ToArray();
             Assert.AreEqual(4, children.Length, "only two root commands should be in the script and a name.");
 
@@ -182,8 +182,8 @@ namespace Tests
         {
             var s = Script;
             var lightScript = s.ToLightScript();
-            var yamlObj = YamlScriptIO.Serialize(s);
-            var newScript = YamlScriptIO.Deserialize(yamlObj);
+            var yamlObj = YamlRecordingIO.Serialize(s);
+            var newScript = YamlRecordingIO.Deserialize(yamlObj);
 
             Assert.AreEqual(lightScript.Commands.Count(), newScript.Commands.Count(), "Command count should be the same.");
         }
@@ -234,7 +234,7 @@ namespace Tests
                 f.TearDown.Name = LightTestFixture.k_TearDown;
                 f.OneTimeSetup.Name = LightTestFixture.k_OneTimeSetup;
                 f.OneTimeTeardown.Name = LightTestFixture.k_OneTimeTeardown;
-                f.Tests = new Script[] { Script }.ToList();
+                f.Tests = new Recording[] { Script }.ToList();
                 return f;
             }
         }

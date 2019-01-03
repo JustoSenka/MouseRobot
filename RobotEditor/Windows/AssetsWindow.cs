@@ -4,7 +4,7 @@ using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Assets;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
@@ -20,13 +20,13 @@ namespace RobotEditor
         public event Action AssetSelected;
 
         private IAssetManager AssetManager;
-        private IScriptManager ScriptManager;
+        private IHierarchyManager ScriptManager;
         private ITestFixtureManager TestFixtureManager;
         private IPluginManager PluginManager;
         private ISolutionManager SolutionManager;
         private ICodeEditor CodeEditor;
         private ILogger Logger;
-        public AssetsWindow(IAssetManager AssetManager, IScriptManager ScriptManager, ITestFixtureManager TestFixtureManager,
+        public AssetsWindow(IAssetManager AssetManager, IHierarchyManager ScriptManager, ITestFixtureManager TestFixtureManager,
             IPluginManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
         {
             this.AssetManager = AssetManager;
@@ -179,7 +179,7 @@ namespace RobotEditor
             if (Logger.AssertIf(asset == null, $"Asset in database was not found but is visible in Assets Window: {treeView.SelectedNode.Text}. Please report a bug."))
                 return;
 
-            if (asset.HoldsTypeOf(typeof(Script)))
+            if (asset.HoldsTypeOf(typeof(Recording)))
             {
                 if (!ScriptManager.LoadedScripts.Any(s => s.Name == asset.Name))
                     ScriptManager.LoadScript(asset.Path);

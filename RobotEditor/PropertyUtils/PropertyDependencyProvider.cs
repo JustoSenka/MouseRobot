@@ -15,7 +15,7 @@ namespace RobotEditor.PropertyUtils
         {
             typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
             typeof(AssetGUIDImageUITypeEditor).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
-            typeof(ScriptGUIDStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
+            typeof(RecordingGUIDStringConverter).GetProperty("AssetManager", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, AssetManager);
 
             typeof(DetectorNameStringConverter).GetProperty("FeatureDetectorFactory", BindingFlags.Static | BindingFlags.NonPublic).SetValue(null, FeatureDetectorFactory);
 

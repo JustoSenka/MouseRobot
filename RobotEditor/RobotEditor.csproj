@@ -208,14 +208,14 @@
     <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
     <Compile Include="Editor\ProjectSelectionDialog.cs" />
     <Compile Include="Hierarchy\TestNode.cs" />
-    <Compile Include="Inspector\ScriptProperties.cs" />
+    <Compile Include="Inspector\RecordingProperties.cs" />
     <Compile Include="Inspector\DefaultCommandProperties.cs" />
     <Compile Include="Inspector\NativeCommandProperties.cs" />
     <Compile Include="Inspector\CommandProperties.cs" />
     <Compile Include="Hierarchy\HierarchyNodeStringConverter.cs" />
     <Compile Include="Hierarchy\HierarchyNode.cs" />
     <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
-    <Compile Include="PropertyUtils\ScriptGUIDStringConverter.cs" />
+    <Compile Include="PropertyUtils\RecordingGUIDStringConverter.cs" />
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />

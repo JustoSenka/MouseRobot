@@ -53,7 +53,7 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Time");
             }
-            else if (Command is CommandRunScript)
+            else if (Command is CommandRunRecording)
             {
                 AddProperty(dt, "Script");
             }
@@ -143,7 +143,7 @@ namespace RobotEditor.Inspector
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DisplayName("Referenced Script")]
-        [TypeConverter(typeof(ScriptGUIDStringConverter))]
+        [TypeConverter(typeof(RecordingGUIDStringConverter))]
         public string Script
         {
             get

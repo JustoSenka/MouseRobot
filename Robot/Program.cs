@@ -1,11 +1,11 @@
 ﻿using Robot.Abstractions;
 using Unity;
 using Unity.Lifetime;
-using Robot.Recording;
+using Robot.RecordingCreation;
 using Robot.Settings;
 using Robot.Utils.Win32;
 using Robot.Plugins;
-using Robot.Scripts;
+using Robot.Recordings;
 using Robot.Tests;
 using Robot.Assets;
 using Robot.Utils;
@@ -21,7 +21,7 @@ namespace Robot
             Container.RegisterType<ICroppingManager, CroppingManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMouseRobot, MouseRobot>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRecordingManager, RecordingManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScriptManager, ScriptManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IHierarchyManager, ScriptManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());

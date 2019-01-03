@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System.Linq;
 using Unity;
 using Unity.Lifetime;
@@ -23,7 +23,7 @@ namespace Tests
         }
 
 
-        public static void CheckThatGuidsAreNotSame(Script s1, Script s2) 
+        public static void CheckThatGuidsAreNotSame(Recording s1, Recording s2) 
         {
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
@@ -34,7 +34,7 @@ namespace Tests
                 Assert.AreNotEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in script not should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
-        public static void CheckThatGuidsAreSame(Script s1, Script s2)
+        public static void CheckThatGuidsAreSame(Recording s1, Recording s2)
         {
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
@@ -45,7 +45,7 @@ namespace Tests
                 Assert.AreEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in script should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
-        public static void CheckThatPtrsAreNotSame(Script s1, Script s2)
+        public static void CheckThatPtrsAreNotSame(Recording s1, Recording s2)
         {
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
@@ -56,7 +56,7 @@ namespace Tests
                 Assert.AreNotSame(zip.a.value, zip.b.value, $"Command ptrs in script should not be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
-        public static void CheckThatPtrsAreSame(Script s1, Script s2)
+        public static void CheckThatPtrsAreSame(Recording s1, Recording s2)
         {
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);

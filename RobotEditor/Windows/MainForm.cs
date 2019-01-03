@@ -14,7 +14,7 @@ using RobotEditor.Windows;
 using Robot.Settings;
 using RobotRuntime.Settings;
 using RobotRuntime.Logging;
-using Robot.Scripts;
+using Robot.Recordings;
 using Unity;
 using RobotRuntime.Tests;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ namespace RobotEditor
         private IScreenPaintForm ScreenPaintForm;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
-        private IScriptManager ScriptManager;
+        private IHierarchyManager ScriptManager;
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
@@ -59,7 +59,7 @@ namespace RobotEditor
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IScriptManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
+            IHierarchyManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager)
@@ -228,7 +228,7 @@ namespace RobotEditor
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
         }
 
-        private void ShowSelectedObjectInInspector(BaseScriptManager BaseScriptManager, object obj)
+        private void ShowSelectedObjectInInspector(BaseHierarchyManager BaseScriptManager, object obj)
         {
             m_InspectorWindow.ShowObject(obj, BaseScriptManager);
         }

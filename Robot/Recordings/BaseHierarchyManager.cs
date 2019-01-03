@@ -1,36 +1,36 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Robot.Scripts
+namespace Robot.Recordings
 {
-    public abstract class BaseScriptManager : IEnumerable<Script>, IHaveGuidMap
+    public abstract class BaseHierarchyManager : IEnumerable<RobotRuntime.Recordings.Recording>, IHaveGuidMap
     {
-        protected readonly IList<Script> m_LoadedScripts;
-        public IList<Script> LoadedScripts { get { return m_LoadedScripts; } }
+        protected readonly IList<RobotRuntime.Recordings.Recording> m_LoadedScripts;
+        public IList<RobotRuntime.Recordings.Recording> LoadedScripts { get { return m_LoadedScripts; } }
 
-        public event Action<Script> ScriptAdded;
-        public event Action<Script> ScriptModified;
+        public event Action<RobotRuntime.Recordings.Recording> ScriptAdded;
+        public event Action<RobotRuntime.Recordings.Recording> ScriptModified;
         public event Action<int> ScriptRemoved;
         public event Action ScriptPositioningChanged;
 
-        public event Action<Script, Command, Command> CommandAddedToScript;
-        public event Action<Script, Command, Command, int> CommandInsertedInScript;
-        public event Action<Script, Command, int> CommandRemovedFromScript;
-        public event Action<Script, Command, Command> CommandModifiedOnScript;
+        public event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandAddedToScript;
+        public event Action<RobotRuntime.Recordings.Recording, Command, Command, int> CommandInsertedInScript;
+        public event Action<RobotRuntime.Recordings.Recording, Command, int> CommandRemovedFromScript;
+        public event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandModifiedOnScript;
 
         protected readonly HashSet<Guid> ScriptGuidMap = new HashSet<Guid>();
 
         private ICommandFactory CommandFactory;
         private IProfiler Profiler;
         private ILogger Logger;
-        public BaseScriptManager(ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
+        public BaseHierarchyManager(ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
         {
             this.CommandFactory = CommandFactory;
             this.Profiler = Profiler;
@@ -38,10 +38,10 @@ namespace Robot.Scripts
 
             CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
 
-            m_LoadedScripts = new List<Script>();
+            m_LoadedScripts = new List<RobotRuntime.Recordings.Recording>();
         }
 
-        protected void SubscribeToScriptEvents(Script s)
+        protected void SubscribeToScriptEvents(RobotRuntime.Recordings.Recording s)
         {
             s.CommandAddedToScript += InvokeCommandAddedToScript;
             s.CommandInsertedInScript += InvokeCommandInsertedInScript;
@@ -49,7 +49,7 @@ namespace Robot.Scripts
             s.CommandModifiedOnScript += InvokeCommandModifiedOnScript;
         }
 
-        protected void UnsubscribeToScriptEvents(Script s)
+        protected void UnsubscribeToScriptEvents(RobotRuntime.Recordings.Recording s)
         {
             s.CommandAddedToScript -= InvokeCommandAddedToScript;
             s.CommandInsertedInScript -= InvokeCommandInsertedInScript;
@@ -57,22 +57,22 @@ namespace Robot.Scripts
             s.CommandModifiedOnScript -= InvokeCommandModifiedOnScript;
         }
 
-        private void InvokeCommandAddedToScript(Script script, Command parentCommand, Command command)
+        private void InvokeCommandAddedToScript(RobotRuntime.Recordings.Recording script, Command parentCommand, Command command)
         {
             CommandAddedToScript?.Invoke(script, parentCommand, command);
         }
 
-        private void InvokeCommandInsertedInScript(Script script, Command parentCommand, Command command, int index)
+        private void InvokeCommandInsertedInScript(RobotRuntime.Recordings.Recording script, Command parentCommand, Command command, int index)
         {
             CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
         }
 
-        private void InvokeCommandRemovedFromScript(Script script, Command parentCommand, int index)
+        private void InvokeCommandRemovedFromScript(RobotRuntime.Recordings.Recording script, Command parentCommand, int index)
         {
             CommandRemovedFromScript?.Invoke(script, parentCommand, index);
         }
 
-        private void InvokeCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
+        private void InvokeCommandModifiedOnScript(RobotRuntime.Recordings.Recording script, Command oldCommand, Command newCommand)
         {
             CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
         }
@@ -96,15 +96,15 @@ namespace Robot.Scripts
             Profiler.Stop("BaseScriptManager_ReplaceOldCommandInstances");
         }
 
-        public virtual Script NewScript(Script clone = null)
+        public virtual Recording NewScript(RobotRuntime.Recordings.Recording clone = null)
         {
-            Script script;
+            RobotRuntime.Recordings.Recording script;
 
             if (clone == null)
-                script = new Script();
+                script = new RobotRuntime.Recordings.Recording();
             else
             {
-                script = (Script)clone.Clone();
+                script = (RobotRuntime.Recordings.Recording)clone.Clone();
                 ((IHaveGuid)script).RegenerateGuid();
             }
 
@@ -118,7 +118,7 @@ namespace Robot.Scripts
             return script;
         }
 
-        public virtual void RemoveScript(Script script)
+        public virtual void RemoveScript(RobotRuntime.Recordings.Recording script)
         {
             var position = m_LoadedScripts.IndexOf(script);
 
@@ -139,14 +139,14 @@ namespace Robot.Scripts
             ScriptRemoved?.Invoke(position);
         }
 
-        public virtual Script AddScript(Script script, bool removeScriptWithSamePath = false)
+        public virtual Recording AddScript(RobotRuntime.Recordings.Recording script, bool removeScriptWithSamePath = false)
         {
             if (script == null)
                 return null;
 
             // If script was already loaded, reload it to last saved state
             var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(script.Path));
-            if (oldScript != default(Script) && removeScriptWithSamePath)
+            if (oldScript != default(RobotRuntime.Recordings.Recording) && removeScriptWithSamePath)
             {
                 // Reload Script
                 var index = m_LoadedScripts.IndexOf(oldScript);
@@ -240,12 +240,12 @@ namespace Robot.Scripts
             ScriptPositioningChanged?.Invoke();
         }
 
-        public Script GetScriptFromCommand(Command command)
+        public Recording GetScriptFromCommand(Command command)
         {
             return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
         }
 
-        public Script GetScriptFromCommandGuid(Guid guid)
+        public Recording GetScriptFromCommandGuid(Guid guid)
         {
             return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
         }
@@ -257,7 +257,7 @@ namespace Robot.Scripts
             return node.parent.IndexOf(command);
         }
 
-        public int GetScriptIndex(Script script)
+        public int GetScriptIndex(RobotRuntime.Recordings.Recording script)
         {
             return LoadedScripts.IndexOf(script);
         }
@@ -267,7 +267,7 @@ namespace Robot.Scripts
             return ScriptGuidMap.Contains(guid);
         }
 
-        public IEnumerator<Script> GetEnumerator()
+        public IEnumerator<RobotRuntime.Recordings.Recording> GetEnumerator()
         {
             return m_LoadedScripts.GetEnumerator();
         }

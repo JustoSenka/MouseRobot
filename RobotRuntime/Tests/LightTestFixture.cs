@@ -1,4 +1,4 @@
-﻿using RobotRuntime.Scripts;
+﻿using RobotRuntime.Recordings;
 using System;
 using System.Collections.Generic;
 
@@ -6,17 +6,17 @@ namespace RobotRuntime.Tests
 {
     public class LightTestFixture : ICloneable
     {
-        public Script Setup { get; set; }
-        public Script TearDown { get; set; }
-        public Script OneTimeSetup { get; set; }
-        public Script OneTimeTeardown { get; set; }
+        public Recording Setup { get; set; }
+        public Recording TearDown { get; set; }
+        public Recording OneTimeSetup { get; set; }
+        public Recording OneTimeTeardown { get; set; }
 
         [NonSerialized] public const string k_Setup = "Setup";
         [NonSerialized] public const string k_TearDown = "TearDown";
         [NonSerialized] public const string k_OneTimeSetup = "OneTimeSetup";
         [NonSerialized] public const string k_OneTimeTeardown = "OneTimeTeardown";
 
-        public IList<Script> Tests { get; set; }
+        public IList<Recording> Tests { get; set; }
 
         public Guid Guid { get; protected set; } = new Guid();
 
@@ -24,11 +24,11 @@ namespace RobotRuntime.Tests
 
         public LightTestFixture(Guid guid = default(Guid))
         {
-            Tests = new List<Script>();
+            Tests = new List<Recording>();
             Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
         }
 
-        public void AddScript(Script s)
+        public void AddScript(Recording s)
         {
             if (s.Name == k_Setup)
                 Setup = s;
@@ -42,7 +42,7 @@ namespace RobotRuntime.Tests
                 Tests.Add(s);
         }
 
-        public static bool IsSpecialScript(Script Script)
+        public static bool IsSpecialScript(Recording Script)
         {
             return (Script.Name == k_OneTimeSetup ||
                 Script.Name == k_OneTimeTeardown ||
@@ -55,13 +55,13 @@ namespace RobotRuntime.Tests
             var fixture = new LightTestFixture();
             fixture.Name = Name;
 
-            fixture.Setup = (Script)Setup.Clone();
-            fixture.TearDown = (Script)TearDown.Clone();
-            fixture.OneTimeSetup = (Script)OneTimeSetup.Clone();
-            fixture.OneTimeTeardown = (Script)OneTimeTeardown.Clone();
+            fixture.Setup = (Recording)Setup.Clone();
+            fixture.TearDown = (Recording)TearDown.Clone();
+            fixture.OneTimeSetup = (Recording)OneTimeSetup.Clone();
+            fixture.OneTimeTeardown = (Recording)OneTimeTeardown.Clone();
 
             foreach (var test in Tests)
-                fixture.Tests.Add((Script)test.Clone());
+                fixture.Tests.Add((Recording)test.Clone());
 
             ((IHaveGuid)fixture.Setup).RegenerateGuid();
             ((IHaveGuid)fixture.TearDown).RegenerateGuid();

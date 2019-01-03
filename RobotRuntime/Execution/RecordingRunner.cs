@@ -4,19 +4,19 @@ using System.Linq;
 
 namespace RobotRuntime.Execution
 {
-    public class ScriptRunner : IRunner
+    public class RecordingRunner : IRunner
     {
         public TestData TestData { set; get; }
 
         private ILogger Logger;
-        public ScriptRunner(ILogger Logger)
+        public RecordingRunner(ILogger Logger)
         {
             this.Logger = Logger;
         }
 
         public void Run(IRunnable runnable)
         {
-            var script = runnable as LightScript;
+            var script = runnable as LightRecording;
 
             if (Logger.AssertIf(script == null, "Script is invalid: " + runnable))
                 return;

@@ -4,15 +4,15 @@ using System;
 namespace RobotRuntime
 {
     [Serializable]
-    [RunnerType(typeof(ScriptRunner))] 
-    public class LightScript : IRunnable
+    [RunnerType(typeof(RecordingRunner))] 
+    public class LightRecording : IRunnable
     {
-        public LightScript(Guid guid = default(Guid))
+        public LightRecording(Guid guid = default(Guid))
         {
             Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
         }
 
-        public LightScript(TreeNode<Command> commands, Guid guid = default(Guid)) : this(guid)
+        public LightRecording(TreeNode<Command> commands, Guid guid = default(Guid)) : this(guid)
         {
             Commands = commands;
         }

@@ -4,12 +4,12 @@ using RobotRuntime.Tests;
 
 namespace RobotRuntime.Execution
 {
-    public class RunScriptCommandRunner : IRunner
+    public class RunRecordingCommandRunner : IRunner
     {
         public TestData TestData { set; get; }
 
         private IRuntimeAssetManager RuntimeAssetManager;
-        public RunScriptCommandRunner(IRuntimeAssetManager RuntimeAssetManager)
+        public RunRecordingCommandRunner(IRuntimeAssetManager RuntimeAssetManager)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
         }
@@ -22,14 +22,14 @@ namespace RobotRuntime.Execution
                 return;
             }
 
-            if (runnable is CommandRunScript command)
+            if (runnable is CommandRunRecording command)
             {
                 TestData.InvokeCallback(command.Guid);
-                var runner = TestData.RunnerFactory.GetFor(typeof(LightScript));
+                var runner = TestData.RunnerFactory.GetFor(typeof(LightRecording));
 
                 var oldScript = TestData.TestFixture;
 
-                var script = RuntimeAssetManager.GetAsset<LightScript>(command.Asset);
+                var script = RuntimeAssetManager.GetAsset<LightRecording>(command.Asset);
                 runner.Run(script);
 
                 TestData.TestFixture = oldScript;

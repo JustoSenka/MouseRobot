@@ -1,5 +1,5 @@
 ﻿using RobotRuntime;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace RobotEditor.Hierarchy
 
         public object Value { get; private set; }
         public Command Command { get; private set; }
-        public Script Script { get; private set; }
+        public Recording Script { get; private set; }
 
         public List<HierarchyNode> Children { get; private set; }
         public HierarchyNode Parent { get; set; }
@@ -34,7 +34,7 @@ namespace RobotEditor.Hierarchy
             Children = new List<HierarchyNode>();
         }
 
-        public HierarchyNode(Script script, int overrideLevel = 0)
+        public HierarchyNode(Recording script, int overrideLevel = 0)
         {
             Value = script;
             Script = script;
@@ -98,7 +98,7 @@ namespace RobotEditor.Hierarchy
             Value = command;
         }
 
-        public void Update(Script script)
+        public void Update(Recording script)
         {
             Script = script;
             Value = script;

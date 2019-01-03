@@ -6,7 +6,7 @@ using Robot.Tests;
 using RobotEditor.Hierarchy;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using System;
 using System.Collections.Generic;
@@ -230,7 +230,7 @@ namespace RobotEditor
             }
         }
 
-        private void OnTestIsBeingRun(LightTestFixture lightTestFixture, Script script)
+        private void OnTestIsBeingRun(LightTestFixture lightTestFixture, Recording script)
         {
             var fixtureNode = m_Nodes.FirstOrDefault(node => node.TestFixture.Name == lightTestFixture.Name);
             if (fixtureNode != null && fixtureNode.TestFixture != null)

@@ -53,6 +53,8 @@ namespace Robot.Utils
                     dte = GetDteFromProgID(m_VsProgID);
                 }
 
+                // TODO: dte can still be null here, if VS process fails to close itself, or refuses to communicate, should I open another VS?
+
                 try
                 {
                     dte.ItemOperations.OpenFile(Path.Combine(Environment.CurrentDirectory, filePath));

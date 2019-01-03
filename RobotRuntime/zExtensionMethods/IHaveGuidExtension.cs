@@ -1,4 +1,4 @@
-﻿using RobotRuntime.Scripts;
+﻿using RobotRuntime.Recordings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +47,7 @@ namespace RobotRuntime
 
                 node.RegenerateGuid();
 
-                if (node is Script s)
+                if (node is Recording s)
                     s.Commands.CastAndRemoveNullsTree<IHaveGuid>().RegenerateGuids();
             }
         }

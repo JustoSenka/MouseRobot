@@ -161,7 +161,7 @@
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Abstractions\IAssetManager.cs" />
-    <Compile Include="Assets\ScriptImporter.cs" />
+    <Compile Include="Assets\RecordingImporter.cs" />
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
     <Compile Include="MouseRobot\ProjectManager.cs" />
@@ -177,21 +177,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Recording\CroppingManager.cs" />
+    <Compile Include="RecordingCreation\CroppingManager.cs" />
     <Compile Include="Abstractions\ICroppingManager.cs" />
     <Compile Include="Abstractions\IRecordingManager.cs" />
-    <Compile Include="Recording\RecordingManager.cs" />
-    <Compile Include="Scripts\CommandExtension.cs" />
-    <Compile Include="Scripts\CommandFactory.cs" />
-    <Compile Include="Abstractions\IScriptManager.cs" />
+    <Compile Include="RecordingCreation\RecordingManager.cs" />
+    <Compile Include="Recordings\CommandExtension.cs" />
+    <Compile Include="Recordings\CommandFactory.cs" />
+    <Compile Include="Abstractions\IHierarchyManager.cs" />
     <Compile Include="Abstractions\ISettingsManager.cs" />
     <Compile Include="Abstractions\ICommandFactory.cs" />
-    <Compile Include="Scripts\BaseScriptManager.cs" />
+    <Compile Include="Recordings\BaseHierarchyManager.cs" />
     <Compile Include="Settings\CompilerSettings.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts\ScriptManager.cs" />
+    <Compile Include="Recordings\HierarchyManager.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Abstractions\IInputCallbacks.cs" />
     <Compile Include="Abstractions\ITestFixtureManager.cs" />

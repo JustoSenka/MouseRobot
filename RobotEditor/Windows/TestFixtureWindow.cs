@@ -2,13 +2,13 @@
 
 using BrightIdeasSoftware;
 using Robot.Abstractions;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
@@ -23,7 +23,7 @@ namespace RobotEditor
 {
     public partial class TestFixtureWindow : DockContent, ITestFixtureWindow
     {
-        public event Action<BaseScriptManager, object> OnSelectionChanged;
+        public event Action<BaseHierarchyManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
         private HierarchyNode m_HighlightedNode;
@@ -194,7 +194,7 @@ namespace RobotEditor
 
         #region ScriptManager Callbacks
 
-        private void OnScriptLoaded(Script script)
+        private void OnScriptLoaded(Recording script)
         {
             var node = new HierarchyNode(script);
             m_TestsNode.AddHierarchyNode(node);
@@ -207,7 +207,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        private void OnScriptModified(Script script)
+        private void OnScriptModified(Recording script)
         {
             var node = new HierarchyNode(script);
             m_Nodes.ReplaceNodeWithNewOne(node);
@@ -251,7 +251,7 @@ namespace RobotEditor
             ASSERT_TreeViewIsTheSameAsInScriptManager();
         }
 
-        private void OnCommandAddedToScript(Script script, Command parentCommand, Command command)
+        private void OnCommandAddedToScript(Recording script, Command parentCommand, Command command)
         {
             var addedNode = HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
             var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => treeListView.Expand(addedNode.Parent) : default(Action);
@@ -259,20 +259,20 @@ namespace RobotEditor
             RefreshTreeListViewAsync(postRefreshAction);
         }
 
-        private void OnCommandRemovedFromScript(Script script, Command parentCommand, int commandIndex)
+        private void OnCommandRemovedFromScript(Recording script, Command parentCommand, int commandIndex)
         {
             HierarchyUtils.OnCommandRemovedFromScript(m_Nodes, script, parentCommand, commandIndex);
             RefreshTreeListViewAsync();
         }
 
-        private void OnCommandModifiedOnScript(Script script, Command oldCommand, Command newCommand)
+        private void OnCommandModifiedOnScript(Recording script, Command oldCommand, Command newCommand)
         {
             HierarchyUtils.OnCommandModifiedOnScript(m_Nodes, script, oldCommand, newCommand);
             RefreshTreeListViewAsync();
         }
 
         // Will not work with multi dragging
-        private void OnCommandInsertedInScript(Script script, Command parentCommand, Command command, int pos)
+        private void OnCommandInsertedInScript(Recording script, Command parentCommand, Command command, int pos)
         {
             var node = HierarchyUtils.OnCommandInsertedInScript(m_Nodes, script, parentCommand, command, pos);
             RefreshTreeListViewAsync(() => treeListView.SelectedObject = node);
@@ -440,7 +440,7 @@ namespace RobotEditor
 
                 var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
                 sourceScript.RemoveCommand(sourceNode.Command);
-                targetNode.Script.AddCommandNode(node);
+                targetNode.Script.AddCommandNode((TreeNode<Command>)node);
             }
         }
 
@@ -522,7 +522,7 @@ namespace RobotEditor
             treeListView.FormatCell -= UpdateFontsTreeListView;
         }
 
-        private bool IsItASpecialScript(Script script)
+        private bool IsItASpecialScript(Recording script)
         {
             if (script == null)
                 return false;

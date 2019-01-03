@@ -1,9 +1,9 @@
 ﻿using Robot;
 using Robot.Abstractions;
-using Robot.Scripts;
+using Robot.Recordings;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
-using RobotRuntime.Scripts;
+using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using System.ComponentModel;
 using System.Linq;
@@ -11,17 +11,17 @@ using System.Windows.Forms;
 
 namespace RobotEditor.Inspector
 {
-    public class ScriptProperties : BaseProperties
+    public class RecordingProperties : BaseProperties
     {
         [Browsable(false)]
-        public virtual Script Script { get; set; }
+        public virtual Recording Script { get; set; }
 
         [Browsable(false)]
         public override string Title { get { return "Test Properties"; } }
 
         protected PropertyDescriptorCollection Properties;
         private ICommandFactory CommandFactory;
-        public ScriptProperties(ICommandFactory CommandFactory)
+        public RecordingProperties(ICommandFactory CommandFactory)
         {
             this.CommandFactory = CommandFactory;
 
@@ -43,7 +43,7 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "ReadonlyName");
         }
 
-        private bool IsSpecialScript(Script Script, BaseScriptManager BaseScriptManager)
+        private bool IsSpecialScript(Recording Script, BaseHierarchyManager BaseScriptManager)
         {
             return LightTestFixture.IsSpecialScript(Script) ||
                 BaseScriptManager is ScriptManager;

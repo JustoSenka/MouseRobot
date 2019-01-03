@@ -3,7 +3,7 @@ using RobotRuntime.Utils;
 using System;
 using System.Drawing;
 
-namespace Robot.Recording
+namespace Robot.RecordingCreation
 {
     public class CroppingManager : ICroppingManager
     {
