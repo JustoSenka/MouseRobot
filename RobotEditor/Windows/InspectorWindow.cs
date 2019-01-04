@@ -25,18 +25,18 @@ namespace RobotEditor.Windows
         private Type[] m_DesignerTypes;
 
         private new IUnityContainer Container;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private ILogger Logger;
-        public InspectorWindow(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
+        public InspectorWindow(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
 
             InitializeComponent();
             propertyGrid.SelectedObject = null;
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeCommands();
             CollectUserCommands();
@@ -59,7 +59,7 @@ namespace RobotEditor.Windows
         private void CollectUserCommands()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserDesignerTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(CommandProperties)).ToArray();
+            m_UserDesignerTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(CommandProperties)).ToArray();
             m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 

@@ -19,19 +19,19 @@ namespace RobotEditor.Windows
         private IList<IPaintOnScreen> m_RegisteredPainters = new List<IPaintOnScreen>();
 
         private new IUnityContainer Container;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private ILogger Logger;
-        public ScreenPaintForm(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger) : base()
+        public ScreenPaintForm(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger) : base()
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
 
             CollectNativePainters();
             CollectUserPainters();
             SubscribeToAllPainters();
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             m_UpdateTimer.Interval = 30;
             m_UpdateTimer.Tick += CallInvalidate;
@@ -47,7 +47,7 @@ namespace RobotEditor.Windows
         private void CollectUserPainters()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            var types = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
+            var types = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
             m_UserPainters = types.TryResolveTypes(Container, Logger).Cast<IPaintOnScreen>().ToArray();
         }
 

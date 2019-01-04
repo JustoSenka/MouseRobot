@@ -14,15 +14,15 @@ namespace RobotEditor.Settings
         private CompilerSettings m_Settings;
 
         [NonSerialized]
-        private IScriptManager PluginManager;
+        private IScriptManager ScriptManager;
 
         [Browsable(false)]
         public override string Title { get { return "Compiler Settings"; } }
 
-        public CompilerProperties(BaseSettings settings, IScriptManager PluginManager)
+        public CompilerProperties(BaseSettings settings, IScriptManager ScriptManager)
         {
             this.m_Settings = (CompilerSettings)settings;
-            this.PluginManager = PluginManager;
+            this.ScriptManager = ScriptManager;
         }
 
         private const int NumOfCategories = 1;
@@ -39,7 +39,7 @@ namespace RobotEditor.Settings
 
         public override void OnPropertiesModified()
         {
-            PluginManager.CompileScriptsAndReloadUserDomain();
+            ScriptManager.CompileScriptsAndReloadUserDomain();
         }
     }
 }

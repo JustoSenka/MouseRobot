@@ -22,18 +22,18 @@ namespace RobotRuntime.Execution
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ILogger Logger;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public RunnerFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger,
+        public RunnerFactory(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger,
             IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
             this.AssetGuidManager = AssetGuidManager;
             this.FeatureDetectionThread = FeatureDetectionThread;
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeRunners();
             CollectUserRunners();
@@ -65,7 +65,7 @@ namespace RobotRuntime.Execution
         private void CollectUserRunners()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserRunnerTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IRunner)).ToArray();
+            m_UserRunnerTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IRunner)).ToArray();
             m_UserRunners = m_UserRunnerTypes.TryResolveTypes(Container, Logger).Cast<IRunner>().ToArray();
 
             foreach (var runner in m_UserRunners)

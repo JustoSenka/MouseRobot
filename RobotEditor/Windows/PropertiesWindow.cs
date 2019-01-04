@@ -17,11 +17,11 @@ namespace RobotEditor
         private Type m_CurrentSettingsType;
 
         private ISettingsManager SettingsManager;
-        private IScriptManager PluginManager;
-        public PropertiesWindow(ISettingsManager SettingsManager, IScriptManager PluginManager)
+        private IScriptManager ScriptManager;
+        public PropertiesWindow(ISettingsManager SettingsManager, IScriptManager ScriptManager)
         {
             this.SettingsManager = SettingsManager;
-            this.PluginManager = PluginManager;
+            this.ScriptManager = ScriptManager;
 
             SettingsManager.SettingsRestored += OnSettingsRestored;
 
@@ -75,7 +75,7 @@ namespace RobotEditor
             if (settings is CompilerSettings)
             {
                 type = typeof(CompilerProperties);
-                return new CompilerProperties(settings, PluginManager);
+                return new CompilerProperties(settings, ScriptManager);
             }
 
             throw new ArgumentException(typeof(T) + " is not known type of settings, or property wrapper was not created for it");

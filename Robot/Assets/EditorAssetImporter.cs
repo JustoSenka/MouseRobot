@@ -16,7 +16,7 @@ namespace Robot
             else if (path.EndsWith(FileExtensions.RecordingD))
                 return new RecordingImporter(path);
 
-            else if (path.EndsWith(FileExtensions.PluginD))
+            else if (path.EndsWith(FileExtensions.ScriptD))
                 return new ScriptImporter(path);
 
             else if (path.EndsWith(FileExtensions.TestD))

@@ -22,17 +22,17 @@ namespace RobotEditor
         private IAssetManager AssetManager;
         private IHierarchyManager RecordingManager;
         private ITestFixtureManager TestFixtureManager;
-        private IScriptManager PluginManager;
+        private IScriptManager ScriptManager;
         private ISolutionManager SolutionManager;
         private ICodeEditor CodeEditor;
         private ILogger Logger;
         public AssetsWindow(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
-            IScriptManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
+            IScriptManager ScriptManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
         {
             this.AssetManager = AssetManager;
             this.RecordingManager = RecordingManager;
             this.TestFixtureManager = TestFixtureManager;
-            this.PluginManager = PluginManager;
+            this.ScriptManager = ScriptManager;
             this.SolutionManager = SolutionManager;
             this.CodeEditor = CodeEditor;
             this.Logger = Logger;
@@ -107,13 +107,13 @@ namespace RobotEditor
 
                 var recordingNode = new TreeNode(Paths.RecordingFolder);
                 var imageNode = new TreeNode(Paths.ImageFolder);
-                var pluginNode = new TreeNode(Paths.PluginFolder);
+                var scriptNode = new TreeNode(Paths.ScriptFolder);
                 var testsNode = new TreeNode(Paths.TestsFolder);
                 var dllNode = new TreeNode(Paths.ExtensionFolder);
 
                 treeView.Nodes.Add(recordingNode);
                 treeView.Nodes.Add(imageNode);
-                treeView.Nodes.Add(pluginNode);
+                treeView.Nodes.Add(scriptNode);
                 treeView.Nodes.Add(testsNode);
                 treeView.Nodes.Add(dllNode);
 
@@ -131,8 +131,8 @@ namespace RobotEditor
                     else if (asset.Path.EndsWith(FileExtensions.RecordingD))
                         recordingNode.Nodes.Add(assetNode);
 
-                    else if (asset.Path.EndsWith(FileExtensions.PluginD))
-                        pluginNode.Nodes.Add(assetNode);
+                    else if (asset.Path.EndsWith(FileExtensions.ScriptD))
+                        scriptNode.Nodes.Add(assetNode);
 
                     else if (asset.Path.EndsWith(FileExtensions.TestD))
                         testsNode.Nodes.Add(assetNode);
@@ -155,7 +155,7 @@ namespace RobotEditor
             UpdateIconForFolder("", 0);
             UpdateIconForFolder(Paths.RecordingFolder, 1);
             UpdateIconForFolder(Paths.ImageFolder, 2);
-            UpdateIconForFolder(Paths.PluginFolder, 3);
+            UpdateIconForFolder(Paths.ScriptFolder, 3);
             UpdateIconForFolder(Paths.TestsFolder, 3);
             UpdateIconForFolder(Paths.ExtensionFolder, 3);
         }
@@ -261,7 +261,7 @@ namespace RobotEditor
 
         private void recompileRecordingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManager.CompileScriptsAndReloadUserDomain();
+            ScriptManager.CompileScriptsAndReloadUserDomain();
         }
 
         private void regenerateSolutionToolStripMenuItem_Click(object sender, EventArgs e)

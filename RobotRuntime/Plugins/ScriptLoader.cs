@@ -6,15 +6,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace RobotRuntime.Plugins
+namespace RobotRuntime.Scripts
 {
     /// <summary>
-    /// Plugin loader lives in runtime and its purpose is to create user domain and load user assemblies. 
-    /// Directly comunicates with PluginDomainManager
+    /// Script loader lives in runtime and its purpose is to create user domain and load user assemblies. 
+    /// Directly comunicates with ScriptDomainManager
     /// </summary>
     public class ScriptLoader : IScriptLoader
     {
-        private AppDomain m_PluginDomain;
+        private AppDomain m_ScriptDomain;
 
         private string DomainName { get { return "UserRecordings"; } }
 
@@ -24,7 +24,7 @@ namespace RobotRuntime.Plugins
         public event Action UserDomainReloaded;
         public event Action UserDomainReloading;
 
-        private ScriptDomainManager PluginDomainManager;
+        private ScriptDomainManager ScriptDomainManager;
         public ScriptLoader()
         {
             // TODO: runtime on its own should create domain and load assemblies
@@ -36,10 +36,10 @@ namespace RobotRuntime.Plugins
         {
             UserDomainReloading?.Invoke();
 
-            if (m_PluginDomain != null)
-                AppDomain.Unload(m_PluginDomain);
+            if (m_ScriptDomain != null)
+                AppDomain.Unload(m_ScriptDomain);
 
-            m_PluginDomain = null;
+            m_ScriptDomain = null;
         }
 
         public void CreateUserAppDomain()
@@ -51,13 +51,13 @@ namespace RobotRuntime.Plugins
             AppDomainSetup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
             AppDomainSetup.PrivateBinPath = AppDomain.CurrentDomain.BaseDirectory;
 
-            m_PluginDomain = AppDomain.CreateDomain(DomainName, AppDomain.CurrentDomain.Evidence, AppDomainSetup);
+            m_ScriptDomain = AppDomain.CreateDomain(DomainName, AppDomain.CurrentDomain.Evidence, AppDomainSetup);
 
-            PluginDomainManager = (ScriptDomainManager)m_PluginDomain.CreateInstanceAndUnwrap(
-                typeof(ScriptDomainManager).Assembly.FullName, "RobotRuntime.Plugins.PluginDomainManager");
+            ScriptDomainManager = (ScriptDomainManager)m_ScriptDomain.CreateInstanceAndUnwrap(
+                typeof(ScriptDomainManager).Assembly.FullName, "RobotRuntime.Scripts.ScriptDomainManager");
 
             var assemblyNames = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory().ToArray();
-            PluginDomainManager.LoadAssemblies(assemblyNames);
+            ScriptDomainManager.LoadAssemblies(assemblyNames);
 
             LoadUserAssemblies(); // User assemblies must be loaded before UserDomainReloaded event fires
 
@@ -66,7 +66,7 @@ namespace RobotRuntime.Plugins
 
         public void LoadUserAssemblies()
         {
-            PluginDomainManager.LoadAssemblies(new[] { UserAssemblyPath }, true);
+            ScriptDomainManager.LoadAssemblies(new[] { UserAssemblyPath }, true);
         }
 
         public IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func)

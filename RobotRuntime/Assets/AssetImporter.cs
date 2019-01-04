@@ -60,7 +60,7 @@ namespace RobotRuntime
             else if (path.EndsWith(FileExtensions.Recording))
                 return new LightRecordingImporter(path);
 
-            else if (path.EndsWith(FileExtensions.Plugin))
+            else if (path.EndsWith(FileExtensions.Script))
                 return new ScriptImporter(path);
 
             else if (path.EndsWith(FileExtensions.Test))

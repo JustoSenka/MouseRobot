@@ -29,7 +29,7 @@ namespace Robot.Scripts
         private readonly IProjectManager ProjectManager;
         private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
-        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, IScriptLoader PluginManager,
+        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, IScriptLoader ScriptManager,
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.AssetManager = AssetManager;
@@ -40,10 +40,10 @@ namespace Robot.Scripts
             m_SolutionGuid = Guid.NewGuid().ToString();
             m_ProjectGuid = Guid.NewGuid().ToString();
 
-            //TODO: Fix me. Generate project only when Recordings and Plugins are ADDED/REMOVED // If project is identical, it will not be overwritten
+            //TODO: Fix me. Generate project only when Recordings and Scripts are ADDED/REMOVED // If project is identical, it will not be overwritten
             //TODO: Add menu in assets window to regenerate everything
             //TODO: Changing compiler settings should regenerate project
-            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);
+            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.DllD);
             ModifiedAssetCollector.AssetsModified += (assets) => RegenerateEverything();
 
@@ -80,7 +80,7 @@ namespace Robot.Scripts
             var refs = CollectAllCompilerReferences().Distinct().Select((s) => string.Format(k_ReferenceWrapper, s));
             var refString = string.Join("\n", refs).Trim('\n');
 
-            var sources = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD)).Distinct().Select((s) => string.Format(k_CompileWrapper, s.Path));
+            var sources = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD)).Distinct().Select((s) => string.Format(k_CompileWrapper, s.Path));
             var sourcesString = string.Join("\n", sources).Trim('\n');
 
             var newProj = string.Format(Resources.ProjectTemplate,

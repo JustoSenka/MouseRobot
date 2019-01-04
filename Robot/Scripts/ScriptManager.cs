@@ -10,31 +10,31 @@ using System.Linq;
 namespace Robot.Scripts
 {
     /// <summary>
-    /// PluginManager lives in base robot assemblies. Its purpose is to communicate with asset manager and plugin compiler to issue the compilation process
-    /// and to issue plugin loading.
-    /// Directly communicates with PluginCompiler and PluginLoader from runtime.
+    /// ScriptManager lives in base robot assemblies. Its purpose is to communicate with asset manager and script compiler to issue the compilation process
+    /// and to issue script loading.
+    /// Directly communicates with ScriptCompiler and ScriptLoader from runtime.
     /// </summary>
     public class ScriptManager : IScriptManager
     {
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
-        private IScriptCompiler PluginCompiler;
-        private IScriptLoader PluginLoader;
+        private IScriptCompiler ScriptCompiler;
+        private IScriptLoader ScriptLoader;
         private IAssetManager AssetManager;
         private IModifiedAssetCollector ModifiedAssetCollector;
-        public ScriptManager(IScriptCompiler PluginCompiler, IScriptLoader PluginLoader, IAssetManager AssetManager,
+        public ScriptManager(IScriptCompiler ScriptCompiler, IScriptLoader ScriptLoader, IAssetManager AssetManager,
             IModifiedAssetCollector ModifiedAssetCollector)
         {
-            this.PluginCompiler = PluginCompiler;
-            this.PluginLoader = PluginLoader;
+            this.ScriptCompiler = ScriptCompiler;
+            this.ScriptLoader = ScriptLoader;
             this.AssetManager = AssetManager;
             this.ModifiedAssetCollector = ModifiedAssetCollector;
 
-            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);
+            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
 
-            PluginCompiler.RecordingsRecompiled += OnRecordingsRecompiled;
+            ScriptCompiler.RecordingsRecompiled += OnRecordingsRecompiled;
         }
 
         private void OnAssetsModified(IList<string> modifiedAssets)
@@ -44,21 +44,21 @@ namespace Robot.Scripts
 
         public void CompileScriptsAndReloadUserDomain()
         {
-            PluginCompiler.SetOutputPath(CustomAssemblyPath);
+            ScriptCompiler.SetOutputPath(CustomAssemblyPath);
 
-            PluginLoader.UserAssemblyPath = CustomAssemblyPath;
-            PluginLoader.UserAssemblyName = CustomAssemblyName;
-            PluginLoader.DestroyUserAppDomain();
+            ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
+            ScriptLoader.UserAssemblyName = CustomAssemblyName;
+            ScriptLoader.DestroyUserAppDomain();
 
-            var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));
+            var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
             var recordingValues = recordingAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-            PluginCompiler.CompileCode(recordingValues.ToArray());
+            ScriptCompiler.CompileCode(recordingValues.ToArray());
         }
 
         private void OnRecordingsRecompiled()
         {
-            PluginLoader.CreateUserAppDomain(); // This also loads the assemblies
+            ScriptLoader.CreateUserAppDomain(); // This also loads the assemblies
         }
     }
 }

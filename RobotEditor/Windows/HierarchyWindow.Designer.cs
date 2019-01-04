@@ -133,7 +133,7 @@
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList.Images.SetKeyName(0, "Recording_ICO_16.png");
             this.imageList.Images.SetKeyName(1, "gear_ICO_512.png");
-            this.imageList.Images.SetKeyName(2, "Plugin_ICO_256.png");
+            this.imageList.Images.SetKeyName(2, "Script_ICO_256.png");
             // 
             // treeListView
             // 

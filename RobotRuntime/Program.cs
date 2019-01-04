@@ -6,7 +6,7 @@ using RobotRuntime.Graphics;
 using RobotRuntime.Settings;
 using RobotRuntime.Execution;
 using RobotRuntime.Perf;
-using RobotRuntime.Plugins;
+using RobotRuntime.Scripts;
 using System;
 using RobotRuntime.Logging;
 

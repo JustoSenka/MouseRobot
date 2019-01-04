@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace RobotRuntime.Plugins
+namespace RobotRuntime.Scripts
 {
     /// <summary>
     /// This class is supposed to be in UserDomain and its purpose is to load dependencies, user assemblies

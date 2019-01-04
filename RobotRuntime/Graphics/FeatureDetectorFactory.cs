@@ -22,15 +22,15 @@ namespace RobotRuntime.Graphics
         private string[] m_DetectorNames;
 
         private ILogger Logger;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public FeatureDetectorFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
+        public FeatureDetectorFactory(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeDetectors();
             CollectUserDetectors();
@@ -50,7 +50,7 @@ namespace RobotRuntime.Graphics
         private void CollectUserDetectors()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserDetectorTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(FeatureDetector)).ToArray();
+            m_UserDetectorTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(FeatureDetector)).ToArray();
             m_UserDetectors = m_UserDetectorTypes.TryResolveTypes(Container, Logger).Cast<FeatureDetector>().ToArray();
 
             m_DetectorTypes = m_NativeDetectorTypes.Concat(m_UserDetectorTypes).ToArray();

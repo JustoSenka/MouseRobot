@@ -15,7 +15,7 @@ using System.Threading;
 namespace Robot.Scripts
 {
     /// <summary>
-    /// PluginCompiler lives in base robot domain. Its purpose is to compile files in project folder into user dlls.
+    /// ScriptCompiler lives in base robot domain. Its purpose is to compile files in project folder into user dlls.
     /// Used by PLuginManager
     /// </summary>
     public class ScriptCompiler : IScriptCompiler
@@ -71,9 +71,9 @@ namespace Robot.Scripts
 
         private bool CompileCodeSync(string[] sources)
         {
-            StatusManager.Add("PluginCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
+            StatusManager.Add("ScriptCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
 
-            Profiler.Start("PluginCompiler_CompileCode");
+            Profiler.Start("ScriptCompiler_CompileCode");
 
             CompilerParams.ReferencedAssemblies.Clear();
             CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultRobotReferences);
@@ -89,7 +89,7 @@ namespace Robot.Scripts
                 Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
-            Profiler.Stop("PluginCompiler_CompileCode");
+            Profiler.Stop("ScriptCompiler_CompileCode");
 
             m_IsCompiling = false;
 
@@ -110,14 +110,14 @@ namespace Robot.Scripts
 
                 RecordingsRecompiled?.Invoke();
                 Logger.Logi(LogType.Error, "Recordings have compilation errors.");
-                StatusManager.Add("PluginCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
+                StatusManager.Add("ScriptCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
                 RecordingsRecompiled?.Invoke();
                 Logger.Logi(LogType.Log, "Recordings successfully compiled.");
-                StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default));
+                StatusManager.Add("ScriptCompiler", 10, new Status("", "Compilation Complete", default));
                 return true;
             }
 

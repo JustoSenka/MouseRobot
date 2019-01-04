@@ -26,16 +26,16 @@ namespace Robot.Settings
         private ObjectIO m_Serializer = new JsonObjectIO();
 
         private ILogger Logger;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public SettingsManager(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
+        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
-            PluginLoader.UserDomainReloading += OnDomainReloading;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloading += OnDomainReloading;
 
             CreateIfNotExist(Paths.RoamingAppdataPath);
             CreateIfNotExist(Paths.LocalAppdataPath);
@@ -75,7 +75,7 @@ namespace Robot.Settings
         private void CollectDefaultUserSettings()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            var types = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(BaseSettings));
+            var types = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(BaseSettings));
             m_UserSettings = types.TryResolveTypes(Container, Logger).Cast<BaseSettings>().ToArray();
 
             m_Settings = m_NativeSettings.Concat(m_UserSettings).ToArray();

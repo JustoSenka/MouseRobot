@@ -34,17 +34,17 @@ namespace RobotRuntime
         private IScreenStateThread ScreenStateThread;
         private IFeatureDetectionThread FeatureDetectionThread;
         private IRunnerFactory RunnerFactory;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private IRuntimeSettings RuntimeSettings;
         private IRuntimeAssetManager RuntimeAssetManager;
         public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
-            IRunnerFactory RunnerFactory, IScriptLoader PluginLoader, IRuntimeSettings RuntimeSettings, IRuntimeAssetManager RuntimeAssetManager)
+            IRunnerFactory RunnerFactory, IScriptLoader ScriptLoader, IRuntimeSettings RuntimeSettings, IRuntimeAssetManager RuntimeAssetManager)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.RunnerFactory = RunnerFactory;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.RuntimeSettings = RuntimeSettings;
             this.RuntimeAssetManager = RuntimeAssetManager;
         }
@@ -53,9 +53,9 @@ namespace RobotRuntime
         {
             Environment.CurrentDirectory = projectPath;
 
-            PluginLoader.UserAssemblyName = "CustomAssembly.dll";
-            PluginLoader.UserAssemblyPath = Path.Combine(Paths.MetadataPath, PluginLoader.UserAssemblyName);
-            PluginLoader.CreateUserAppDomain();
+            ScriptLoader.UserAssemblyName = "CustomAssembly.dll";
+            ScriptLoader.UserAssemblyPath = Path.Combine(Paths.MetadataPath, ScriptLoader.UserAssemblyName);
+            ScriptLoader.CreateUserAppDomain();
 
             RuntimeSettings.LoadSettingsHardcoded();
         }

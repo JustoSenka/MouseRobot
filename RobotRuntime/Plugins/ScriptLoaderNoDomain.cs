@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace RobotRuntime.Plugins
+namespace RobotRuntime.Scripts
 {
     public class ScriptLoaderNoDomain : IScriptLoader
     {
@@ -34,7 +34,7 @@ namespace RobotRuntime.Plugins
 
         public void CreateUserAppDomain()
         {
-            Profiler.Start("PluginLoader.ReloadAppDomain");
+            Profiler.Start("ScriptLoader.ReloadAppDomain");
 
             if (m_Assemblies.Count != 0)
                 DestroyUserAppDomain();
@@ -42,7 +42,7 @@ namespace RobotRuntime.Plugins
             LoadUserAssemblies();
             UserDomainReloaded?.Invoke();
 
-            Profiler.Stop("PluginLoader.ReloadAppDomain");
+            Profiler.Stop("ScriptLoader.ReloadAppDomain");
         }
 
         public void LoadUserAssemblies()

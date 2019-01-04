@@ -32,15 +32,15 @@ namespace Robot.Recordings
         private Dictionary<string, Type> m_CommandTypes;
 
         private ILogger Logger;
-        private IScriptLoader PluginLoader;
+        private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public CommandFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
+        public CommandFactory(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
         {
             this.Container = Container;
-            this.PluginLoader = PluginLoader;
+            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
 
-            PluginLoader.UserDomainReloaded += OnDomainReloaded;
+            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeCommands();
             CollectUserCommands();
@@ -59,7 +59,7 @@ namespace Robot.Recordings
         private void CollectUserCommands()
         {
             // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserCommandTypes = PluginLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
+            m_UserCommandTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
 
             var commandTypeArray = m_NativeCommandTypes.Concat(m_UserCommandTypes).ToArray();
 

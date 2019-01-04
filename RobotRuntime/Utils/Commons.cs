@@ -11,8 +11,8 @@ namespace RobotRuntime
         public const string Image = "png";
         public const string ImageD = ".png";
 
-        public const string Plugin = "cs";
-        public const string PluginD = ".cs";
+        public const string Script = "cs";
+        public const string ScriptD = ".cs";
 
         public const string Test = "mrt";
         public const string TestD = ".mrt";
@@ -29,7 +29,7 @@ namespace RobotRuntime
         public const string GetNameWithDot = @"[/\\]{1}[\w\d ]+\.";
         public const string GetRecordingNameFromPath = GetNameWithDot + FileExtensions.Recording;
         public const string GetImageNameFromPath = GetNameWithDot + FileExtensions.Image;
-        public const string GetPluginNameFromPath = GetNameWithDot + FileExtensions.Plugin;
+        public const string GetScriptNameFromPath = GetNameWithDot + FileExtensions.Script;
         public const string GetTestNameFromPath = GetNameWithDot + FileExtensions.Test;
         public const string Guid = @"[{(]?[0-9A-F]{8}[-]?([0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?";
     }

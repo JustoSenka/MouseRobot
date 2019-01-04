@@ -10,14 +10,14 @@ namespace RobotRuntime.Utils
     {
         public static string RecordingFolder { get { return "Recordings"; } }
         public static string ImageFolder { get { return "Images"; } }
-        public static string PluginFolder { get { return "Plugins"; } }
+        public static string ScriptFolder { get { return "Scripts"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
         public static string TestsFolder { get { return "Tests"; } }
         public static string ExtensionFolder { get { return "Extensions"; } }
 
         public static string RecordingPath { get { return Path.Combine(Environment.CurrentDirectory, RecordingFolder); } }
         public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
-        public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
+        public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
         public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
         public static string ExtensionPath { get { return Path.Combine(Environment.CurrentDirectory, ExtensionFolder); } }
@@ -30,7 +30,7 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { RecordingPath, ImagePath, PluginPath, MetadataPath, TestsFolder, ExtensionFolder }; }
+            get { return new[] { RecordingPath, ImagePath, ScriptPath, MetadataPath, TestsFolder, ExtensionFolder }; }
         }
 
         public static string GetName(string path)
@@ -92,8 +92,8 @@ namespace RobotRuntime.Utils
                 return FileExtensions.Recording;
             else if (folder == ImageFolder)
                 return FileExtensions.Image;
-            else if (folder == PluginFolder)
-                return FileExtensions.Plugin;
+            else if (folder == ScriptFolder)
+                return FileExtensions.Script;
             else if (folder == TestsFolder)
                 return FileExtensions.Test;
             else if (folder == ExtensionFolder)
@@ -108,8 +108,8 @@ namespace RobotRuntime.Utils
                 return RecordingFolder;
             else if (path.EndsWith(FileExtensions.Image))
                 return ImageFolder;
-            else if (path.EndsWith(FileExtensions.Plugin))
-                return PluginFolder;
+            else if (path.EndsWith(FileExtensions.Script))
+                return ScriptFolder;
             else if (path.EndsWith(FileExtensions.Test))
                 return TestsFolder;
             else if (path.EndsWith(FileExtensions.Dll) || path.EndsWith(FileExtensions.Exe))
