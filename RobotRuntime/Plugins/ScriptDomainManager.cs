@@ -9,11 +9,11 @@ namespace RobotRuntime.Plugins
     /// <summary>
     /// This class is supposed to be in UserDomain and its purpose is to load dependencies, user assemblies
     /// </summary>
-    public class PluginDomainManager : MarshalByRefObject, IPluginDomainManager
+    public class ScriptDomainManager : MarshalByRefObject, IScriptDomainManager
     {
         public Assembly[] Assemblies;
 
-        public PluginDomainManager()
+        public ScriptDomainManager()
         {
 
         }

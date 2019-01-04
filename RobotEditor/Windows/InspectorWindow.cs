@@ -25,9 +25,9 @@ namespace RobotEditor.Windows
         private Type[] m_DesignerTypes;
 
         private new IUnityContainer Container;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private ILogger Logger;
-        public InspectorWindow(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
+        public InspectorWindow(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
         {
             this.Container = Container;
             this.PluginLoader = PluginLoader;

@@ -22,12 +22,12 @@ namespace RobotEditor
         private IAssetManager AssetManager;
         private IHierarchyManager RecordingManager;
         private ITestFixtureManager TestFixtureManager;
-        private IPluginManager PluginManager;
+        private IScriptManager PluginManager;
         private ISolutionManager SolutionManager;
         private ICodeEditor CodeEditor;
         private ILogger Logger;
         public AssetsWindow(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
-            IPluginManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
+            IScriptManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
         {
             this.AssetManager = AssetManager;
             this.RecordingManager = RecordingManager;
@@ -198,7 +198,7 @@ namespace RobotEditor
                 }
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
-            else if (asset.Importer.GetType() == typeof(PluginImporter))
+            else if (asset.Importer.GetType() == typeof(ScriptImporter))
             {
                 Task.Run(() => CodeEditor.FocusFile(asset.Importer.Path));
             }
@@ -261,7 +261,7 @@ namespace RobotEditor
 
         private void recompileRecordingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManager.CompileRecordingsAndReloadUserDomain();
+            PluginManager.CompileScriptsAndReloadUserDomain();
         }
 
         private void regenerateSolutionToolStripMenuItem_Click(object sender, EventArgs e)

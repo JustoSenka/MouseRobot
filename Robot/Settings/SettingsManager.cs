@@ -26,9 +26,9 @@ namespace Robot.Settings
         private ObjectIO m_Serializer = new JsonObjectIO();
 
         private ILogger Logger;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private IUnityContainer Container;
-        public SettingsManager(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
+        public SettingsManager(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
         {
             this.Container = Container;
             this.PluginLoader = PluginLoader;

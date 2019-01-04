@@ -17,8 +17,8 @@ namespace RobotEditor
         private Type m_CurrentSettingsType;
 
         private ISettingsManager SettingsManager;
-        private IPluginManager PluginManager;
-        public PropertiesWindow(ISettingsManager SettingsManager, IPluginManager PluginManager)
+        private IScriptManager PluginManager;
+        public PropertiesWindow(ISettingsManager SettingsManager, IScriptManager PluginManager)
         {
             this.SettingsManager = SettingsManager;
             this.PluginManager = PluginManager;

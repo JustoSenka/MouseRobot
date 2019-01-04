@@ -19,9 +19,9 @@ namespace RobotEditor.Windows
         private IList<IPaintOnScreen> m_RegisteredPainters = new List<IPaintOnScreen>();
 
         private new IUnityContainer Container;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private ILogger Logger;
-        public ScreenPaintForm(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger) : base()
+        public ScreenPaintForm(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger) : base()
         {
             this.Container = Container;
             this.PluginLoader = PluginLoader;

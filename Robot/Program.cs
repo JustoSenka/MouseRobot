@@ -4,7 +4,7 @@ using Unity.Lifetime;
 using Robot.RecordingCreation;
 using Robot.Settings;
 using Robot.Utils.Win32;
-using Robot.Plugins;
+using Robot.Scripts;
 using Robot.Recordings;
 using Robot.Tests;
 using Robot.Assets;
@@ -26,8 +26,8 @@ namespace Robot
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<IPluginManager, PluginManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IPluginCompiler, PluginCompiler>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IScriptManager, ScriptManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IScriptCompiler, ScriptCompiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ICommandFactory, CommandFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestFixtureManager, TestFixtureManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestRunnerManager, TestRunnerManager>(new ContainerControlledLifetimeManager());

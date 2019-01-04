@@ -12,13 +12,13 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace Robot.Plugins
+namespace Robot.Scripts
 {
     /// <summary>
     /// PluginCompiler lives in base robot domain. Its purpose is to compile files in project folder into user dlls.
     /// Used by PLuginManager
     /// </summary>
-    public class PluginCompiler : IPluginCompiler
+    public class ScriptCompiler : IScriptCompiler
     {
         public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
@@ -33,7 +33,7 @@ namespace Robot.Plugins
         private IStatusManager StatusManager;
         private ISettingsManager SettingsManager;
         private ILogger Logger;
-        public PluginCompiler(IProfiler Profiler, IStatusManager StatusManager, ISettingsManager SettingsManager, ILogger Logger)
+        public ScriptCompiler(IProfiler Profiler, IStatusManager StatusManager, ISettingsManager SettingsManager, ILogger Logger)
         {
             this.Profiler = Profiler;
             this.StatusManager = StatusManager;

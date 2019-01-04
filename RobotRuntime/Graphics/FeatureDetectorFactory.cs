@@ -22,9 +22,9 @@ namespace RobotRuntime.Graphics
         private string[] m_DetectorNames;
 
         private ILogger Logger;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private IUnityContainer Container;
-        public FeatureDetectorFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
+        public FeatureDetectorFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
         {
             this.Container = Container;
             this.PluginLoader = PluginLoader;

@@ -17,7 +17,7 @@ namespace Robot
                 return new RecordingImporter(path);
 
             else if (path.EndsWith(FileExtensions.PluginD))
-                return new PluginImporter(path);
+                return new ScriptImporter(path);
 
             else if (path.EndsWith(FileExtensions.TestD))
                 return new LightTestFixtureImporter(path);

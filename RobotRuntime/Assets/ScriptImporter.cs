@@ -3,9 +3,9 @@ using System.IO;
 
 namespace RobotRuntime.Assets
 {
-    public class PluginImporter : AssetImporter
+    public class ScriptImporter : AssetImporter
     {
-        public PluginImporter(string path) : base(path) { }
+        public ScriptImporter(string path) : base(path) { }
 
         protected override object LoadAsset()
         {

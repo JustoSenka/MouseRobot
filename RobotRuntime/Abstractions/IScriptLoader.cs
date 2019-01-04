@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace RobotRuntime.Abstractions
 {
-    public interface IPluginLoader
+    public interface IScriptLoader
     {
         string UserAssemblyName { get; set; }
         string UserAssemblyPath { get; set; }

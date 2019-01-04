@@ -34,11 +34,11 @@ namespace RobotRuntime
         private IScreenStateThread ScreenStateThread;
         private IFeatureDetectionThread FeatureDetectionThread;
         private IRunnerFactory RunnerFactory;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private IRuntimeSettings RuntimeSettings;
         private IRuntimeAssetManager RuntimeAssetManager;
         public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
-            IRunnerFactory RunnerFactory, IPluginLoader PluginLoader, IRuntimeSettings RuntimeSettings, IRuntimeAssetManager RuntimeAssetManager)
+            IRunnerFactory RunnerFactory, IScriptLoader PluginLoader, IRuntimeSettings RuntimeSettings, IRuntimeAssetManager RuntimeAssetManager)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.ScreenStateThread = ScreenStateThread;

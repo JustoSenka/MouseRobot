@@ -61,7 +61,7 @@ namespace RobotRuntime
                 return new LightRecordingImporter(path);
 
             else if (path.EndsWith(FileExtensions.Plugin))
-                return new PluginImporter(path);
+                return new ScriptImporter(path);
 
             else if (path.EndsWith(FileExtensions.Test))
                 return new LightTestFixtureImporter(path);

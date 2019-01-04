@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Robot.Plugins
+namespace Robot.Scripts
 {
     public class SolutionManager : ISolutionManager
     {
@@ -29,7 +29,7 @@ namespace Robot.Plugins
         private readonly IProjectManager ProjectManager;
         private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
-        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, IPluginLoader PluginManager,
+        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, IScriptLoader PluginManager,
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.AssetManager = AssetManager;

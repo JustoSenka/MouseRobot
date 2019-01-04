@@ -12,7 +12,7 @@ namespace RobotRuntime.Plugins
     /// Plugin loader lives in runtime and its purpose is to create user domain and load user assemblies. 
     /// Directly comunicates with PluginDomainManager
     /// </summary>
-    public class PluginLoader : IPluginLoader
+    public class ScriptLoader : IScriptLoader
     {
         private AppDomain m_PluginDomain;
 
@@ -24,8 +24,8 @@ namespace RobotRuntime.Plugins
         public event Action UserDomainReloaded;
         public event Action UserDomainReloading;
 
-        private PluginDomainManager PluginDomainManager;
-        public PluginLoader()
+        private ScriptDomainManager PluginDomainManager;
+        public ScriptLoader()
         {
             // TODO: runtime on its own should create domain and load assemblies
             // at this moment cannot accomplish, since path is not known by itself
@@ -53,8 +53,8 @@ namespace RobotRuntime.Plugins
 
             m_PluginDomain = AppDomain.CreateDomain(DomainName, AppDomain.CurrentDomain.Evidence, AppDomainSetup);
 
-            PluginDomainManager = (PluginDomainManager)m_PluginDomain.CreateInstanceAndUnwrap(
-                typeof(PluginDomainManager).Assembly.FullName, "RobotRuntime.Plugins.PluginDomainManager");
+            PluginDomainManager = (ScriptDomainManager)m_PluginDomain.CreateInstanceAndUnwrap(
+                typeof(ScriptDomainManager).Assembly.FullName, "RobotRuntime.Plugins.PluginDomainManager");
 
             var assemblyNames = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory().ToArray();
             PluginDomainManager.LoadAssemblies(assemblyNames);

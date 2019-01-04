@@ -32,9 +32,9 @@ namespace Robot.Recordings
         private Dictionary<string, Type> m_CommandTypes;
 
         private ILogger Logger;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private IUnityContainer Container;
-        public CommandFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger)
+        public CommandFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger)
         {
             this.Container = Container;
             this.PluginLoader = PluginLoader;

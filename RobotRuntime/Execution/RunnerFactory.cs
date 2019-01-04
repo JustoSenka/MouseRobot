@@ -22,9 +22,9 @@ namespace RobotRuntime.Execution
         private IAssetGuidManager AssetGuidManager;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ILogger Logger;
-        private IPluginLoader PluginLoader;
+        private IScriptLoader PluginLoader;
         private IUnityContainer Container;
-        public RunnerFactory(IUnityContainer Container, IPluginLoader PluginLoader, ILogger Logger,
+        public RunnerFactory(IUnityContainer Container, IScriptLoader PluginLoader, ILogger Logger,
             IFeatureDetectionThread FeatureDetectionThread, IAssetGuidManager AssetGuidManager)
         {
             this.Container = Container;

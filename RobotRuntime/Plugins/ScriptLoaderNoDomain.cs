@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace RobotRuntime.Plugins
 {
-    public class PluginLoaderNoDomain : IPluginLoader
+    public class ScriptLoaderNoDomain : IScriptLoader
     {
         public string UserAssemblyName { get; set; }
         public string UserAssemblyPath { get; set; }
@@ -20,7 +20,7 @@ namespace RobotRuntime.Plugins
 
         private IRuntimeAssetManager RuntimeAssetManager;
         private IProfiler Profiler;
-        public PluginLoaderNoDomain(IRuntimeAssetManager RuntimeAssetManager, IProfiler Profiler)
+        public ScriptLoaderNoDomain(IRuntimeAssetManager RuntimeAssetManager, IProfiler Profiler)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Profiler = Profiler;

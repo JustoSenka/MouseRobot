@@ -165,12 +165,12 @@
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
     <Compile Include="MouseRobot\ProjectManager.cs" />
-    <Compile Include="Abstractions\IPluginCompiler.cs" />
-    <Compile Include="Abstractions\IPluginManager.cs" />
+    <Compile Include="Abstractions\IScriptCompiler.cs" />
+    <Compile Include="Abstractions\IScriptManager.cs" />
     <Compile Include="Abstractions\ISolutionManager.cs" />
-    <Compile Include="Plugins\PluginCompiler.cs" />
-    <Compile Include="Plugins\PluginManager.cs" />
-    <Compile Include="Plugins\SolutionManager.cs" />
+    <Compile Include="Scripts\ScriptCompiler.cs" />
+    <Compile Include="Scripts\ScriptManager.cs" />
+    <Compile Include="Scripts\SolutionManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

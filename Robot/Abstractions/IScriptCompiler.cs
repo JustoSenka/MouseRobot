@@ -4,7 +4,7 @@ using System.CodeDom.Compiler;
 
 namespace Robot.Abstractions
 {
-    public interface IPluginCompiler
+    public interface IScriptCompiler
     {
         CSharpCodeProvider CodeProvider { get; }
         CompilerParameters CompilerParams { get; }

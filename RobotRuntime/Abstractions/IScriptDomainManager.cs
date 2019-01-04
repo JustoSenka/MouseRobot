@@ -3,7 +3,7 @@ using Unity;
 
 namespace RobotRuntime.Abstractions
 {
-    public interface IPluginDomainManager
+    public interface IScriptDomainManager
     {
         object Instantiate(string className);
         void LoadAssemblies(string[] paths, bool userAssemblies = false);

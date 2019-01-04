@@ -188,7 +188,7 @@
     <Compile Include="Abstractions\IAssetGuidManager.cs" />
     <Compile Include="Assets\ImageImporter.cs" />
     <Compile Include="Assets\LightTestFixtureImporter.cs" />
-    <Compile Include="Assets\PluginImporter.cs" />
+    <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Assets\LightRecordingImporter.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandFail.cs" />
@@ -245,11 +245,11 @@
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />
     <Compile Include="Abstractions\ITestRunner.cs" />
-    <Compile Include="Abstractions\IPluginDomainManager.cs" />
-    <Compile Include="Abstractions\IPluginLoader.cs" />
-    <Compile Include="Plugins\PluginDomainManager.cs" />
-    <Compile Include="Plugins\PluginLoader.cs" />
-    <Compile Include="Plugins\PluginLoaderNoDomain.cs" />
+    <Compile Include="Abstractions\IScriptDomainManager.cs" />
+    <Compile Include="Abstractions\IScriptLoader.cs" />
+    <Compile Include="Plugins\ScriptDomainManager.cs" />
+    <Compile Include="Plugins\ScriptLoader.cs" />
+    <Compile Include="Plugins\ScriptLoaderNoDomain.cs" />
     <Compile Include="Recordings\Recording.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
     <Compile Include="Settings\FeatureDetectionSettings.cs" />

@@ -7,23 +7,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Robot.Plugins
+namespace Robot.Scripts
 {
     /// <summary>
     /// PluginManager lives in base robot assemblies. Its purpose is to communicate with asset manager and plugin compiler to issue the compilation process
     /// and to issue plugin loading.
     /// Directly communicates with PluginCompiler and PluginLoader from runtime.
     /// </summary>
-    public class PluginManager : IPluginManager
+    public class ScriptManager : IScriptManager
     {
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
-        private IPluginCompiler PluginCompiler;
-        private IPluginLoader PluginLoader;
+        private IScriptCompiler PluginCompiler;
+        private IScriptLoader PluginLoader;
         private IAssetManager AssetManager;
         private IModifiedAssetCollector ModifiedAssetCollector;
-        public PluginManager(IPluginCompiler PluginCompiler, IPluginLoader PluginLoader, IAssetManager AssetManager,
+        public ScriptManager(IScriptCompiler PluginCompiler, IScriptLoader PluginLoader, IAssetManager AssetManager,
             IModifiedAssetCollector ModifiedAssetCollector)
         {
             this.PluginCompiler = PluginCompiler;
@@ -39,10 +39,10 @@ namespace Robot.Plugins
 
         private void OnAssetsModified(IList<string> modifiedAssets)
         {
-            CompileRecordingsAndReloadUserDomain();
+            CompileScriptsAndReloadUserDomain();
         }
 
-        public void CompileRecordingsAndReloadUserDomain()
+        public void CompileScriptsAndReloadUserDomain()
         {
             PluginCompiler.SetOutputPath(CustomAssemblyPath);
 

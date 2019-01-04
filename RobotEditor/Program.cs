@@ -6,7 +6,7 @@ using RobotEditor.Windows;
 using System.Windows.Forms;
 using Robot;
 using RobotEditor.Editor;
-using Robot.Plugins;
+using Robot.Scripts;
 using RobotRuntime.Abstractions;
 using RobotRuntime;
 using RobotEditor.Hierarchy;
