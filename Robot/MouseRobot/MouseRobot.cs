@@ -33,7 +33,7 @@ namespace Robot
         }
         private AsyncOperation m_AsyncOperationOnUI;
 
-        private IHierarchyManager ScriptManager;
+        private IHierarchyManager HierarchyManager;
         private ITestRunner TestRunner;
         private IRecordingManager RecordingManager;
         private IRuntimeSettings RuntimeSettings;
@@ -42,11 +42,11 @@ namespace Robot
         private ISettingsManager SettingsManager;
         private IInputCallbacks InputCallbacks;
         private IStatusManager StatusManager;
-        public MouseRobot(IHierarchyManager ScriptManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
+        public MouseRobot(IHierarchyManager HierarchyManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IInputCallbacks InputCallbacks, IStatusManager StatusManager)
         {
-            this.ScriptManager = ScriptManager;
+            this.HierarchyManager = HierarchyManager;
             this.TestRunner = TestRunner;
             this.RecordingManager = RecordingManager;
             this.RuntimeSettings = RuntimeSettings;
@@ -55,12 +55,12 @@ namespace Robot
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
-            
-            ScriptManager.NewScript();
-            TestRunner.TestRunEnd += OnScriptFinished;
+
+            HierarchyManager.NewRecording();
+            TestRunner.TestRunEnd += OnRecordingFinished;
         }
 
-        private void OnScriptFinished()
+        private void OnRecordingFinished()
         {
             IsPlaying = false;
         }
@@ -74,7 +74,7 @@ namespace Robot
                 {
                     if (m_IsPlaying)
                     {
-                        Logger.Log(LogType.Error, "Cannot record while playing script.");
+                        Logger.Log(LogType.Error, "Cannot record while playing recording.");
                         return;
                     }
 
@@ -100,7 +100,7 @@ namespace Robot
                 {
                     if (m_IsRecording)
                     {
-                        Logger.Log(LogType.Error, "Cannot play a script while is recording.");
+                        Logger.Log(LogType.Error, "Cannot play a recording while is recording.");
                         return;
                     }
 

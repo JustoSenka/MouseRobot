@@ -46,7 +46,7 @@ namespace RobotEditor.Windows
         {
             CollectUserCommands();
 
-            // This will break if command is custom command, because script manager replaces all old instances with newly compiled ones, so pointer type is no good here
+            // This will break if command is custom command, because recording manager replaces all old instances with newly compiled ones, so pointer type is no good here
             /*if (m_CurrentObject != null && m_CurrentObject.Command != null)
                 Invoke(new MethodInvoker(() => ShowCommand(m_CurrentObject.Command)));*/
         }
@@ -63,7 +63,7 @@ namespace RobotEditor.Windows
             m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 
-        public void ShowObject(object obj, BaseHierarchyManager BaseScriptManager = null)
+        public void ShowObject(object obj, BaseHierarchyManager BaseHierarchyManager = null)
         {
             if (obj == null)
             {
@@ -73,27 +73,27 @@ namespace RobotEditor.Windows
 
             var type = obj.GetType();
             if (typeof(Recording).IsAssignableFrom(type))
-                ShowScript((Recording)obj);
+                ShowRecording((Recording)obj);
 
             else if (typeof(Command).IsAssignableFrom(type))
-                ShowCommand((Command)obj, BaseScriptManager);
+                ShowCommand((Command)obj, BaseHierarchyManager);
 
             if (m_CurrentObject != null)
             {
-                m_CurrentObject.BaseScriptManager = BaseScriptManager;
+                m_CurrentObject.BaseHierarchyManager = BaseHierarchyManager;
                 ApplyDynamicTypeDescriptorToPropertyView();
             }
         }
 
-        private void ShowScript<T>(T script) where T : Recording
+        private void ShowRecording<T>(T recording) where T : Recording
         {
-            var scriptProperties = Container.Resolve<Inspector.RecordingProperties>();
-            scriptProperties.Script = script;
+            var recordingProperties = Container.Resolve<Inspector.RecordingProperties>();
+            recordingProperties.Recording = recording;
 
-            m_CurrentObject = scriptProperties;
+            m_CurrentObject = recordingProperties;
         }
 
-        private void ShowCommand<T>(T command, BaseHierarchyManager BaseScriptManager) where T : Command
+        private void ShowCommand<T>(T command, BaseHierarchyManager BaseHierarchyManager) where T : Command
         {
             var designerType = GetDesignerTypeForCommand(command.GetType());
 
@@ -103,12 +103,12 @@ namespace RobotEditor.Windows
 
             commandProperties.Command = command;
             m_CurrentObject = commandProperties;
-            m_CurrentObject.BaseScriptManager = BaseScriptManager;
+            m_CurrentObject.BaseHierarchyManager = BaseHierarchyManager;
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            if (m_CurrentObject is Inspector.RecordingProperties scriptProperties)
+            if (m_CurrentObject is Inspector.RecordingProperties recordingProperties)
             {
                 ApplyDynamicTypeDescriptorToPropertyView();
             }
@@ -116,11 +116,11 @@ namespace RobotEditor.Windows
             {
                 var commandProperties = (CommandProperties)m_CurrentObject;
                 var command = commandProperties.Command;
-                m_CurrentObject.BaseScriptManager.GetScriptFromCommand(command).ApplyCommandModifications(command);
+                m_CurrentObject.BaseHierarchyManager.GetRecordingFromCommand(command).ApplyCommandModifications(command);
 
                 // Command type has changed, so we might need new command properties instance for it, so inspector draws int properly
                 if (m_OldCommand.GetType() != command.GetType())
-                    ShowCommand(command, m_CurrentObject.BaseScriptManager);
+                    ShowCommand(command, m_CurrentObject.BaseHierarchyManager);
 
                 ApplyDynamicTypeDescriptorToPropertyView();
             }

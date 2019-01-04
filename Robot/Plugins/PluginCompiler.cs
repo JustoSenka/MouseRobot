@@ -23,7 +23,7 @@ namespace Robot.Plugins
         public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
-        public event Action ScriptsRecompiled;
+        public event Action RecordingsRecompiled;
 
         private bool m_IsCompiling = false;
         private bool m_ShouldRecompile = false;
@@ -93,7 +93,7 @@ namespace Robot.Plugins
 
             m_IsCompiling = false;
 
-            // This might happen if scripts are modified before compilation is finished
+            // This might happen if recordings are modified before compilation is finished
             if (m_ShouldRecompile)
             {
                 m_ShouldRecompile = false;
@@ -108,15 +108,15 @@ namespace Robot.Plugins
                         string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
                         string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
 
-                ScriptsRecompiled?.Invoke();
-                Logger.Logi(LogType.Error, "Scripts have compilation errors.");
+                RecordingsRecompiled?.Invoke();
+                Logger.Logi(LogType.Error, "Recordings have compilation errors.");
                 StatusManager.Add("PluginCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
-                ScriptsRecompiled?.Invoke();
-                Logger.Logi(LogType.Log, "Scripts successfully compiled.");
+                RecordingsRecompiled?.Invoke();
+                Logger.Logi(LogType.Log, "Recordings successfully compiled.");
                 StatusManager.Add("PluginCompiler", 10, new Status("", "Compilation Complete", default));
                 return true;
             }

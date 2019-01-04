@@ -98,7 +98,7 @@ namespace Tests
         }
 
 
-        private Recording Script
+        private Recording Recording
         {
             get
             {
@@ -111,7 +111,7 @@ namespace Tests
                 return s;
             }
         }
-        private const string serializedScript = @"LightScript: 
+        private const string serializedRecording = @"LightRecording: 
   <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
   <Name>k__BackingField: TestName
   CommandForImage: 
@@ -130,24 +130,24 @@ namespace Tests
     <Y>k__BackingField: 20";
 
         [TestMethod]
-        public void Script_ProducesCorrect_YamlString()
+        public void Recording_ProducesCorrect_YamlString()
         {
-            var yamlObj = YamlRecordingIO.Serialize(Script.ToLightScript());
+            var yamlObj = YamlRecordingIO.Serialize(Recording.ToLightRecording());
             var yamlString = YamlSerializer.SerializeYamlTree(yamlObj);
 
             // Needed to ignore randomly generated guids
-            var expected = Regex.Replace(serializedScript, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            var expected = Regex.Replace(serializedRecording, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var actual = Regex.Replace(yamlString, RegexExpression.Guid, new Guid().ToString(), RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
             StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
         [TestMethod]
-        public void Script_ProducesCorrect_YamlObj()
+        public void Recording_ProducesCorrect_YamlObj()
         {
-            var yamlObj = YamlRecordingIO.Serialize(Script.ToLightScript());
+            var yamlObj = YamlRecordingIO.Serialize(Recording.ToLightRecording());
             var children = yamlObj.ToArray();
-            Assert.AreEqual(4, children.Length, "only two root commands should be in the script and a name.");
+            Assert.AreEqual(4, children.Length, "only two root commands should be in the recording and a name.");
 
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
             Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
@@ -160,12 +160,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void YamlString_ProducesCorrect_ScriptYamlObject()
+        public void YamlString_ProducesCorrect_RecordingYamlObject()
         {
-            var yamlObj = YamlSerializer.DeserializeYamlTree(serializedScript);
+            var yamlObj = YamlSerializer.DeserializeYamlTree(serializedRecording);
 
             var children = yamlObj.ToArray();
-            Assert.AreEqual(4, children.Length, "only two root commands should be in the script and a name.");
+            Assert.AreEqual(4, children.Length, "only two root commands should be in the recording and a name.");
 
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
             Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
@@ -178,14 +178,14 @@ namespace Tests
         }
 
         [TestMethod]
-        public void YamlObject_ProducesCorrect_Script()
+        public void YamlObject_ProducesCorrect_Recording()
         {
-            var s = Script;
-            var lightScript = s.ToLightScript();
+            var s = Recording;
+            var lightRecording = s.ToLightRecording();
             var yamlObj = YamlRecordingIO.Serialize(s);
-            var newScript = YamlRecordingIO.Deserialize(yamlObj);
+            var newRecording = YamlRecordingIO.Deserialize(yamlObj);
 
-            Assert.AreEqual(lightScript.Commands.Count(), newScript.Commands.Count(), "Command count should be the same.");
+            Assert.AreEqual(lightRecording.Commands.Count(), newRecording.Commands.Count(), "Command count should be the same.");
         }
 
 
@@ -226,15 +226,15 @@ namespace Tests
             {
                 var f = new LightTestFixture(guid);
                 f.Name = "TestName";
-                f.Setup = Script;
-                f.TearDown = Script;
-                f.OneTimeSetup = Script;
-                f.OneTimeTeardown = Script;
+                f.Setup = Recording;
+                f.TearDown = Recording;
+                f.OneTimeSetup = Recording;
+                f.OneTimeTeardown = Recording;
                 f.Setup.Name = LightTestFixture.k_Setup;
                 f.TearDown.Name = LightTestFixture.k_TearDown;
                 f.OneTimeSetup.Name = LightTestFixture.k_OneTimeSetup;
                 f.OneTimeTeardown.Name = LightTestFixture.k_OneTimeTeardown;
-                f.Tests = new Recording[] { Script }.ToList();
+                f.Tests = new Recording[] { Recording }.ToList();
                 return f;
             }
         }
@@ -243,7 +243,7 @@ namespace Tests
         private const string serializedFixture = @"LightTestFixture: 
   <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
   <Name>k__BackingField: TestName
-  LightScript: 
+  LightRecording: 
     <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: Setup
     CommandForImage: 
@@ -260,7 +260,7 @@ namespace Tests
       <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
-  LightScript: 
+  LightRecording: 
     <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: TearDown
     CommandForImage: 
@@ -277,7 +277,7 @@ namespace Tests
       <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
-  LightScript: 
+  LightRecording: 
     <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: OneTimeSetup
     CommandForImage: 
@@ -294,7 +294,7 @@ namespace Tests
       <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
-  LightScript: 
+  LightRecording: 
     <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: OneTimeTeardown
     CommandForImage: 
@@ -311,7 +311,7 @@ namespace Tests
       <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
       <X>k__BackingField: 10
       <Y>k__BackingField: 20
-  LightScript: 
+  LightRecording: 
     <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
     <Name>k__BackingField: TestName
     CommandForImage: 
@@ -349,10 +349,10 @@ namespace Tests
         {
             var yamlObj = YamlTestFixtureIO.Serialize(Fixture);
             var children = yamlObj.ToArray();
-            Assert.AreEqual(7, children.Length, "6 Childs. Name + 5 scripts");
+            Assert.AreEqual(7, children.Length, "6 Childs. Name + 5 recordings");
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guids missmatched");
             Assert.AreEqual("TestName", children[1].value.value, "Names missmatched");
-            Assert.AreEqual("LightScript", children[2].value.property, "Script type missmatched");
+            Assert.AreEqual("LightRecording", children[2].value.property, "Recording type missmatched");
         }
 
         [TestMethod]
@@ -361,10 +361,10 @@ namespace Tests
             var yamlObj = YamlSerializer.DeserializeYamlTree(serializedFixture);
 
             var children = yamlObj.ToArray();
-            Assert.AreEqual(7, children.Length, "7 Childs. Name + guid + 5 scripts");
+            Assert.AreEqual(7, children.Length, "7 Childs. Name + guid + 5 recordings");
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guids missmatched");
             Assert.AreEqual("TestName", children[1].value.value, "Names missmatched");
-            Assert.AreEqual("LightScript", children[2].value.property, "Script type missmatched");
+            Assert.AreEqual("LightRecording", children[2].value.property, "Recording type missmatched");
         }
 
         [TestMethod]

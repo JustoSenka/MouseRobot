@@ -11,7 +11,7 @@ namespace Robot.Tests
 {
     /// <summary>
     /// Contains TextFixtures which are currently open and loaded (has window document open).
-    /// Responsible for keeping setup and teardown special scripts
+    /// Responsible for keeping setup and teardown special recordings
     /// Handles saving of test fixtures
     /// Double clicking fixture in assets window will add fixture here
     /// TestFixtureWindow will rely on this manager callbacks

@@ -30,16 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindow));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Scripts");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Recordings");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Images");
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.reloadScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.recompileScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recompileRecordingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -51,25 +51,25 @@
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.reloadScriptToolStripMenuItem,
+            this.reloadRecordingToolStripMenuItem,
             this.toolStripMenuItem2,
             this.refreshToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.recompileScriptsToolStripMenuItem,
+            this.recompileRecordingsToolStripMenuItem,
             this.regenerateSolutionToolStripMenuItem,
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
             this.contextMenuStrip.Size = new System.Drawing.Size(221, 198);
             // 
-            // reloadScriptToolStripMenuItem
+            // reloadRecordingToolStripMenuItem
             // 
-            this.reloadScriptToolStripMenuItem.Name = "reloadScriptToolStripMenuItem";
-            this.reloadScriptToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.reloadScriptToolStripMenuItem.Text = "Reload Script";
-            this.reloadScriptToolStripMenuItem.Click += new System.EventHandler(this.reloadScriptToolStripMenuItem_Click);
+            this.reloadRecordingToolStripMenuItem.Name = "reloadRecordingToolStripMenuItem";
+            this.reloadRecordingToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.reloadRecordingToolStripMenuItem.Text = "Reload Recording";
+            this.reloadRecordingToolStripMenuItem.Click += new System.EventHandler(this.reloadRecordingToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -105,13 +105,13 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(217, 6);
             // 
-            // recompileScriptsToolStripMenuItem
+            // recompileRecordingsToolStripMenuItem
             // 
-            this.recompileScriptsToolStripMenuItem.Name = "recompileScriptsToolStripMenuItem";
-            this.recompileScriptsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
-            this.recompileScriptsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.recompileScriptsToolStripMenuItem.Text = "Recompile Scripts";
-            this.recompileScriptsToolStripMenuItem.Click += new System.EventHandler(this.recompileScriptsToolStripMenuItem_Click);
+            this.recompileRecordingsToolStripMenuItem.Name = "recompileRecordingsToolStripMenuItem";
+            this.recompileRecordingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
+            this.recompileRecordingsToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.recompileRecordingsToolStripMenuItem.Text = "Recompile Recordings";
+            this.recompileRecordingsToolStripMenuItem.Click += new System.EventHandler(this.recompileRecordingsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -130,7 +130,7 @@
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "Folder_ICO_128.png");
-            this.imageList1.Images.SetKeyName(1, "Script_ICO_16.png");
+            this.imageList1.Images.SetKeyName(1, "Recording_ICO_16.png");
             this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
             this.imageList1.Images.SetKeyName(3, "Plugin_ICO_256.png");
             // 
@@ -143,8 +143,8 @@
             this.treeView.LabelEdit = true;
             this.treeView.Location = new System.Drawing.Point(0, 0);
             this.treeView.Name = "treeView";
-            treeNode1.Name = "Scripts";
-            treeNode1.Text = "Scripts";
+            treeNode1.Name = "Recordings";
+            treeNode1.Text = "Recordings";
             treeNode2.Name = "Images";
             treeNode2.Text = "Images";
             this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
@@ -189,9 +189,9 @@
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem reloadScriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadRecordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem recompileScriptsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem recompileRecordingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem regenerateSolutionToolStripMenuItem;
     }

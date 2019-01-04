@@ -68,8 +68,8 @@ namespace RobotEditor
                 var node = ((TestNode)x);
                 if (node.TestFixture != null)
                     return node.TestFixture.Name + " (" + node.TestFixture.Tests.Count + ")";
-                else if (node.Script != null)
-                    return node.Script.Name;
+                else if (node.Recording != null)
+                    return node.Recording.Name;
                 else
                     return node.ToString();
             };
@@ -85,7 +85,7 @@ namespace RobotEditor
                 }
                 else
                 {
-                    var tuple = new Tuple<string, string>(fixture.Name, node.Script.Name);
+                    var tuple = new Tuple<string, string>(fixture.Name, node.Recording.Name);
 
                     TestRunnerManager.TestStatusDictionary.TryGetValue(tuple, out TestStatus status);
 
@@ -120,7 +120,7 @@ namespace RobotEditor
                 RefreshTreeListView();
                 treeListView.ExpandAll();
 
-                ASSERT_TreeViewIsTheSameAsInScriptManager();
+                ASSERT_TreeViewIsTheSameAsInRecordingManager();
             }));
         }
 
@@ -177,14 +177,14 @@ namespace RobotEditor
             RefreshTreeListView();
             treeListView.Expand(fixtureNode.Parent);
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void OnTestFixtureRemoved(TestFixture fixture, int position)
         {
             m_Nodes.RemoveAt(position);
             RefreshTreeListView();
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void OnTestFixtureModified(TestFixture fixture, int position)
@@ -200,7 +200,7 @@ namespace RobotEditor
             if (expandState)
                 treeListView.Expand(fixtureNode);
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void OnTestRunEnd()
@@ -230,15 +230,15 @@ namespace RobotEditor
             }
         }
 
-        private void OnTestIsBeingRun(LightTestFixture lightTestFixture, Recording script)
+        private void OnTestIsBeingRun(LightTestFixture lightTestFixture, Recording recording)
         {
             var fixtureNode = m_Nodes.FirstOrDefault(node => node.TestFixture.Name == lightTestFixture.Name);
             if (fixtureNode != null && fixtureNode.TestFixture != null)
             {
-                var scriptNode = fixtureNode.Children.FirstOrDefault(node => node.Script?.Name == script.Name);
-                if (scriptNode != null)
+                var recordingNode = fixtureNode.Children.FirstOrDefault(node => node.Recording?.Name == recording.Name);
+                if (recordingNode != null)
                 {
-                    m_HighlightedNode = scriptNode;
+                    m_HighlightedNode = recordingNode;
                     this.BeginInvokeIfCreated(new MethodInvoker(delegate
                     {
                         RefreshTreeListView();
@@ -278,7 +278,7 @@ namespace RobotEditor
         private void runSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var names = treeListView.SelectedObjects.Cast<TestNode>().Select(node =>
-                node.TestFixture != null ? node.TestFixture.Name : node.Parent.TestFixture.Name + "." + node.Script.Name);
+                node.TestFixture != null ? node.TestFixture.Name : node.Parent.TestFixture.Name + "." + node.Recording.Name);
 
             var filter = BuildTestFilter(names);
             if (filter != "")
@@ -337,7 +337,7 @@ namespace RobotEditor
 
         #endregion
 
-        private void ASSERT_TreeViewIsTheSameAsInScriptManager()
+        private void ASSERT_TreeViewIsTheSameAsInRecordingManager()
         {
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)

@@ -8,14 +8,14 @@ namespace RobotRuntime.Utils
 {
     public static class Paths
     {
-        public static string ScriptFolder { get { return "Scripts"; } }
+        public static string RecordingFolder { get { return "Recordings"; } }
         public static string ImageFolder { get { return "Images"; } }
         public static string PluginFolder { get { return "Plugins"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
         public static string TestsFolder { get { return "Tests"; } }
         public static string ExtensionFolder { get { return "Extensions"; } }
 
-        public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
+        public static string RecordingPath { get { return Path.Combine(Environment.CurrentDirectory, RecordingFolder); } }
         public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
         public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
@@ -30,14 +30,14 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { ScriptPath, ImagePath, PluginPath, MetadataPath, TestsFolder, ExtensionFolder }; }
+            get { return new[] { RecordingPath, ImagePath, PluginPath, MetadataPath, TestsFolder, ExtensionFolder }; }
         }
 
         public static string GetName(string path)
         {
             /*var name = Regex.Match(path, @"[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value.
                 TrimStart('/', '\\').
-                TrimEnd(FileExtensions.Script.ToCharArray()).
+                TrimEnd(FileExtensions.Recording.ToCharArray()).
                 TrimEnd(FileExtensions.Timeline.ToCharArray()).
                 TrimEnd(FileExtensions.Image.ToCharArray()).
                 TrimEnd('.');*/
@@ -88,8 +88,8 @@ namespace RobotRuntime.Utils
 
         public static string GetExtensionFromFolder(string folder)
         {
-            if (folder == ScriptFolder)
-                return FileExtensions.Script;
+            if (folder == RecordingFolder)
+                return FileExtensions.Recording;
             else if (folder == ImageFolder)
                 return FileExtensions.Image;
             else if (folder == PluginFolder)
@@ -104,8 +104,8 @@ namespace RobotRuntime.Utils
 
         public static string GetFolderFromExtension(string path)
         {
-            if (path.EndsWith(FileExtensions.Script))
-                return ScriptFolder;
+            if (path.EndsWith(FileExtensions.Recording))
+                return RecordingFolder;
             else if (path.EndsWith(FileExtensions.Image))
                 return ImageFolder;
             else if (path.EndsWith(FileExtensions.Plugin))

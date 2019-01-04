@@ -14,15 +14,15 @@ namespace RobotEditor.Hierarchy
         public object Value { get; private set; }
 
         public TestFixture TestFixture { get; private set; }
-        public Recording Script { get; private set; }
+        public Recording Recording { get; private set; }
 
         public List<TestNode> Children { get; private set; }
         public TestNode Parent { get; set; }
 
-        public TestNode(Recording script, TestNode parent)
+        public TestNode(Recording recording, TestNode parent)
         {
-            Value = script;
-            Script = script;
+            Value = recording;
+            Recording = recording;
             Parent = parent;
             Level = Parent.Level + 1;
 
@@ -43,8 +43,8 @@ namespace RobotEditor.Hierarchy
 
             Children = new List<TestNode>();
 
-            foreach (var script in testFixture.Tests)
-                Children.Add(new TestNode(script, this));
+            foreach (var recording in testFixture.Tests)
+                Children.Add(new TestNode(recording, this));
         }
 
         public void AddTestNode(TestNode node)
@@ -66,10 +66,10 @@ namespace RobotEditor.Hierarchy
             }
         }
 
-        public void Update(Recording script)
+        public void Update(Recording recording)
         {
-            Script = script;
-            Value = script;
+            Recording = recording;
+            Value = recording;
         }
 
         public void Update(TestFixture testFixture)
@@ -79,8 +79,8 @@ namespace RobotEditor.Hierarchy
 
             Children = new List<TestNode>();
 
-            foreach (var script in testFixture.Tests)
-                Children.Add(new TestNode(script, this));
+            foreach (var recording in testFixture.Tests)
+                Children.Add(new TestNode(recording, this));
         }
 
         public TestNode GetNodeFromValue(Command command)

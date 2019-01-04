@@ -40,7 +40,7 @@ namespace Robot.Plugins
             m_SolutionGuid = Guid.NewGuid().ToString();
             m_ProjectGuid = Guid.NewGuid().ToString();
 
-            //TODO: Fix me. Generate project only when Scripts and Plugins are ADDED/REMOVED // If project is identical, it will not be overwritten
+            //TODO: Fix me. Generate project only when Recordings and Plugins are ADDED/REMOVED // If project is identical, it will not be overwritten
             //TODO: Add menu in assets window to regenerate everything
             //TODO: Changing compiler settings should regenerate project
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);

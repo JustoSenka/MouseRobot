@@ -14,36 +14,36 @@ namespace Tests
     [TestClass]
     public class HierarchyManagerTests
     {
-        IHierarchyManager ScriptManager;
+        IHierarchyManager RecordingManager;
 
         [TestMethod]
-        public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
+        public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
-            Assert.AreEqual(1, ScriptManager.LoadedScripts.Count);
+            Assert.AreEqual(1, RecordingManager.LoadedRecordings.Count);
         }
 
         [TestMethod]
-        public void ScriptManager_NewScript_WillCreateSecondEmptyScript()
+        public void RecordingManager_NewRecording_WillCreateSecondEmptyRecording()
         {
-            ScriptManager.NewScript();
-            Assert.AreEqual(2, ScriptManager.LoadedScripts.Count);
+            RecordingManager.NewRecording();
+            Assert.AreEqual(2, RecordingManager.LoadedRecordings.Count);
         }
 
-        private Recording NewTestScript(out Command topCommand, out Command childCommand)
+        private Recording NewTestRecording(out Command topCommand, out Command childCommand)
         {
-            var s = ScriptManager.NewScript();
+            var s = RecordingManager.NewRecording();
             topCommand = s.AddCommand(new CommandSleep(1));
             childCommand = s.AddCommand(new CommandSleep(2), topCommand);
             return s;
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandAfter_ToOtherScript_MovesFullNode()
+        public void RecordingManager_MoveCommandAfter_ToOtherRecording_MovesFullNode()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandAfter(c1, c2, 1, 2);
+            RecordingManager.MoveCommandAfter(c1, c2, 1, 2);
 
             Assert.AreEqual(0, s1.Commands.Count());
             Assert.AreEqual(2, s2.Commands.Count());
@@ -52,12 +52,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandBefore_ToOtherScript_MovesFullNode()
+        public void RecordingManager_MoveCommandBefore_ToOtherRecording_MovesFullNode()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandBefore(c1, c2, 1, 2);
+            RecordingManager.MoveCommandBefore(c1, c2, 1, 2);
 
             Assert.AreEqual(0, s1.Commands.Count());
             Assert.AreEqual(2, s2.Commands.Count());
@@ -66,12 +66,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandAfter_ToOtherScriptButNotRoot_AlsoWorks()
+        public void RecordingManager_MoveCommandAfter_ToOtherRecordingButNotRoot_AlsoWorks()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandAfter(c1, c21, 1, 2);
+            RecordingManager.MoveCommandAfter(c1, c21, 1, 2);
 
             Assert.AreEqual(0, s1.Commands.Count());
             Assert.AreEqual(1, s2.Commands.Count());
@@ -80,12 +80,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandBefore_ToOtherScriptButNotRoot_AlsoWorks()
+        public void RecordingManager_MoveCommandBefore_ToOtherRecordingButNotRoot_AlsoWorks()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandBefore(c1, c21, 1, 2);
+            RecordingManager.MoveCommandBefore(c1, c21, 1, 2);
 
             Assert.AreEqual(0, s1.Commands.Count());
             Assert.AreEqual(1, s2.Commands.Count());
@@ -94,12 +94,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandAfter_FromChildToRoot_AlsoWorks()
+        public void RecordingManager_MoveCommandAfter_FromChildToRoot_AlsoWorks()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandAfter(c11, c2, 1, 2);
+            RecordingManager.MoveCommandAfter(c11, c2, 1, 2);
 
             Assert.AreEqual(1, s1.Commands.Count());
             Assert.AreEqual(2, s2.Commands.Count());
@@ -108,12 +108,12 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandBefore_FromChildToRoot_AlsoWorks()
+        public void RecordingManager_MoveCommandBefore_FromChildToRoot_AlsoWorks()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c21);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c21);
 
-            ScriptManager.MoveCommandBefore(c11, c2, 1, 2);
+            RecordingManager.MoveCommandBefore(c11, c2, 1, 2);
 
             Assert.AreEqual(1, s1.Commands.Count());
             Assert.AreEqual(2, s2.Commands.Count());
@@ -123,11 +123,11 @@ namespace Tests
 
 
         [TestMethod]
-        public void ScriptManager_MoveCommandAfter_SameScript()
+        public void RecordingManager_MoveCommandAfter_SameRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
 
-            ScriptManager.MoveCommandAfter(c11, c1, 1);
+            RecordingManager.MoveCommandAfter(c11, c1, 1);
 
             Assert.AreEqual(2, s1.Commands.Count());
             Assert.AreEqual(c1, s1.Commands.GetChild(0).value);
@@ -135,11 +135,11 @@ namespace Tests
         }
 
         [TestMethod]
-        public void ScriptManager_MoveCommandBefore_SameScript()
+        public void RecordingManager_MoveCommandBefore_SameRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
 
-            ScriptManager.MoveCommandBefore(c11, c1, 1);
+            RecordingManager.MoveCommandBefore(c11, c1, 1);
 
             Assert.AreEqual(2, s1.Commands.Count());
             Assert.AreEqual(c1, s1.Commands.GetChild(1).value);
@@ -147,107 +147,107 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Scripts_HaveCorrectGuids_AfterMovingCommandToOtherScript()
+        public void Recordings_HaveCorrectGuids_AfterMovingCommandToOtherRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c22);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c22);
 
-            ScriptManager.MoveCommandBefore(c2, c1, 2, 1);
+            RecordingManager.MoveCommandBefore(c2, c1, 2, 1);
 
-            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+            CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
         [TestMethod]
         public void Scrips_HaveCorrectGuids_AfterDuplicatingCommand()
         {
-            var s = NewTestScript(out Command c1, out Command c11);
+            var s = NewTestRecording(out Command c1, out Command c11);
 
             var clone = s.CloneCommandStub(c1);
             s.AddCommandNode(clone);
 
-            CheckIfScriptsHasAllCorrectGuids(s);
+            CheckIfRecordingsHasAllCorrectGuids(s);
         }
 
         [TestMethod]
-        public void Scripts_HaveCorrectGuids_AfterDuplicatingCommand_AndMovingBackAndForthBetweenScripts()
+        public void Recordings_HaveCorrectGuids_AfterDuplicatingCommand_AndMovingBackAndForthBetweenRecordings()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c22);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c22);
 
             var clone = s1.CloneCommandStub(c1);
             var command = s1.AddCommandNode(clone);
 
-            ScriptManager.MoveCommandBefore(command, c2, 1, 2);
-            ScriptManager.MoveCommandBefore(command, c1, 2, 1);
+            RecordingManager.MoveCommandBefore(command, c2, 1, 2);
+            RecordingManager.MoveCommandBefore(command, c1, 2, 1);
 
-            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+            CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
         [TestMethod]
-        public void Scripts_HaveCorrectGuids_AfterDuplicatingScript()
+        public void Recordings_HaveCorrectGuids_AfterDuplicatingRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = ScriptManager.NewScript(s1);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = RecordingManager.NewRecording(s1);
 
-            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+            CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
         [TestMethod]
-        public void Scripts_HaveCorrectGuids_AfterDuplicatingScript_AndMovingCommandsToIt()
+        public void Recordings_HaveCorrectGuids_AfterDuplicatingRecording_AndMovingCommandsToIt()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = ScriptManager.NewScript(s1);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = RecordingManager.NewRecording(s1);
 
             var node = s1.Commands.GetNodeFromValue(c1);
             s2.AddCommandNode(node);
 
-            CheckIfScriptsHasAllCorrectGuids(s1, s2);
+            CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
         [TestMethod]
-        public void ScriptManager_CloneNewScript_RegeneratesCommandAndScriptGuids()
+        public void RecordingManager_CloneNewRecording_RegeneratesCommandAndRecordingGuids()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = ScriptManager.NewScript(s1);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = RecordingManager.NewRecording(s1);
 
             TestBase.CheckThatGuidsAreNotSame(s1, s2);
             TestBase.CheckThatPtrsAreNotSame(s1, s2);
         }
 
         [TestMethod]
-        public void ScriptManager_GetScriptFromCommand_FindsCorrectScript()
+        public void RecordingManager_GetRecordingFromCommand_FindsCorrectRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c22);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c22);
 
-            var script = ScriptManager.GetScriptFromCommand(c22);
+            var recording = RecordingManager.GetRecordingFromCommand(c22);
 
-            Assert.AreEqual(s2, script, "Scripts missmatched");
+            Assert.AreEqual(s2, recording, "Recordings missmatched");
         }
 
         [TestMethod]
-        public void ScriptManager_GetScriptFromCommandGuid_FindsCorrectScript()
+        public void RecordingManager_GetRecordingFromCommandGuid_FindsCorrectRecording()
         {
-            var s1 = NewTestScript(out Command c1, out Command c11);
-            var s2 = NewTestScript(out Command c2, out Command c22);
+            var s1 = NewTestRecording(out Command c1, out Command c11);
+            var s2 = NewTestRecording(out Command c2, out Command c22);
 
-            var script = ScriptManager.GetScriptFromCommandGuid(c22.Guid);
+            var recording = RecordingManager.GetRecordingFromCommandGuid(c22.Guid);
 
-            Assert.AreEqual(s2, script, "Scripts missmatched");
+            Assert.AreEqual(s2, recording, "Recordings missmatched");
         }
 
-        private void CheckIfScriptsHasAllCorrectGuids(params Recording[] scripts)
+        private void CheckIfRecordingsHasAllCorrectGuids(params Recording[] recordings)
         {
             var hashmapField = typeof(Recording).GetField("CommandGuidMap", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (var s in scripts)
+            foreach (var s in recordings)
             {
                 var commands = s.Commands.GetAllNodes(false).Select(node => node.value);
                 var hashmap = (HashSet<Guid>)hashmapField.GetValue(s);
 
                 Assert.AreEqual(commands.Count(), hashmap.Count, $"Hashmap guid count missmatched with command count: {s.Name}");
                 foreach (var c in commands)
-                    Assert.IsTrue(s.HasRegisteredGuid(c.Guid), $"Command {c.Name} is not registered in script {s.Name}");
+                    Assert.IsTrue(s.HasRegisteredGuid(c.Guid), $"Command {c.Name} is not registered in recording {s.Name}");
             }
         }
 
@@ -256,17 +256,17 @@ namespace Tests
         {
             var container = TestBase.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
-            ScriptManager = container.Resolve<IHierarchyManager>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
         }
 
         [TestCleanup]
-        public void ResetScriptManager()
+        public void ResetRecordingManager()
         {
-            for (int i = ScriptManager.LoadedScripts.Count - 1; i >= 0; --i)
+            for (int i = RecordingManager.LoadedRecordings.Count - 1; i >= 0; --i)
             {
-                ScriptManager.RemoveScript(ScriptManager.LoadedScripts[i]);
+                RecordingManager.RemoveRecording(RecordingManager.LoadedRecordings[i]);
             }
-            ScriptManager.NewScript();
+            RecordingManager.NewRecording();
         }
     }
 }

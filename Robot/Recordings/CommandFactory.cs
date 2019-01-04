@@ -19,7 +19,7 @@ namespace Robot.Recordings
         public const string k_Asset = "Asset";
         public const string k_Time = "Time";
         public const string k_Timeout = "Timeout";
-        public const string k_Script = "Script";
+        public const string k_Recording = "Recording";
 
         public event Action NewUserCommands;
 

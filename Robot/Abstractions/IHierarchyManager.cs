@@ -7,31 +7,31 @@ namespace Robot.Abstractions
 {
     public interface IHierarchyManager
     {
-        Recording ActiveScript { get; set; }
-        IList<Recording> LoadedScripts { get; }
+        Recording ActiveRecording { get; set; }
+        IList<Recording> LoadedRecordings { get; }
 
-        event Action<Recording, Recording> ActiveScriptChanged;
-        event Action<Recording, Command, Command> CommandAddedToScript;
-        event Action<Recording, Command, Command, int> CommandInsertedInScript;
-        event Action<Recording, Command, Command> CommandModifiedOnScript;
-        event Action<Recording, Command, int> CommandRemovedFromScript;
-        event Action<Recording> ScriptAdded;
-        event Action<Recording> ScriptModified;
-        event Action ScriptPositioningChanged;
-        event Action<int> ScriptRemoved;
-        event Action<Recording> ScriptSaved;
+        event Action<Recording, Recording> ActiveRecordingChanged;
+        event Action<Recording, Command, Command> CommandAddedToRecording;
+        event Action<Recording, Command, Command, int> CommandInsertedInRecording;
+        event Action<Recording, Command, Command> CommandModifiedOnRecording;
+        event Action<Recording, Command, int> CommandRemovedFromRecording;
+        event Action<Recording> RecordingAdded;
+        event Action<Recording> RecordingModified;
+        event Action RecordingPositioningChanged;
+        event Action<int> RecordingRemoved;
+        event Action<Recording> RecordingSaved;
 
         IEnumerator<Recording> GetEnumerator();
-        Recording GetScriptFromCommand(Command command);
-        Recording GetScriptFromCommandGuid(Guid guid);
-        Recording LoadScript(string path);
-        void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1);
-        void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1);
-        void MoveScriptAfter(int index, int after);
-        void MoveScriptBefore(int index, int before);
-        Recording NewScript(Recording clone = null);
-        void RemoveScript(Recording script);
-        void RemoveScript(int position);
-        void SaveScript(Recording script, string path);
+        Recording GetRecordingFromCommand(Command command);
+        Recording GetRecordingFromCommandGuid(Guid guid);
+        Recording LoadRecording(string path);
+        void MoveCommandAfter(Command source, Command after, int recordingIndex, int destinationRecordingIndex = -1);
+        void MoveCommandBefore(Command source, Command before, int recordingIndex, int destinationRecordingIndex = -1);
+        void MoveRecordingAfter(int index, int after);
+        void MoveRecordingBefore(int index, int before);
+        Recording NewRecording(Recording clone = null);
+        void RemoveRecording(Recording recording);
+        void RemoveRecording(int position);
+        void SaveRecording(Recording recording, string path);
     }
 }

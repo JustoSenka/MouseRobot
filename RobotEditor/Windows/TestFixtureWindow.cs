@@ -49,7 +49,7 @@ namespace RobotEditor
 
             treeListView.Font = Fonts.Default;
 
-            TestRunner.TestRunEnd += OnScriptsFinishedRunning;
+            TestRunner.TestRunEnd += OnRecordingsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
 
             treeListView.FormatCell += UpdateFontsTreeListView;
@@ -110,28 +110,28 @@ namespace RobotEditor
 
         private void SubscribeAllEvents(TestFixture fixture)
         {
-            fixture.CommandAddedToScript += OnCommandAddedToScript;
-            fixture.CommandRemovedFromScript += OnCommandRemovedFromScript;
-            fixture.CommandModifiedOnScript += OnCommandModifiedOnScript;
-            fixture.CommandInsertedInScript += OnCommandInsertedInScript;
+            fixture.CommandAddedToRecording += OnCommandAddedToRecording;
+            fixture.CommandRemovedFromRecording += OnCommandRemovedFromRecording;
+            fixture.CommandModifiedOnRecording += OnCommandModifiedOnRecording;
+            fixture.CommandInsertedInRecording += OnCommandInsertedInRecording;
 
-            fixture.ScriptAdded += OnScriptLoaded;
-            fixture.ScriptModified += OnScriptModified;
-            fixture.ScriptRemoved += OnScriptRemoved;
-            fixture.ScriptPositioningChanged += OnScriptPositioningChanged;
+            fixture.RecordingAdded += OnRecordingLoaded;
+            fixture.RecordingModified += OnRecordingModified;
+            fixture.RecordingRemoved += OnRecordingRemoved;
+            fixture.RecordingPositioningChanged += OnRecordingPositioningChanged;
         }
 
         private void UnsubscribeAllEvents(TestFixture fixture)
         {
-            fixture.CommandAddedToScript -= OnCommandAddedToScript;
-            fixture.CommandRemovedFromScript -= OnCommandRemovedFromScript;
-            fixture.CommandModifiedOnScript -= OnCommandModifiedOnScript;
-            fixture.CommandInsertedInScript -= OnCommandInsertedInScript;
+            fixture.CommandAddedToRecording -= OnCommandAddedToRecording;
+            fixture.CommandRemovedFromRecording -= OnCommandRemovedFromRecording;
+            fixture.CommandModifiedOnRecording -= OnCommandModifiedOnRecording;
+            fixture.CommandInsertedInRecording -= OnCommandInsertedInRecording;
 
-            fixture.ScriptAdded -= OnScriptLoaded;
-            fixture.ScriptModified -= OnScriptModified;
-            fixture.ScriptRemoved -= OnScriptRemoved;
-            fixture.ScriptPositioningChanged -= OnScriptPositioningChanged;
+            fixture.RecordingAdded -= OnRecordingLoaded;
+            fixture.RecordingModified -= OnRecordingModified;
+            fixture.RecordingRemoved -= OnRecordingRemoved;
+            fixture.RecordingPositioningChanged -= OnRecordingPositioningChanged;
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
@@ -139,10 +139,10 @@ namespace RobotEditor
             if (!(e.Model is HierarchyNode node))
                 return;
 
-            if (node.Script != null)
+            if (node.Recording != null)
             {
-                if (node.Script.IsDirty)
-                    e.SubItem.Font = Fonts.DirtyScript;//.AddFont(Fonts.DirtyScript);
+                if (node.Recording.IsDirty)
+                    e.SubItem.Font = Fonts.DirtyRecording;//.AddFont(Fonts.DirtyRecording);
                 else
                     e.SubItem.Font = Fonts.Default;
             }
@@ -161,7 +161,7 @@ namespace RobotEditor
             if (m_TestFixture == null)
                 return;
 
-            m_HooksNode = new HierarchyNode("Special Scripts");
+            m_HooksNode = new HierarchyNode("Special Recordings");
             foreach (var s in m_TestFixture.Hooks)
                 m_HooksNode.AddHierarchyNode(new HierarchyNode(s));
 
@@ -192,11 +192,11 @@ namespace RobotEditor
             }));
         }
 
-        #region ScriptManager Callbacks
+        #region RecordingManager Callbacks
 
-        private void OnScriptLoaded(Recording script)
+        private void OnRecordingLoaded(Recording recording)
         {
-            var node = new HierarchyNode(script);
+            var node = new HierarchyNode(recording);
             m_TestsNode.AddHierarchyNode(node);
             RefreshTreeListViewAsync(() =>
             {
@@ -204,20 +204,20 @@ namespace RobotEditor
                 treeListView.Expand(node);
             });
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
-        private void OnScriptModified(Recording script)
+        private void OnRecordingModified(Recording recording)
         {
-            var node = new HierarchyNode(script);
+            var node = new HierarchyNode(recording);
             m_Nodes.ReplaceNodeWithNewOne(node);
 
             RefreshTreeListViewAsync();
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
-        private void OnScriptRemoved(int index)
+        private void OnRecordingRemoved(int index)
         {
             var oldSelectedObject = treeListView.SelectedObject;
 
@@ -228,53 +228,53 @@ namespace RobotEditor
                     OnSelectionChanged?.Invoke(m_TestFixture, null);
             });
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
-        private void OnScriptPositioningChanged()
+        private void OnRecordingPositioningChanged()
         {
-            foreach (var script in m_TestFixture.Tests)
+            foreach (var recording in m_TestFixture.Tests)
             {
-                var index = m_TestsNode.Children.FindIndex(n => n.Script == script);
-                var indexInBackend = m_TestFixture.GetScriptIndex(script) - 4; // -4 since 4 scripts are reserved as hooks
+                var index = m_TestsNode.Children.FindIndex(n => n.Recording == recording);
+                var indexInBackend = m_TestFixture.GetRecordingIndex(recording) - 4; // -4 since 4 recordings are reserved as hooks
                 m_TestsNode.Children.MoveBefore(index, indexInBackend);
             }
 
-            // Hooks do not allow drag and drop, but keeping here in case of position changing from script
-            foreach (var script in m_TestFixture.Hooks)
+            // Hooks do not allow drag and drop, but keeping here in case of position changing from recording
+            foreach (var recording in m_TestFixture.Hooks)
             {
-                var index = m_HooksNode.Children.FindIndex(n => n.Script == script);
-                m_HooksNode.Children.MoveBefore(index, m_TestFixture.GetScriptIndex(script));
+                var index = m_HooksNode.Children.FindIndex(n => n.Recording == recording);
+                m_HooksNode.Children.MoveBefore(index, m_TestFixture.GetRecordingIndex(recording));
             }
 
             RefreshTreeListViewAsync();
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
-        private void OnCommandAddedToScript(Recording script, Command parentCommand, Command command)
+        private void OnCommandAddedToRecording(Recording recording, Command parentCommand, Command command)
         {
-            var addedNode = HierarchyUtils.OnCommandAddedToScript(m_Nodes, script, parentCommand, command);
+            var addedNode = HierarchyUtils.OnCommandAddedToRecording(m_Nodes, recording, parentCommand, command);
             var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => treeListView.Expand(addedNode.Parent) : default(Action);
 
             RefreshTreeListViewAsync(postRefreshAction);
         }
 
-        private void OnCommandRemovedFromScript(Recording script, Command parentCommand, int commandIndex)
+        private void OnCommandRemovedFromRecording(Recording recording, Command parentCommand, int commandIndex)
         {
-            HierarchyUtils.OnCommandRemovedFromScript(m_Nodes, script, parentCommand, commandIndex);
+            HierarchyUtils.OnCommandRemovedFromRecording(m_Nodes, recording, parentCommand, commandIndex);
             RefreshTreeListViewAsync();
         }
 
-        private void OnCommandModifiedOnScript(Recording script, Command oldCommand, Command newCommand)
+        private void OnCommandModifiedOnRecording(Recording recording, Command oldCommand, Command newCommand)
         {
-            HierarchyUtils.OnCommandModifiedOnScript(m_Nodes, script, oldCommand, newCommand);
+            HierarchyUtils.OnCommandModifiedOnRecording(m_Nodes, recording, oldCommand, newCommand);
             RefreshTreeListViewAsync();
         }
 
         // Will not work with multi dragging
-        private void OnCommandInsertedInScript(Recording script, Command parentCommand, Command command, int pos)
+        private void OnCommandInsertedInRecording(Recording recording, Command parentCommand, Command command, int pos)
         {
-            var node = HierarchyUtils.OnCommandInsertedInScript(m_Nodes, script, parentCommand, command, pos);
+            var node = HierarchyUtils.OnCommandInsertedInRecording(m_Nodes, recording, parentCommand, command, pos);
             RefreshTreeListViewAsync(() => treeListView.SelectedObject = node);
         }
 
@@ -282,12 +282,12 @@ namespace RobotEditor
 
         #region Context Menu Items
 
-        private void newScriptToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void newRecordingToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            m_TestFixture.NewScript();
+            m_TestFixture.NewRecording();
             RefreshTreeListViewAsync(() => treeListView.Expand(m_TestsNode));
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -295,26 +295,26 @@ namespace RobotEditor
             if (!(treeListView.SelectedObject is HierarchyNode selectedNode))
                 return;
 
-            if (selectedNode.Script != null && IsItASpecialScript(selectedNode.Script))
+            if (selectedNode.Recording != null && IsItASpecialRecording(selectedNode.Recording))
             {
-                m_TestFixture.NewScript(selectedNode.Script);
-                m_TestFixture.MoveScriptAfter(m_TestFixture.LoadedScripts.Count - 1, m_TestFixture.GetScriptIndex(selectedNode.Script));
+                m_TestFixture.NewRecording(selectedNode.Recording);
+                m_TestFixture.MoveRecordingAfter(m_TestFixture.LoadedRecordings.Count - 1, m_TestFixture.GetRecordingIndex(selectedNode.Recording));
             }
             else if (selectedNode.Command != null)
             {
-                var script = selectedNode.TopLevelScriptNode.Script;
+                var recording = selectedNode.TopLevelRecordingNode.Recording;
 
-                var node = script.Commands.GetNodeFromValue(selectedNode.Command);
-                var clone = script.CloneCommandStub(selectedNode.Command);
+                var node = recording.Commands.GetNodeFromValue(selectedNode.Command);
+                var clone = recording.CloneCommandStub(selectedNode.Command);
 
-                script.AddCommandNode(clone, node.parent.value);
-                script.MoveCommandAfter(clone.value, selectedNode.Command);
+                recording.AddCommandNode(clone, node.parent.value);
+                recording.MoveCommandAfter(clone.value, selectedNode.Command);
             }
 
             RefreshTreeListViewAsync();
             treeListView.Focus();
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -323,18 +323,18 @@ namespace RobotEditor
             if (selectedNode == null)
                 return;
 
-            if (selectedNode.Script != null && IsItASpecialScript(selectedNode.Script))
-                m_TestFixture.RemoveScript(selectedNode.Script);
+            if (selectedNode.Recording != null && IsItASpecialRecording(selectedNode.Recording))
+                m_TestFixture.RemoveRecording(selectedNode.Recording);
             else if (selectedNode.Command != null)
-                m_TestFixture.GetScriptFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+                m_TestFixture.GetRecordingFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
             RefreshTreeListViewAsync();
 
-            ASSERT_TreeViewIsTheSameAsInScriptManager();
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
         #endregion
 
-        #region Menu Items (save scripts from MainForm)
+        #region Menu Items (save recordings from MainForm)
         public void SaveTestFixture()
         {
             if (!m_TestFixture.IsDirty)
@@ -354,7 +354,7 @@ namespace RobotEditor
             {
                 InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.TestsFolder,
                 Filter = string.Format("Test Fixture File (*.{0})|*.{0}", FileExtensions.Test),
-                Title = "Select a path for script to save.",
+                Title = "Select a path for recording to save.",
                 FileName = m_TestFixture.Name + FileExtensions.TestD
             };
 
@@ -377,21 +377,21 @@ namespace RobotEditor
             e.DropSink.CanDropBetween = true;
 
             if (targetNode == null || sourceNode == null ||
-                sourceNode.Script == null && sourceNode.Command == null || // Source node is empty string value
-                targetNode.Script == null && targetNode.Command == null || // Target node is empty string value
-                targetNode.Script == null && sourceNode.Command == null || // Cannot drag scripts onto commands
-                m_HooksNode.Children.Contains(sourceNode) || // Hooks scripts are special and should not be moved at all
-                m_HooksNode.Children.Contains(targetNode) && sourceNode.Script != null || // Cannot drag any script onto or inbetween hooks scripts
-                targetNode.Script != null && sourceNode.Script != null && e.DropTargetLocation == DropTargetLocation.Item) // Cannot drag scripts onto scripts
+                sourceNode.Recording == null && sourceNode.Command == null || // Source node is empty string value
+                targetNode.Recording == null && targetNode.Command == null || // Target node is empty string value
+                targetNode.Recording == null && sourceNode.Command == null || // Cannot drag recordings onto commands
+                m_HooksNode.Children.Contains(sourceNode) || // Hooks recordings are special and should not be moved at all
+                m_HooksNode.Children.Contains(targetNode) && sourceNode.Recording != null || // Cannot drag any recording onto or inbetween hooks recordings
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item) // Cannot drag recordings onto recordings
             {
                 e.Effect = DragDropEffects.None;
                 return;
             }
 
-            e.DropSink.CanDropOnItem = sourceNode.Script == null && // We don't want scripts to be dropped on any item
-                (targetNode.Script != null || targetNode.Command.CanBeNested); // Everything can be dropped on script and commands with nested tag can also be dropped onto
+            e.DropSink.CanDropOnItem = sourceNode.Recording == null && // We don't want recordings to be dropped on any item
+                (targetNode.Recording != null || targetNode.Command.CanBeNested); // Everything can be dropped on recording and commands with nested tag can also be dropped onto
 
-            if (targetNode.Script != null && sourceNode.Command != null)
+            if (targetNode.Recording != null && sourceNode.Command != null)
                 e.DropSink.CanDropBetween = false;
 
             if (sourceNode.GetAllNodes().Contains(targetNode))
@@ -408,51 +408,51 @@ namespace RobotEditor
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNode = e.SourceModels[0] as HierarchyNode;
 
-            if (targetNode.Script != null && sourceNode.Script != null)
+            if (targetNode.Recording != null && sourceNode.Recording != null)
             {
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveScriptBefore(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
+                    m_TestFixture.MoveRecordingBefore(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveScriptAfter(m_TestFixture.GetScriptIndex(sourceNode.Script), m_TestFixture.GetScriptIndex(targetNode.Script));
+                    m_TestFixture.MoveRecordingAfter(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
             }
 
             if (targetNode.Command != null && sourceNode.Command != null)
             {
-                var targetScript = m_TestFixture.GetScriptFromCommand(targetNode.Command);
-                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
+                var targetRecording = m_TestFixture.GetRecordingFromCommand(targetNode.Command);
+                var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
 
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
+                    m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
                 if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetScriptIndex(sourceScript), m_TestFixture.GetScriptIndex(targetScript));
+                    m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
 
                 if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
                 {
-                    var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
-                    sourceScript.RemoveCommand(sourceNode.Command);
-                    targetScript.AddCommandNode(node, targetNode.Command);
+                    var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+                    sourceRecording.RemoveCommand(sourceNode.Command);
+                    targetRecording.AddCommandNode(node, targetNode.Command);
                 }
             }
 
-            if (targetNode.Script != null && sourceNode.Command != null)
+            if (targetNode.Recording != null && sourceNode.Command != null)
             {
-                var sourceScript = m_TestFixture.GetScriptFromCommand(sourceNode.Command);
+                var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
 
-                var node = sourceScript.Commands.GetNodeFromValue(sourceNode.Command);
-                sourceScript.RemoveCommand(sourceNode.Command);
-                targetNode.Script.AddCommandNode((TreeNode<Command>)node);
+                var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+                sourceRecording.RemoveCommand(sourceNode.Command);
+                targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
             }
         }
 
         #endregion
 
-        #region ScriptRunner Callbacks
+        #region RecordingRunner Callbacks
 
-        // TODO: Also mark parent commands/scripts/tests
+        // TODO: Also mark parent commands/recordings/tests
         private void OnCommandRunning(Guid guid)
         {
-            var script = m_TestFixture.GetScriptFromCommandGuid(guid);
-            if (script == null)
+            var recording = m_TestFixture.GetRecordingFromCommandGuid(guid);
+            if (recording == null)
                 return;
 
             var commandNode = m_Nodes.Select(node => node.GetNode(guid)).FirstOrDefault(node => node != null);
@@ -463,7 +463,7 @@ namespace RobotEditor
             treeListView.BeginInvokeIfCreated(new MethodInvoker(() => treeListView.Refresh()));
         }
 
-        private void OnScriptsFinishedRunning()
+        private void OnRecordingsFinishedRunning()
         {
             m_HighlightedNode = null;
 
@@ -514,7 +514,7 @@ namespace RobotEditor
 
             UnsubscribeAllEvents(m_TestFixture);
 
-            TestRunner.TestRunEnd -= OnScriptsFinishedRunning;
+            TestRunner.TestRunEnd -= OnRecordingsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback -= OnCommandRunning;
             CommandFactory.NewUserCommands -= AddNewCommandsToCreateMenu;
             treeListView.HandleCreated -= AddNewCommandsToCreateMenu;
@@ -522,15 +522,15 @@ namespace RobotEditor
             treeListView.FormatCell -= UpdateFontsTreeListView;
         }
 
-        private bool IsItASpecialScript(Recording script)
+        private bool IsItASpecialRecording(Recording recording)
         {
-            if (script == null)
+            if (recording == null)
                 return false;
 
-            return m_TestFixture.GetScriptIndex(script) >= 4;
+            return m_TestFixture.GetRecordingIndex(recording) >= 4;
         }
 
-        private void ASSERT_TreeViewIsTheSameAsInScriptManager()
+        private void ASSERT_TreeViewIsTheSameAsInRecordingManager()
         {
 #if ENABLE_UI_TESTING
 
@@ -542,15 +542,15 @@ namespace RobotEditor
 
             for (int i = 0; i < list.Count; i++)
             {
-                Debug.Assert(list[i].Script == m_TestFixture.LoadedScripts[i],
-                    string.Format("Hierarchy script missmatch: {0}:{1}", i, list[i].Value.ToString()));
+                Debug.Assert(list[i].Recording == m_TestFixture.LoadedRecordings[i],
+                    string.Format("Hierarchy recording missmatch: {0}:{1}", i, list[i].Value.ToString()));
 
                 // Will not work in nested scenarios
-                for (int j = 0; j < list[i].Script.Commands.Count(); j++)
+                for (int j = 0; j < list[i].Recording.Commands.Count(); j++)
                 {
-                    Debug.Assert(list[i].Children[j].Command == m_TestFixture.LoadedScripts[i].Commands.GetChild(j).value,
+                    Debug.Assert(list[i].Children[j].Command == m_TestFixture.LoadedRecordings[i].Commands.GetChild(j).value,
                         string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
-                        i, list[i].Value.ToString(), j, list[i].Script.Commands.GetChild(j).value.ToString()));
+                        i, list[i].Value.ToString(), j, list[i].Recording.Commands.GetChild(j).value.ToString()));
                 }
             }
 #endif

@@ -158,7 +158,7 @@ namespace Tests
         [TestMethod]
         public void LinkedTree_Parent_GivesCorrectParent()
         {
-            var tree = new TreeNode<string>("script");
+            var tree = new TreeNode<string>("recording");
 
             var node_0 = tree.AddChild("0");
             var node_1 = tree.AddChild("1");
@@ -171,13 +171,13 @@ namespace Tests
 
             Assert.AreEqual("11", node_11.value);
             Assert.AreEqual("1", node_11.parent.value);
-            Assert.AreEqual("script", node_11.parent.parent.value);
+            Assert.AreEqual("recording", node_11.parent.parent.value);
         }
 
         [TestMethod]
         public void LinkedTree_GetNodeFromValue_GivesCorrectNode()
         {
-            var tree = new TreeNode<string>("script");
+            var tree = new TreeNode<string>("recording");
 
             var node_0 = tree.AddChild("0");
             var node_1 = tree.AddChild("1");
@@ -199,7 +199,7 @@ namespace Tests
         [TestMethod]
         public void LinkedTree_MoveAfter_CanWorkWithDifferentNodeLevels()
         {
-            var tree = new TreeNode<string>("script");
+            var tree = new TreeNode<string>("recording");
 
             var node_0 = tree.AddChild("0");
             var node_1 = tree.AddChild("1");
@@ -221,7 +221,7 @@ namespace Tests
         [TestMethod]
         public void LinkedTree_MoveBefore_CanWorkWithMultipleObjects()
         {
-            var tree = new TreeNode<string>("script");
+            var tree = new TreeNode<string>("recording");
 
             var node_0 = tree.AddChild("0");
             var node_1 = tree.AddChild("1");

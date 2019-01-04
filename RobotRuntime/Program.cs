@@ -28,7 +28,7 @@ namespace RobotRuntime
             Logger.Instance = container.Resolve<ILogger>();
 
             var testRunner = container.Resolve<ITestRunner>();
-            testRunner.StartScript(args[0], args[1]);
+            testRunner.StartRecording(args[0], args[1]);
         }
 
 

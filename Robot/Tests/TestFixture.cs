@@ -18,10 +18,10 @@ namespace RobotRuntime.Tests
         public const string k_OneTimeSetup = "OneTimeSetup";
         public const string k_OneTimeTeardown = "OneTimeTeardown";
 
-        public Recording Setup { get { return GetScriptWithName(k_Setup); } set { ReplaceScriptWithName(k_Setup, value); } }
-        public Recording TearDown { get { return GetScriptWithName(k_TearDown); } set { ReplaceScriptWithName(k_TearDown, value); } }
-        public Recording OneTimeSetup { get { return GetScriptWithName(k_OneTimeSetup); } set { ReplaceScriptWithName(k_OneTimeSetup, value); } }
-        public Recording OneTimeTeardown { get { return GetScriptWithName(k_OneTimeTeardown); } set { ReplaceScriptWithName(k_OneTimeTeardown, value); } }
+        public Recording Setup { get { return GetRecordingWithName(k_Setup); } set { ReplaceRecordingWithName(k_Setup, value); } }
+        public Recording TearDown { get { return GetRecordingWithName(k_TearDown); } set { ReplaceRecordingWithName(k_TearDown, value); } }
+        public Recording OneTimeSetup { get { return GetRecordingWithName(k_OneTimeSetup); } set { ReplaceRecordingWithName(k_OneTimeSetup, value); } }
+        public Recording OneTimeTeardown { get { return GetRecordingWithName(k_OneTimeTeardown); } set { ReplaceRecordingWithName(k_OneTimeTeardown, value); } }
 
         public IList<Recording> Tests { get { return GetAllTests(); } }
         public IList<Recording> Hooks { get { return GetAllHooks(); } }
@@ -43,13 +43,13 @@ namespace RobotRuntime.Tests
 
                 if (m_IsDirty == false)
                 {
-                    foreach (var s in LoadedScripts)
+                    foreach (var s in LoadedRecordings)
                         s.IsDirty = false;
                 }
             }
             get
             {
-                return LoadedScripts.Any(s => s.IsDirty) || m_IsDirty;
+                return LoadedRecordings.Any(s => s.IsDirty) || m_IsDirty;
             }
         }
 
@@ -61,17 +61,17 @@ namespace RobotRuntime.Tests
         {
             this.Logger = Logger;
 
-            AddScript(new Recording() { Name = k_Setup });
-            AddScript(new Recording() { Name = k_TearDown });
-            AddScript(new Recording() { Name = k_OneTimeSetup });
-            AddScript(new Recording() { Name = k_OneTimeTeardown });
+            AddRecording(new Recording() { Name = k_Setup });
+            AddRecording(new Recording() { Name = k_TearDown });
+            AddRecording(new Recording() { Name = k_OneTimeSetup });
+            AddRecording(new Recording() { Name = k_OneTimeTeardown });
 
             Guid = Guid.NewGuid();
         }
 
-        public override Recording NewScript(Recording clone = null)
+        public override Recording NewRecording(Recording clone = null)
         {
-            var s = base.NewScript(clone);
+            var s = base.NewRecording(clone);
             s.Name = GetUniqueTestName(DefaultTestName);
             m_IsDirty = true;
             return s;
@@ -82,46 +82,46 @@ namespace RobotRuntime.Tests
             var newName = name;
             var i = 0;
 
-            while (LoadedScripts.Any(script => script.Name == newName))
+            while (LoadedRecordings.Any(recording => recording.Name == newName))
                 newName = name + ++i;
 
             return newName;
         }
 
-        public override void RemoveScript(Recording script)
+        public override void RemoveRecording(Recording recording)
         {
-            base.RemoveScript(script);
+            base.RemoveRecording(recording);
             m_IsDirty = true;
         }
 
-        public override void RemoveScript(int position)
+        public override void RemoveRecording(int position)
         {
-            base.RemoveScript(position);
+            base.RemoveRecording(position);
             m_IsDirty = true;
         }
 
-        public override Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
+        public override Recording AddRecording(Recording recording, bool removeRecordingWithSamePath = false)
         {
             m_IsDirty = true;
-            return base.AddScript(script, removeScriptWithSamePath);
+            return base.AddRecording(recording, removeRecordingWithSamePath);
         }
 
-        private Recording GetScriptWithName(string name)
+        private Recording GetRecordingWithName(string name)
         {
-            return LoadedScripts.FirstOrDefault(s => s.Name == name);
+            return LoadedRecordings.FirstOrDefault(s => s.Name == name);
         }
 
-        private void ReplaceScriptWithName(string name, Recording value)
+        private void ReplaceRecordingWithName(string name, Recording value)
         {
-            var s = GetScriptWithName(name);
+            var s = GetRecordingWithName(name);
             if (s == null)
-                Logger.Logi(LogType.Error, "Tried to replace script value with name '" + name + "' but it was not found.");
+                Logger.Logi(LogType.Error, "Tried to replace recording value with name '" + name + "' but it was not found.");
 
-            var addedScriptIndex = LoadedScripts.Count - 1;
-            var instertIntoIndex = LoadedScripts.IndexOf(s);
-            RemoveScript(s);
-            AddScript(s);
-            MoveScriptBefore(addedScriptIndex, instertIntoIndex);
+            var addedRecordingIndex = LoadedRecordings.Count - 1;
+            var instertIntoIndex = LoadedRecordings.IndexOf(s);
+            RemoveRecording(s);
+            AddRecording(s);
+            MoveRecordingBefore(addedRecordingIndex, instertIntoIndex);
         }
 
         public bool Similar(object obj)
@@ -133,12 +133,12 @@ namespace RobotRuntime.Tests
             if (f.Name != Name)
                 return false;
 
-            return LoadedScripts.SequenceEqual(f.LoadedScripts, new SimilarEqualityComparer());
+            return LoadedRecordings.SequenceEqual(f.LoadedRecordings, new SimilarEqualityComparer());
         }
 
         /// <summary>
         /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
-        /// As of this time, only scripts need to regenerate guids for commands (2018.08.15)
+        /// As of this time, only recordings need to regenerate guids for commands (2018.08.15)
         /// </summary>
         void IHaveGuid.RegenerateGuid()
         {
@@ -148,18 +148,18 @@ namespace RobotRuntime.Tests
         public override int GetHashCode()
         {
             int hash = Name.GetHashCode();
-            hash += LoadedScripts.Select(script => script.GetHashCode()).Sum();
+            hash += LoadedRecordings.Select(recording => recording.GetHashCode()).Sum();
             return hash;
         }
 
         private IList<Recording> GetAllTests()
         {
-            return LoadedScripts.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
+            return LoadedRecordings.Where(s => s.Name != k_Setup && s.Name != k_TearDown && s.Name != k_OneTimeSetup && s.Name != k_OneTimeTeardown).ToList();
         }
 
         private IList<Recording> GetAllHooks()
         {
-            return LoadedScripts.Where(s => s.Name == k_Setup || s.Name == k_TearDown || s.Name == k_OneTimeSetup || s.Name == k_OneTimeTeardown).ToList();
+            return LoadedRecordings.Where(s => s.Name == k_Setup || s.Name == k_TearDown || s.Name == k_OneTimeSetup || s.Name == k_OneTimeTeardown).ToList();
         }
 
         // Inheritence
@@ -179,18 +179,18 @@ namespace RobotRuntime.Tests
 
         public TestFixture ApplyLightFixtureValues(LightTestFixture t)
         {
-            m_LoadedScripts.Clear();
+            m_LoadedRecordings.Clear();
 
             Name = t.Name;
             Guid = t.Guid == default(Guid) ? Guid : t.Guid;
             
-            AddScript(t.Setup);
-            AddScript(t.TearDown);
-            AddScript(t.OneTimeSetup);
-            AddScript(t.OneTimeTeardown);
+            AddRecording(t.Setup);
+            AddRecording(t.TearDown);
+            AddRecording(t.OneTimeSetup);
+            AddRecording(t.OneTimeTeardown);
             
             foreach (var test in t.Tests)
-                AddScript(test);
+                AddRecording(test);
 
             m_IsDirty = false;
 

@@ -27,12 +27,12 @@ namespace RobotRuntime.Execution
                 TestData.InvokeCallback(command.Guid);
                 var runner = TestData.RunnerFactory.GetFor(typeof(LightRecording));
 
-                var oldScript = TestData.TestFixture;
+                var oldRecording = TestData.TestFixture;
 
-                var script = RuntimeAssetManager.GetAsset<LightRecording>(command.Asset);
-                runner.Run(script);
+                var recording = RuntimeAssetManager.GetAsset<LightRecording>(command.Asset);
+                runner.Run(recording);
 
-                TestData.TestFixture = oldScript;
+                TestData.TestFixture = oldRecording;
             }
         }
     }

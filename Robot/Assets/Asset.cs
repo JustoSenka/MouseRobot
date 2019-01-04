@@ -50,7 +50,7 @@ namespace Robot
         internal void UpdatePath(string path) { UpdateInternal(path, false); }
 
         /// <summary>
-        /// Will update Hash (not from disk, only if asset value was modified by script). Will keep old references
+        /// Will update Hash (not from disk, only if asset value was modified by recording). Will keep old references
         /// </summary>
         internal void Update() { UpdateInternal(Path, false); }
 

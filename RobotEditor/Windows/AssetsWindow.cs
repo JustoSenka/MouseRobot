@@ -20,17 +20,17 @@ namespace RobotEditor
         public event Action AssetSelected;
 
         private IAssetManager AssetManager;
-        private IHierarchyManager ScriptManager;
+        private IHierarchyManager RecordingManager;
         private ITestFixtureManager TestFixtureManager;
         private IPluginManager PluginManager;
         private ISolutionManager SolutionManager;
         private ICodeEditor CodeEditor;
         private ILogger Logger;
-        public AssetsWindow(IAssetManager AssetManager, IHierarchyManager ScriptManager, ITestFixtureManager TestFixtureManager,
+        public AssetsWindow(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
             IPluginManager PluginManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
         {
             this.AssetManager = AssetManager;
-            this.ScriptManager = ScriptManager;
+            this.RecordingManager = RecordingManager;
             this.TestFixtureManager = TestFixtureManager;
             this.PluginManager = PluginManager;
             this.SolutionManager = SolutionManager;
@@ -105,13 +105,13 @@ namespace RobotEditor
             {
                 treeView.Nodes.Clear();
 
-                var scriptNode = new TreeNode(Paths.ScriptFolder);
+                var recordingNode = new TreeNode(Paths.RecordingFolder);
                 var imageNode = new TreeNode(Paths.ImageFolder);
                 var pluginNode = new TreeNode(Paths.PluginFolder);
                 var testsNode = new TreeNode(Paths.TestsFolder);
                 var dllNode = new TreeNode(Paths.ExtensionFolder);
 
-                treeView.Nodes.Add(scriptNode);
+                treeView.Nodes.Add(recordingNode);
                 treeView.Nodes.Add(imageNode);
                 treeView.Nodes.Add(pluginNode);
                 treeView.Nodes.Add(testsNode);
@@ -128,8 +128,8 @@ namespace RobotEditor
                     if (asset.Path.EndsWith(FileExtensions.ImageD))
                         imageNode.Nodes.Add(assetNode);
 
-                    else if (asset.Path.EndsWith(FileExtensions.ScriptD))
-                        scriptNode.Nodes.Add(assetNode);
+                    else if (asset.Path.EndsWith(FileExtensions.RecordingD))
+                        recordingNode.Nodes.Add(assetNode);
 
                     else if (asset.Path.EndsWith(FileExtensions.PluginD))
                         pluginNode.Nodes.Add(assetNode);
@@ -153,7 +153,7 @@ namespace RobotEditor
         private void UpdateIcons()
         {
             UpdateIconForFolder("", 0);
-            UpdateIconForFolder(Paths.ScriptFolder, 1);
+            UpdateIconForFolder(Paths.RecordingFolder, 1);
             UpdateIconForFolder(Paths.ImageFolder, 2);
             UpdateIconForFolder(Paths.PluginFolder, 3);
             UpdateIconForFolder(Paths.TestsFolder, 3);
@@ -181,8 +181,8 @@ namespace RobotEditor
 
             if (asset.HoldsTypeOf(typeof(Recording)))
             {
-                if (!ScriptManager.LoadedScripts.Any(s => s.Name == asset.Name))
-                    ScriptManager.LoadScript(asset.Path);
+                if (!RecordingManager.LoadedRecordings.Any(s => s.Name == asset.Name))
+                    RecordingManager.LoadRecording(asset.Path);
             }
             else if (asset.HoldsTypeOf(typeof(LightTestFixture)))
             {
@@ -204,13 +204,13 @@ namespace RobotEditor
             }
         }
 
-        private void reloadScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        private void reloadRecordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != Paths.ScriptFolder)
+            if (treeView.SelectedNode == null || treeView.SelectedNode.Level != 1 || treeView.SelectedNode.Parent.Text != Paths.RecordingFolder)
                 return;
 
             var asset = AssetManager.GetAsset(treeView.SelectedNode.Parent.Text, treeView.SelectedNode.Text);
-            ScriptManager.LoadScript(asset.Path);
+            RecordingManager.LoadRecording(asset.Path);
         }
 
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -259,9 +259,9 @@ namespace RobotEditor
                 treeView.SelectedNode.BeginEdit();
         }
 
-        private void recompileScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void recompileRecordingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManager.CompileScriptsAndReloadUserDomain();
+            PluginManager.CompileRecordingsAndReloadUserDomain();
         }
 
         private void regenerateSolutionToolStripMenuItem_Click(object sender, EventArgs e)

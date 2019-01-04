@@ -186,7 +186,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TestFixture_EqualsOperator_ForFixturesWithDifferentScripts_ReturnsFalse()
+        public void TestFixture_EqualsOperator_ForFixturesWithDifferentRecordings_ReturnsFalse()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
             var fixture2 = TestFixtureManager.NewTestFixture();
@@ -226,7 +226,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public void TestFixture_FromLightTestFixture_KeepsSameCommandAndScriptGuids()
+        public void TestFixture_FromLightTestFixture_KeepsSameCommandAndRecordingGuids()
         {
             var cachedLightTestFixture = LightTestFixture;
 

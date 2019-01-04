@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestFixtureWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.newScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.newRecordingToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,7 +53,7 @@
             // 
             this.contextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newScriptToolStripMenuItem1,
+            this.newRecordingToolStripMenuItem1,
             this.toolStripSeparator1,
             this.duplicateToolStripMenuItem1,
             this.deleteToolStripMenuItem1,
@@ -62,13 +62,13 @@
             this.contextMenuStrip.Name = "contextMenuStrip1";
             this.contextMenuStrip.Size = new System.Drawing.Size(167, 104);
             // 
-            // newScriptToolStripMenuItem1
+            // newRecordingToolStripMenuItem1
             // 
-            this.newScriptToolStripMenuItem1.Name = "newScriptToolStripMenuItem1";
-            this.newScriptToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newScriptToolStripMenuItem1.Size = new System.Drawing.Size(166, 22);
-            this.newScriptToolStripMenuItem1.Text = "New Test";
-            this.newScriptToolStripMenuItem1.Click += new System.EventHandler(this.newScriptToolStripMenuItem1_Click);
+            this.newRecordingToolStripMenuItem1.Name = "newRecordingToolStripMenuItem1";
+            this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(166, 22);
+            this.newRecordingToolStripMenuItem1.Text = "New Test";
+            this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem1_Click);
             // 
             // toolStripSeparator1
             // 
@@ -106,7 +106,7 @@
             // 
             this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList.Images.SetKeyName(0, "Script_ICO_16.png");
+            this.imageList.Images.SetKeyName(0, "Recording_ICO_16.png");
             this.imageList.Images.SetKeyName(1, "gear_ICO_512.png");
             this.imageList.Images.SetKeyName(2, "Plugin_ICO_256.png");
             // 
@@ -205,7 +205,7 @@
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem newRecordingToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;

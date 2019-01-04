@@ -17,7 +17,7 @@ namespace Robot.Assets
 
         public override void SaveAsset()
         {
-            new YamlRecordingIO().SaveObject(Path, ((Recording)Value).ToLightScript());
+            new YamlRecordingIO().SaveObject(Path, ((Recording)Value).ToLightRecording());
         }
 
         public override Type HoldsType()

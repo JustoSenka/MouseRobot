@@ -49,13 +49,13 @@
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newProjectToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.newTestFixtureToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.newScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.newRecordingToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveAllScriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAllRecordingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.openScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -220,10 +220,10 @@
             this.newToolStripMenuItem,
             this.openProjectToolStripMenuItem,
             this.toolStripMenuItem2,
-            this.saveAllScriptsToolStripMenuItem,
-            this.saveScriptToolStripMenuItem,
+            this.saveAllRecordingsToolStripMenuItem,
+            this.saveRecordingToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.openScriptToolStripMenuItem,
+            this.openRecordingToolStripMenuItem,
             this.exitToolStripMenuItem,
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -235,7 +235,7 @@
             this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newProjectToolStripMenuItem1,
             this.newTestFixtureToolStripMenuItem1,
-            this.newScriptToolStripMenuItem1});
+            this.newRecordingToolStripMenuItem1});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.newToolStripMenuItem.Text = "New";
@@ -255,13 +255,13 @@
             this.newTestFixtureToolStripMenuItem1.Text = "Test Fixture";
             this.newTestFixtureToolStripMenuItem1.Click += new System.EventHandler(this.newTestFixtureToolStripMenuItem1_Click);
             // 
-            // newScriptToolStripMenuItem1
+            // newRecordingToolStripMenuItem1
             // 
-            this.newScriptToolStripMenuItem1.Name = "newScriptToolStripMenuItem1";
-            this.newScriptToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newScriptToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
-            this.newScriptToolStripMenuItem1.Text = "Script";
-            this.newScriptToolStripMenuItem1.Click += new System.EventHandler(this.newScriptToolStripMenuItem_Click);
+            this.newRecordingToolStripMenuItem1.Name = "newRecordingToolStripMenuItem1";
+            this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newRecordingToolStripMenuItem1.Text = "Recording";
+            this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem_Click);
             // 
             // openProjectToolStripMenuItem
             // 
@@ -275,35 +275,35 @@
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(186, 6);
             // 
-            // saveAllScriptsToolStripMenuItem
+            // saveAllRecordingsToolStripMenuItem
             // 
-            this.saveAllScriptsToolStripMenuItem.Name = "saveAllScriptsToolStripMenuItem";
-            this.saveAllScriptsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveAllScriptsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.saveAllScriptsToolStripMenuItem.Text = "Save";
-            this.saveAllScriptsToolStripMenuItem.Click += new System.EventHandler(this.saveAllScriptsToolStripMenuItem_Click);
+            this.saveAllRecordingsToolStripMenuItem.Name = "saveAllRecordingsToolStripMenuItem";
+            this.saveAllRecordingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveAllRecordingsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.saveAllRecordingsToolStripMenuItem.Text = "Save";
+            this.saveAllRecordingsToolStripMenuItem.Click += new System.EventHandler(this.saveAllRecordingsToolStripMenuItem_Click);
             // 
-            // saveScriptToolStripMenuItem
+            // saveRecordingToolStripMenuItem
             // 
-            this.saveScriptToolStripMenuItem.Name = "saveScriptToolStripMenuItem";
-            this.saveScriptToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            this.saveRecordingToolStripMenuItem.Name = "saveRecordingToolStripMenuItem";
+            this.saveRecordingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
-            this.saveScriptToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.saveScriptToolStripMenuItem.Text = "Save As";
-            this.saveScriptToolStripMenuItem.Click += new System.EventHandler(this.saveScriptToolStripMenuItem_Click);
+            this.saveRecordingToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.saveRecordingToolStripMenuItem.Text = "Save As";
+            this.saveRecordingToolStripMenuItem.Click += new System.EventHandler(this.saveRecordingToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 6);
             // 
-            // openScriptToolStripMenuItem
+            // openRecordingToolStripMenuItem
             // 
-            this.openScriptToolStripMenuItem.Name = "openScriptToolStripMenuItem";
-            this.openScriptToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openScriptToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.openScriptToolStripMenuItem.Text = "Import Assets";
-            this.openScriptToolStripMenuItem.Click += new System.EventHandler(this.importAssetsToolStripMenuItem_Click);
+            this.openRecordingToolStripMenuItem.Name = "openRecordingToolStripMenuItem";
+            this.openRecordingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openRecordingToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.openRecordingToolStripMenuItem.Text = "Import Assets";
+            this.openRecordingToolStripMenuItem.Click += new System.EventHandler(this.importAssetsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
@@ -521,9 +521,9 @@
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAllScriptsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveScriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openRecordingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAllRecordingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveRecordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
@@ -560,7 +560,7 @@
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newTestFixtureToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem newScriptToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem newRecordingToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem compilerToolStripMenuItem;
     }
 }

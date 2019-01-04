@@ -34,15 +34,15 @@ namespace Robot.Plugins
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.PluginD);
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
 
-            PluginCompiler.ScriptsRecompiled += OnScriptsRecompiled;
+            PluginCompiler.RecordingsRecompiled += OnRecordingsRecompiled;
         }
 
         private void OnAssetsModified(IList<string> modifiedAssets)
         {
-            CompileScriptsAndReloadUserDomain();
+            CompileRecordingsAndReloadUserDomain();
         }
 
-        public void CompileScriptsAndReloadUserDomain()
+        public void CompileRecordingsAndReloadUserDomain()
         {
             PluginCompiler.SetOutputPath(CustomAssemblyPath);
 
@@ -50,13 +50,13 @@ namespace Robot.Plugins
             PluginLoader.UserAssemblyName = CustomAssemblyName;
             PluginLoader.DestroyUserAppDomain();
 
-            var scriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));
-            var scriptValues = scriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+            var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.PluginD));
+            var recordingValues = recordingAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-            PluginCompiler.CompileCode(scriptValues.ToArray());
+            PluginCompiler.CompileCode(recordingValues.ToArray());
         }
 
-        private void OnScriptsRecompiled()
+        private void OnRecordingsRecompiled()
         {
             PluginLoader.CreateUserAppDomain(); // This also loads the assemblies
         }

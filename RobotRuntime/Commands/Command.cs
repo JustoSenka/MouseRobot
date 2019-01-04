@@ -55,7 +55,7 @@ namespace RobotRuntime
 
         /// <summary>
         /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
-        /// As of this time, only scripts need to regenerate guids for commands (2018.08.15)
+        /// As of this time, only recordings need to regenerate guids for commands (2018.08.15)
         /// </summary>
         void IHaveGuid.RegenerateGuid()
         {

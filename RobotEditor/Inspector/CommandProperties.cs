@@ -41,7 +41,7 @@ namespace RobotEditor.Inspector
             set
             {
                 var newCommand = CommandFactory.Create(value, Command);
-                BaseScriptManager.GetScriptFromCommand(Command).ReplaceCommand(Command, newCommand);
+                BaseHierarchyManager.GetRecordingFromCommand(Command).ReplaceCommand(Command, newCommand);
                 Command = newCommand;
             }
         }

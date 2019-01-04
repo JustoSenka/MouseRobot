@@ -39,7 +39,7 @@ namespace RobotEditor.Settings
 
         public override void OnPropertiesModified()
         {
-            PluginManager.CompileScriptsAndReloadUserDomain();
+            PluginManager.CompileRecordingsAndReloadUserDomain();
         }
     }
 }

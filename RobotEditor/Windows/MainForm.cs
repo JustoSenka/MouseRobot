@@ -47,7 +47,7 @@ namespace RobotEditor
         private IScreenPaintForm ScreenPaintForm;
         private IFeatureDetectionThread FeatureDetectionThread;
         private ISettingsManager SettingsManager;
-        private IHierarchyManager ScriptManager;
+        private IHierarchyManager RecordingManager;
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
         private IInputCallbacks InputCallbacks;
@@ -59,7 +59,7 @@ namespace RobotEditor
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IHierarchyManager ScriptManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
+            IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager)
@@ -70,7 +70,7 @@ namespace RobotEditor
             this.ScreenPaintForm = ScreenPaintForm;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.SettingsManager = SettingsManager;
-            this.ScriptManager = ScriptManager;
+            this.RecordingManager = RecordingManager;
             this.AssetManager = AssetManager;
             this.ScreenStateThread = ScreenStateThread;
             this.InputCallbacks = InputCallbacks;
@@ -228,9 +228,9 @@ namespace RobotEditor
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
         }
 
-        private void ShowSelectedObjectInInspector(BaseHierarchyManager BaseScriptManager, object obj)
+        private void ShowSelectedObjectInInspector(BaseHierarchyManager BaseHierarchyManager, object obj)
         {
-            m_InspectorWindow.ShowObject(obj, BaseScriptManager);
+            m_InspectorWindow.ShowObject(obj, BaseHierarchyManager);
         }
 
         private void OnStatusUpdated(Status status)
@@ -332,22 +332,22 @@ namespace RobotEditor
 
 
 
-        #region Menu Items (ScriptManager)
+        #region Menu Items (RecordingManager)
 
-        private void saveAllScriptsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveAllRecordingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (((Form)m_HierarchyWindow).ContainsFocus)
-                m_HierarchyWindow.SaveAllScripts();
+                m_HierarchyWindow.SaveAllRecordings();
 
             TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
 
             TestFixtureWindows.FirstOrDefault(w => ((Form)w).ContainsFocus)?.SaveTestFixture();
         }
 
-        private void saveScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveRecordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (((Form)m_HierarchyWindow).ContainsFocus)
-                m_HierarchyWindow.SaveSelectedScriptWithDialog(ScriptManager.ActiveScript, true);
+                m_HierarchyWindow.SaveSelectedRecordingWithDialog(RecordingManager.ActiveRecording, true);
 
             TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
 
@@ -364,9 +364,9 @@ namespace RobotEditor
             }
         }
 
-        private void newScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        private void newRecordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.newScriptToolStripMenuItem1_Click(sender, e);
+            m_HierarchyWindow.newRecordingToolStripMenuItem1_Click(sender, e);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -385,8 +385,8 @@ namespace RobotEditor
         private void importAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openDialog = new OpenFileDialog();
-            openDialog.Filter = string.Format("Files|*.*|Script File|*.{0}|Image File|*.{1}|Timeline File|*.{2}",
-                FileExtensions.Script, FileExtensions.Image, FileExtensions.Test);
+            openDialog.Filter = string.Format("Files|*.*|Recording File|*.{0}|Image File|*.{1}|Timeline File|*.{2}",
+                FileExtensions.Recording, FileExtensions.Image, FileExtensions.Test);
 
             openDialog.Title = "Select files to import.";
             openDialog.Multiselect = true;
@@ -518,10 +518,10 @@ namespace RobotEditor
 
             if (MouseRobot.IsPlaying)
             {
-                if (ScriptManager.ActiveScript == null)
+                if (RecordingManager.ActiveRecording == null)
                     MouseRobot.IsPlaying = false;
                 else
-                    TestRunner.StartScript(ScriptManager.ActiveScript.ToLightScript());
+                    TestRunner.StartRecording(RecordingManager.ActiveRecording.ToLightRecording());
             }
         }
 

@@ -26,7 +26,7 @@ namespace RobotRuntime
         public event Action<LightTestFixture, Recording> TestIsBeingRun;
 
         public event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
-        public event Action<LightTestFixture, Recording> FixtureSpecialScriptSucceded;
+        public event Action<LightTestFixture, Recording> FixtureSpecialRecordingSucceded;
         public event Action<LightTestFixture, Recording> TestPassed;
         public event Action<LightTestFixture, Recording> TestFailed;
 
@@ -79,12 +79,12 @@ namespace RobotRuntime
         /// <summary>
         /// This method should solely be used when running from command line
         /// </summary>
-        public void StartScript(string projectPath, string scriptName)
+        public void StartRecording(string projectPath, string recordingName)
         {
             InitializeProject(projectPath);
 
-            var importer = AssetImporter.FromPath(Path.Combine(Paths.ScriptPath, scriptName) + FileExtensions.ScriptD);
-            StartScript(importer.Load<LightRecording>());
+            var importer = AssetImporter.FromPath(Path.Combine(Paths.RecordingPath, recordingName) + FileExtensions.RecordingD);
+            StartRecording(importer.Load<LightRecording>());
         }
 
         /// <summary>
@@ -96,19 +96,19 @@ namespace RobotRuntime
             StartTests(testFilter);
         }
 
-        public void StartScript(LightRecording lightScript)
+        public void StartRecording(LightRecording lightRecording)
         {
             InitializeNewRun();
 
-            TestData.TestFixture = lightScript;
+            TestData.TestFixture = lightRecording;
             RunnerFactory.PassDependencies(TestData);
 
             new Thread(delegate ()
             {
                 Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
 
-                var runner = RunnerFactory.GetFor(lightScript.GetType());
-                runner.Run(lightScript);
+                var runner = RunnerFactory.GetFor(lightRecording.GetType());
+                runner.Run(lightRecording);
 
                 ScreenStateThread.Stop();
                 FeatureDetectionThread.Stop();
@@ -133,7 +133,7 @@ namespace RobotRuntime
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 
                 // RunnerFactory.GetFor uses reflection to check attribute, might be faster to just cache the value
-                var cachedScriptRunner = RunnerFactory.GetFor(typeof(LightRecording));
+                var cachedRecordingRunner = RunnerFactory.GetFor(typeof(LightRecording));
 
                 foreach (var fixture in fixtures)
                 {
@@ -145,7 +145,7 @@ namespace RobotRuntime
 
                     FixtureIsBeingRun?.Invoke(fixture);
 
-                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeSetup);
+                    RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.OneTimeSetup);
                     if (TestData.ShouldCancelRun) return;
                     CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeSetup);
 
@@ -158,23 +158,23 @@ namespace RobotRuntime
                         TestIsBeingRun?.Invoke(fixture, test);
 
                         // Setup
-                        RunScriptIfNotEmpty(cachedScriptRunner, fixture.Setup);
+                        RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.Setup);
                         if (TestData.ShouldCancelRun) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, fixture.Setup);
 
                         // Test 
                         RunnerFactory.PassDependencies(TestData);
-                        cachedScriptRunner.Run(test);
+                        cachedRecordingRunner.Run(test);
                         if (TestData.ShouldCancelRun) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, test);
 
                         // Teardown
-                        RunScriptIfNotEmpty(cachedScriptRunner, fixture.TearDown);
+                        RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.TearDown);
                         if (TestData.ShouldCancelRun) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, fixture.TearDown);
                     }
 
-                    RunScriptIfNotEmpty(cachedScriptRunner, fixture.OneTimeTeardown);
+                    RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.OneTimeTeardown);
                     CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeTeardown);
                 }
 
@@ -185,30 +185,30 @@ namespace RobotRuntime
             }).Start();
         }
 
-        private void RunScriptIfNotEmpty(IRunner scriptRunner, LightRecording script)
+        private void RunRecordingIfNotEmpty(IRunner recordingRunner, LightRecording recording)
         {
-            if (script.Commands.Count() > 0)
+            if (recording.Commands.Count() > 0)
             {
                 RunnerFactory.PassDependencies(TestData);
-                scriptRunner.Run(script);
+                recordingRunner.Run(recording);
             }
         }
 
-        private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Recording script)
+        private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Recording recording)
         {
             var shouldFailTest = TestData.ShouldFailTest;
 
-            if (LightTestFixture.IsSpecialScript(script) && shouldFailTest)
-                FixtureSpecialScripFailed?.Invoke(fixture, script);
+            if (LightTestFixture.IsSpecialRecording(recording) && shouldFailTest)
+                FixtureSpecialScripFailed?.Invoke(fixture, recording);
 
-            else if (LightTestFixture.IsSpecialScript(script) && !shouldFailTest)
-                FixtureSpecialScriptSucceded?.Invoke(fixture, script);
+            else if (LightTestFixture.IsSpecialRecording(recording) && !shouldFailTest)
+                FixtureSpecialRecordingSucceded?.Invoke(fixture, recording);
 
             else if (shouldFailTest)
-                TestFailed?.Invoke(fixture, script);
+                TestFailed?.Invoke(fixture, recording);
 
             else
-                TestPassed?.Invoke(fixture, script);
+                TestPassed?.Invoke(fixture, recording);
 
             TestData.ShouldFailTest = false;
             return shouldFailTest;

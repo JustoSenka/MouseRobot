@@ -50,13 +50,13 @@ namespace RobotRuntime.IO
             foreach (var n in YamlSerializer.SerializeSimpleProperties(fixture, level + 1))
                 tree.AddChild(n);
             
-            tree.Join(YamlRecordingIO.Serialize(fixture.Setup.ToLightScript(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.TearDown.ToLightScript(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeSetup.ToLightScript(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeTeardown.ToLightScript(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.Setup.ToLightRecording(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.TearDown.ToLightRecording(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeSetup.ToLightRecording(), level + 1));
+            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeTeardown.ToLightRecording(), level + 1));
 
             foreach(var t in fixture.Tests)
-                tree.Join(YamlRecordingIO.Serialize(t.ToLightScript(), level + 1));
+                tree.Join(YamlRecordingIO.Serialize(t.ToLightRecording(), level + 1));
 
             return tree;
         }
@@ -68,13 +68,13 @@ namespace RobotRuntime.IO
             var fixture = new LightTestFixture();
             YamlSerializer.DeserializeSimpleProperties(fixture, tree);
 
-            foreach (var yamlScriptNode in tree)
+            foreach (var yamlRecordingNode in tree)
             {
-                var s = YamlRecordingIO.Deserialize(yamlScriptNode);
+                var s = YamlRecordingIO.Deserialize(yamlRecordingNode);
                 if (s == null || s.Name == null && s.Commands.Count() == 0) // Test fixture name is also part of the tree, so skip it
                     continue;
 
-                fixture.AddScript(Recording.FromLightScript(s));
+                fixture.AddRecording(Recording.FromLightRecording(s));
             }
 
             return fixture;

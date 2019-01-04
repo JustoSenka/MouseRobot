@@ -13,7 +13,7 @@ namespace Robot
             if (path.EndsWith(FileExtensions.ImageD))
                 return new ImageImporter(path);
 
-            else if (path.EndsWith(FileExtensions.ScriptD))
+            else if (path.EndsWith(FileExtensions.RecordingD))
                 return new RecordingImporter(path);
 
             else if (path.EndsWith(FileExtensions.PluginD))

@@ -28,10 +28,10 @@ namespace Tests
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
 
-            Assert.AreNotEqual(s1.Guid, s2.Guid, $"Script guids should not be the same: {s1.Name}, {s2.Name}");
+            Assert.AreNotEqual(s1.Guid, s2.Guid, $"Recording guids should not be the same: {s1.Name}, {s2.Name}");
 
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
-                Assert.AreNotEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in script not should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
+                Assert.AreNotEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in recording not should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
         public static void CheckThatGuidsAreSame(Recording s1, Recording s2)
@@ -39,10 +39,10 @@ namespace Tests
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
 
-            Assert.AreEqual(s1.Guid, s2.Guid, $"Script guids should be the same: {s1.Name}, {s2.Name}");
+            Assert.AreEqual(s1.Guid, s2.Guid, $"Recording guids should be the same: {s1.Name}, {s2.Name}");
 
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
-                Assert.AreEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in script should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
+                Assert.AreEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in recording should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
         public static void CheckThatPtrsAreNotSame(Recording s1, Recording s2)
@@ -50,10 +50,10 @@ namespace Tests
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
 
-            Assert.AreNotSame(s1, s2, $"Script ptrs should not be the same: {s1.Name}, {s2.Name}");
+            Assert.AreNotSame(s1, s2, $"Recording ptrs should not be the same: {s1.Name}, {s2.Name}");
 
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
-                Assert.AreNotSame(zip.a.value, zip.b.value, $"Command ptrs in script should not be the same: {zip.a.value.Name}, {zip.b.value.Name}");
+                Assert.AreNotSame(zip.a.value, zip.b.value, $"Command ptrs in recording should not be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
         public static void CheckThatPtrsAreSame(Recording s1, Recording s2)
@@ -61,10 +61,10 @@ namespace Tests
             var s1Nodes = s1.Commands.GetAllNodes(false);
             var s2Nodes = s2.Commands.GetAllNodes(false);
 
-            Assert.AreSame(s1, s2, $"Script ptrs should be the same: {s1.Name}, {s2.Name}");
+            Assert.AreSame(s1, s2, $"Recording ptrs should be the same: {s1.Name}, {s2.Name}");
 
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
-                Assert.AreSame(zip.a.value, zip.b.value, $"Command ptrs in script should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
+                Assert.AreSame(zip.a.value, zip.b.value, $"Command ptrs in recording should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
 
 

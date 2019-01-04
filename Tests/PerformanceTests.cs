@@ -24,9 +24,9 @@ namespace Tests
             }
         }
 
-        private const string k_ScriptAPath = "Scripts\\A.mrb";
-        private const string k_ScriptBPath = "Scripts\\B.mrb";
-        private const string k_ScriptCPath = "Scripts\\C.mrb";
+        private const string k_RecordingAPath = "Recordings\\A.mrb";
+        private const string k_RecordingBPath = "Recordings\\B.mrb";
+        private const string k_RecordingCPath = "Recordings\\C.mrb";
 
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
@@ -34,13 +34,13 @@ namespace Tests
         IProfiler Profiler;
 
         [TestMethod]
-        public void AssetRefreshTime_100_ScriptAssets() // 22 ms - 50 (guid)
+        public void AssetRefreshTime_100_RecordingAssets() // 22 ms - 50 (guid)
         {
             int count = 100;
             var name = "Refresh_Test_1";
 
             for (int i = 0; i < count; ++i)
-                CreateDummyScriptWithImporter("Scripts\\A" + i + ".mrb");
+                CreateDummyRecordingWithImporter("Recordings\\A" + i + ".mrb");
 
             Profiler.Start(name);
             AssetManager.Refresh();
@@ -55,13 +55,13 @@ namespace Tests
         }
 
         [TestMethod]
-        public void AssetRefreshTime_1000_ScriptAssets() // 120 ms -- 180 (guid)
+        public void AssetRefreshTime_1000_RecordingAssets() // 120 ms -- 180 (guid)
         {
             int count = 1000;
             var name = "Refresh_Test_2";
 
             for (int i = 0; i < count; ++i)
-                CreateDummyScriptWithImporter("Scripts\\A" + i + ".mrb");
+                CreateDummyRecordingWithImporter("Recordings\\A" + i + ".mrb");
 
             Profiler.Start(name);
             AssetManager.Refresh();
@@ -75,7 +75,7 @@ namespace Tests
             Assert.IsTrue(timeTaken < 250, "This test took 40% longer than usual");
         }
 
-        private static void CreateDummyScriptWithImporter(string path)
+        private static void CreateDummyRecordingWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
             importer.Value = new Recording();
@@ -98,7 +98,7 @@ namespace Tests
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
             Profiler = container.Resolve<IProfiler>();
 
-            CleanupScriptsDirectory();
+            CleanupRecordingsDirectory();
             CleanupMetaDataDirectory();
 
             ProjectManager.InitProject(TempProjectPath);
@@ -108,7 +108,7 @@ namespace Tests
         [TestCleanup]
         public void Cleanup()
         {
-            CleanupScriptsDirectory();
+            CleanupRecordingsDirectory();
             CleanupMetaDataDirectory();
 
             AssetGuidManager.LoadMetaFiles();
@@ -125,11 +125,11 @@ namespace Tests
             }
         }
 
-        private void CleanupScriptsDirectory()
+        private void CleanupRecordingsDirectory()
         {
-            if (Directory.Exists(TempProjectPath + "\\" + Paths.ScriptFolder))
+            if (Directory.Exists(TempProjectPath + "\\" + Paths.RecordingFolder))
             {
-                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.ScriptFolder);
+                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.RecordingFolder);
                 foreach (FileInfo file in di.GetFiles())
                     file.Delete();
             }

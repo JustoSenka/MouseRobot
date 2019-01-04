@@ -9,111 +9,111 @@ using System.Linq;
 
 namespace Robot
 {
-    public class ScriptManager : BaseHierarchyManager, IHierarchyManager
+    public class HierarchyManager : BaseHierarchyManager, IHierarchyManager
     {
-        public static string k_DefaultScriptName = "New Script";
+        public static string k_DefaultRecordingName = "New Recording";
 
-        private Recording m_ActiveScript;
-        public Recording ActiveScript
+        private Recording m_ActiveRecording;
+        public Recording ActiveRecording
         {
             set
             {
-                if (m_ActiveScript != value)
-                    ActiveScriptChanged?.Invoke(m_ActiveScript, value);
+                if (m_ActiveRecording != value)
+                    ActiveRecordingChanged?.Invoke(m_ActiveRecording, value);
 
-                m_ActiveScript = value;
+                m_ActiveRecording = value;
             }
-            get { return m_ActiveScript; }
+            get { return m_ActiveRecording; }
         }
 
-        public event Action<Recording, Recording> ActiveScriptChanged;
-        public event Action<Recording> ScriptSaved;
+        public event Action<Recording, Recording> ActiveRecordingChanged;
+        public event Action<Recording> RecordingSaved;
 
         private IAssetManager AssetManager;
         private IProfiler Profiler;
-        public ScriptManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
+        public HierarchyManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
             : base(CommandFactory, Profiler, Logger)
         {
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;
         }
 
-        public Recording LoadScript(string path)
+        public Recording LoadRecording(string path)
         {
             var asset = AssetManager.GetAsset(path);
             if (asset == null)
             {
-                Logger.Log(LogType.Error, "Cannot load script. No such asset at path: " + path);
+                Logger.Log(LogType.Error, "Cannot load recording. No such asset at path: " + path);
                 return null;
             }
 
-            Profiler.Start("ScriptManager_LoadScript");
+            Profiler.Start("RecordingManager_LoadRecording");
 
-            // if hierarchy contains empty untitled script, remove it
-            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Recording.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
-                RemoveScript(0);
+            // if hierarchy contains empty untitled recording, remove it
+            if (m_LoadedRecordings.Count == 1 && m_LoadedRecordings[0].Name == Recording.DefaultRecordingName && m_LoadedRecordings[0].Commands.Count() == 0)
+                RemoveRecording(0);
 
-            Recording newScript = asset.Importer.ReloadAsset<Recording>();
-            if (newScript != null)
+            Recording newRecording = asset.Importer.ReloadAsset<Recording>();
+            if (newRecording != null)
             {
-                newScript.Path = asset.Path;
-                AddScript(newScript, true);
+                newRecording.Path = asset.Path;
+                AddRecording(newRecording, true);
             }
             else
-                Logger.Log(LogType.Error, "Failed to load script: " + asset.Path);
+                Logger.Log(LogType.Error, "Failed to load recording: " + asset.Path);
 
-            Profiler.Stop("ScriptManager_LoadScript");
-            return newScript;
+            Profiler.Stop("RecordingManager_LoadRecording");
+            return newRecording;
         }
 
-        public void SaveScript(Recording script, string path)
+        public void SaveRecording(Recording recording, string path)
         {
-            Profiler.Start("ScriptManager_SafeScript");
+            Profiler.Start("RecordingManager_SafeRecording");
 
-            AssetManager.CreateAsset(script, path);
-            script.Path = Paths.GetProjectRelativePath(path);
+            AssetManager.CreateAsset(recording, path);
+            recording.Path = Paths.GetProjectRelativePath(path);
 
-            ScriptSaved?.Invoke(script);
+            RecordingSaved?.Invoke(recording);
 
-            Profiler.Stop("ScriptManager_SafeScript");
+            Profiler.Stop("RecordingManager_SafeRecording");
         }
 
-        private void MakeSureActiveScriptExist()
+        private void MakeSureActiveRecordingExist()
         {
-            if (!m_LoadedScripts.Contains(ActiveScript) || m_LoadedScripts.Count == 0)
-                ActiveScript = null;
+            if (!m_LoadedRecordings.Contains(ActiveRecording) || m_LoadedRecordings.Count == 0)
+                ActiveRecording = null;
 
-            if (m_LoadedScripts.Count == 1)
-                ActiveScript = m_LoadedScripts[0];
+            if (m_LoadedRecordings.Count == 1)
+                ActiveRecording = m_LoadedRecordings[0];
 
-            if (ActiveScript == null && m_LoadedScripts.Count > 0)
-                ActiveScript = m_LoadedScripts[0];
+            if (ActiveRecording == null && m_LoadedRecordings.Count > 0)
+                ActiveRecording = m_LoadedRecordings[0];
         }
 
-        public override Recording NewScript(Recording clone = null)
+        public override Recording NewRecording(Recording clone = null)
         {
-            var s = base.NewScript(clone);
-            s.Name = k_DefaultScriptName;
-            MakeSureActiveScriptExist();
+            var s = base.NewRecording(clone);
+            s.Name = k_DefaultRecordingName;
+            MakeSureActiveRecordingExist();
             return s;
         }
 
-        public override void RemoveScript(Recording script)
+        public override void RemoveRecording(Recording recording)
         {
-            base.RemoveScript(script);
-            MakeSureActiveScriptExist();
+            base.RemoveRecording(recording);
+            MakeSureActiveRecordingExist();
         }
 
-        public override void RemoveScript(int position)
+        public override void RemoveRecording(int position)
         {
-            base.RemoveScript(position);
-            MakeSureActiveScriptExist();
+            base.RemoveRecording(position);
+            MakeSureActiveRecordingExist();
         }
 
-        public override Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
+        public override Recording AddRecording(Recording recording, bool removeRecordingWithSamePath = false)
         {
-            var s = base.AddScript(script, removeScriptWithSamePath);
-            MakeSureActiveScriptExist();
+            var s = base.AddRecording(recording, removeRecordingWithSamePath);
+            MakeSureActiveRecordingExist();
             return s;
         }
     }

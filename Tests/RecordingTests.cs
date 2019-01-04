@@ -13,18 +13,18 @@ namespace Tests
     [TestClass]
     public class RecordingTests
     {
-        IHierarchyManager ScriptManager;
+        IHierarchyManager RecordingManager;
 
         [TestMethod]
-        public void NewlyCreatedScriptManager_WillHaveOneScriptOpen()
+        public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
-            Assert.AreEqual(1, ScriptManager.LoadedScripts.Count);
+            Assert.AreEqual(1, RecordingManager.LoadedRecordings.Count);
         }
 
         [TestMethod]
-        public void Script_MoveCommandAfter_WorksWithinSameLevel()
+        public void Recording_MoveCommandAfter_WorksWithinSameLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -39,9 +39,9 @@ namespace Tests
 
 
         [TestMethod]
-        public void Script_MoveCommandBefore_WorksWithinSameLevel()
+        public void Recording_MoveCommandBefore_WorksWithinSameLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -55,9 +55,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveCommand_MultipleTimes_WorksWithinSameLevel()
+        public void Recording_MoveCommand_MultipleTimes_WorksWithinSameLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -78,9 +78,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveCommandAfter_WorksToUpperLevel()
+        public void Recording_MoveCommandAfter_WorksToUpperLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -98,9 +98,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveCommandBefore_WorksToUpperLevel()
+        public void Recording_MoveCommandBefore_WorksToUpperLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -118,9 +118,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveCommandAfter_WorksToLowerLevel()
+        public void Recording_MoveCommandAfter_WorksToLowerLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
 
@@ -137,9 +137,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveCommandBefore_WorksToLowerLevel()
+        public void Recording_MoveCommandBefore_WorksToLowerLevel()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
 
@@ -156,9 +156,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_MoveNestedCommands_MovesAllChildCommandsAlso()
+        public void Recording_MoveNestedCommands_MovesAllChildCommandsAlso()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c11 = s.AddCommand(new CommandSleep(2), c1);
@@ -176,9 +176,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_InsertCommand_InsertsCommandInCorrectPosition()
+        public void Recording_InsertCommand_InsertsCommandInCorrectPosition()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c2 = s.AddCommand(new CommandSleep(2));
             var c4 = s.AddCommand(new CommandSleep(4));
@@ -199,9 +199,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_AddCommandNode_AddAllCommandsWithIt()
+        public void Recording_AddCommandNode_AddAllCommandsWithIt()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(3));
@@ -220,9 +220,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_RemoveCommand_RemovesItWithChildren()
+        public void Recording_RemoveCommand_RemovesItWithChildren()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
 
             var c1 = s.AddCommand(new CommandSleep(1));
             var c2 = s.AddCommand(new CommandSleep(2));
@@ -240,9 +240,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_InsertCommandNode_AfterTopLevelCommand()
+        public void Recording_InsertCommandNode_AfterTopLevelCommand()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
             var c0 = s.AddCommand(new CommandSleep(1));
             var c1 = s.AddCommand(new CommandSleep(1));
             var c12 = s.AddCommand(new CommandSleep(2), c1);
@@ -259,9 +259,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_InsertCommandNode_BeforeTopLevelCommand()
+        public void Recording_InsertCommandNode_BeforeTopLevelCommand()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
             var c0 = s.AddCommand(new CommandSleep(1));
             var c1 = s.AddCommand(new CommandSleep(1));
             var c12 = s.AddCommand(new CommandSleep(2), c1);
@@ -278,9 +278,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_InsertCommandNode_AfterBottomLevelCommand()
+        public void Recording_InsertCommandNode_AfterBottomLevelCommand()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
             var c1 = s.AddCommand(new CommandSleep(1));
             var c11 = s.AddCommand(new CommandSleep(2), c1);
             var c2 = s.AddCommand(new CommandSleep(3));
@@ -302,9 +302,9 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Script_InsertCommandNode_BeforeBottomLevelCommand()
+        public void Recording_InsertCommandNode_BeforeBottomLevelCommand()
         {
-            var s = ScriptManager.LoadedScripts[0];
+            var s = RecordingManager.LoadedRecordings[0];
             var c1 = s.AddCommand(new CommandSleep(1));
             var c11 = s.AddCommand(new CommandSleep(2), c1);
             var c2 = s.AddCommand(new CommandSleep(3));
@@ -327,40 +327,40 @@ namespace Tests
 
 
         [TestMethod]
-        public void Guid_ToLightScriptIsCorrect()
+        public void Guid_ToLightRecordingIsCorrect()
         {
-            var script = new Recording();
-            var guid = script.Guid;
+            var recording = new Recording();
+            var guid = recording.Guid;
 
-            var lightScript = script.ToLightScript();
+            var lightRecording = recording.ToLightRecording();
 
-            Assert.AreEqual(guid, lightScript.Guid, "Guids should be the same");
+            Assert.AreEqual(guid, lightRecording.Guid, "Guids should be the same");
         }
 
         [TestMethod]
-        public void Guid_FromLightScriptIsCorrect()
+        public void Guid_FromLightRecordingIsCorrect()
         {
-            var script = new Recording();
+            var recording = new Recording();
 
-            var lightScript = script.ToLightScript();
-            var newScript = Recording.FromLightScript(lightScript);
+            var lightRecording = recording.ToLightRecording();
+            var newRecording = Recording.FromLightRecording(lightRecording);
 
-            Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
+            Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
         }
 
         [TestMethod]
-        public void Guid_FromLightScriptCtorIsCorrect()
+        public void Guid_FromLightRecordingCtorIsCorrect()
         {
-            var script = new Recording();
+            var recording = new Recording();
 
-            var lightScript = script.ToLightScript();
-            var newScript = new Recording(lightScript);
+            var lightRecording = recording.ToLightRecording();
+            var newRecording = new Recording(lightRecording);
 
-            Assert.AreEqual(lightScript.Guid, newScript.Guid, "Guids should be the same");
+            Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
         }
 
         [TestMethod]
-        public void Guids_AfterCloningScript_AreSame()
+        public void Guids_AfterCloningRecording_AreSame()
         {
             var s1 = new Recording();
             var s2 = (Recording) s1.Clone();
@@ -374,17 +374,17 @@ namespace Tests
         {
             var container = TestBase.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
-            ScriptManager = container.Resolve<IHierarchyManager>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
         }
 
         [TestCleanup]
-        public void ResetScriptManager()
+        public void ResetRecordingManager()
         {
-            for (int i = ScriptManager.LoadedScripts.Count - 1; i >= 0; --i)
+            for (int i = RecordingManager.LoadedRecordings.Count - 1; i >= 0; --i)
             {
-                ScriptManager.RemoveScript(ScriptManager.LoadedScripts[i]);
+                RecordingManager.RemoveRecording(RecordingManager.LoadedRecordings[i]);
             }
-            ScriptManager.NewScript();
+            RecordingManager.NewRecording();
         }
     }
 }

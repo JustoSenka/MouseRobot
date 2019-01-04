@@ -11,9 +11,9 @@ namespace RobotEditor.Abstractions
 
         void deleteToolStripMenuItem1_Click(object sender, EventArgs e);
         void duplicateToolStripMenuItem1_Click(object sender, EventArgs e);
-        void newScriptToolStripMenuItem1_Click(object sender, EventArgs e);
-        void SaveAllScripts();
-        void SaveSelectedScriptWithDialog(Recording script, bool updateUI = true);
+        void newRecordingToolStripMenuItem1_Click(object sender, EventArgs e);
+        void SaveAllRecordings();
+        void SaveSelectedRecordingWithDialog(Recording recording, bool updateUI = true);
 
         ToolStrip ToolStrip { get; }
     }

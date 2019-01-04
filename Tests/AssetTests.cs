@@ -26,22 +26,22 @@ namespace Tests
             }
         }
 
-        private const string k_ScriptAPath = "Scripts\\A.mrb";
-        private const string k_ScriptBPath = "Scripts\\B.mrb";
-        private const string k_ScriptCPath = "Scripts\\C.mrb";
-        private const string k_ScriptDPath = "Scripts\\D.mrb";
+        private const string k_RecordingAPath = "Recordings\\A.mrb";
+        private const string k_RecordingBPath = "Recordings\\B.mrb";
+        private const string k_RecordingCPath = "Recordings\\C.mrb";
+        private const string k_RecordingDPath = "Recordings\\D.mrb";
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
-        IHierarchyManager ScriptManager;
+        IHierarchyManager RecordingManager;
 
         [TestMethod]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
-            var asset = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
-            var asset2 = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
+            var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            var asset2 = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
 
             Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
@@ -50,76 +50,76 @@ namespace Tests
         [TestMethod]
         public void CreateAsset_CreatesFile_AndAddsToAssetManager()
         {
-            var script = new Recording(guid);
-            AssetManager.CreateAsset(script, k_ScriptAPath);
+            var recording = new Recording(guid);
+            AssetManager.CreateAsset(recording, k_RecordingAPath);
 
-            Assert.IsTrue(File.Exists(k_ScriptAPath), "File was not created");
-            Assert.AreEqual(AssetManager.GetAsset(k_ScriptAPath).Importer.Load<Recording>(), script, "Asset value did not match the script");
+            Assert.IsTrue(File.Exists(k_RecordingAPath), "File was not created");
+            Assert.AreEqual(AssetManager.GetAsset(k_RecordingAPath).Importer.Load<Recording>(), recording, "Asset value did not match the recording");
         }
 
         [TestMethod]
-        public void ReloadScript_UpdatesScriptRef_FromFile()
+        public void ReloadRecording_UpdatesRecordingRef_FromFile()
         {
-            var script = ScriptManager.LoadedScripts[0];
-            ScriptManager.SaveScript(script, k_ScriptAPath);
-            script.AddCommand(new CommandSleep(5));
+            var recording = RecordingManager.LoadedRecordings[0];
+            RecordingManager.SaveRecording(recording, k_RecordingAPath);
+            recording.AddCommand(new CommandSleep(5));
 
-            var script2 = ScriptManager.LoadScript(k_ScriptAPath);
+            var recording2 = RecordingManager.LoadRecording(k_RecordingAPath);
 
-            Assert.AreNotEqual(script, script2, "Reloading script should give new reference type object");
-            Assert.AreEqual(script2, ScriptManager.LoadedScripts[0], "Scripts from assets and in script manager should be the same");
-            Assert.AreEqual(0, script2.Commands.Count(), "Script should not have commands");
+            Assert.AreNotEqual(recording, recording2, "Reloading recording should give new reference type object");
+            Assert.AreEqual(recording2, RecordingManager.LoadedRecordings[0], "Recordings from assets and in recording manager should be the same");
+            Assert.AreEqual(0, recording2.Commands.Count(), "Recording should not have commands");
         }
 
         [TestMethod]
         public void RenameAsset_RenamesFile_AndKeepsAllReferencesIntact()
         {
-            var script = new Recording(guid);
-            var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
+            var recording = new Recording(guid);
+            var asset = AssetManager.CreateAsset(recording, k_RecordingAPath);
 
-            AssetManager.RenameAsset(k_ScriptAPath, k_ScriptBPath);
+            AssetManager.RenameAsset(k_RecordingAPath, k_RecordingBPath);
 
-            var newAsset = AssetManager.GetAsset(k_ScriptBPath);
-            var newScript = newAsset.Importer.Load<Recording>();
+            var newAsset = AssetManager.GetAsset(k_RecordingBPath);
+            var newRecording = newAsset.Importer.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
-            Assert.AreEqual(script, newScript, "Script reference should be the same after renaming asset");
-            Assert.IsFalse(File.Exists(k_ScriptAPath), "Old file should not exist anymore");
-            Assert.IsTrue(File.Exists(k_ScriptBPath), "New file should exist on disk");
+            Assert.AreEqual(recording, newRecording, "Recording reference should be the same after renaming asset");
+            Assert.IsFalse(File.Exists(k_RecordingAPath), "Old file should not exist anymore");
+            Assert.IsTrue(File.Exists(k_RecordingBPath), "New file should exist on disk");
         }
 
         [TestMethod]
         public void Refresh_WithFileBeingRenamedOnFileSystem_AcceptsRenameAndKeepsAllReferences()
         {
-            var script = new Recording(guid);
-            var asset = AssetManager.CreateAsset(script, k_ScriptAPath);
+            var recording = new Recording(guid);
+            var asset = AssetManager.CreateAsset(recording, k_RecordingAPath);
 
-            File.Move(k_ScriptAPath, k_ScriptBPath);
+            File.Move(k_RecordingAPath, k_RecordingBPath);
             AssetManager.Refresh();
 
-            var newAsset = AssetManager.GetAsset(k_ScriptBPath);
-            var newScript = newAsset.Importer.Load<Recording>();
+            var newAsset = AssetManager.GetAsset(k_RecordingBPath);
+            var newRecording = newAsset.Importer.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
-            Assert.AreEqual(script, newScript, "Script reference should be the same after renaming asset");
-            Assert.IsFalse(File.Exists(k_ScriptAPath), "Old file should not exist anymore");
-            Assert.IsTrue(File.Exists(k_ScriptBPath), "New file should exist on disk");
+            Assert.AreEqual(recording, newRecording, "Recording reference should be the same after renaming asset");
+            Assert.IsFalse(File.Exists(k_RecordingAPath), "Old file should not exist anymore");
+            Assert.IsTrue(File.Exists(k_RecordingBPath), "New file should exist on disk");
         }
 
         [TestMethod]
         public void Refresh_WithDeletedFiles_RemovesThemFromManager()
         {
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingCPath);
 
-            File.Delete(k_ScriptAPath);
-            File.Delete(k_ScriptCPath);
+            File.Delete(k_RecordingAPath);
+            File.Delete(k_RecordingCPath);
             AssetManager.Refresh();
 
-            var assetA = AssetManager.GetAsset(k_ScriptAPath);
-            var assetB = AssetManager.GetAsset(k_ScriptBPath);
-            var assetC = AssetManager.GetAsset(k_ScriptCPath);
+            var assetA = AssetManager.GetAsset(k_RecordingAPath);
+            var assetB = AssetManager.GetAsset(k_RecordingBPath);
+            var assetC = AssetManager.GetAsset(k_RecordingCPath);
 
             Assert.AreEqual(1, AssetManager.Assets.Count());
             Assert.IsNull(assetA, "Asset A should not exist anymore");
@@ -130,15 +130,15 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithNewFiles_AddsThemToManager()
         {
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
 
-            CreateDummyScriptWithImporter(k_ScriptBPath);
-            CreateDummyScriptWithImporter(k_ScriptCPath);
+            CreateDummyRecordingWithImporter(k_RecordingBPath);
+            CreateDummyRecordingWithImporter(k_RecordingCPath);
             AssetManager.Refresh();
 
-            var assetA = AssetManager.GetAsset(k_ScriptAPath);
-            var assetB = AssetManager.GetAsset(k_ScriptBPath);
-            var assetC = AssetManager.GetAsset(k_ScriptCPath);
+            var assetA = AssetManager.GetAsset(k_RecordingAPath);
+            var assetB = AssetManager.GetAsset(k_RecordingBPath);
+            var assetC = AssetManager.GetAsset(k_RecordingCPath);
 
             Assert.AreEqual(3, AssetManager.Assets.Count());
             Assert.IsNotNull(assetA, "Asset A should exist");
@@ -149,55 +149,55 @@ namespace Tests
         [TestMethod]
         public void Refresh_WithRenamedFiles_HavingOtherFilesWithSameHash_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            var assetB = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
+            var assetC = AssetManager.CreateAsset(new Recording(guid), k_RecordingCPath);
 
-            File.Move(k_ScriptBPath, k_ScriptDPath);
+            File.Move(k_RecordingBPath, k_RecordingDPath);
             AssetManager.Refresh();
 
             Assert.AreEqual(3, AssetManager.Assets.Count());
-            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_ScriptAPath).Guid, "A asset guid missmath");
-            Assert.AreEqual(assetB.Guid, AssetManager.GetAsset(k_ScriptDPath).Guid, "B asset guid missmath");
-            Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_ScriptCPath).Guid, "C asset guid missmath");
-            Assert.IsNull(AssetManager.GetAsset(k_ScriptBPath), "B asset was renamed, so should not appear");
+            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_RecordingAPath).Guid, "A asset guid missmath");
+            Assert.AreEqual(assetB.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
+            Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset guid missmath");
+            Assert.IsNull(AssetManager.GetAsset(k_RecordingBPath), "B asset was renamed, so should not appear");
         }
 
         [TestMethod]
         public void Refresh_WithRenamedFiles_AndOneBeingDeleted_AcceptsRename()
         {
-            var assetA = AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
-            var assetB = AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
-            var assetC = AssetManager.CreateAsset(new Recording(guid), k_ScriptCPath);
+            var assetA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            var assetB = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
+            var assetC = AssetManager.CreateAsset(new Recording(guid), k_RecordingCPath);
 
             // This will actually think that A was renamed to D, and B deleted
             // this is due to having the same hash
-            File.Move(k_ScriptBPath, k_ScriptDPath);
-            File.Delete(k_ScriptAPath);
+            File.Move(k_RecordingBPath, k_RecordingDPath);
+            File.Delete(k_RecordingAPath);
             AssetManager.Refresh();
 
             Assert.AreEqual(2, AssetManager.Assets.Count());
-            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_ScriptDPath).Guid, "B asset guid missmath");
-            Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_ScriptCPath).Guid, "C asset guid missmath");
-            Assert.IsNull(AssetManager.GetAsset(k_ScriptAPath), "A asset was renamed, so should not appear");
-            Assert.IsNull(AssetManager.GetAsset(k_ScriptBPath), "B asset was renamed, so should not appear");
+            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
+            Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset guid missmath");
+            Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "A asset was renamed, so should not appear");
+            Assert.IsNull(AssetManager.GetAsset(k_RecordingBPath), "B asset was renamed, so should not appear");
         }
 
         [TestMethod]
         public void DeleteAsset_RemovesFromManager_AndFromDisk()
         {
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptAPath);
-            AssetManager.CreateAsset(new Recording(guid), k_ScriptBPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
 
-            AssetManager.DeleteAsset(k_ScriptAPath);
+            AssetManager.DeleteAsset(k_RecordingAPath);
 
             Assert.AreEqual(1, AssetManager.Assets.Count());
-            Assert.IsFalse(File.Exists(k_ScriptAPath), "Asset A should not exist on disk");
-            Assert.IsNull(AssetManager.GetAsset(k_ScriptAPath), "Asset A should not exist anymore");
-            Assert.IsNotNull(AssetManager.GetAsset(k_ScriptBPath), "Asset B should exist");
+            Assert.IsFalse(File.Exists(k_RecordingAPath), "Asset A should not exist on disk");
+            Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "Asset A should not exist anymore");
+            Assert.IsNotNull(AssetManager.GetAsset(k_RecordingBPath), "Asset B should exist");
         }
 
-        private static void CreateDummyScriptWithImporter(string path)
+        private static void CreateDummyRecordingWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);
             importer.Value = new Recording(guid);
@@ -217,7 +217,7 @@ namespace Tests
             MouseRobot = container.Resolve<IMouseRobot>();
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
-            ScriptManager = container.Resolve<IHierarchyManager>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
@@ -225,7 +225,7 @@ namespace Tests
         [TestCleanup]
         public void Cleanup()
         {
-            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.ScriptFolder);
+            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.RecordingFolder);
             foreach (FileInfo file in di.GetFiles())
                 file.Delete();
 

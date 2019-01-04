@@ -2,6 +2,6 @@
 {
     public interface IPluginManager
     {
-        void CompileScriptsAndReloadUserDomain();
+        void CompileRecordingsAndReloadUserDomain();
     }
 }

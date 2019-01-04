@@ -55,7 +55,7 @@ namespace RobotEditor.Inspector
             }
             else if (Command is CommandRunRecording)
             {
-                AddProperty(dt, "Script");
+                AddProperty(dt, "Recording");
             }
             else if (Command is CommandWriteText)
             {
@@ -142,9 +142,9 @@ namespace RobotEditor.Inspector
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
-        [DisplayName("Referenced Script")]
+        [DisplayName("Referenced Recording")]
         [TypeConverter(typeof(RecordingGUIDStringConverter))]
-        public string Script
+        public string Recording
         {
             get
             {
@@ -154,7 +154,7 @@ namespace RobotEditor.Inspector
             }
             set
             {
-                Asset asset = AssetManager.GetAsset(Paths.ScriptFolder, value);
+                Asset asset = AssetManager.GetAsset(Paths.RecordingFolder, value);
                 if (asset != null)
                     DynamicCast(Command).Asset = asset.Guid;
             }

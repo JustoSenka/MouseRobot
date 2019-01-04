@@ -12,20 +12,20 @@ namespace Robot.Recordings
 {
     public abstract class BaseHierarchyManager : IEnumerable<Recording>, IHaveGuidMap
     {
-        protected readonly IList<Recording> m_LoadedScripts;
-        public IList<Recording> LoadedScripts { get { return m_LoadedScripts; } }
+        protected readonly IList<Recording> m_LoadedRecordings;
+        public IList<Recording> LoadedRecordings { get { return m_LoadedRecordings; } }
 
-        public event Action<Recording> ScriptAdded;
-        public event Action<Recording> ScriptModified;
-        public event Action<int> ScriptRemoved;
-        public event Action ScriptPositioningChanged;
+        public event Action<Recording> RecordingAdded;
+        public event Action<Recording> RecordingModified;
+        public event Action<int> RecordingRemoved;
+        public event Action RecordingPositioningChanged;
 
-        public event Action<Recording, Command, Command> CommandAddedToScript;
-        public event Action<Recording, Command, Command, int> CommandInsertedInScript;
-        public event Action<Recording, Command, int> CommandRemovedFromScript;
-        public event Action<Recording, Command, Command> CommandModifiedOnScript;
+        public event Action<Recording, Command, Command> CommandAddedToRecording;
+        public event Action<Recording, Command, Command, int> CommandInsertedInRecording;
+        public event Action<Recording, Command, int> CommandRemovedFromRecording;
+        public event Action<Recording, Command, Command> CommandModifiedOnRecording;
 
-        protected readonly HashSet<Guid> ScriptGuidMap = new HashSet<Guid>();
+        protected readonly HashSet<Guid> RecordingGuidMap = new HashSet<Guid>();
 
         private ICommandFactory CommandFactory;
         private IProfiler Profiler;
@@ -36,254 +36,254 @@ namespace Robot.Recordings
             this.Profiler = Profiler;
             this.Logger = Logger;
 
-            CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
+            CommandFactory.NewUserCommands += ReplaceCommandsInRecordingsWithNewRecompiledOnes;
 
-            m_LoadedScripts = new List<Recording>();
+            m_LoadedRecordings = new List<Recording>();
         }
 
-        protected void SubscribeToScriptEvents(Recording s)
+        protected void SubscribeToRecordingEvents(Recording s)
         {
-            s.CommandAddedToScript += InvokeCommandAddedToScript;
-            s.CommandInsertedInScript += InvokeCommandInsertedInScript;
-            s.CommandRemovedFromScript += InvokeCommandRemovedFromScript;
-            s.CommandModifiedOnScript += InvokeCommandModifiedOnScript;
+            s.CommandAddedToRecording += InvokeCommandAddedToRecording;
+            s.CommandInsertedInRecording += InvokeCommandInsertedInRecording;
+            s.CommandRemovedFromRecording += InvokeCommandRemovedFromRecording;
+            s.CommandModifiedOnRecording += InvokeCommandModifiedOnRecording;
         }
 
-        protected void UnsubscribeToScriptEvents(Recording s)
+        protected void UnsubscribeToRecordingEvents(Recording s)
         {
-            s.CommandAddedToScript -= InvokeCommandAddedToScript;
-            s.CommandInsertedInScript -= InvokeCommandInsertedInScript;
-            s.CommandRemovedFromScript -= InvokeCommandRemovedFromScript;
-            s.CommandModifiedOnScript -= InvokeCommandModifiedOnScript;
+            s.CommandAddedToRecording -= InvokeCommandAddedToRecording;
+            s.CommandInsertedInRecording -= InvokeCommandInsertedInRecording;
+            s.CommandRemovedFromRecording -= InvokeCommandRemovedFromRecording;
+            s.CommandModifiedOnRecording -= InvokeCommandModifiedOnRecording;
         }
 
-        private void InvokeCommandAddedToScript(Recording script, Command parentCommand, Command command)
+        private void InvokeCommandAddedToRecording(Recording recording, Command parentCommand, Command command)
         {
-            CommandAddedToScript?.Invoke(script, parentCommand, command);
+            CommandAddedToRecording?.Invoke(recording, parentCommand, command);
         }
 
-        private void InvokeCommandInsertedInScript(Recording script, Command parentCommand, Command command, int index)
+        private void InvokeCommandInsertedInRecording(Recording recording, Command parentCommand, Command command, int index)
         {
-            CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
+            CommandInsertedInRecording?.Invoke(recording, parentCommand, command, index);
         }
 
-        private void InvokeCommandRemovedFromScript(Recording script, Command parentCommand, int index)
+        private void InvokeCommandRemovedFromRecording(Recording recording, Command parentCommand, int index)
         {
-            CommandRemovedFromScript?.Invoke(script, parentCommand, index);
+            CommandRemovedFromRecording?.Invoke(recording, parentCommand, index);
         }
 
-        private void InvokeCommandModifiedOnScript(Recording script, Command oldCommand, Command newCommand)
+        private void InvokeCommandModifiedOnRecording(Recording recording, Command oldCommand, Command newCommand)
         {
-            CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
+            CommandModifiedOnRecording?.Invoke(recording, oldCommand, newCommand);
         }
 
-        private void ReplaceCommandsInScriptsWithNewRecompiledOnes()
+        private void ReplaceCommandsInRecordingsWithNewRecompiledOnes()
         {
-            Profiler.Start("BaseScriptManager_ReplaceOldCommandInstances");
+            Profiler.Start("BaseHierarchyManager_ReplaceOldCommandInstances");
 
-            foreach (var script in LoadedScripts)
+            foreach (var recording in LoadedRecordings)
             {
-                foreach (var node in script.Commands.GetAllNodes().ToArray())
+                foreach (var node in recording.Commands.GetAllNodes().ToArray())
                 {
                     var command = node.value;
                     if (command == null || CommandFactory.IsNative(command))
                         continue;
 
-                    script.ReplaceCommand(node.value, CommandFactory.Create(node.value.Name, node.value));
+                    recording.ReplaceCommand(node.value, CommandFactory.Create(node.value.Name, node.value));
                 }
             }
 
-            Profiler.Stop("BaseScriptManager_ReplaceOldCommandInstances");
+            Profiler.Stop("BaseHierarchyManager_ReplaceOldCommandInstances");
         }
 
-        public virtual Recording NewScript(Recording clone = null)
+        public virtual Recording NewRecording(Recording clone = null)
         {
-            Recording script;
+            Recording recording;
 
             if (clone == null)
-                script = new Recording();
+                recording = new Recording();
             else
             {
-                script = (Recording)clone.Clone();
-                ((IHaveGuid)script).RegenerateGuid();
+                recording = (Recording)clone.Clone();
+                ((IHaveGuid)recording).RegenerateGuid();
             }
 
-            ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
-            m_LoadedScripts.Add(script);
+            RecordingGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(recording);
+            m_LoadedRecordings.Add(recording);
 
-            SubscribeToScriptEvents(script);
-            script.IsDirty = true;
+            SubscribeToRecordingEvents(recording);
+            recording.IsDirty = true;
 
-            ScriptAdded?.Invoke(script);
-            return script;
+            RecordingAdded?.Invoke(recording);
+            return recording;
         }
 
-        public virtual void RemoveScript(Recording script)
+        public virtual void RemoveRecording(Recording recording)
         {
-            var position = m_LoadedScripts.IndexOf(script);
+            var position = m_LoadedRecordings.IndexOf(recording);
 
-            ScriptGuidMap.RemoveGuidFromMap(script);
-            m_LoadedScripts.Remove(script);
-            UnsubscribeToScriptEvents(script);
+            RecordingGuidMap.RemoveGuidFromMap(recording);
+            m_LoadedRecordings.Remove(recording);
+            UnsubscribeToRecordingEvents(recording);
 
-            ScriptRemoved?.Invoke(position);
+            RecordingRemoved?.Invoke(position);
         }
 
-        public virtual void RemoveScript(int position)
+        public virtual void RemoveRecording(int position)
         {
-            UnsubscribeToScriptEvents(m_LoadedScripts[position]);
+            UnsubscribeToRecordingEvents(m_LoadedRecordings[position]);
 
-            ScriptGuidMap.RemoveGuidFromMap(m_LoadedScripts[position]);
-            m_LoadedScripts.RemoveAt(position);
+            RecordingGuidMap.RemoveGuidFromMap(m_LoadedRecordings[position]);
+            m_LoadedRecordings.RemoveAt(position);
 
-            ScriptRemoved?.Invoke(position);
+            RecordingRemoved?.Invoke(position);
         }
 
-        public virtual Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
+        public virtual Recording AddRecording(Recording recording, bool removeRecordingWithSamePath = false)
         {
-            if (script == null)
+            if (recording == null)
                 return null;
 
-            // If script was already loaded, reload it to last saved state
-            var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(script.Path));
-            if (oldScript != default(Recording) && removeScriptWithSamePath)
+            // If recording was already loaded, reload it to last saved state
+            var oldRecording = m_LoadedRecordings.FirstOrDefault(s => s.Path.Equals(recording.Path));
+            if (oldRecording != default(Recording) && removeRecordingWithSamePath)
             {
-                // Reload Script
-                var index = m_LoadedScripts.IndexOf(oldScript);
-                UnsubscribeToScriptEvents(oldScript);
+                // Reload Recording
+                var index = m_LoadedRecordings.IndexOf(oldRecording);
+                UnsubscribeToRecordingEvents(oldRecording);
 
-                ScriptGuidMap.RemoveGuidFromMap(m_LoadedScripts[index]);
-                ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
+                RecordingGuidMap.RemoveGuidFromMap(m_LoadedRecordings[index]);
+                RecordingGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(recording);
 
-                m_LoadedScripts[index] = script;
-                ScriptModified?.Invoke(script);
+                m_LoadedRecordings[index] = recording;
+                RecordingModified?.Invoke(recording);
             }
             else
             {
-                // Load New Script
-                ScriptGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(script);
-                m_LoadedScripts.Add(script);
-                ScriptAdded?.Invoke(script);
+                // Load New Recording
+                RecordingGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(recording);
+                m_LoadedRecordings.Add(recording);
+                RecordingAdded?.Invoke(recording);
             }
 
-            SubscribeToScriptEvents(script);
-            return script;
+            SubscribeToRecordingEvents(recording);
+            return recording;
         }
 
         /// <summary>
-        /// Moves existing command from script to different place and/or between scripts.
+        /// Moves existing command from recording to different place and/or between recordings.
         /// Also moves all child commands altogether.
         /// </summary>
-        public void MoveCommandAfter(Command source, Command after, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
+        public void MoveCommandAfter(Command source, Command after, int recordingIndex, int destinationRecordingIndex = -1) // recording indices could be removed
         {
-            var script = m_LoadedScripts[scriptIndex];
+            var recording = m_LoadedRecordings[recordingIndex];
 
-            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-                script.MoveCommandAfter(source, after);
+            if (recordingIndex == destinationRecordingIndex || destinationRecordingIndex == -1) // Same recording
+                recording.MoveCommandAfter(source, after);
 
-            else // Move between two different scripts
+            else // Move between two different recordings
             {
-                var destScript = m_LoadedScripts[destinationScriptIndex];
-                var sourceNode = script.Commands.GetNodeFromValue(source);
+                var destRecording = m_LoadedRecordings[destinationRecordingIndex];
+                var sourceNode = recording.Commands.GetNodeFromValue(source);
 
                 if (Logger.AssertIf(sourceNode == null,
-                    "Cannot find node in script '" + destScript.Name + "' for command: " + source))
+                    "Cannot find node in recording '" + destRecording.Name + "' for command: " + source))
                     return;
 
-                script.RemoveCommand(source);
-                destScript.InsertCommandNodeAfter(sourceNode, after);
+                recording.RemoveCommand(source);
+                destRecording.InsertCommandNodeAfter(sourceNode, after);
 
-                destScript.IsDirty = true;
+                destRecording.IsDirty = true;
             }
 
-            script.IsDirty = true;
+            recording.IsDirty = true;
         }
 
         /// <summary>
-        /// Moves existing command from script to different place and/or between scripts.
+        /// Moves existing command from recording to different place and/or between recordings.
         /// Also moves all child commands altogether.
         /// </summary>
-        public void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1) // script indices could be removed
+        public void MoveCommandBefore(Command source, Command before, int recordingIndex, int destinationRecordingIndex = -1) // recording indices could be removed
         {
-            var script = m_LoadedScripts[scriptIndex];
+            var recording = m_LoadedRecordings[recordingIndex];
 
-            if (scriptIndex == destinationScriptIndex || destinationScriptIndex == -1) // Same script
-                script.MoveCommandBefore(source, before);
+            if (recordingIndex == destinationRecordingIndex || destinationRecordingIndex == -1) // Same recording
+                recording.MoveCommandBefore(source, before);
 
-            else // Move between two different scripts
+            else // Move between two different recordings
             {
-                var destScript = m_LoadedScripts[destinationScriptIndex];
-                var sourceNode = m_LoadedScripts[scriptIndex].Commands.GetNodeFromValue(source);
+                var destRecording = m_LoadedRecordings[destinationRecordingIndex];
+                var sourceNode = m_LoadedRecordings[recordingIndex].Commands.GetNodeFromValue(source);
 
                 if (Logger.AssertIf(sourceNode == null,
-                    "Cannot find node in script '" + destScript.Name + "' for command: " + source))
+                    "Cannot find node in recording '" + destRecording.Name + "' for command: " + source))
                     return;
 
-                script.RemoveCommand(source);
-                destScript.InsertCommandNodeBefore(sourceNode, before);
+                recording.RemoveCommand(source);
+                destRecording.InsertCommandNodeBefore(sourceNode, before);
 
-                destScript.IsDirty = true;
+                destRecording.IsDirty = true;
             }
 
-            script.IsDirty = true;
+            recording.IsDirty = true;
         }
 
-        public void MoveScriptAfter(int index, int after)
+        public void MoveRecordingAfter(int index, int after)
         {
-            m_LoadedScripts.MoveAfter(index, after);
-            ScriptPositioningChanged?.Invoke();
+            m_LoadedRecordings.MoveAfter(index, after);
+            RecordingPositioningChanged?.Invoke();
         }
 
-        public void MoveScriptBefore(int index, int before)
+        public void MoveRecordingBefore(int index, int before)
         {
-            m_LoadedScripts.MoveBefore(index, before);
-            ScriptPositioningChanged?.Invoke();
+            m_LoadedRecordings.MoveBefore(index, before);
+            RecordingPositioningChanged?.Invoke();
         }
 
-        public Recording GetScriptFromCommand(Command command)
+        public Recording GetRecordingFromCommand(Command command)
         {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
+            return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
         }
 
-        public Recording GetScriptFromCommandGuid(Guid guid)
+        public Recording GetRecordingFromCommandGuid(Guid guid)
         {
-            return LoadedScripts.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
+            return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
         }
 
         public int GetCommandIndex(Command command)
         {
-            var script = GetScriptFromCommand(command);
-            var node = script.Commands.GetNodeFromValue(command);
+            var recording = GetRecordingFromCommand(command);
+            var node = recording.Commands.GetNodeFromValue(command);
             return node.parent.IndexOf(command);
         }
 
-        public int GetScriptIndex(Recording script)
+        public int GetRecordingIndex(Recording recording)
         {
-            return LoadedScripts.IndexOf(script);
+            return LoadedRecordings.IndexOf(recording);
         }
 
         public bool HasRegisteredGuid(Guid guid)
         {
-            return ScriptGuidMap.Contains(guid);
+            return RecordingGuidMap.Contains(guid);
         }
 
         public IEnumerator<Recording> GetEnumerator()
         {
-            return m_LoadedScripts.GetEnumerator();
+            return m_LoadedRecordings.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_LoadedScripts.GetEnumerator();
+            return m_LoadedRecordings.GetEnumerator();
         }
 
         [Conditional("DEBUG")]
         private void CheckCommandGuidConsistency()
         {
-            foreach (var s in m_LoadedScripts)
+            foreach (var s in m_LoadedRecordings)
             {
-                if (!ScriptGuidMap.Contains(s.Guid))
-                    Logger.Logi(LogType.Error, "Script is not registered to guid map: " + s.ToString());
+                if (!RecordingGuidMap.Contains(s.Guid))
+                    Logger.Logi(LogType.Error, "Recording is not registered to guid map: " + s.ToString());
             }
         }
     }

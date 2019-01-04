@@ -52,7 +52,7 @@ namespace Robot.Tests
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
 
             TestRunner.FixtureSpecialScripFailed += OnTestFailed;
-            TestRunner.FixtureSpecialScriptSucceded += OnTestPassed;
+            TestRunner.FixtureSpecialRecordingSucceded += OnTestPassed;
             TestRunner.TestFailed += OnTestFailed;
             TestRunner.TestPassed += OnTestPassed;
         }
@@ -94,21 +94,21 @@ namespace Robot.Tests
 
         #region TestRunner Callbacks
 
-        private void OnTestFailed(LightTestFixture fixture, Recording script)
+        private void OnTestFailed(LightTestFixture fixture, Recording recording)
         {
             lock (m_TestStatusDictionaryLock)
             {
-                var tuple = CreateTuple(fixture, script);
+                var tuple = CreateTuple(fixture, recording);
                 SetStatus(tuple, TestStatus.Failed);
                 TestStatusUpdated?.Invoke();
             }
         }
 
-        private void OnTestPassed(LightTestFixture fixture, Recording script)
+        private void OnTestPassed(LightTestFixture fixture, Recording recording)
         {
             lock (m_TestStatusDictionaryLock)
             {
-                var tuple = CreateTuple(fixture, script);
+                var tuple = CreateTuple(fixture, recording);
                 SetStatus(tuple, TestStatus.Passed);
                 TestStatusUpdated?.Invoke();
             }
@@ -209,30 +209,30 @@ namespace Robot.Tests
         }
 
         /// <summary>
-        /// This method constructs new dictionary from all tests in old fixture, then iterates new fixture to find matching scripts
+        /// This method constructs new dictionary from all tests in old fixture, then iterates new fixture to find matching recordings
         /// Iterating both fixtures would result in O(n^2). With dictionary, it is only O(2n) with some temp memory allocations.
         /// </summary>
         private void ResetTestStatusForModifiedTests(TestFixture oldFixture, LightTestFixture newFixture)
         {
             // dictionary with count is faster on adding elements. Operation complexity is o(1)
-            var newScriptsDict = new Dictionary<string, Recording>(oldFixture.Tests.Count);
+            var newRecordingsDict = new Dictionary<string, Recording>(oldFixture.Tests.Count);
             foreach (var s in oldFixture.Tests)
-                newScriptsDict.Add(s.Name, s);
+                newRecordingsDict.Add(s.Name, s);
 
-            var oldScripts = newFixture.Tests;
+            var oldRecordings = newFixture.Tests;
 
-            for (int i = 0; i < oldScripts.Count; ++i)
+            for (int i = 0; i < oldRecordings.Count; ++i)
             {
-                var oldScript = oldScripts[i];
-                Recording newScript;
-                newScriptsDict.TryGetValue(oldScript.Name, out newScript);
+                var oldRecording = oldRecordings[i];
+                Recording newRecording;
+                newRecordingsDict.TryGetValue(oldRecording.Name, out newRecording);
 
-                // if new script is different, mark it's status as None
-                if (!oldScript.Similar(newScript) && newScript != null)
+                // if new recording is different, mark it's status as None
+                if (!oldRecording.Similar(newRecording) && newRecording != null)
                 {
                     lock (m_TestStatusDictionaryLock)
                     {
-                        var tuple = CreateTuple(oldFixture, newScript);
+                        var tuple = CreateTuple(oldFixture, newRecording);
                         SetStatus(tuple, TestStatus.None);
 
                         TestStatusUpdated?.Invoke();
@@ -247,9 +247,9 @@ namespace Robot.Tests
             {
                 foreach (var fixture in m_TestFixtures)
                 {
-                    foreach (var script in fixture.LoadedScripts)
+                    foreach (var recording in fixture.LoadedRecordings)
                     {
-                        var tuple = CreateTuple(fixture, script);
+                        var tuple = CreateTuple(fixture, recording);
                         if (!TestStatusDictionary.ContainsKey(tuple))
                             TestStatusDictionary.Add(tuple, TestStatus.None);
                     }
@@ -258,14 +258,14 @@ namespace Robot.Tests
             TestStatusUpdated?.Invoke();
         }
 
-        private Tuple<string, string> CreateTuple(TestFixture fixture, Recording script)
+        private Tuple<string, string> CreateTuple(TestFixture fixture, Recording recording)
         {
-            return new Tuple<string, string>(fixture.Name, script.Name);
+            return new Tuple<string, string>(fixture.Name, recording.Name);
         }
 
-        private Tuple<string, string> CreateTuple(LightTestFixture fixture, Recording script)
+        private Tuple<string, string> CreateTuple(LightTestFixture fixture, Recording recording)
         {
-            return new Tuple<string, string>(fixture.Name, script.Name);
+            return new Tuple<string, string>(fixture.Name, recording.Name);
         }
     }
 

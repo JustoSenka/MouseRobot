@@ -11,8 +11,8 @@ namespace RobotEditor
             {
                 if (n.Value == newNode.Value)
                 {
-                    if (newNode.Script != null)
-                        n.Update(newNode.Script);
+                    if (newNode.Recording != null)
+                        n.Update(newNode.Recording);
                     else if (newNode.Command != null)
                         n.Update(newNode.Command);
                 }
@@ -41,7 +41,7 @@ namespace RobotEditor
         }
 
         /// <summary>
-        /// This is specific only for TestFixtureWindow and TestFixture, since 4 initial scripts are in separate group.
+        /// This is specific only for TestFixtureWindow and TestFixture, since 4 initial recordings are in separate group.
         /// </summary>
         public static void RemoveAtIndexRemoving4(this IList<HierarchyNode> nodeList, int index)
         {

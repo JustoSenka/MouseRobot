@@ -28,7 +28,7 @@ namespace RobotRuntime.Tests
             Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
         }
 
-        public void AddScript(Recording s)
+        public void AddRecording(Recording s)
         {
             if (s.Name == k_Setup)
                 Setup = s;
@@ -42,12 +42,12 @@ namespace RobotRuntime.Tests
                 Tests.Add(s);
         }
 
-        public static bool IsSpecialScript(Recording Script)
+        public static bool IsSpecialRecording(Recording Recording)
         {
-            return (Script.Name == k_OneTimeSetup ||
-                Script.Name == k_OneTimeTeardown ||
-                Script.Name == k_Setup ||
-                Script.Name == k_TearDown);
+            return (Recording.Name == k_OneTimeSetup ||
+                Recording.Name == k_OneTimeTeardown ||
+                Recording.Name == k_Setup ||
+                Recording.Name == k_TearDown);
         }
 
         public object Clone()

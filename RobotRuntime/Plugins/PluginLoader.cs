@@ -16,7 +16,7 @@ namespace RobotRuntime.Plugins
     {
         private AppDomain m_PluginDomain;
 
-        private string DomainName { get { return "UserScripts"; } }
+        private string DomainName { get { return "UserRecordings"; } }
 
         public string UserAssemblyName { get; set; }
         public string UserAssemblyPath { get; set; }

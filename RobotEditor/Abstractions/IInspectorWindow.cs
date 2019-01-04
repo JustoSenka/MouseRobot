@@ -4,6 +4,6 @@ namespace RobotEditor.Abstractions
 {
     public interface IInspectorWindow
     {
-        void ShowObject(object obj, BaseHierarchyManager BaseScriptManager = null);
+        void ShowObject(object obj, BaseHierarchyManager BaseHierarchyManager = null);
     }
 }

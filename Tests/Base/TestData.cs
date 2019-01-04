@@ -38,7 +38,7 @@ namespace Tests.Base
             }
         }
 
-        public static Recording NewScript(out Command topCommand, out Command childCommand)
+        public static Recording NewRecording(out Command topCommand, out Command childCommand)
         {
             var s = new Recording();
             topCommand = s.AddCommand(new CommandSleep(1));

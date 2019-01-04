@@ -33,17 +33,17 @@ namespace Robot.RecordingCreation
 
         private readonly Size k_ImageForReferenceSearchUnderCursorSize = new Size(12, 12);
 
-        private IHierarchyManager ScriptManager;
+        private IHierarchyManager HierarchyManager;
         private ISettingsManager SettingsManager;
         private ICroppingManager CroppingManager;
         private IAssetManager AssetManager;
         private IProfiler Profiler;
         private IFeatureDetectorFactory FeatureDetectorFactory;
         private IInputCallbacks InputCallbacks;
-        public RecordingManager(IHierarchyManager ScriptManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler,
+        public RecordingManager(IHierarchyManager HierarchyManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler,
             IFeatureDetectorFactory FeatureDetectorFactory, IInputCallbacks InputCallbacks)
         {
-            this.ScriptManager = ScriptManager;
+            this.HierarchyManager = HierarchyManager;
             this.SettingsManager = SettingsManager;
             this.CroppingManager = CroppingManager;
             this.AssetManager = AssetManager;
@@ -59,10 +59,10 @@ namespace Robot.RecordingCreation
             if (!IsRecording)
                 return;
 
-            if (ScriptManager.LoadedScripts.Count == 0)
+            if (HierarchyManager.LoadedRecordings.Count == 0)
                 return;
 
-            var activeScript = ScriptManager.ActiveScript;
+            var activeRecording = HierarchyManager.ActiveRecording;
             var props = SettingsManager.GetSettings<RecordingSettings>();
 
             if (!CroppingManager.IsCropping)
@@ -76,11 +76,11 @@ namespace Robot.RecordingCreation
                     return;
             }
 
-            RecordCommand(e, activeScript, props);
-            ImageFindOperations(e, activeScript, props);
+            RecordCommand(e, activeRecording, props);
+            ImageFindOperations(e, activeRecording, props);
         }
 
-        private void RecordCommand(KeyEvent e, Recording activeScript, RecordingSettings props)
+        private void RecordCommand(KeyEvent e, Recording activeRecording, RecordingSettings props)
         {
             var isMouseButtonUsed = e.keyCode == props.LeftMouseDownButton ||
                 e.keyCode == props.RightMouseDownButton ||
@@ -148,12 +148,12 @@ namespace Robot.RecordingCreation
         private void AddCommand(Command command)
         {
             if (m_ForImage || m_ForEachImage)
-                ScriptManager.ActiveScript.AddCommand(command, m_ParentCommand);
+                HierarchyManager.ActiveRecording.AddCommand(command, m_ParentCommand);
             else
-                ScriptManager.ActiveScript.AddCommand(command);
+                HierarchyManager.ActiveRecording.AddCommand(command);
         }
 
-        private void ImageFindOperations(KeyEvent e, Recording activeScript, RecordingSettings props)
+        private void ImageFindOperations(KeyEvent e, Recording activeRecording, RecordingSettings props)
         {
             var timeOut = 2000;
 
@@ -165,7 +165,7 @@ namespace Robot.RecordingCreation
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.Guid, timeOut);
-                        ScriptManager.ActiveScript.AddCommand(m_ParentCommand);
+                        HierarchyManager.ActiveRecording.AddCommand(m_ParentCommand);
                         m_ForImage = true;
                     }
                 }
@@ -176,7 +176,7 @@ namespace Robot.RecordingCreation
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut);
-                        ScriptManager.ActiveScript.AddCommand(m_ParentCommand);
+                        HierarchyManager.ActiveRecording.AddCommand(m_ParentCommand);
                         m_ForEachImage = true;
                     }
                 }

@@ -14,7 +14,7 @@ namespace RobotEditor.Inspector
     public class RecordingProperties : BaseProperties
     {
         [Browsable(false)]
-        public virtual Recording Script { get; set; }
+        public virtual Recording Recording { get; set; }
 
         [Browsable(false)]
         public override string Title { get { return "Test Properties"; } }
@@ -35,18 +35,18 @@ namespace RobotEditor.Inspector
         {
             dt.Properties.Clear();
 
-            var isSpecialScript = IsSpecialScript(Script, BaseScriptManager);
+            var isSpecialRecording = IsSpecialRecording(Recording, BaseHierarchyManager);
 
-            if (!isSpecialScript)
+            if (!isSpecialRecording)
                 AddProperty(dt, "Name");
             else
                 AddProperty(dt, "ReadonlyName");
         }
 
-        private bool IsSpecialScript(Recording Script, BaseHierarchyManager BaseScriptManager)
+        private bool IsSpecialRecording(Recording Recording, BaseHierarchyManager BaseHierarchyManager)
         {
-            return LightTestFixture.IsSpecialScript(Script) ||
-                BaseScriptManager is ScriptManager;
+            return LightTestFixture.IsSpecialRecording(Recording) ||
+                BaseHierarchyManager is HierarchyManager;
         }
 
         [SortedCategory("Test Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -55,18 +55,18 @@ namespace RobotEditor.Inspector
         {
             get
             {
-                return Script.Name;
+                return Recording.Name;
             }
             set
             {
-                if (BaseScriptManager.LoadedScripts.Any(Script => Script.Name == value))
+                if (BaseHierarchyManager.LoadedRecordings.Any(Recording => Recording.Name == value))
                 {
                     FlexibleMessageBox.Show("Property value is not valid.\nTest with this name already exists: " + value, 
                         "Inspector Window", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                Script.Name = value;
+                Recording.Name = value;
             }
         }
 
@@ -76,7 +76,7 @@ namespace RobotEditor.Inspector
         {
             get
             {
-                return Script.Name;
+                return Recording.Name;
             }
         }
 

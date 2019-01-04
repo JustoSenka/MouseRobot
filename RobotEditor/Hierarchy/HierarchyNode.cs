@@ -13,7 +13,7 @@ namespace RobotEditor.Hierarchy
 
         public object Value { get; private set; }
         public Command Command { get; private set; }
-        public Recording Script { get; private set; }
+        public Recording Recording { get; private set; }
 
         public List<HierarchyNode> Children { get; private set; }
         public HierarchyNode Parent { get; set; }
@@ -34,15 +34,15 @@ namespace RobotEditor.Hierarchy
             Children = new List<HierarchyNode>();
         }
 
-        public HierarchyNode(Recording script, int overrideLevel = 0)
+        public HierarchyNode(Recording recording, int overrideLevel = 0)
         {
-            Value = script;
-            Script = script;
+            Value = recording;
+            Recording = recording;
             Level = overrideLevel;
 
             Children = new List<HierarchyNode>();
 
-            foreach (var node in script)
+            foreach (var node in recording)
                 AddChildRecursively(node);
         }
 
@@ -74,21 +74,21 @@ namespace RobotEditor.Hierarchy
             }
         }
 
-        public HierarchyNode TopLevelScriptNode
+        public HierarchyNode TopLevelRecordingNode
         {
             get
             {
-                HierarchyNode scriptNode = this.Script != null ? this : null;
+                HierarchyNode recordingNode = this.Recording != null ? this : null;
                 var node = this;
                 while (node.Level != 0)
                 {
                     node = node.Parent;
 
-                    if (node.Script != null)
-                        scriptNode = node;
+                    if (node.Recording != null)
+                        recordingNode = node;
                 }
 
-                return scriptNode;
+                return recordingNode;
             }
         }
 
@@ -98,14 +98,14 @@ namespace RobotEditor.Hierarchy
             Value = command;
         }
 
-        public void Update(Recording script)
+        public void Update(Recording recording)
         {
-            Script = script;
-            Value = script;
+            Recording = recording;
+            Value = recording;
 
             Children = new List<HierarchyNode>();
 
-            foreach (var node in script)
+            foreach (var node in recording)
                 AddChildRecursively(node);
         }
 

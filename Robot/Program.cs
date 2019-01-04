@@ -21,7 +21,7 @@ namespace Robot
             Container.RegisterType<ICroppingManager, CroppingManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IMouseRobot, MouseRobot>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRecordingManager, RecordingManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IHierarchyManager, ScriptManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IHierarchyManager, HierarchyManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());

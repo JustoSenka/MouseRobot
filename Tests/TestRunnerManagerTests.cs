@@ -60,7 +60,7 @@ namespace Tests
         {
             var fixture = TestFixtureManager.NewTestFixture();
             fixture.ApplyLightFixtureValues(LightTestFixture);
-            fixture.AddScript(new Recording() { Name = "Test" });
+            fixture.AddRecording(new Recording() { Name = "Test" });
 
             TestFixtureManager.SaveTestFixture(fixture, k_TestAPath);
 
@@ -72,7 +72,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Recording() { Name = "Test" });
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
 
@@ -84,7 +84,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager_IfTwoFixturesAreSaved()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Recording() { Name = "Test" });
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);
@@ -96,7 +96,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaFileSystem()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Recording() { Name = "Test" });
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
 
             new YamlTestFixtureIO().SaveObject(k_TestAPath, lightFixture);
             AssetManager.Refresh();
@@ -109,7 +109,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyRemovesFixtures_WhenDeletingThemOnDisk()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Recording() { Name = "Test" });
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);
@@ -127,7 +127,7 @@ namespace Tests
         public void TestRunnerManager_CorrectlyHandlesFixtures_WhenRenamingThemOnDisk()
         {
             var lightFixture = LightTestFixture;
-            lightFixture.AddScript(new Recording() { Name = "Test" });
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
 
             AssetManager.CreateAsset(lightFixture, k_TestAPath);
             AssetManager.CreateAsset(lightFixture, k_TestBPath);

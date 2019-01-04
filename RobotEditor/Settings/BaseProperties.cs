@@ -12,7 +12,7 @@ namespace RobotEditor.Settings
 
         [Browsable(false)]
         [NonSerialized]
-        public BaseHierarchyManager BaseScriptManager;
+        public BaseHierarchyManager BaseHierarchyManager;
 
         public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {

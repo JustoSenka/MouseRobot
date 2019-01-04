@@ -16,22 +16,22 @@ namespace RobotRuntime.Execution
 
         public void Run(IRunnable runnable)
         {
-            var script = runnable as LightRecording;
+            var recording = runnable as LightRecording;
 
-            if (Logger.AssertIf(script == null, "Script is invalid: " + runnable))
+            if (Logger.AssertIf(recording == null, "Recording is invalid: " + runnable))
                 return;
 
-            TestData.TestFixture = script;
+            TestData.TestFixture = recording;
             TestData.RunnerFactory.PassDependencies(TestData);
 
-            Logger.Logi(LogType.Debug, "Script is being run: " + script.Name);
+            Logger.Logi(LogType.Debug, "Recording is being run: " + recording.Name);
 
             // making shallow copy of commands collection, so it doesn't crash when test tries to modify itself while running
-            foreach (var node in script.Commands.ToList())
+            foreach (var node in recording.Commands.ToList())
             {
                 if (TestData.ShouldCancelRun)
                 {
-                    Logger.Logi(LogType.Log, "Script run was cancelled.");
+                    Logger.Logi(LogType.Log, "Recording run was cancelled.");
                     return;
                 }
 

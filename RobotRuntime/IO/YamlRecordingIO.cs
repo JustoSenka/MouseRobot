@@ -38,15 +38,15 @@ namespace RobotRuntime.IO
             }
         }
 
-        public static TreeNode<YamlObject> Serialize(LightRecording script, int level = 0)
+        public static TreeNode<YamlObject> Serialize(LightRecording recording, int level = 0)
         {
-            var scriptObject = new YamlObject(level, script.GetType().Name, "");
-            var tree = new TreeNode<YamlObject>(scriptObject);
+            var recordingObject = new YamlObject(level, recording.GetType().Name, "");
+            var tree = new TreeNode<YamlObject>(recordingObject);
 
-            foreach (var n in YamlSerializer.SerializeSimpleProperties(script, level + 1))
+            foreach (var n in YamlSerializer.SerializeSimpleProperties(recording, level + 1))
                 tree.AddChild(n);
 
-            foreach (var node in script.Commands)
+            foreach (var node in recording.Commands)
                 SerializeCommandsRecursively(tree, node, level + 1);
 
             return tree;
@@ -68,10 +68,10 @@ namespace RobotRuntime.IO
             foreach (var yamlCommandNode in tree)
                 DeserializeCommandsRecursively(commandRoot, yamlCommandNode);
 
-            var lightScript = new LightRecording(commandRoot);
-            YamlSerializer.DeserializeSimpleProperties(lightScript, tree);
+            var lightRecording = new LightRecording(commandRoot);
+            YamlSerializer.DeserializeSimpleProperties(lightRecording, tree);
 
-            return lightScript;
+            return lightRecording;
         }
 
         private static void DeserializeCommandsRecursively(TreeNode<Command> commandRoot, TreeNode<YamlObject> yamlCommandNode)

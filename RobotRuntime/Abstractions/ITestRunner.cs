@@ -15,14 +15,14 @@ namespace RobotRuntime.Abstractions
         event Action<LightTestFixture, Recording> TestIsBeingRun;
 
         event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
-        event Action<LightTestFixture, Recording> FixtureSpecialScriptSucceded;
+        event Action<LightTestFixture, Recording> FixtureSpecialRecordingSucceded;
         event Action<LightTestFixture, Recording> TestPassed;
         event Action<LightTestFixture, Recording> TestFailed;
 
-        void StartScript(string projectPath, string scriptName);
+        void StartRecording(string projectPath, string recordingName);
         void StartTests(string projectPath, string testFilter = ".");
 
-        void StartScript(LightRecording lightScript);
+        void StartRecording(LightRecording lightRecording);
         void StartTests(string testFilter = ".");
 
         void Stop();

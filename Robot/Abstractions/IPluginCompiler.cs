@@ -12,6 +12,6 @@ namespace Robot.Abstractions
         void CompileCode(params string[] sources);
         void SetOutputPath(string customAssemblyPath);
 
-        event Action ScriptsRecompiled;
+        event Action RecordingsRecompiled;
     }
 }

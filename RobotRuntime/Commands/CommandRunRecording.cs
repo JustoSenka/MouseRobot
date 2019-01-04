@@ -9,16 +9,16 @@ namespace RobotRuntime.Commands
     [PropertyDesignerType("NativeCommandProperties")]
     public class CommandRunRecording : Command
     {
-        public override string Name { get { return "Run Script"; } }
+        public override string Name { get { return "Run Recording"; } }
         public override bool CanBeNested { get { return false; } }
 
         public Guid Asset { get; set; }
 
         public CommandRunRecording() : base() { }
         public CommandRunRecording(Guid guid) : base(guid) { }
-        public CommandRunRecording(Guid script, Guid guid = default(Guid)) : base(guid)
+        public CommandRunRecording(Guid recording, Guid guid = default(Guid)) : base(guid)
         {
-            Asset = script;
+            Asset = recording;
         }
 
         public override object Clone()
@@ -30,7 +30,7 @@ namespace RobotRuntime.Commands
 
         public override string ToString()
         {
-            return "Run Script: <" + Asset.ToString() + ">";
+            return "Run Recording: <" + Asset.ToString() + ">";
         }
     }
 }
