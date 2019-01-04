@@ -80,7 +80,7 @@ namespace Robot.RecordingCreation
             ImageFindOperations(e, activeScript, props);
         }
 
-        private void RecordCommand(KeyEvent e, RobotRuntime.Recordings.Recording activeScript, RecordingSettings props)
+        private void RecordCommand(KeyEvent e, Recording activeScript, RecordingSettings props)
         {
             var isMouseButtonUsed = e.keyCode == props.LeftMouseDownButton ||
                 e.keyCode == props.RightMouseDownButton ||
@@ -153,7 +153,7 @@ namespace Robot.RecordingCreation
                 ScriptManager.ActiveScript.AddCommand(command);
         }
 
-        private void ImageFindOperations(KeyEvent e, RobotRuntime.Recordings.Recording activeScript, RecordingSettings props)
+        private void ImageFindOperations(KeyEvent e, Recording activeScript, RecordingSettings props)
         {
             var timeOut = 2000;
 

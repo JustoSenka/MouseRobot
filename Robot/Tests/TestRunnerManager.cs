@@ -94,7 +94,7 @@ namespace Robot.Tests
 
         #region TestRunner Callbacks
 
-        private void OnTestFailed(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
+        private void OnTestFailed(LightTestFixture fixture, Recording script)
         {
             lock (m_TestStatusDictionaryLock)
             {
@@ -104,7 +104,7 @@ namespace Robot.Tests
             }
         }
 
-        private void OnTestPassed(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
+        private void OnTestPassed(LightTestFixture fixture, Recording script)
         {
             lock (m_TestStatusDictionaryLock)
             {
@@ -215,7 +215,7 @@ namespace Robot.Tests
         private void ResetTestStatusForModifiedTests(TestFixture oldFixture, LightTestFixture newFixture)
         {
             // dictionary with count is faster on adding elements. Operation complexity is o(1)
-            var newScriptsDict = new Dictionary<string, RobotRuntime.Recordings.Recording>(oldFixture.Tests.Count);
+            var newScriptsDict = new Dictionary<string, Recording>(oldFixture.Tests.Count);
             foreach (var s in oldFixture.Tests)
                 newScriptsDict.Add(s.Name, s);
 
@@ -224,7 +224,7 @@ namespace Robot.Tests
             for (int i = 0; i < oldScripts.Count; ++i)
             {
                 var oldScript = oldScripts[i];
-                RobotRuntime.Recordings.Recording newScript;
+                Recording newScript;
                 newScriptsDict.TryGetValue(oldScript.Name, out newScript);
 
                 // if new script is different, mark it's status as None
@@ -258,12 +258,12 @@ namespace Robot.Tests
             TestStatusUpdated?.Invoke();
         }
 
-        private Tuple<string, string> CreateTuple(TestFixture fixture, RobotRuntime.Recordings.Recording script)
+        private Tuple<string, string> CreateTuple(TestFixture fixture, Recording script)
         {
             return new Tuple<string, string>(fixture.Name, script.Name);
         }
 
-        private Tuple<string, string> CreateTuple(LightTestFixture fixture, RobotRuntime.Recordings.Recording script)
+        private Tuple<string, string> CreateTuple(LightTestFixture fixture, Recording script)
         {
             return new Tuple<string, string>(fixture.Name, script.Name);
         }

@@ -10,20 +10,20 @@ using System.Linq;
 
 namespace Robot.Recordings
 {
-    public abstract class BaseHierarchyManager : IEnumerable<RobotRuntime.Recordings.Recording>, IHaveGuidMap
+    public abstract class BaseHierarchyManager : IEnumerable<Recording>, IHaveGuidMap
     {
-        protected readonly IList<RobotRuntime.Recordings.Recording> m_LoadedScripts;
-        public IList<RobotRuntime.Recordings.Recording> LoadedScripts { get { return m_LoadedScripts; } }
+        protected readonly IList<Recording> m_LoadedScripts;
+        public IList<Recording> LoadedScripts { get { return m_LoadedScripts; } }
 
-        public event Action<RobotRuntime.Recordings.Recording> ScriptAdded;
-        public event Action<RobotRuntime.Recordings.Recording> ScriptModified;
+        public event Action<Recording> ScriptAdded;
+        public event Action<Recording> ScriptModified;
         public event Action<int> ScriptRemoved;
         public event Action ScriptPositioningChanged;
 
-        public event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandAddedToScript;
-        public event Action<RobotRuntime.Recordings.Recording, Command, Command, int> CommandInsertedInScript;
-        public event Action<RobotRuntime.Recordings.Recording, Command, int> CommandRemovedFromScript;
-        public event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandModifiedOnScript;
+        public event Action<Recording, Command, Command> CommandAddedToScript;
+        public event Action<Recording, Command, Command, int> CommandInsertedInScript;
+        public event Action<Recording, Command, int> CommandRemovedFromScript;
+        public event Action<Recording, Command, Command> CommandModifiedOnScript;
 
         protected readonly HashSet<Guid> ScriptGuidMap = new HashSet<Guid>();
 
@@ -38,10 +38,10 @@ namespace Robot.Recordings
 
             CommandFactory.NewUserCommands += ReplaceCommandsInScriptsWithNewRecompiledOnes;
 
-            m_LoadedScripts = new List<RobotRuntime.Recordings.Recording>();
+            m_LoadedScripts = new List<Recording>();
         }
 
-        protected void SubscribeToScriptEvents(RobotRuntime.Recordings.Recording s)
+        protected void SubscribeToScriptEvents(Recording s)
         {
             s.CommandAddedToScript += InvokeCommandAddedToScript;
             s.CommandInsertedInScript += InvokeCommandInsertedInScript;
@@ -49,7 +49,7 @@ namespace Robot.Recordings
             s.CommandModifiedOnScript += InvokeCommandModifiedOnScript;
         }
 
-        protected void UnsubscribeToScriptEvents(RobotRuntime.Recordings.Recording s)
+        protected void UnsubscribeToScriptEvents(Recording s)
         {
             s.CommandAddedToScript -= InvokeCommandAddedToScript;
             s.CommandInsertedInScript -= InvokeCommandInsertedInScript;
@@ -57,22 +57,22 @@ namespace Robot.Recordings
             s.CommandModifiedOnScript -= InvokeCommandModifiedOnScript;
         }
 
-        private void InvokeCommandAddedToScript(RobotRuntime.Recordings.Recording script, Command parentCommand, Command command)
+        private void InvokeCommandAddedToScript(Recording script, Command parentCommand, Command command)
         {
             CommandAddedToScript?.Invoke(script, parentCommand, command);
         }
 
-        private void InvokeCommandInsertedInScript(RobotRuntime.Recordings.Recording script, Command parentCommand, Command command, int index)
+        private void InvokeCommandInsertedInScript(Recording script, Command parentCommand, Command command, int index)
         {
             CommandInsertedInScript?.Invoke(script, parentCommand, command, index);
         }
 
-        private void InvokeCommandRemovedFromScript(RobotRuntime.Recordings.Recording script, Command parentCommand, int index)
+        private void InvokeCommandRemovedFromScript(Recording script, Command parentCommand, int index)
         {
             CommandRemovedFromScript?.Invoke(script, parentCommand, index);
         }
 
-        private void InvokeCommandModifiedOnScript(RobotRuntime.Recordings.Recording script, Command oldCommand, Command newCommand)
+        private void InvokeCommandModifiedOnScript(Recording script, Command oldCommand, Command newCommand)
         {
             CommandModifiedOnScript?.Invoke(script, oldCommand, newCommand);
         }
@@ -96,15 +96,15 @@ namespace Robot.Recordings
             Profiler.Stop("BaseScriptManager_ReplaceOldCommandInstances");
         }
 
-        public virtual Recording NewScript(RobotRuntime.Recordings.Recording clone = null)
+        public virtual Recording NewScript(Recording clone = null)
         {
-            RobotRuntime.Recordings.Recording script;
+            Recording script;
 
             if (clone == null)
-                script = new RobotRuntime.Recordings.Recording();
+                script = new Recording();
             else
             {
-                script = (RobotRuntime.Recordings.Recording)clone.Clone();
+                script = (Recording)clone.Clone();
                 ((IHaveGuid)script).RegenerateGuid();
             }
 
@@ -118,7 +118,7 @@ namespace Robot.Recordings
             return script;
         }
 
-        public virtual void RemoveScript(RobotRuntime.Recordings.Recording script)
+        public virtual void RemoveScript(Recording script)
         {
             var position = m_LoadedScripts.IndexOf(script);
 
@@ -139,14 +139,14 @@ namespace Robot.Recordings
             ScriptRemoved?.Invoke(position);
         }
 
-        public virtual Recording AddScript(RobotRuntime.Recordings.Recording script, bool removeScriptWithSamePath = false)
+        public virtual Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
         {
             if (script == null)
                 return null;
 
             // If script was already loaded, reload it to last saved state
             var oldScript = m_LoadedScripts.FirstOrDefault(s => s.Path.Equals(script.Path));
-            if (oldScript != default(RobotRuntime.Recordings.Recording) && removeScriptWithSamePath)
+            if (oldScript != default(Recording) && removeScriptWithSamePath)
             {
                 // Reload Script
                 var index = m_LoadedScripts.IndexOf(oldScript);
@@ -257,7 +257,7 @@ namespace Robot.Recordings
             return node.parent.IndexOf(command);
         }
 
-        public int GetScriptIndex(RobotRuntime.Recordings.Recording script)
+        public int GetScriptIndex(Recording script)
         {
             return LoadedScripts.IndexOf(script);
         }
@@ -267,7 +267,7 @@ namespace Robot.Recordings
             return ScriptGuidMap.Contains(guid);
         }
 
-        public IEnumerator<RobotRuntime.Recordings.Recording> GetEnumerator()
+        public IEnumerator<Recording> GetEnumerator()
         {
             return m_LoadedScripts.GetEnumerator();
         }

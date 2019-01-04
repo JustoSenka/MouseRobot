@@ -8,20 +8,20 @@ namespace Robot.Abstractions
     public interface IHierarchyManager
     {
         Recording ActiveScript { get; set; }
-        IList<RobotRuntime.Recordings.Recording> LoadedScripts { get; }
+        IList<Recording> LoadedScripts { get; }
 
-        event Action<RobotRuntime.Recordings.Recording, RobotRuntime.Recordings.Recording> ActiveScriptChanged;
-        event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandAddedToScript;
-        event Action<RobotRuntime.Recordings.Recording, Command, Command, int> CommandInsertedInScript;
-        event Action<RobotRuntime.Recordings.Recording, Command, Command> CommandModifiedOnScript;
-        event Action<RobotRuntime.Recordings.Recording, Command, int> CommandRemovedFromScript;
-        event Action<RobotRuntime.Recordings.Recording> ScriptAdded;
-        event Action<RobotRuntime.Recordings.Recording> ScriptModified;
+        event Action<Recording, Recording> ActiveScriptChanged;
+        event Action<Recording, Command, Command> CommandAddedToScript;
+        event Action<Recording, Command, Command, int> CommandInsertedInScript;
+        event Action<Recording, Command, Command> CommandModifiedOnScript;
+        event Action<Recording, Command, int> CommandRemovedFromScript;
+        event Action<Recording> ScriptAdded;
+        event Action<Recording> ScriptModified;
         event Action ScriptPositioningChanged;
         event Action<int> ScriptRemoved;
-        event Action<RobotRuntime.Recordings.Recording> ScriptSaved;
+        event Action<Recording> ScriptSaved;
 
-        IEnumerator<RobotRuntime.Recordings.Recording> GetEnumerator();
+        IEnumerator<Recording> GetEnumerator();
         Recording GetScriptFromCommand(Command command);
         Recording GetScriptFromCommandGuid(Guid guid);
         Recording LoadScript(string path);
@@ -29,9 +29,9 @@ namespace Robot.Abstractions
         void MoveCommandBefore(Command source, Command before, int scriptIndex, int destinationScriptIndex = -1);
         void MoveScriptAfter(int index, int after);
         void MoveScriptBefore(int index, int before);
-        Recording NewScript(RobotRuntime.Recordings.Recording clone = null);
-        void RemoveScript(RobotRuntime.Recordings.Recording script);
+        Recording NewScript(Recording clone = null);
+        void RemoveScript(Recording script);
         void RemoveScript(int position);
-        void SaveScript(RobotRuntime.Recordings.Recording script, string path);
+        void SaveScript(Recording script, string path);
     }
 }

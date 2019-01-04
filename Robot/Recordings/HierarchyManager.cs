@@ -13,7 +13,7 @@ namespace Robot
     {
         public static string k_DefaultScriptName = "New Script";
 
-        private RobotRuntime.Recordings.Recording m_ActiveScript;
+        private Recording m_ActiveScript;
         public Recording ActiveScript
         {
             set
@@ -26,8 +26,8 @@ namespace Robot
             get { return m_ActiveScript; }
         }
 
-        public event Action<RobotRuntime.Recordings.Recording, RobotRuntime.Recordings.Recording> ActiveScriptChanged;
-        public event Action<RobotRuntime.Recordings.Recording> ScriptSaved;
+        public event Action<Recording, Recording> ActiveScriptChanged;
+        public event Action<Recording> ScriptSaved;
 
         private IAssetManager AssetManager;
         private IProfiler Profiler;
@@ -50,10 +50,10 @@ namespace Robot
             Profiler.Start("ScriptManager_LoadScript");
 
             // if hierarchy contains empty untitled script, remove it
-            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == RobotRuntime.Recordings.Recording.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
+            if (m_LoadedScripts.Count == 1 && m_LoadedScripts[0].Name == Recording.DefaultScriptName && m_LoadedScripts[0].Commands.Count() == 0)
                 RemoveScript(0);
 
-            RobotRuntime.Recordings.Recording newScript = asset.Importer.ReloadAsset<RobotRuntime.Recordings.Recording>();
+            Recording newScript = asset.Importer.ReloadAsset<Recording>();
             if (newScript != null)
             {
                 newScript.Path = asset.Path;
@@ -66,7 +66,7 @@ namespace Robot
             return newScript;
         }
 
-        public void SaveScript(RobotRuntime.Recordings.Recording script, string path)
+        public void SaveScript(Recording script, string path)
         {
             Profiler.Start("ScriptManager_SafeScript");
 
@@ -90,7 +90,7 @@ namespace Robot
                 ActiveScript = m_LoadedScripts[0];
         }
 
-        public override Recording NewScript(RobotRuntime.Recordings.Recording clone = null)
+        public override Recording NewScript(Recording clone = null)
         {
             var s = base.NewScript(clone);
             s.Name = k_DefaultScriptName;
@@ -98,7 +98,7 @@ namespace Robot
             return s;
         }
 
-        public override void RemoveScript(RobotRuntime.Recordings.Recording script)
+        public override void RemoveScript(Recording script)
         {
             base.RemoveScript(script);
             MakeSureActiveScriptExist();
@@ -110,7 +110,7 @@ namespace Robot
             MakeSureActiveScriptExist();
         }
 
-        public override Recording AddScript(RobotRuntime.Recordings.Recording script, bool removeScriptWithSamePath = false)
+        public override Recording AddScript(Recording script, bool removeScriptWithSamePath = false)
         {
             var s = base.AddScript(script, removeScriptWithSamePath);
             MakeSureActiveScriptExist();
