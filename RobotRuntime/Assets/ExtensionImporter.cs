@@ -4,9 +4,9 @@ using System.Reflection;
 
 namespace RobotRuntime
 {
-    public class ExtensionImporter : AssetImporter
+    public class PluginImporter : AssetImporter
     {
-        public ExtensionImporter(string path) : base(path) { }
+        public PluginImporter(string path) : base(path) { }
 
         protected override object LoadAsset()
         {

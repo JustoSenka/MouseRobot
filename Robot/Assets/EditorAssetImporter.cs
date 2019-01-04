@@ -23,7 +23,7 @@ namespace Robot
                 return new LightTestFixtureImporter(path);
 
             else if (path.EndsWith(FileExtensions.DllD) || path.EndsWith(FileExtensions.ExeD))
-                return new ExtensionImporter(path);
+                return new PluginImporter(path);
 
             else
                 return null;

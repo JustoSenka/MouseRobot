@@ -13,14 +13,14 @@ namespace RobotRuntime.Utils
         public static string ScriptFolder { get { return "Scripts"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
         public static string TestsFolder { get { return "Tests"; } }
-        public static string ExtensionFolder { get { return "Extensions"; } }
+        public static string PluginFolder { get { return "Plugin"; } }
 
         public static string RecordingPath { get { return Path.Combine(Environment.CurrentDirectory, RecordingFolder); } }
         public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
         public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
         public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
-        public static string ExtensionPath { get { return Path.Combine(Environment.CurrentDirectory, ExtensionFolder); } }
+        public static string ExtensionPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
 
         public static string AppName { get { return "MouseRobot"; } }
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
@@ -30,7 +30,7 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { RecordingPath, ImagePath, ScriptPath, MetadataPath, TestsFolder, ExtensionFolder }; }
+            get { return new[] { RecordingPath, ImagePath, ScriptPath, MetadataPath, TestsFolder, PluginFolder }; }
         }
 
         public static string GetName(string path)
@@ -96,7 +96,7 @@ namespace RobotRuntime.Utils
                 return FileExtensions.Script;
             else if (folder == TestsFolder)
                 return FileExtensions.Test;
-            else if (folder == ExtensionFolder)
+            else if (folder == PluginFolder)
                 return FileExtensions.Dll;
             else
                 return "";
@@ -113,7 +113,7 @@ namespace RobotRuntime.Utils
             else if (path.EndsWith(FileExtensions.Test))
                 return TestsFolder;
             else if (path.EndsWith(FileExtensions.Dll) || path.EndsWith(FileExtensions.Exe))
-                return ExtensionFolder;
+                return PluginFolder;
             else
                 return "";
         }

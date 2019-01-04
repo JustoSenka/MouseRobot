@@ -109,7 +109,7 @@ namespace RobotEditor
                 var imageNode = new TreeNode(Paths.ImageFolder);
                 var scriptNode = new TreeNode(Paths.ScriptFolder);
                 var testsNode = new TreeNode(Paths.TestsFolder);
-                var dllNode = new TreeNode(Paths.ExtensionFolder);
+                var dllNode = new TreeNode(Paths.PluginFolder);
 
                 treeView.Nodes.Add(recordingNode);
                 treeView.Nodes.Add(imageNode);
@@ -157,7 +157,7 @@ namespace RobotEditor
             UpdateIconForFolder(Paths.ImageFolder, 2);
             UpdateIconForFolder(Paths.ScriptFolder, 3);
             UpdateIconForFolder(Paths.TestsFolder, 3);
-            UpdateIconForFolder(Paths.ExtensionFolder, 3);
+            UpdateIconForFolder(Paths.PluginFolder, 3);
         }
 
         private void UpdateIconForFolder(string folder, int iconIndex)

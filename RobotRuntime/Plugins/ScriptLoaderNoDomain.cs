@@ -51,11 +51,11 @@ namespace RobotRuntime.Scripts
             RuntimeAssetManager.CollectAllImporters();
 
             var userAssemblies = new[] { UserAssemblyPath };
-            var userExtensions = RuntimeAssetManager.AssetImporters.
+            var userPlugins = RuntimeAssetManager.AssetImporters.
                 Where(i => i.HoldsType() == typeof(Assembly)).Select(i => i.Path).ToArray();
 
             LoadAssemblies(m_Assemblies, userAssemblies);
-            LoadAssemblies(m_Assemblies, userExtensions);
+            LoadAssemblies(m_Assemblies, userPlugins);
         }
 
         public IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func)
