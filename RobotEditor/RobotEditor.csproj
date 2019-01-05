@@ -215,6 +215,11 @@
     <Compile Include="Hierarchy\HierarchyNodeStringConverter.cs" />
     <Compile Include="Hierarchy\HierarchyNode.cs" />
     <Compile Include="Abstractions\IHierarchyNodeStringConverter.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="PropertyUtils\RecordingGUIDStringConverter.cs" />
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
@@ -222,9 +227,10 @@
     <Content Include="Resources\ScriptTemplates\CustomCommand.cs" />
     <Content Include="Resources\ScriptTemplates\CustomCommandDesigner.cs" />
     <Content Include="Resources\ScriptTemplates\CustomCommandRunner.cs" />
-    <Content Include="Resources\ScriptTemplates\CustomFetureDetector.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomFeatureDetector.cs" />
     <Content Include="Resources\ScriptTemplates\CustomSettings.cs" />
     <Compile Include="Abstractions\IScriptTemplates.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomScreenPainter.cs" />
     <Compile Include="Resources\ScriptTemplates\ScriptTemplates.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
     <Compile Include="PropertyUtils\CommandNameStringConverter.cs" />
@@ -370,14 +376,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="Windows\HierarchyWindow.resx">
       <DependentUpon>HierarchyWindow.cs</DependentUpon>
     </EmbeddedResource>

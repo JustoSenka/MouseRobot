@@ -1,6 +1,5 @@
 ﻿using RobotEditor.Abstractions;
 using RobotRuntime;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,14 +36,10 @@ namespace RobotEditor.Resources.ScriptTemplates
             string value = "";
             if (!fileName.IsEmpty())
             {
-                try
-                {
-                    value = (string)Properties.Resources.ResourceManager.GetObject(fileName);
-                }
-                catch(Exception e)
-                {
-                    Logger.Log(LogType.Error, "Resource Manager did not contain this resource: " + fileName, e.Message);
-                }
+                value = (string)Properties.Resources.ResourceManager.GetObject(fileName);
+
+                if (value.IsEmpty())
+                    Logger.Log(LogType.Error, "Resource Manager did not contain this resource: " + fileName + " from template name: " + name);
             }
 
             return value;

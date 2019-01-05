@@ -68,7 +68,9 @@ namespace RobotEditor
                     {
                         var script = ScriptTemplates.GetTemplate(name);
                         var fileName = ScriptTemplates.GetTemplateFileName(name);
-                        AssetManager.CreateAsset(script, Path.Combine(Paths.ScriptPath, fileName + ".cs"));
+                        var filePath = Path.Combine(Paths.ScriptPath, fileName + ".cs");
+                        filePath = Paths.GetUniquePath(filePath);
+                        AssetManager.CreateAsset(script, filePath);
                     };
                     menuItem.DropDownItems.Add(item);
                 }

@@ -158,9 +158,34 @@ namespace RobotEditor.Properties {
         ///
         ///         [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string CustomFetureDetector {
+        internal static string CustomFeatureDetector {
             get {
-                return ResourceManager.GetString("CustomFetureDetector", resourceCulture);
+                return ResourceManager.GetString("CustomFeatureDetector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using RobotEditor.Windows.Base;
+        ///using RobotRuntime;
+        ///using System;
+        ///using System.Drawing;
+        ///using System.Windows.Forms;
+        ///
+        ///namespace RobotEditor.Resources.ScriptTemplates
+        ///{
+        ///    public class CustomScreenPainter : IPaintOnScreen
+        ///    {
+        ///        // Constructor can ask for dependencies, IAssetManager, IMouseRobot etc.
+        ///        public CustomScreenPainter()
+        ///        {
+        ///            Invalidate.Invoke();
+        ///        }
+        ///
+        ///        // Call invalidate if you want OnPaint method to be called. Unless it won&apos;t draw anything [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomScreenPainter {
+            get {
+                return ResourceManager.GetString("CustomScreenPainter", resourceCulture);
             }
         }
         

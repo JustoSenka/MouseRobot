@@ -33,6 +33,28 @@ namespace RobotRuntime.Utils
             get { return new[] { RecordingPath, ImagePath, ScriptPath, MetadataPath, TestsFolder, PluginFolder }; }
         }
 
+        /// <summary>
+        /// Will add 0, 1, 2 until it finds unique path
+        /// </summary>
+        public static string GetUniquePath(string path)
+        {
+            var ext = Path.GetExtension(path);
+            var pathNoExt = Path.Combine (Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+
+            if (!File.Exists(path))
+                return path;
+
+            string finalPath = "";
+            var num = 0;
+            do
+            {
+                finalPath = $"{pathNoExt}_{num++}{ext}";
+            }
+            while (File.Exists(finalPath));
+
+            return finalPath;
+        }
+
         public static string GetName(string path)
         {
             /*var name = Regex.Match(path, @"[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value.
