@@ -13,7 +13,7 @@ namespace Robot.Scripts
     public class SolutionManager : ISolutionManager
     {
         public string CSharpSolutionPath => CSharpSolutionName + ".sln";
-        public string CSharpProjectPath => CSharpProjectName + ".proj";
+        public string CSharpProjectPath => CSharpProjectName + ".csproj";
 
         public string CSharpSolutionName => ProjectManager.ProjectName + "_Solution";
         public string CSharpProjectName => ProjectManager.ProjectName + "_Project";

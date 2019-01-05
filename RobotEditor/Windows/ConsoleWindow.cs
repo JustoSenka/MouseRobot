@@ -52,36 +52,36 @@ namespace RobotEditor.Windows
 
             m_ErrorFilter = new ToolStripToggleButton("0");
             m_ErrorFilter.TextImageRelation = TextImageRelation.ImageBeforeText;
-            m_ErrorFilter.Image = Resources.LogError_32;
-            m_ErrorFilter.ImageActive = Resources.LogError_32;
-            m_ErrorFilter.ImageNotActive = Resources.LogError_d_32;
+            m_ErrorFilter.Image = Properties.Resources.LogError_32;
+            m_ErrorFilter.ImageActive = Properties.Resources.LogError_32;
+            m_ErrorFilter.ImageNotActive = Properties.Resources.LogError_d_32;
             m_ErrorFilter.ActiveStateChanged += UpdateHierarchy;
             m_ErrorFilter.Padding = new Padding(10, 0, 10, 0);
             toolStrip.Items.Add(m_ErrorFilter);
 
             m_WarningFilter = new ToolStripToggleButton("0");
             m_WarningFilter.TextImageRelation = TextImageRelation.ImageBeforeText;
-            m_WarningFilter.Image = Resources.LogWarning_32;
-            m_WarningFilter.ImageActive = Resources.LogWarning_32;
-            m_WarningFilter.ImageNotActive = Resources.LogWarning_d_32;
+            m_WarningFilter.Image = Properties.Resources.LogWarning_32;
+            m_WarningFilter.ImageActive = Properties.Resources.LogWarning_32;
+            m_WarningFilter.ImageNotActive = Properties.Resources.LogWarning_d_32;
             m_WarningFilter.ActiveStateChanged += UpdateHierarchy;
             m_WarningFilter.Padding = new Padding(10, 0, 10, 0);
             toolStrip.Items.Add(m_WarningFilter);
 
             m_InfoFilter = new ToolStripToggleButton("0");
             m_InfoFilter.TextImageRelation = TextImageRelation.ImageBeforeText;
-            m_InfoFilter.Image = Resources.LogInfo_32;
-            m_InfoFilter.ImageActive = Resources.LogInfo_32;
-            m_InfoFilter.ImageNotActive = Resources.LogInfo_d_32;
+            m_InfoFilter.Image = Properties.Resources.LogInfo_32;
+            m_InfoFilter.ImageActive = Properties.Resources.LogInfo_32;
+            m_InfoFilter.ImageNotActive = Properties.Resources.LogInfo_d_32;
             m_InfoFilter.ActiveStateChanged += UpdateHierarchy;
             m_InfoFilter.Padding = new Padding(10, 0, 10, 0);
             toolStrip.Items.Add(m_InfoFilter);
 
             m_DebugFilter = new ToolStripToggleButton("0");
             m_DebugFilter.TextImageRelation = TextImageRelation.ImageBeforeText;
-            m_DebugFilter.Image = Resources.LogDebug_32;
-            m_DebugFilter.ImageActive = Resources.LogDebug_32;
-            m_DebugFilter.ImageNotActive = Resources.LogDebug_d_32;
+            m_DebugFilter.Image = Properties.Resources.LogDebug_32;
+            m_DebugFilter.ImageActive = Properties.Resources.LogDebug_32;
+            m_DebugFilter.ImageNotActive = Properties.Resources.LogDebug_d_32;
             m_DebugFilter.ActiveStateChanged += UpdateHierarchy;
             m_DebugFilter.Padding = new Padding(10, 0, 10, 0);
             toolStrip.Items.Add(m_DebugFilter);

@@ -1,26 +1,26 @@
-﻿using Robot.Utils.Win32;
-using RobotEditor.Editor;
-using RobotEditor.Abstractions;
-using RobotRuntime;
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
+﻿using Robot;
 using Robot.Abstractions;
-using RobotRuntime.Abstractions;
-using RobotRuntime.Utils;
-using RobotEditor.Windows;
-using Robot.Settings;
-using RobotRuntime.Settings;
-using RobotRuntime.Logging;
 using Robot.Recordings;
-using Unity;
+using Robot.Settings;
+using Robot.Utils.Win32;
+using RobotEditor.Abstractions;
+using RobotEditor.Editor;
+using RobotEditor.Windows;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Logging;
+using RobotRuntime.Settings;
 using RobotRuntime.Tests;
+using RobotRuntime.Utils;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using System.Drawing;
-using Robot;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using Unity;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
@@ -56,13 +56,15 @@ namespace RobotEditor
         private ITestRunner TestRunner;
         private IProjectManager ProjectManager;
 
+        private IScriptTemplates ScriptTemplates;
+
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
-            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager)
+            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates)
         {
             this.Container = Container;
 
@@ -87,6 +89,8 @@ namespace RobotEditor
             this.m_InspectorWindow = InspectorWindow;
             this.m_ConsoleWindow = ConsoleWindow;
             this.m_TestRunnerWindow = TestRunnerWindow;
+
+            this.ScriptTemplates = ScriptTemplates;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -127,6 +131,8 @@ namespace RobotEditor
 
             this.Activated += OnFormActivated;
 
+            menuStrip.HandleCreated += (s, e) => m_AssetsWindow.AddMenuItemsForScriptTemplates(menuStrip, "addScriptToolStripMenuItem");
+
             ((Form)ScreenPaintForm).Show();
         }
 
@@ -134,8 +140,10 @@ namespace RobotEditor
         {
             AssetManager.Refresh();
 
-            this.BeginInvokeIfCreated(new MethodInvoker(() => 
-                this.Text = ProjectManager.ProjectName + " - " + Paths.AppName));
+            this.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                this.Text = ProjectManager.ProjectName + " - " + Paths.AppName;
+            }));
         }
 
         private void OnFixtureAdded(TestFixture fixture)
@@ -235,7 +243,7 @@ namespace RobotEditor
 
         private void OnStatusUpdated(Status status)
         {
-            if (!this.Created || !statusStrip.Created || this.Disposing || this.IsDisposed || 
+            if (!this.Created || !statusStrip.Created || this.Disposing || this.IsDisposed ||
                 !statusStrip.Created || statusStrip.IsDisposed || statusStrip.Disposing)
                 return;
 
@@ -549,13 +557,13 @@ namespace RobotEditor
         {
             // Change images
             playButton.Image = (MouseRobot.IsPlaying) ?
-                RobotEditor.Properties.Resources.ToolButton_Stop_32 : RobotEditor.Properties.Resources.ToolButton_Play_32;
+                Properties.Resources.ToolButton_Stop_32 : Properties.Resources.ToolButton_Play_32;
 
             recordButton.Image = (MouseRobot.IsRecording) ?
-                RobotEditor.Properties.Resources.ToolButton_RecordStop_32 : RobotEditor.Properties.Resources.ToolButton_Record_32;
+                Properties.Resources.ToolButton_RecordStop_32 : Properties.Resources.ToolButton_Record_32;
 
             visualizationButton.Image = (MouseRobot.IsVisualizationOn) ?
-                RobotEditor.Properties.Resources.Eye_e_ICO_256 : RobotEditor.Properties.Resources.Eye_d_ICO_256;
+                Properties.Resources.Eye_e_ICO_256 : Properties.Resources.Eye_d_ICO_256;
 
             // Disable/Enable buttons
             playButton.Enabled = !MouseRobot.IsRecording;

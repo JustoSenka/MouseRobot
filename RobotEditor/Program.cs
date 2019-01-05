@@ -1,17 +1,17 @@
-﻿using RobotEditor.Abstractions;
-using System;
-using Unity;
-using Unity.Lifetime;
-using RobotEditor.Windows;
-using System.Windows.Forms;
-using Robot;
+﻿using Robot;
+using Robot.Abstractions;
+using RobotEditor.Abstractions;
 using RobotEditor.Editor;
-using Robot.Scripts;
-using RobotRuntime.Abstractions;
-using RobotRuntime;
 using RobotEditor.Hierarchy;
 using RobotEditor.PropertyUtils;
-using Robot.Abstractions;
+using RobotEditor.Resources.ScriptTemplates;
+using RobotEditor.Windows;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
+using System;
+using System.Windows.Forms;
+using Unity;
+using Unity.Lifetime;
 
 namespace RobotEditor
 {
@@ -79,8 +79,10 @@ namespace RobotEditor
             Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<PropertyDependencyProvider, PropertyDependencyProvider>(new ContainerControlledLifetimeManager());
-            
+
             Container.RegisterType<IProjectSelectionDialog, ProjectSelectionDialog>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IScriptTemplates, ScriptTemplates>(new ContainerControlledLifetimeManager());
+
             Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
         }
     }

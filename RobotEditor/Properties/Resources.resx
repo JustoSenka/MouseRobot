@@ -199,4 +199,19 @@
   <data name="TestStatus_Q_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icons\TestStatus_Q_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CustomCommand" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptTemplates\CustomCommand.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CustomCommandDesigner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptTemplates\CustomCommandDesigner.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CustomCommandRunner" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptTemplates\CustomCommandRunner.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CustomFetureDetector" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptTemplates\CustomFetureDetector.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="CustomSettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ScriptTemplates\CustomSettings.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

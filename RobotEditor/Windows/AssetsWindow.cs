@@ -8,6 +8,7 @@ using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,8 +27,9 @@ namespace RobotEditor
         private ISolutionManager SolutionManager;
         private ICodeEditor CodeEditor;
         private ILogger Logger;
+        private IScriptTemplates ScriptTemplates;
         public AssetsWindow(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
-            IScriptManager ScriptManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger)
+            IScriptManager ScriptManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger, IScriptTemplates ScriptTemplates)
         {
             this.AssetManager = AssetManager;
             this.RecordingManager = RecordingManager;
@@ -36,6 +38,7 @@ namespace RobotEditor
             this.SolutionManager = SolutionManager;
             this.CodeEditor = CodeEditor;
             this.Logger = Logger;
+            this.ScriptTemplates = ScriptTemplates;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -49,6 +52,27 @@ namespace RobotEditor
             AssetManager.AssetDeleted += OnAssetDeleted;
 
             treeView.HandleCreated += OnRefreshFinished;
+            contextMenuStrip.HandleCreated += (s, e) => AddMenuItemsForScriptTemplates(contextMenuStrip, "addScriptToolStripMenuItem");
+        }
+
+        public void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName)
+        {
+            menuStrip.BeginInvoke(new MethodInvoker(() =>
+            {
+                var menuItem = (ToolStripMenuItem)menuStrip.Items.Find(menuItemName, true)[0];
+
+                foreach (var name in ScriptTemplates.TemplateNames)
+                {
+                    var item = new ToolStripMenuItem(name);
+                    item.Click += (sender, eventArgs) =>
+                    {
+                        var script = ScriptTemplates.GetTemplate(name);
+                        var fileName = ScriptTemplates.GetTemplateFileName(name);
+                        AssetManager.CreateAsset(script, Path.Combine(Paths.ScriptPath, fileName + ".cs"));
+                    };
+                    menuItem.DropDownItems.Add(item);
+                }
+            }));
         }
 
         public Asset GetSelectedAsset()

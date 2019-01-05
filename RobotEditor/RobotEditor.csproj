@@ -219,6 +219,13 @@
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomCommand.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomCommandDesigner.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomCommandRunner.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomFetureDetector.cs" />
+    <Content Include="Resources\ScriptTemplates\CustomSettings.cs" />
+    <Compile Include="Abstractions\IScriptTemplates.cs" />
+    <Compile Include="Resources\ScriptTemplates\ScriptTemplates.cs" />
     <Compile Include="Settings\BaseProperties.cs" />
     <Compile Include="PropertyUtils\CommandNameStringConverter.cs" />
     <Compile Include="PropertyUtils\DetectorNameStringConverter.cs" />

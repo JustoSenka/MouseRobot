@@ -71,6 +71,124 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime;
+        ///using System;
+        ///using RobotRuntime.Tests;
+        ///
+        ///namespace CustomNamespace
+        ///{
+        ///    [Serializable]
+        ///    // [RunnerType(typeof(CustomCommandRunner))] // Can also use already implemented types: SimpleCommandRunner etc.
+        ///    // [PropertyDesignerType(&quot;CustomCommandDesigner&quot;)] // Optional, will specify how to draw command in inspector
+        ///    public class CustomCommand : Command
+        ///    {
+        ///        // This is what will appear in dropdown in inspector under Command Type. Must be unique
+        ///        public ove [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomCommand {
+            get {
+                return ResourceManager.GetString("CustomCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using CustomNamespace;
+        ///using Robot.Abstractions;
+        ///using RobotEditor.Inspector;
+        ///using RobotEditor.Utils;
+        ///using System.ComponentModel;
+        ///
+        ///namespace RobotEditor.Resources.ScriptTemplates
+        ///{
+        ///    public class CustomCommandDesigner : CommandProperties
+        ///    {
+        ///        public CustomCommandDesigner(ICommandFactory CommandFactory)
+        ///            : base(CommandFactory)
+        ///        {
+        ///            Properties = TypeDescriptor.GetProperties(this);
+        ///        }
+        ///
+        ///        public override void HideProperties(ref DynamicTypeDes [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomCommandDesigner {
+            get {
+                return ResourceManager.GetString("CustomCommandDesigner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime.Abstractions;
+        ///using RobotRuntime;
+        ///using RobotRuntime.Execution;
+        ///using RobotRuntime.Tests;
+        ///
+        ///namespace RobotEditor.Resources.ScriptTemplates
+        ///{
+        ///    public class CustomCommandRunner : IRunner
+        ///    {
+        ///        private CommandRunningCallback m_Callback;
+        ///
+        ///        public CustomCommandRunner()
+        ///        {
+        ///            // Constructor actually can ask for other managers if needed, like IHierarchyManager etc.
+        ///        }
+        ///
+        ///        public TestData TestData { set; get; }
+        ///
+        ///        public void P [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomCommandRunner {
+            get {
+                return ResourceManager.GetString("CustomCommandRunner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime.Graphics;
+        ///using System.Collections.Generic;
+        ///using System.Drawing;
+        ///
+        ///namespace RobotEditor.Resources.ScriptTemplates
+        ///{
+        ///    public class CustomFeatureDetector : FeatureDetector
+        ///    {
+        ///        public override string Name { get { return &quot;Custom Detector&quot;; } } // Name must be unique. It is used in settings to choose detector
+        ///
+        ///        public override bool SupportsMultipleMatches { get { return true; } } // If detector cannot match multiple images on screen, set this to false
+        ///
+        ///         [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CustomFetureDetector {
+            get {
+                return ResourceManager.GetString("CustomFetureDetector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime.Settings;
+        ///using System;
+        ///using System.Windows.Forms;
+        ///
+        ///namespace RobotEditor.Resources.ScriptTemplates
+        ///{
+        ///    [Serializable]
+        ///    public class UserSettings : BaseSettings 
+        ///    { 
+        ///        public int SomeInt { get; set; } = 15;
+        ///        public string SomeString { get; set; } = &quot;string&quot;;
+        ///        public bool SomeBool { get; set; } = false;
+        ///        public Keys SomeKey { get; set; } = Keys.E;
+        ///    }
+        ///}
+        ///.
+        /// </summary>
+        internal static string CustomSettings {
+            get {
+                return ResourceManager.GetString("CustomSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ExpandAll_16 {

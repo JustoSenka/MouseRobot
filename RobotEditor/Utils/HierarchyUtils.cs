@@ -71,7 +71,10 @@ namespace RobotEditor.Utils
                         }
                         else
                         {
-                            baseRecordingManager.LoadedRecordings.Last().AddCommand(newCommand);
+                            if (baseRecordingManager.LoadedRecordings.Count < 1)
+                                baseRecordingManager.LoadedRecordings.Last().AddCommand(newCommand);
+                            else
+                                Logger.Log(LogType.Error, "Cannot create command since no Recordings are loaded in the Hierarchy.");
                         }
                     };
                     createMenuItem.DropDownItems.Add(item);

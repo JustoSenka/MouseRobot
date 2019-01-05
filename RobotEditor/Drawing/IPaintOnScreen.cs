@@ -19,7 +19,8 @@ namespace RobotEditor.Windows.Base
         event Action Invalidate;
 
         /// <summary>
-        /// Will start a timer to invalidate view every 30 ms if object is registered
+        /// Will start a timer to invalidate view every 30 ms if object is registered. Painter Manager will listen to this event.
+        /// Invoke this event if you have constantly changing values or some kind of animation, and want constant redraw happening
         /// </summary>
         event Action<IPaintOnScreen> StartInvalidateOnTimer;
 

@@ -9,5 +9,6 @@ namespace RobotEditor.Abstractions
         event Action AssetSelected;
 
         Asset GetSelectedAsset();
+        void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName);
     }
 }
