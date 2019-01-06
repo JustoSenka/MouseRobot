@@ -7,10 +7,9 @@ using RobotRuntime.Logging;
 using RobotRuntime.Utils;
 using System;
 using System.CodeDom.Compiler;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading;
+using System.Threading.Tasks;
 
 namespace Robot.Scripts
 {
@@ -23,9 +22,10 @@ namespace Robot.Scripts
         public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
-        public event Action RecordingsRecompiled;
+        public event Action ScriptsRecompiled;
 
-        private bool m_IsCompiling = false;
+        public bool IsCompiling { get; private set; } = false;
+
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
 
@@ -39,7 +39,7 @@ namespace Robot.Scripts
             this.StatusManager = StatusManager;
             this.SettingsManager = SettingsManager;
             this.Logger = Logger;
-            
+
             // hack to change path
             var settings = typeof(CSharpCodeProvider)
                 .GetField("_compilerSettings", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -48,25 +48,28 @@ namespace Robot.Scripts
             settings.GetType()
                 .GetField("_compilerFullPath", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(settings, Path.Combine(Paths.ApplicationInstallPath, "roslyn", "csc.exe"));
-            
+
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
         }
 
-        public void CompileCode(params string[] sources)
+        public Task<bool> CompileCode(params string[] sources)
         {
-            // If already compiling, save sources for future compilation
-            if (m_IsCompiling)
+            return Task.Run(() =>
             {
-                m_ShouldRecompile = true;
-                m_TempSources = sources;
-                return;
-            }
+               // If already compiling, save sources for future compilation
+               if (IsCompiling)
+                {
+                    m_ShouldRecompile = true;
+                    m_TempSources = sources;
+                    return false;
+                }
 
-            m_IsCompiling = true;
+                IsCompiling = true;
 
-            new Thread(() => CompileCodeSync(sources)).Start();
+                return CompileCodeSync(sources);
+            });
         }
 
         private bool CompileCodeSync(string[] sources)
@@ -91,9 +94,9 @@ namespace Robot.Scripts
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
             Profiler.Stop("ScriptCompiler_CompileCode");
 
-            m_IsCompiling = false;
+            IsCompiling = false;
 
-            // This might happen if recordings are modified before compilation is finished
+            // This might happen if scripts are modified before compilation is finished
             if (m_ShouldRecompile)
             {
                 m_ShouldRecompile = false;
@@ -108,15 +111,15 @@ namespace Robot.Scripts
                         string.Format("({0}): {1}", error.ErrorNumber, error.ErrorText),
                         string.Format("at {0} {1} : {2}", error.FileName, error.Line, error.Column));
 
-                RecordingsRecompiled?.Invoke();
-                Logger.Logi(LogType.Error, "Recordings have compilation errors.");
+                ScriptsRecompiled?.Invoke();
+                Logger.Logi(LogType.Error, "Scripts have compilation errors.");
                 StatusManager.Add("ScriptCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
                 return false;
             }
             else
             {
-                RecordingsRecompiled?.Invoke();
-                Logger.Logi(LogType.Log, "Recordings successfully compiled.");
+                ScriptsRecompiled?.Invoke();
+                Logger.Logi(LogType.Log, "Scripts successfully compiled.");
                 StatusManager.Add("ScriptCompiler", 10, new Status("", "Compilation Complete", default));
                 return true;
             }

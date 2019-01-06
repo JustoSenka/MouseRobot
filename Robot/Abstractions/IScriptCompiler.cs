@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeDom.Providers.DotNetCompilerPlatform;
 using System;
 using System.CodeDom.Compiler;
+using System.Threading.Tasks;
 
 namespace Robot.Abstractions
 {
@@ -9,9 +10,11 @@ namespace Robot.Abstractions
         CSharpCodeProvider CodeProvider { get; }
         CompilerParameters CompilerParams { get; }
 
-        void CompileCode(params string[] sources);
+        bool IsCompiling { get; }
+
+        Task<bool> CompileCode(params string[] sources);
         void SetOutputPath(string customAssemblyPath);
 
-        event Action RecordingsRecompiled;
+        event Action ScriptsRecompiled;
     }
 }

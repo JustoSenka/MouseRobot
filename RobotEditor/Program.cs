@@ -15,13 +15,13 @@ using Unity.Lifetime;
 
 namespace RobotEditor
 {
-    static class Program
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -36,7 +36,7 @@ namespace RobotEditor
             container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
             container.Resolve<ISolutionManager>(); // not referenced by anything
 
-            var projectIsCreated = SetupProjectPath(container);
+            var projectIsCreated = SetupProjectPath(container, args);
 
             if (projectIsCreated)
             {
@@ -47,12 +47,14 @@ namespace RobotEditor
             Application.Exit();
         }
 
-        private static bool SetupProjectPath(IUnityContainer container)
+        private static bool SetupProjectPath(IUnityContainer container, string[] args)
         {
             var projectManager = container.Resolve<IProjectManager>();
             var projectDialog = container.Resolve<IProjectSelectionDialog>();
 
-            if (projectManager.LastKnownProjectPaths.Count > 0)
+            if (args.Length > 0)
+                projectManager.InitProject(args[0]);
+            else if (projectManager.LastKnownProjectPaths.Count > 0)
                 projectManager.InitProject(projectManager.LastKnownProjectPaths[0]);
             else
             {

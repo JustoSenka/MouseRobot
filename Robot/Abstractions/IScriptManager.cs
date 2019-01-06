@@ -1,7 +1,9 @@
-﻿namespace Robot.Abstractions
+﻿using System.Threading.Tasks;
+
+namespace Robot.Abstractions
 {
     public interface IScriptManager
     {
-        void CompileScriptsAndReloadUserDomain();
+        Task<bool> CompileScriptsAndReloadUserDomain();
     }
 }

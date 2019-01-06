@@ -26,7 +26,8 @@ namespace RobotRuntime.Utils
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
         public static string LocalAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName); } }
 
-        public static string ApplicationInstallPath { get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); } }
+        // public static string ApplicationInstallPath { get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); } } // Does not work from tests
+        public static string ApplicationInstallPath { get { return AppDomain.CurrentDomain.BaseDirectory; } }
 
         public static string[] ProjectPathArray
         {

@@ -2,10 +2,10 @@
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Robot.Scripts
 {
@@ -34,7 +34,7 @@ namespace Robot.Scripts
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
 
-            ScriptCompiler.RecordingsRecompiled += OnRecordingsRecompiled;
+            ScriptCompiler.ScriptsRecompiled += OnScriptsRecompiled;
         }
 
         private void OnAssetsModified(IList<string> modifiedAssets)
@@ -42,21 +42,24 @@ namespace Robot.Scripts
             CompileScriptsAndReloadUserDomain();
         }
 
-        public void CompileScriptsAndReloadUserDomain()
+        public Task<bool> CompileScriptsAndReloadUserDomain()
         {
-            ScriptCompiler.SetOutputPath(CustomAssemblyPath);
+            return Task.Run(async () =>
+            {
+                ScriptCompiler.SetOutputPath(CustomAssemblyPath);
 
-            ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
-            ScriptLoader.UserAssemblyName = CustomAssemblyName;
-            ScriptLoader.DestroyUserAppDomain();
+                ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
+                ScriptLoader.UserAssemblyName = CustomAssemblyName;
+                ScriptLoader.DestroyUserAppDomain();
 
-            var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-            var recordingValues = recordingAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+                var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
+                var recordingValues = recordingAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-            ScriptCompiler.CompileCode(recordingValues.ToArray());
+                return await ScriptCompiler.CompileCode(recordingValues.ToArray());
+            });
         }
 
-        private void OnRecordingsRecompiled()
+        private void OnScriptsRecompiled()
         {
             ScriptLoader.CreateUserAppDomain(); // This also loads the assemblies
         }
