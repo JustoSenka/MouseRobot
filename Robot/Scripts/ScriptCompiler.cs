@@ -25,6 +25,7 @@ namespace Robot.Scripts
         public event Action ScriptsRecompiled;
 
         public bool IsCompiling { get; private set; } = false;
+        public Task<bool> m_LastCompilationTask;
 
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
@@ -56,18 +57,17 @@ namespace Robot.Scripts
 
         public Task<bool> CompileCode(params string[] sources)
         {
-            return Task.Run(() =>
+            if (IsCompiling)
             {
-               // If already compiling, save sources for future compilation
-               if (IsCompiling)
-                {
-                    m_ShouldRecompile = true;
-                    m_TempSources = sources;
-                    return false;
-                }
+                // If already compiling, save sources for future compilation
+                m_ShouldRecompile = true;
+                m_TempSources = sources;
+                return m_LastCompilationTask;
+            }
 
+            return m_LastCompilationTask = Task.Run(() =>
+            {
                 IsCompiling = true;
-
                 return CompileCodeSync(sources);
             });
         }
@@ -94,15 +94,14 @@ namespace Robot.Scripts
             var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
             Profiler.Stop("ScriptCompiler_CompileCode");
 
-            IsCompiling = false;
-
             // This might happen if scripts are modified before compilation is finished
             if (m_ShouldRecompile)
             {
                 m_ShouldRecompile = false;
-                CompileCode(m_TempSources);
-                return false;
+                return CompileCodeSync(m_TempSources);
             }
+
+            IsCompiling = false;
 
             if (results.Errors.HasErrors)
             {
@@ -123,7 +122,6 @@ namespace Robot.Scripts
                 StatusManager.Add("ScriptCompiler", 10, new Status("", "Compilation Complete", default));
                 return true;
             }
-
         }
 
         public void SetOutputPath(string customAssemblyPath)

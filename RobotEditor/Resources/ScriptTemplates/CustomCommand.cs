@@ -13,7 +13,7 @@ namespace CustomNamespace
         public override string Name { get { return "Custom Command"; } }
         public override bool CanBeNested { get { return true; } }
 
-        public int SomeInt { get; set; }
+        public int SomeInt { get; set; } = 5;
 
         // having an empty constructor is a must, will not work otherwise
         public CustomCommand() { }

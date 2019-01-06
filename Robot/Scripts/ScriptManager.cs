@@ -52,10 +52,10 @@ namespace Robot.Scripts
                 ScriptLoader.UserAssemblyName = CustomAssemblyName;
                 ScriptLoader.DestroyUserAppDomain();
 
-                var recordingAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-                var recordingValues = recordingAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+                var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
+                var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-                return await ScriptCompiler.CompileCode(recordingValues.ToArray());
+                return await ScriptCompiler.CompileCode(scriptValues.ToArray());
             });
         }
 

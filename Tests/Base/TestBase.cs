@@ -1,7 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Robot.Abstractions;
+using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
+using RobotRuntime.Utils;
+using System;
 using System.IO;
 using System.Linq;
 using Unity;
@@ -22,6 +26,18 @@ namespace Tests
             Logger.Instance = container.Resolve<ILogger>();
 
             return container;
+        }
+
+        internal static void CopyAllTemplateScriptsToProjectFolder(IScriptTemplates ScriptTemplates, IAssetManager AssetManager)
+        {
+            foreach (var name in ScriptTemplates.TemplateNames)
+            {
+                var script = ScriptTemplates.GetTemplate(name);
+                var fileName = ScriptTemplates.GetTemplateFileName(name);
+                var filePath = Path.Combine(Paths.ScriptPath, fileName + ".cs");
+                filePath = Paths.GetUniquePath(filePath);
+                AssetManager.CreateAsset(script, filePath);
+            }
         }
 
         public static bool TryCleanDirectory(string tempProjectPath)
@@ -60,6 +76,15 @@ namespace Tests
 
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
                 Assert.AreEqual(zip.a.value.Guid, zip.b.value.Guid, $"Command guids in recording should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
+        }
+
+        public static void ModifyScriptAsset(IAssetManager AssetManager, string path)
+        {
+            var asset = AssetManager.GetAsset(path);
+            var value = asset.Importer.Load<string>();
+            //asset.Importer.Value = value.Replace("public int SomeInt { get; set; } = 5;", "public int SomeInt { get; set; } = 5; \n public int SomeInt2 { get; set; } = 10;");
+            asset.Importer.Value += "// Comment";
+            asset.Importer.SaveAsset();
         }
 
         public static void CheckThatPtrsAreNotSame(Recording s1, Recording s2)
