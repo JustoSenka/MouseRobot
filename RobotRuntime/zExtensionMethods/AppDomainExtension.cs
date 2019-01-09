@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotRuntime.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,10 +14,23 @@ namespace RobotRuntime
             return AppDomain.GetAssemblies().Where(a => a.FullName.Contains("Robot"));
         }
 
-        public static IEnumerable<Type> GetAllTypesWhichImplementInterface(this AppDomain AppDomain, Type interfaceType)
+        // Really bad hack, needed to get user assemblies without getting all trashed assemblies from previous compilations
+        // This field is set by PropertyDependencyProvider using reflection on name
+        // DO NOT RENAME
+        private static IScriptLoader ScriptLoader { get; set; }
+
+        [Obsolete("This method will lead to more mistakes than goods. Be aware that AppDomain will contain out of date" +
+            " user assemblies. Better use GetNativeAssemblies or GetUserAssemblies from ScriptLoader")]
+        public static IEnumerable<Assembly> GetAllAssemblies(this AppDomain AppDomain)
         {
-            return AppDomain.GetAssemblies().SelectMany(s => s.GetTypes()).Where(
-                p => interfaceType.IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+            if (ScriptLoader != null)
+            {
+                var userAssemblies = ScriptLoader.IterateUserAssemblies(a => a);
+                var nativeAssemblies = AppDomain.GetNativeAssemblies();
+                return nativeAssemblies.Concat(userAssemblies);
+            }
+            else
+                return AppDomain.GetAssemblies();
         }
 
         public static IEnumerable<Type> GetAllTypesWhichImplementInterface<T>(this T assemblies, Type interfaceType) where T : IEnumerable<Assembly>

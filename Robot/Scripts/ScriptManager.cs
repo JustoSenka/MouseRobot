@@ -16,6 +16,11 @@ namespace Robot.Scripts
     /// </summary>
     public class ScriptManager : IScriptManager
     {
+        public bool AllowCompilation { get; set; } = true;
+        public bool IsCompilingOrReloadingAssemblies { get; private set; }
+
+        private Task<bool> m_LastCompilationTask;
+
         private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
         private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
 
@@ -33,8 +38,6 @@ namespace Robot.Scripts
 
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
-
-            ScriptCompiler.ScriptsRecompiled += OnScriptsRecompiled;
         }
 
         private void OnAssetsModified(IList<string> modifiedAssets)
@@ -44,21 +47,46 @@ namespace Robot.Scripts
 
         public Task<bool> CompileScriptsAndReloadUserDomain()
         {
-            return Task.Run(async () =>
+            var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
+            var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+
+            if (IsCompilingOrReloadingAssemblies)
             {
-                ScriptCompiler.SetOutputPath(CustomAssemblyPath);
+                ScriptCompiler.UpdateCompilationSources(scriptValues.ToArray());
 
-                ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
-                ScriptLoader.UserAssemblyName = CustomAssemblyName;
-                ScriptLoader.DestroyUserAppDomain();
+                // Always return the same task and never create additional tasks, or multiple domain reloads will happen after one compilation
+                // because script compiler also returns always the same task for compilation
+                return m_LastCompilationTask;
+            }
 
-                var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-                var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+            return m_LastCompilationTask = Task.Run(() =>
+            {
+                if (AllowCompilation)
+                {
+                    IsCompilingOrReloadingAssemblies = true;
 
-                return await ScriptCompiler.CompileCode(scriptValues.ToArray());
+                    ScriptCompiler.SetOutputPath(CustomAssemblyPath);
+
+                    ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
+                    ScriptLoader.UserAssemblyName = CustomAssemblyName;
+
+                    var result = ScriptCompiler.CompileCode(scriptValues.ToArray()).Result;
+
+                    if (result)
+                    {
+                        ScriptLoader.DestroyUserAppDomain();
+                        ScriptLoader.CreateUserAppDomain();
+                    }
+
+                    IsCompilingOrReloadingAssemblies = false;
+                    return result;
+                }
+                else
+                    return false;
             });
         }
 
+        // TODO: Not used anymore. Should it be?
         private void OnScriptsRecompiled()
         {
             ScriptLoader.CreateUserAppDomain(); // This also loads the assemblies

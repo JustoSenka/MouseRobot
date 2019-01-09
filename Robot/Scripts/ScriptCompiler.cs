@@ -23,12 +23,14 @@ namespace Robot.Scripts
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
         public event Action ScriptsRecompiled;
-
         public bool IsCompiling { get; private set; } = false;
-        public Task<bool> m_LastCompilationTask;
+
+        private Task<bool> m_LastCompilationTask;
 
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
+
+        private object CompilationLock = new object();
 
         private IProfiler Profiler;
         private IStatusManager StatusManager;
@@ -58,41 +60,50 @@ namespace Robot.Scripts
         public Task<bool> CompileCode(params string[] sources)
         {
             if (IsCompiling)
-            {
-                // If already compiling, save sources for future compilation
-                m_ShouldRecompile = true;
-                m_TempSources = sources;
-                return m_LastCompilationTask;
-            }
+                return UpdateCompilationSources(sources);
 
+            IsCompiling = true;
             return m_LastCompilationTask = Task.Run(() =>
             {
-                IsCompiling = true;
                 return CompileCodeSync(sources);
             });
+        }
+
+        public Task<bool> UpdateCompilationSources(params string[] sources)
+        {
+            if (Logger.AssertIf(!IsCompiling, "Cannot update compilation if not compiling. Might be race condition. Recompile manually"))
+                return m_LastCompilationTask;
+
+            m_ShouldRecompile = true;
+            m_TempSources = sources;
+            return m_LastCompilationTask;
         }
 
         private bool CompileCodeSync(string[] sources)
         {
             StatusManager.Add("ScriptCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
 
-            Profiler.Start("ScriptCompiler_CompileCode");
-
-            CompilerParams.ReferencedAssemblies.Clear();
-            CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultRobotReferences);
-            CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultCompilerReferences);
-
-            var settings = SettingsManager.GetSettings<CompilerSettings>();
-            if (settings != null)
+            CompilerResults results = null;
+            lock (CompilationLock)
             {
-                if (settings.HasValidReferences)
-                    CompilerParams.ReferencedAssemblies.AddRange(settings.NonEmptyCompilerReferences);
-            }
-            else
-                Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
+                Profiler.Start("ScriptCompiler_CompileCode");
 
-            var results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
-            Profiler.Stop("ScriptCompiler_CompileCode");
+                CompilerParams.ReferencedAssemblies.Clear();
+                CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultRobotReferences);
+                CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultCompilerReferences);
+
+                var settings = SettingsManager.GetSettings<CompilerSettings>();
+                if (settings != null)
+                {
+                    if (settings.HasValidReferences)
+                        CompilerParams.ReferencedAssemblies.AddRange(settings.NonEmptyCompilerReferences);
+                }
+                else
+                    Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
+
+                results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
+                Profiler.Stop("ScriptCompiler_CompileCode");
+            }
 
             // This might happen if scripts are modified before compilation is finished
             if (m_ShouldRecompile)

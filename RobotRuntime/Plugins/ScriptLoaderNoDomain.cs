@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel;
 
 namespace RobotRuntime.Scripts
 {
@@ -34,6 +33,7 @@ namespace RobotRuntime.Scripts
 
         public void CreateUserAppDomain()
         {
+            // TODO: Lock here to prevent race? Lock on DestroyUserDomain also?
             Profiler.Start("ScriptLoader.ReloadAppDomain");
 
             if (m_Assemblies.Count != 0)
@@ -41,6 +41,8 @@ namespace RobotRuntime.Scripts
 
             LoadUserAssemblies();
             UserDomainReloaded?.Invoke();
+
+            Logger.Log(LogType.Log, "User assemblies successfully loaded.");
 
             Profiler.Stop("ScriptLoader.ReloadAppDomain");
         }

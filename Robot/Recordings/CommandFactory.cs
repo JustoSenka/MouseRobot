@@ -90,7 +90,7 @@ namespace Robot.Recordings
             else
             {
                 Logger.Logi(LogType.Error, "Command with name '" + commandName + "' not found.", "Returning first command on the list.");
-                return (Command)Activator.CreateInstance(typeof(CommandMove));
+                return new CommandSleep(0);
             }
         }
 

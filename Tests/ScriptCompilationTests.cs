@@ -1,14 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Robot;
-using RobotRuntime;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
-using System.IO;
-using Unity;
-using RobotRuntime.Utils;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
+using RobotRuntime.Utils;
 using System;
+using System.IO;
+using Unity;
 
 namespace Tests
 {
@@ -51,8 +51,7 @@ namespace Tests
         [TestCleanup]
         public void Cleanup()
         {
-            AssetManager.Refresh();
-            Sync.WaitFor(() => !ScriptCompiler.IsCompiling);
+            Sync.WaitFor(() => !ScriptManager.IsCompilingOrReloadingAssemblies);
             TestBase.TryCleanDirectory(TempProjectPath);
         }
 
@@ -60,7 +59,7 @@ namespace Tests
         public void ScriptTemplates_ShouldNotHave_CompilationErrors()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-            Sync.WaitFor(() => !ScriptCompiler.IsCompiling);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var compileSucceeded = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
 
@@ -71,7 +70,7 @@ namespace Tests
         public void CommandFactory_CanCreate_CustomCommand()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-            Sync.WaitFor(() => !ScriptCompiler.IsCompiling);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var command = CommandFactory.Create(k_CustomCommand);
             Assert.AreEqual(k_CustomCommand, command.Name, "Command names differ");
@@ -83,7 +82,7 @@ namespace Tests
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-            
+
             var oldCommandType = CommandFactory.Create(k_CustomCommand).GetType();
 
             TestBase.ModifyScriptAsset(AssetManager, "Scripts\\CustomCommand.cs");
@@ -115,6 +114,8 @@ namespace Tests
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint();
 
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             var oldRec = HierarchyManager.NewRecording();
@@ -152,9 +153,75 @@ namespace Tests
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            CommandFactory.NewUserCommands += () => Console.WriteLine("New Commands Appeared");
+
+            SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint();
 
             var testFixture = TestFixtureManager.NewTestFixture();
             var oldCommand = CommandFactory.Create(k_CustomCommand);
+            testFixture.Setup.AddCommand(oldCommand);
+
+            var testPath = Path.Combine(Paths.TestsPath, "test.mrt");
+            TestFixtureManager.SaveTestFixture(testFixture, testPath);
+
+            var newTestFixture = new Asset(testPath).Importer.Load<LightTestFixture>();
+            var newCommand = newTestFixture.Setup.Commands.GetChild(0).value;
+
+            Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");
+        }
+
+        [TestMethod]
+        public void CustomCommand_CreatedFromFactory_AlwaysHasSameType()
+        {
+            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var testFixture = TestFixtureManager.NewTestFixture();
+            var c1 = CommandFactory.Create(k_CustomCommand);
+            var c2 = CommandFactory.Create(k_CustomCommand);
+
+            Assert.AreEqual(c1.GetType(), c2.GetType(), "CommandFactory should always give same type commands");
+        }
+
+        [TestMethod]
+        public void CustomCommand_KeepsItsType_WhileBeingSavedInOtherAssets()
+        {
+            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint();
+
+            var testFixture = TestFixtureManager.NewTestFixture();
+            var oldCommand = CommandFactory.Create(k_CustomCommand);
+            testFixture.Setup.AddCommand(oldCommand);
+
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
+
+            var sameCommand = testFixture.Setup.Commands.GetChild(0).value;
+
+            Assert.AreEqual(oldCommand.GetType(), sameCommand.GetType(), "Command type should not change due to it being saved in other assets");
+        }
+
+        private void SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint()
+        {
+            CommandFactory.NewUserCommands += () =>
+            {
+                // This test showed signs of instability once, leaving here for future reference
+                Console.WriteLine("New Commands Appeared. This should never be called, if it is called, we failed to correctly wait for all tasks to finish.");
+                Assert.Fail();
+            };
+        }
+
+        [TestMethod]
+        public void NativeCommand_SerializingAndDeserializing_InsideTestFixture_KeepsItsType()
+        {
+            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var testFixture = TestFixtureManager.NewTestFixture();
+            var oldCommand = CommandFactory.Create(new CommandMove().Name);
             testFixture.Setup.AddCommand(oldCommand);
 
             var testPath = Path.Combine(Paths.TestsPath, "test.mrt");

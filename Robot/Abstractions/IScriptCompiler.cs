@@ -13,6 +13,8 @@ namespace Robot.Abstractions
         bool IsCompiling { get; }
 
         Task<bool> CompileCode(params string[] sources);
+        Task<bool> UpdateCompilationSources(params string[] sources);
+
         void SetOutputPath(string customAssemblyPath);
 
         event Action ScriptsRecompiled;

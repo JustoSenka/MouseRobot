@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
+using RobotEditor.PropertyUtils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
@@ -23,7 +24,9 @@ namespace Tests
             RobotEditor.Program.RegisterInterfaces(container);
 
             container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
+
             Logger.Instance = container.Resolve<ILogger>();
+            container.Resolve<PropertyDependencyProvider>(); // This one is needed, since it provides dependencies to static fields (command Yaml Serialized etc)
 
             return container;
         }
