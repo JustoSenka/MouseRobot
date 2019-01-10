@@ -162,6 +162,12 @@ namespace RobotRuntime
                 ac.Invoke();
             }), null);
         }
+
+        public static string FixLineEndings(this string str)
+        {
+            return Regex.Replace(str, @"\r\n|\n\r|\n|\r", Environment.NewLine);
+            // return Regex.Replace(str, $"{Environment.NewLine} +| +{Environment.NewLine}", Environment.NewLine).Trim();
+        }
     }
 }
 
