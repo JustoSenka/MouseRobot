@@ -10,10 +10,10 @@ using System;
 using System.IO;
 using Unity;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestClass]
-    public class ScriptCompilationTests
+    public class CustomCommandCompilationTests
     {
         private string TempProjectPath => Path.Combine(Path.GetTempPath(), "MProject"/* + Guid.NewGuid().ToString()*/);
 

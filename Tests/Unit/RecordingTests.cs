@@ -1,14 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using RobotRuntime.Commands;
-using Unity;
 using Robot.Abstractions;
-using Unity.Lifetime;
 using RobotRuntime;
-using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
+using System.Linq;
+using Unity;
 
-namespace Tests
+namespace Tests.Unit
 {
     [TestClass]
     public class RecordingTests
@@ -363,7 +361,7 @@ namespace Tests
         public void Guids_AfterCloningRecording_AreSame()
         {
             var s1 = new Recording();
-            var s2 = (Recording) s1.Clone();
+            var s2 = (Recording)s1.Clone();
 
             TestBase.CheckThatGuidsAreSame(s1, s2);
             TestBase.CheckThatPtrsAreNotSame(s1, s2);

@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using RobotRuntime.Perf;
 using System;
+using System.Linq;
 
-namespace Tests
+namespace Tests.Utils
 {
     [TestClass]
     public class LimitedStackTests

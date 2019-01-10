@@ -164,27 +164,26 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AssetGuidManagerTests.cs" />
+    <Compile Include="Integration\AssetGuidManagerTests.cs" />
     <Compile Include="Base\Sync.cs" />
-    <Compile Include="ScriptCompilationTests.cs" />
+    <Compile Include="Integration\CustomCommandCompilationTests.cs" />
     <Compile Include="Base\TestBase.cs" />
     <Compile Include="Base\TestData.cs" />
-    <Compile Include="DteTests.cs" />
-    <Compile Include="HierarchyManagerTests.cs" />
-    <Compile Include="TestRunnerManagerTests.cs" />
-    <Compile Include="TestFixtureTests.cs" />
+    <Compile Include="Unit\HierarchyManagerTests.cs" />
+    <Compile Include="Integration\TestRunnerManagerTests.cs" />
+    <Compile Include="Integration\TestFixtureTests.cs" />
     <Compile Include="Fakes\FakeLogger.cs" />
-    <Compile Include="PerformanceTests.cs" />
-    <Compile Include="AssetTests.cs" />
-    <Compile Include="GraphicsTests.cs" />
-    <Compile Include="LinkedTreeTests.cs" />
-    <Compile Include="LimitedStackTests.cs" />
-    <Compile Include="ListExtensionTests.cs" />
-    <Compile Include="ExtensionMethodsTests.cs" />
+    <Compile Include="Performance\PerformanceTests.cs" />
+    <Compile Include="Integration\AssetTests.cs" />
+    <Compile Include="Graphics\GraphicsTests.cs" />
+    <Compile Include="Utils\LinkedTreeTests.cs" />
+    <Compile Include="Utils\LimitedStackTests.cs" />
+    <Compile Include="Utils\ListExtensionTests.cs" />
+    <Compile Include="Utils\ExtensionMethodsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordingTests.cs" />
-    <Compile Include="StatusManagerTests.cs" />
-    <Compile Include="YamlSerializerTests.cs" />
+    <Compile Include="Unit\RecordingTests.cs" />
+    <Compile Include="Unit\StatusManagerTests.cs" />
+    <Compile Include="Unit\YamlSerializerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RobotEditor\RobotEditor.csproj">
@@ -204,6 +203,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -3,7 +3,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using System.Drawing;
 
-namespace Tests
+namespace Tests.Unit
 {
     [TestClass]
     public class StatusManagerTests
@@ -11,9 +11,9 @@ namespace Tests
         IStatusManager StatusManager;
 
         Status defaultStatus;
-        Status statusA = new Status("a" ,"a", Color.Blue);
-        Status statusB = new Status("b" ,"b", Color.Blue);
-        Status statusC = new Status("c" ,"c", Color.Blue);
+        Status statusA = new Status("a", "a", Color.Blue);
+        Status statusB = new Status("b", "b", Color.Blue);
+        Status statusC = new Status("c", "c", Color.Blue);
 
         [TestInitialize]
         public void CreateStatusManager()

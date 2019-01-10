@@ -1,18 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Robot;
-using System.IO;
 using Robot.Abstractions;
-using Unity;
-using RobotRuntime.Utils;
-using Unity.Lifetime;
-using RobotRuntime.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Tests;
-using RobotRuntime.Recordings;
-using System.Linq;
+using RobotRuntime.Abstractions;
 using RobotRuntime.IO;
+using RobotRuntime.Recordings;
+using RobotRuntime.Tests;
+using RobotRuntime.Utils;
+using System.IO;
+using System.Linq;
+using Unity;
+using Unity.Lifetime;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestClass]
     public class TestRunnerManagerTests

@@ -1,17 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Robot.Recordings;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
-using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Tests
+namespace Tests.Unit
 {
     [TestClass]
     public class YamlSerializerTests

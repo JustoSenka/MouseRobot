@@ -1,9 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Emgu.CV;
-using RobotRuntime.Graphics;
-using Robot;
 
-namespace Tests
+namespace Tests.Graphics
 {
     [TestClass]
     public class GraphicsTests
@@ -11,6 +8,8 @@ namespace Tests
         [TestMethod]
         public void FindImageInsideAnotherImage()
         {
+            // ScreenShot and smaller screenshot
+
             /*
             MouseRobot.ForceInit();
             AssetManager.Refresh();

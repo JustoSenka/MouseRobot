@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using Unity;
 
-namespace Tests
+namespace Tests.Unit
 {
     [TestClass]
     public class HierarchyManagerTests

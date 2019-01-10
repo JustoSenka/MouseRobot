@@ -1,17 +1,16 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Robot;
-using Robot.Recordings;
-using System.IO;
 using Robot.Abstractions;
-using RobotRuntime.Abstractions;
-using Unity;
-using RobotRuntime.Utils;
-using Unity.Lifetime;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
+using RobotRuntime.Utils;
+using System.IO;
+using System.Linq;
+using Unity;
+using Unity.Lifetime;
 
-namespace Tests
+namespace Tests.Performance
 {
     [TestClass]
     public class PerformanceTests

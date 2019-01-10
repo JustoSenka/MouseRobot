@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RobotRuntime;
 
-namespace Tests
+namespace Tests.Utils
 {
     [TestClass]
     public class LinkedTreeTests

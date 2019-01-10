@@ -1,19 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Robot;
-using RobotRuntime.Commands;
-using Robot.Recordings;
-using System.IO;
 using Robot.Abstractions;
-using Unity;
-using RobotRuntime.Utils;
-using Unity.Lifetime;
-using RobotRuntime.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
+using RobotRuntime.Utils;
 using System;
+using System.IO;
+using System.Linq;
+using Unity;
+using Unity.Lifetime;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestClass]
     public class AssetTests

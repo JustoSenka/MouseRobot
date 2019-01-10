@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Robot;
 using RobotRuntime;
 using System.Collections.Generic;
 
-namespace Tests
+namespace Tests.Utils
 {
     [TestClass]
     public class ListExtensionTests

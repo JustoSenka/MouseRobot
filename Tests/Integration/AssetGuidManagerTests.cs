@@ -1,18 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Robot;
-using Robot.Recordings;
-using System.IO;
-using System;
 using Robot.Abstractions;
-using RobotRuntime.Abstractions;
-using Unity;
-using RobotRuntime.Utils;
-using Unity.Lifetime;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
+using RobotRuntime.Utils;
+using System;
+using System.IO;
+using System.Linq;
+using Unity;
+using Unity.Lifetime;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestClass]
     public class AssetGuidManagerTests
@@ -225,7 +224,7 @@ namespace Tests
         {
             CleanupRecordingsDirectory();
             CleanupMetaDataDirectory();
-            
+
             AssetGuidManager.LoadMetaFiles();
             AssetManager.Refresh();
         }

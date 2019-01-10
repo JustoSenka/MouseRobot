@@ -1,20 +1,18 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using Robot;
-using System.IO;
 using Robot.Abstractions;
-using Unity;
-using RobotRuntime.Utils;
-using Unity.Lifetime;
-using RobotRuntime.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
-using Robot.Tests;
-using RobotRuntime.Commands;
-using System;
+using RobotRuntime.Utils;
+using System.IO;
+using System.Linq;
+using Unity;
+using Unity.Lifetime;
 
-namespace Tests
+namespace Tests.Integration
 {
     [TestClass]
     public class TestFixtureTests
