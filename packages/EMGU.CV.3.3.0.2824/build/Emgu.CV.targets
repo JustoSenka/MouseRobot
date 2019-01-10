@@ -4,8 +4,8 @@
         <EmguLinkTarget>WindowsForms</EmguLinkTarget>
         <EmguBuildX64 Condition="'$(Platform)'=='AnyCPU' OR '$(Platform)'=='x64'">True</EmguBuildX64>
 		<EmguBuildX86 Condition="'$(Platform)'=='AnyCPU' OR '$(Platform)'=='x86'">True</EmguBuildX86>
-        <EmguNativeFileX64>$(MSBuildThisFileDirectory)\x64\cvextern.dll</EmguNativeFileX64>
-		<EmguNativeFileX86>$(MSBuildThisFileDirectory)\x86\cvextern.dll</EmguNativeFileX86>
+        <EmguNativeFileX64>$(MSBuildThisFileDirectory)x64\cvextern.dll</EmguNativeFileX64>
+		<EmguNativeFileX86>$(MSBuildThisFileDirectory)x86\cvextern.dll</EmguNativeFileX86>
 		<EmguErrorMessage Condition="'$(EmguBuildX64)'=='True' AND !Exists('$(EmguNativeFileX86)')">This package do not contain necessary binary for $(EmguLinkTarget). X86 is targeted, but file $(EmguNativeFileX86) is missing.</EmguErrorMessage>
         <EmguDeployMessage Condition="'$(EmguBuildX86)'=='True' AND Exists('$(EmguNativeFileX86)')">$(EmguDeployMessage)x86 </EmguDeployMessage>
         <EmguErrorMessage Condition="'$(EmguBuildX64)'=='True' AND !Exists('$(EmguNativeFileX64)')">This package do not contain necessary binary for $(EmguLinkTarget). X64 is targeted, but file $(EmguNativeFileX64) is missing.</EmguErrorMessage>
