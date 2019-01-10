@@ -232,7 +232,7 @@ namespace RobotEditor
                 return;
 
             m_ScreenPreviewWindow.Preview(asset);
-            if (MouseRobot.IsVisualizationOn)
+            if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
                 FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
         }
 
