@@ -9,6 +9,7 @@ using Robot.Recordings;
 using Robot.Tests;
 using Robot.Assets;
 using Robot.Utils;
+using RobotRuntime.Abstractions;
 
 namespace Robot
 {
@@ -25,6 +26,7 @@ namespace Robot
             Container.RegisterType<ISettingsManager, SettingsManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInputCallbacks, InputCallbacks>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IRuntimeProjectManager, ProjectManager>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<IScriptManager, ScriptManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScriptCompiler, ScriptCompiler>(new ContainerControlledLifetimeManager());

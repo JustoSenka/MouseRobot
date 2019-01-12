@@ -28,7 +28,7 @@ namespace Robot.Settings
         private ILogger Logger;
         private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
+        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager)
         {
             this.Container = Container;
             this.ScriptLoader = ScriptLoader;
@@ -41,8 +41,12 @@ namespace Robot.Settings
             CreateIfNotExist(Paths.LocalAppdataPath);
 
             CollectDefaultNativeSettings();
-            CollectDefaultUserSettings();
 
+            ProjectManager.NewProjectOpened += OnNewProjectOpened;
+        }
+
+        private void OnNewProjectOpened(string obj)
+        {
             RestoreSettings();
         }
 
@@ -70,6 +74,8 @@ namespace Robot.Settings
         {
             var types = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(BaseSettings));
             m_NativeSettings = types.Select(t => Container.Resolve(t)).Cast<BaseSettings>().ToArray();
+
+            m_Settings = m_NativeSettings;
         }
 
         private void CollectDefaultUserSettings()
@@ -94,7 +100,7 @@ namespace Robot.Settings
 
         public void RestoreSettings()
         {
-            for(int i = 0; i < m_Settings.Length; i++)
+            for (int i = 0; i < m_Settings.Length; i++)
                 m_Settings[i] = RestoreSettingFromFile(m_Settings[i]);
 
             SettingsRestored?.Invoke();
@@ -102,7 +108,7 @@ namespace Robot.Settings
 
         public T GetSettings<T>() where T : BaseSettings
         {
-            return (T) GetSettingsFromType(typeof(T));
+            return (T)GetSettingsFromType(typeof(T));
         }
 
         public BaseSettings GetSettingsFromType(Type type)
@@ -138,9 +144,9 @@ namespace Robot.Settings
 
                 // If deserializing from file fails, restore defaults
                 if (newSettings == null)
-                    newSettings = (T) Container.Resolve(settings.GetType());
+                    newSettings = (T)Container.Resolve(settings.GetType());
 
-                return (T) newSettings;
+                return (T)newSettings;
             }
             else
                 return settings;

@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 
 namespace RobotRuntime.Abstractions
 {
     public interface IScriptLoader
     {
-        string UserAssemblyName { get; set; }
-        string UserAssemblyPath { get; set; }
+        string UserAssemblyName { get; }
+        string UserAssemblyPath { get; }
 
         void DestroyUserAppDomain();
         void CreateUserAppDomain();

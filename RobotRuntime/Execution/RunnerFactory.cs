@@ -36,7 +36,6 @@ namespace RobotRuntime.Execution
             ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeRunners();
-            CollectUserRunners();
         }
 
         public void PassDependencies(TestData TestData)

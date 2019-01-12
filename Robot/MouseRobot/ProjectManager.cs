@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.IO;
 using RobotRuntime.Utils;
@@ -9,13 +10,9 @@ using System.Linq;
 
 namespace Robot
 {
-    public class ProjectManager : IProjectManager
+    public class ProjectManager : RuntimeProjectManager, IProjectManager, IRuntimeProjectManager
     {
-        public string ProjectName => Path.GetFileName(Environment.CurrentDirectory);
-
         public IList<string> LastKnownProjectPaths { get; private set; }
-
-        public event Action<string> NewProjectOpened;
 
         private ObjectIO m_Serializer = new JsonObjectIO();
 
@@ -44,7 +41,7 @@ namespace Robot
             SaveSettings();
         }
 
-        public void InitProject(string path)
+        public override void InitProject(string path)
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -62,7 +59,7 @@ namespace Robot
             AssetGuidManager.LoadMetaFiles();
             AssetManager.Refresh();
 
-            NewProjectOpened?.Invoke(path);
+            base.OnNewProjectOpened(path);
         }
 
         public bool IsPathAProject(string path)

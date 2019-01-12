@@ -28,7 +28,6 @@ namespace RobotEditor.Windows
             this.Logger = Logger;
 
             CollectNativePainters();
-            CollectUserPainters();
             SubscribeToAllPainters();
 
             ScriptLoader.UserDomainReloaded += OnDomainReloaded;
@@ -53,7 +52,7 @@ namespace RobotEditor.Windows
 
         public void SubscribeToAllPainters()
         {
-            var newPainters = m_NativePainters.Concat(m_UserPainters).ToArray();
+            var newPainters = (m_UserPainters != null) ? m_NativePainters.Concat(m_UserPainters).ToArray() : m_NativePainters;
 
             if (m_Painters != null)
             {

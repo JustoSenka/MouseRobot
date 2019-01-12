@@ -181,6 +181,7 @@
   <ItemGroup>
     <Compile Include="Abstractions\ILogger.cs" />
     <Compile Include="Abstractions\IRuntimeAssetManager.cs" />
+    <Compile Include="Abstractions\IRuntimeProjectManager.cs" />
     <Compile Include="Assets\ExtensionImporter.cs" />
     <Compile Include="Assets\RuntimeAssetManager.cs" />
     <Compile Include="Assets\AssetGuidManager.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Logging\StaticLogger.cs" />
     <Compile Include="Logging\Status.cs" />
     <Compile Include="Logging\StatusManager.cs" />
+    <Compile Include="MouseRobot\RuntimeProjectManager.cs" />
     <Compile Include="Perf\LimitedStack.cs" />
     <Compile Include="Perf\Profiler.cs" />
     <Compile Include="Perf\ProfilerNode.cs" />

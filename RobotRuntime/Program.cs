@@ -22,10 +22,12 @@ namespace RobotRuntime
             Environment.CurrentDirectory = args[0];
 
             var container = new UnityContainer();
-            container.RegisterInstance(typeof(IUnityContainer), container, new ContainerControlledLifetimeManager());
             RegisterInterfaces(container);
 
             Logger.Instance = container.Resolve<ILogger>();
+
+            var projectManager = container.Resolve<IRuntimeProjectManager>();
+            projectManager.InitProject(args[0]);
 
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.StartRecording(args[0], args[1]);
@@ -45,6 +47,7 @@ namespace RobotRuntime
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IScriptLoader, ScriptLoaderNoDomain>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IRuntimeProjectManager, RuntimeProjectManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
         }

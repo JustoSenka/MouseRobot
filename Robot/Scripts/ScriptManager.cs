@@ -21,8 +21,8 @@ namespace Robot.Scripts
 
         private Task<bool> m_LastCompilationTask;
 
-        private string CustomAssemblyName { get { return "CustomAssembly.dll"; } }
-        private string CustomAssemblyPath { get { return Path.Combine(Paths.MetadataPath, CustomAssemblyName); } }
+        private string CustomAssemblyName { get { return ScriptLoader.UserAssemblyName; } }
+        private string CustomAssemblyPath { get { return ScriptLoader.UserAssemblyPath; } }
 
         private IScriptCompiler ScriptCompiler;
         private IScriptLoader ScriptLoader;
@@ -66,9 +66,6 @@ namespace Robot.Scripts
                     IsCompilingOrReloadingAssemblies = true;
 
                     ScriptCompiler.SetOutputPath(CustomAssemblyPath);
-
-                    ScriptLoader.UserAssemblyPath = CustomAssemblyPath;
-                    ScriptLoader.UserAssemblyName = CustomAssemblyName;
 
                     var result = ScriptCompiler.CompileCode(scriptValues.ToArray()).Result;
 

@@ -51,12 +51,6 @@ namespace RobotRuntime
 
         private void InitializeProject(string projectPath)
         {
-            Environment.CurrentDirectory = projectPath;
-
-            ScriptLoader.UserAssemblyName = "CustomAssembly.dll";
-            ScriptLoader.UserAssemblyPath = Path.Combine(Paths.MetadataPath, ScriptLoader.UserAssemblyName);
-            ScriptLoader.CreateUserAppDomain();
-
             RuntimeSettings.LoadSettingsHardcoded();
         }
 

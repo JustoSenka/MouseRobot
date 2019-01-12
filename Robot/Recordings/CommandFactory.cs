@@ -43,7 +43,6 @@ namespace Robot.Recordings
             ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeCommands();
-            CollectUserCommands();
         }
 
         private void OnDomainReloaded()

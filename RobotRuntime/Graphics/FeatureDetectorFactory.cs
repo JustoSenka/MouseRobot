@@ -33,7 +33,6 @@ namespace RobotRuntime.Graphics
             ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
             CollectNativeDetectors();
-            CollectUserDetectors();
         }
 
         private void OnDomainReloaded()
