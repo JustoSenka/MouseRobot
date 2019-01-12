@@ -1,8 +1,9 @@
 ﻿using RobotRuntime;
 using System;
 using RobotRuntime.Tests;
+using RobotRuntime.Execution;
 
-namespace CustomNamespace
+namespace RobotEditor.Resources.ScriptTemplates
 {
     [Serializable]
     // [RunnerType(typeof(CustomCommandRunner))] // Can also use already implemented types: SimpleCommandRunner etc.

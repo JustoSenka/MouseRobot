@@ -68,9 +68,10 @@ namespace Robot.Settings
         {
             for (int i = 0; i < TypeCollector.AllObjects.Count(); i++)
             {
-                // Will not work
-                // Need a mechanism to replace all props or to replace whole objects
-                // TypeCollector.AllObjects.ElementAt(i) = RestoreSettingFromFile(TypeCollector.AllObjects.ElementAt(i));
+                var currentSetting = TypeCollector.AllObjects.ElementAt(i);
+                var newSetting = RestoreSettingFromFile(TypeCollector.AllObjects.ElementAt(i));
+                currentSetting.CopyAllFields(newSetting);
+                currentSetting.CopyAllProperties(newSetting);
             }
 
             SettingsRestored?.Invoke();

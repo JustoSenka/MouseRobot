@@ -3,11 +3,11 @@ using System.Reflection;
 
 namespace RobotRuntime.Utils
 {
-    public static class CommandExtension
+    public static class ReflectionExtension
     {
         private const BindingFlags k_BindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
-        public static void CopyAllProperties(this Command dest, Command source)
+        public static void CopyAllProperties<T>(this T dest, T source) where T : class
         {
             var destProps = dest.GetType().GetProperties(k_BindingFlags);
             var sourceProps = source.GetType().GetProperties(k_BindingFlags);
@@ -22,7 +22,7 @@ namespace RobotRuntime.Utils
             }
         }
 
-        public static void CopyAllFields(this Command dest, Command source)
+        public static void CopyAllFields<T>(this T dest, T source) where T : class
         {
             var destFields = dest.GetType().GetFields(k_BindingFlags);
             var sourceFields = source.GetType().GetFields(k_BindingFlags);
@@ -37,7 +37,7 @@ namespace RobotRuntime.Utils
             }
         }
 
-        public static void CopyPropertyFromIfExist(this Command dest, Command source, string name)
+        public static void CopyPropertyFromIfExist<T>(this T dest, T source, string name) where T : class
         {
             var destProp = dest.GetType().GetProperty(name, k_BindingFlags);
             var sourceProp = source.GetType().GetProperty(name, k_BindingFlags);
@@ -48,25 +48,25 @@ namespace RobotRuntime.Utils
             }
         }
 
-        public static void SetPropertyIfExist(this Command dest, string name, object value)
+        public static void SetPropertyIfExist<T>(this T dest, string name, object value) where T : class
         {
             var destProp = dest.GetType().GetProperty(name, k_BindingFlags);
             destProp?.SetValue(dest, value);
         }
 
-        public static object GetPropertyIfExist(this Command source, string name)
+        public static object GetPropertyIfExist<T>(this T source, string name) where T : class
         {
             var prop = source.GetType().GetProperty(name, k_BindingFlags);
             return prop != null ? prop.GetValue(source) : null;
         }
 
-        public static void SetFieldIfExist(this Command dest, string name, object value)
+        public static void SetFieldIfExist<T>(this T dest, string name, object value) where T : class
         {
             var destField = dest.GetType().GetField(name, k_BindingFlags);
             destField?.SetValue(dest, value);
         }
 
-        public static object GetFieldIfExist(this Command source, string name)
+        public static object GetFieldIfExist<T>(this T source, string name) where T : class
         {
             var field = source.GetType().GetField(name, k_BindingFlags);
             return field != null ? field.GetValue(source) : null;

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
-using Unity.Attributes;
 
 namespace RobotRuntime.Scripts
 {
@@ -48,10 +47,14 @@ namespace RobotRuntime.Scripts
         protected override void CollectUserTypes()
         {
             base.CollectUserTypes();
-            m_UserObjects = base.UserTypes.TryResolveTypes<T>(Container, Logger).ToArray();
 
-            m_AllObjects = m_NativeObjects.Concat(m_UserObjects).ToArray();
-            BuildTypeObjectMap();
+            if (Container != null)
+            {
+                m_UserObjects = base.UserTypes.TryResolveTypes<T>(Container, Logger).ToArray();
+
+                m_AllObjects = m_NativeObjects.Concat(m_UserObjects).ToArray();
+                BuildTypeObjectMap();
+            }
         }
 
         private void BuildTypeObjectMap()
