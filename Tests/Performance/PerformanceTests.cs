@@ -50,7 +50,7 @@ namespace Tests.Performance
             var timeTaken = Profiler.CopyNodes()[name][0].Time;
             System.Diagnostics.Debug.WriteLine("Asset Refresh on 100 entries took: " + timeTaken + " ms.");
 
-            Assert.IsTrue(timeTaken < 80, "This test took 40% longer than usual");
+            Assert.IsTrue(timeTaken < 100, "This test took 50% longer than usual");
         }
 
         [TestMethod]

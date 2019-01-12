@@ -19,9 +19,11 @@ namespace Robot
         private const string k_FileName = "LastKnownProjectPaths.config";
         private string FilePath { get { return Path.Combine(Paths.RoamingAppdataPath, k_FileName); } }
 
+        private IAssetManager AssetManager;
         private IAssetGuidManager AssetGuidManager;
-        public ProjectManager(IAssetGuidManager AssetGuidManager)
+        public ProjectManager(IAssetManager AssetManager, IAssetGuidManager AssetGuidManager)
         {
+            this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
 
             RestoreAndRemovePathsOfDeletedProjects();
