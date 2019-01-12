@@ -15,39 +15,30 @@ namespace Robot.Settings
 {
     public class SettingsManager : ISettingsManager
     {
-        public IEnumerable<BaseSettings> Settings { get { return m_Settings; } }
+        public IEnumerable<BaseSettings> Settings { get { return TypeCollector.AllObjects; } }
 
         public event Action SettingsRestored;
-
-        private BaseSettings[] m_NativeSettings;
-        private BaseSettings[] m_UserSettings;
-        private BaseSettings[] m_Settings;
 
         private ObjectIO m_Serializer = new JsonObjectIO();
 
         private ILogger Logger;
         private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager)
+        private ICustomTypeObjectCollector<BaseSettings> TypeCollector;
+        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager, ICustomTypeObjectCollector<BaseSettings> TypeCollector)
         {
             this.Container = Container;
             this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
+            this.TypeCollector = TypeCollector;
 
-            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
             ScriptLoader.UserDomainReloading += OnDomainReloading;
 
             CreateIfNotExist(Paths.RoamingAppdataPath);
             CreateIfNotExist(Paths.LocalAppdataPath);
-
-            CollectDefaultNativeSettings();
-
-            ProjectManager.NewProjectOpened += OnNewProjectOpened;
-        }
-
-        private void OnNewProjectOpened(string obj)
-        {
-            RestoreSettings();
+            
+            TypeCollector.NewTypesAppeared += () => RestoreSettings();
+            ProjectManager.NewProjectOpened += (str) => RestoreSettings();
         }
 
         private void OnDomainReloading()
@@ -56,35 +47,10 @@ namespace Robot.Settings
             SaveSettings();
         }
 
-        private void OnDomainReloaded()
-        {
-            // TODO: Optimize, we only need user settings to be restored
-            CollectDefaultUserSettings();
-            RestoreSettings();
-        }
-
         public void RestoreDefaults()
         {
-            CollectDefaultNativeSettings();
-            CollectDefaultUserSettings();
+            TypeCollector.RestoreDefaultObjects();
             SettingsRestored?.Invoke();
-        }
-
-        private void CollectDefaultNativeSettings()
-        {
-            var types = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(BaseSettings));
-            m_NativeSettings = types.Select(t => Container.Resolve(t)).Cast<BaseSettings>().ToArray();
-
-            m_Settings = m_NativeSettings;
-        }
-
-        private void CollectDefaultUserSettings()
-        {
-            // DO-DOMAIN: This will not work if assemblies are in different domain
-            var types = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(BaseSettings));
-            m_UserSettings = types.TryResolveTypes(Container, Logger).Cast<BaseSettings>().ToArray();
-
-            m_Settings = m_NativeSettings.Concat(m_UserSettings).ToArray();
         }
 
         ~SettingsManager()
@@ -94,14 +60,18 @@ namespace Robot.Settings
 
         public void SaveSettings()
         {
-            foreach (var s in m_Settings)
+            foreach (var s in TypeCollector.AllObjects)
                 WriteToSettingFile(s);
         }
 
         public void RestoreSettings()
         {
-            for (int i = 0; i < m_Settings.Length; i++)
-                m_Settings[i] = RestoreSettingFromFile(m_Settings[i]);
+            for (int i = 0; i < TypeCollector.AllObjects.Count(); i++)
+            {
+                // Will not work
+                // Need a mechanism to replace all props or to replace whole objects
+                // TypeCollector.AllObjects.ElementAt(i) = RestoreSettingFromFile(TypeCollector.AllObjects.ElementAt(i));
+            }
 
             SettingsRestored?.Invoke();
         }
@@ -113,13 +83,13 @@ namespace Robot.Settings
 
         public BaseSettings GetSettingsFromType(Type type)
         {
-            return m_Settings.FirstOrDefault(s => s.GetType() == type);
+            return TypeCollector.AllObjects.FirstOrDefault(s => s.GetType() == type);
         }
 
         public BaseSettings GetSettingsFromName(string fullTypeName)
         {
             // DO-DOMAIN will not work if types are in different domain
-            return m_Settings.FirstOrDefault(s => s.GetType().FullName == fullTypeName);
+            return TypeCollector.AllObjects.FirstOrDefault(s => s.GetType().FullName == fullTypeName);
         }
 
         private void WriteToSettingFile<T>(T settings) where T : BaseSettings

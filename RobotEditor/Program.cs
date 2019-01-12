@@ -3,11 +3,14 @@ using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotEditor.Editor;
 using RobotEditor.Hierarchy;
+using RobotEditor.Inspector;
 using RobotEditor.PropertyUtils;
 using RobotEditor.Resources.ScriptTemplates;
 using RobotEditor.Windows;
+using RobotEditor.Windows.Base;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Scripts;
 using System;
 using System.Windows.Forms;
 using Unity;
@@ -86,6 +89,9 @@ namespace RobotEditor
             Container.RegisterType<IScriptTemplates, ScriptTemplates>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
+
+            Container.RegisterType<ICustomTypeCollector<CommandProperties>, CustomTypeCollector<CommandProperties>>();
+            Container.RegisterType<ICustomTypeObjectCollector<IPaintOnScreen>, CustomTypeObjectCollector<IPaintOnScreen>>();
         }
     }
 }

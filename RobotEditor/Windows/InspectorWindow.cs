@@ -1,17 +1,17 @@
-﻿using RobotEditor.Inspector;
+﻿using Robot.Recordings;
 using RobotEditor.Abstractions;
+using RobotEditor.Inspector;
+using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
 using RobotRuntime.Abstractions;
-using System;
-using Unity;
-using System.Linq;
 using RobotRuntime.Execution;
-using Robot.Recordings;
-using RobotEditor.Settings;
 using RobotRuntime.Recordings;
+using System;
+using System.Linq;
+using System.Windows.Forms;
+using Unity;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows
 {
@@ -20,47 +20,17 @@ namespace RobotEditor.Windows
         private BaseProperties m_CurrentObject;
         private Command m_OldCommand;
 
-        private Type[] m_NativeDesignerTypes;
-        private Type[] m_UserDesignerTypes;
-        private Type[] m_DesignerTypes;
-
         private new IUnityContainer Container;
-        private IScriptLoader ScriptLoader;
         private ILogger Logger;
-        public InspectorWindow(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
+        private ICustomTypeCollector<CommandProperties> TypeCollector;
+        public InspectorWindow(IUnityContainer Container, ILogger Logger, ICustomTypeCollector<CommandProperties> TypeCollector)
         {
             this.Container = Container;
-            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
+            this.TypeCollector = TypeCollector;
 
             InitializeComponent();
             propertyGrid.SelectedObject = null;
-
-            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
-
-            CollectNativeCommands();
-            CollectUserCommands();
-        }
-
-        private void OnDomainReloaded()
-        {
-            CollectUserCommands();
-
-            // This will break if command is custom command, because recording manager replaces all old instances with newly compiled ones, so pointer type is no good here
-            /*if (m_CurrentObject != null && m_CurrentObject.Command != null)
-                Invoke(new MethodInvoker(() => ShowCommand(m_CurrentObject.Command)));*/
-        }
-
-        private void CollectNativeCommands()
-        {
-            m_NativeDesignerTypes = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(CommandProperties)).ToArray();
-        }
-
-        private void CollectUserCommands()
-        {
-            // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserDesignerTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(CommandProperties)).ToArray();
-            m_DesignerTypes = m_NativeDesignerTypes.Concat(m_UserDesignerTypes).ToArray();
         }
 
         public void ShowObject(object obj, BaseHierarchyManager BaseHierarchyManager = null)
@@ -151,7 +121,7 @@ namespace RobotEditor.Windows
         private Type GetDesignerTypeForCommand(Type commandType)
         {
             var attribute = commandType.GetCustomAttributes(false).OfType<PropertyDesignerTypeAttribute>().FirstOrDefault();
-            var type = attribute != null ? m_DesignerTypes.FirstOrDefault(t => t.Name == attribute.typeName) : null;
+            var type = attribute != null ? TypeCollector.AllTypes.FirstOrDefault(t => t.Name == attribute.typeName) : null;
 
             if (attribute == null) // No attribute, return default without error
             {

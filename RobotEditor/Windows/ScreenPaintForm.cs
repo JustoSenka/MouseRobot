@@ -1,89 +1,59 @@
 ﻿using RobotEditor.Abstractions;
 using RobotEditor.Windows.Base;
+using RobotRuntime.Abstractions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Unity;
-using RobotRuntime;
-using System.Linq;
-using System.Collections.Generic;
-using RobotRuntime.Abstractions;
 
 namespace RobotEditor.Windows
 {
     public class ScreenPaintForm : InvisibleForm, IScreenPaintForm
     {
-        private IPaintOnScreen[] m_NativePainters;
-        private IPaintOnScreen[] m_UserPainters;
-        private IPaintOnScreen[] m_Painters;
-
         private IList<IPaintOnScreen> m_RegisteredPainters = new List<IPaintOnScreen>();
 
-        private new IUnityContainer Container;
-        private IScriptLoader ScriptLoader;
-        private ILogger Logger;
-        public ScreenPaintForm(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger) : base()
+        private IEnumerable<IPaintOnScreen> m_OldPainters;
+
+        private ICustomTypeObjectCollector<IPaintOnScreen> TypeCollector;
+        public ScreenPaintForm(ICustomTypeObjectCollector<IPaintOnScreen> TypeCollector) : base()
         {
-            this.Container = Container;
-            this.ScriptLoader = ScriptLoader;
-            this.Logger = Logger;
+            this.TypeCollector = TypeCollector;
 
-            CollectNativePainters();
-            SubscribeToAllPainters();
-
-            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
+            TypeCollector.NewTypesAppeared += SubscribeToAllPainters;
 
             m_UpdateTimer.Interval = 30;
             m_UpdateTimer.Tick += CallInvalidate;
             m_UpdateTimer.Enabled = true;
         }
 
-        private void CollectNativePainters()
-        {
-            var types = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
-            m_NativePainters = types.Select(t => Container.Resolve(t)).Cast<IPaintOnScreen>().ToArray();
-        }
-
-        private void CollectUserPainters()
-        {
-            // DO-DOMAIN: This will not work if assemblies are in different domain
-            var types = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(IPaintOnScreen));
-            m_UserPainters = types.TryResolveTypes(Container, Logger).Cast<IPaintOnScreen>().ToArray();
-        }
-
         public void SubscribeToAllPainters()
         {
-            var newPainters = (m_UserPainters != null) ? m_NativePainters.Concat(m_UserPainters).ToArray() : m_NativePainters;
-
-            if (m_Painters != null)
+            if (m_OldPainters != null)
             {
-                foreach (var p in m_Painters)
+                foreach (var p in m_OldPainters)
                 {
                     p.StartInvalidateOnTimer -= AddClassToInvalidateList;
                     p.StopInvalidateOnTimer -= RemoveClassFromInvalidateList;
                     p.Invalidate -= Invalidate;
 
-                    if (!newPainters.Contains(p) && m_RegisteredPainters.Contains(p))
+                    if (!TypeCollector.AllObjects.Contains(p) && m_RegisteredPainters.Contains(p))
                         m_RegisteredPainters.Remove(p);
                 }
             }
 
-            m_Painters = newPainters;
+            m_OldPainters = TypeCollector.AllObjects;
 
-            if (m_Painters != null)
+            if (m_OldPainters != null)
             {
-                foreach (var p in m_Painters)
+                foreach (var p in m_OldPainters)
                 {
                     p.StartInvalidateOnTimer += AddClassToInvalidateList;
                     p.StopInvalidateOnTimer += RemoveClassFromInvalidateList;
                     p.Invalidate += Invalidate;
                 }
             }
-        }
 
-        private void OnDomainReloaded()
-        {
-            CollectUserPainters();
-            SubscribeToAllPainters();
             Invalidate();
         }
 
@@ -115,7 +85,7 @@ namespace RobotEditor.Windows
         {
             base.OnPaint(e);
 
-            foreach (var p in m_Painters)
+            foreach (var p in TypeCollector.AllObjects)
                 p.OnPaint(e);
         }
     }

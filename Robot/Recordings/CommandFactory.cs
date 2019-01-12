@@ -6,7 +6,6 @@ using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity;
 
 namespace Robot.Recordings
 {
@@ -25,51 +24,29 @@ namespace Robot.Recordings
 
         public IEnumerable<string> CommandNames { get { return m_CommandNames; } }
 
-        private Type[] m_NativeCommandTypes;
-        private Type[] m_UserCommandTypes;
-
         private string[] m_CommandNames;
         private Dictionary<string, Type> m_CommandTypes;
 
         private ILogger Logger;
-        private IScriptLoader ScriptLoader;
-        private IUnityContainer Container;
-        public CommandFactory(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
+        private readonly ICustomTypeCollector<Command> TypeCollector;
+        public CommandFactory(ILogger Logger, ICustomTypeCollector<Command> TypeCollector)
         {
-            this.Container = Container;
-            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
+            this.TypeCollector = TypeCollector;
 
-            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
-
-            CollectNativeCommands();
-        }
-
-        private void OnDomainReloaded()
-        {
-            CollectUserCommands();
-        }
-
-        private void CollectNativeCommands()
-        {
-            m_NativeCommandTypes = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
+            TypeCollector.NewTypesAppeared += CollectUserCommands;
         }
 
         private void CollectUserCommands()
         {
-            // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserCommandTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(Command)).ToArray();
-
-            var commandTypeArray = m_NativeCommandTypes.Concat(m_UserCommandTypes).ToArray();
-
-            var dummyCommands = commandTypeArray.Select(type => ((Command)Activator.CreateInstance(type)));
+            var dummyCommands = TypeCollector.AllTypes.Select(type => ((Command)Activator.CreateInstance(type))).ToArray();
             m_CommandNames = dummyCommands.Select(c => c.Name).ToArray();
 
             m_CommandTypes = new Dictionary<string, Type>();
             foreach (var command in dummyCommands)
             {
                 if (Logger.AssertIf(m_CommandTypes.ContainsKey(command.Name),
-                    "Command of type '" + command.GetType() + 
+                    "Command of type '" + command.GetType() +
                     "' cannot be added because other command with same name already exists: " + command.Name))
                     continue;
 
@@ -99,7 +76,7 @@ namespace Robot.Recordings
 
             command.CopyAllProperties(oldCommand);
             command.CopyAllFields(oldCommand);
-            
+
             /*
             command.CopyPropertyFromIfExist(oldCommand, k_X);
             command.CopyPropertyFromIfExist(oldCommand, k_Y);
@@ -114,8 +91,7 @@ namespace Robot.Recordings
 
         public bool IsNative(Command command)
         {
-            // DO-DOMAIN: This will not work if command is in other domain
-            return m_NativeCommandTypes.Contains(command.GetType());
+            return TypeCollector.IsNative(command.GetType());
         }
     }
 }

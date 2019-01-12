@@ -7,15 +7,15 @@ namespace RobotRuntime
 {
     public static class ObjectCreationExtension
     {
-        public static IEnumerable<object> TryResolveTypes<T>(this T types, IUnityContainer Container, ILogger Logger) where T : IEnumerable<Type>
+        public static IEnumerable<T> TryResolveTypes<T>(this IEnumerable<Type> types, IUnityContainer Container, ILogger Logger)
         {
-            var list = new List<object>();
+            var list = new List<T>();
 
             foreach (var t in types)
             {
                 try
                 {
-                    var instance = Container.Resolve(t);
+                    var instance = (T) Container.Resolve(t);
                     list.Add(instance);
                 }
                 catch (Exception e)

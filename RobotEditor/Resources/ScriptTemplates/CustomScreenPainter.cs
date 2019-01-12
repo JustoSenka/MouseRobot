@@ -11,7 +11,7 @@ namespace RobotEditor.Resources.ScriptTemplates
         // Constructor can ask for dependencies, IAssetManager, IMouseRobot etc.
         public CustomScreenPainter()
         {
-            Invalidate.Invoke();
+            Invalidate?.Invoke();
         }
 
         // Call invalidate if you want OnPaint method to be called. Unless it won't draw anything.

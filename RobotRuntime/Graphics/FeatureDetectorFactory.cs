@@ -1,5 +1,4 @@
 ﻿using RobotRuntime.Abstractions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
@@ -8,53 +7,17 @@ namespace RobotRuntime.Graphics
 {
     public class FeatureDetectorFactory : IFeatureDetectorFactory
     {
-        public IEnumerable<FeatureDetector> Detectors { get { return m_Detectors; } }
-        public IEnumerable<string> DetectorNames { get { return m_DetectorNames; } }
-
-        private Type[] m_NativeDetectorTypes;
-        private Type[] m_UserDetectorTypes;
-        private Type[] m_DetectorTypes;
-
-        private FeatureDetector[] m_NativeDetectors;
-        private FeatureDetector[] m_UserDetectors;
-        private FeatureDetector[] m_Detectors;
-
-        private string[] m_DetectorNames;
+        public IEnumerable<FeatureDetector> Detectors => TypeCollector.AllObjects;
+        public IEnumerable<string> DetectorNames { get { return TypeCollector.AllObjects.Select(d => d.Name); } }
 
         private ILogger Logger;
-        private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        public FeatureDetectorFactory(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger)
+        private ICustomTypeObjectCollector<FeatureDetector> TypeCollector;
+        public FeatureDetectorFactory(IUnityContainer Container, ILogger Logger, ICustomTypeObjectCollector<FeatureDetector> TypeCollector)
         {
             this.Container = Container;
-            this.ScriptLoader = ScriptLoader;
             this.Logger = Logger;
-
-            ScriptLoader.UserDomainReloaded += OnDomainReloaded;
-
-            CollectNativeDetectors();
-        }
-
-        private void OnDomainReloaded()
-        {
-            CollectUserDetectors();
-        }
-
-        private void CollectNativeDetectors()
-        {
-            m_NativeDetectorTypes = AppDomain.CurrentDomain.GetNativeAssemblies().GetAllTypesWhichImplementInterface(typeof(FeatureDetector)).ToArray();
-            m_NativeDetectors = m_NativeDetectorTypes.Select(t => Container.Resolve(t)).Cast<FeatureDetector>().ToArray();
-        }
-
-        private void CollectUserDetectors()
-        {
-            // DO-DOMAIN: This will not work if assemblies are in different domain
-            m_UserDetectorTypes = ScriptLoader.IterateUserAssemblies(a => a).GetAllTypesWhichImplementInterface(typeof(FeatureDetector)).ToArray();
-            m_UserDetectors = m_UserDetectorTypes.TryResolveTypes(Container, Logger).Cast<FeatureDetector>().ToArray();
-
-            m_DetectorTypes = m_NativeDetectorTypes.Concat(m_UserDetectorTypes).ToArray();
-            m_Detectors = m_NativeDetectors.Concat(m_UserDetectors).ToArray();
-            m_DetectorNames = m_Detectors.Select(d => d.Name).ToArray();
+            this.TypeCollector = TypeCollector;
         }
 
         /// <summary>
@@ -71,17 +34,17 @@ namespace RobotRuntime.Graphics
         public FeatureDetector Create(string Name)
         {
             var detector = FindDetectorOfName(Name);
-            return (FeatureDetector) Container.Resolve(detector.GetType());
+            return (FeatureDetector)Container.Resolve(detector.GetType());
         }
 
         private FeatureDetector FindDetectorOfName(string Name)
         {
-            var detector = m_Detectors.FirstOrDefault(d => d.Name.Equals(Name));
+            var detector = TypeCollector.AllObjects.FirstOrDefault(d => d.Name.Equals(Name));
 
             if (detector == null)
             {
                 Logger.Logi(LogType.Error, "Detector with name '" + Name + "' not found.", "Returning very first detector from the list.");
-                detector = m_Detectors[0];
+                detector = TypeCollector.AllObjects.ElementAt(0);
             }
 
             return detector;

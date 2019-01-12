@@ -249,6 +249,10 @@
     <Compile Include="Abstractions\ITestRunner.cs" />
     <Compile Include="Abstractions\IScriptDomainManager.cs" />
     <Compile Include="Abstractions\IScriptLoader.cs" />
+    <Compile Include="Plugins\CustomTypeObjectCollector.cs" />
+    <Compile Include="Plugins\CustomTypeCollector.cs" />
+    <Compile Include="Abstractions\ICustomTypeCollector.cs" />
+    <Compile Include="Abstractions\ICustomTypeObjectCollector.cs" />
     <Compile Include="Plugins\ScriptDomainManager.cs" />
     <Compile Include="Plugins\ScriptLoader.cs" />
     <Compile Include="Plugins\ScriptLoaderNoDomain.cs" />
