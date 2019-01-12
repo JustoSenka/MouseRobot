@@ -12,8 +12,8 @@ namespace RobotRuntime.Graphics
 
         private ILogger Logger;
         private IUnityContainer Container;
-        private ICustomTypeObjectCollector<FeatureDetector> TypeCollector;
-        public FeatureDetectorFactory(IUnityContainer Container, ILogger Logger, ICustomTypeObjectCollector<FeatureDetector> TypeCollector)
+        private ITypeObjectCollector<FeatureDetector> TypeCollector;
+        public FeatureDetectorFactory(IUnityContainer Container, ILogger Logger, ITypeObjectCollector<FeatureDetector> TypeCollector)
         {
             this.Container = Container;
             this.Logger = Logger;

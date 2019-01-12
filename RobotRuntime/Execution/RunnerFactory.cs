@@ -10,8 +10,8 @@ namespace RobotRuntime.Execution
         private TestData m_TestData;
 
         private ILogger Logger;
-        private ICustomTypeObjectCollector<IRunner> TypeCollector;
-        public RunnerFactory(ILogger Logger, ICustomTypeObjectCollector<IRunner> TypeCollector)
+        private ITypeObjectCollector<IRunner> TypeCollector;
+        public RunnerFactory(ILogger Logger, ITypeObjectCollector<IRunner> TypeCollector)
         {
             this.Logger = Logger;
             this.TypeCollector = TypeCollector;

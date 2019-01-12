@@ -29,7 +29,7 @@ namespace Robot.Scripts
         private readonly IProjectManager ProjectManager;
         private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
-        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, IScriptLoader ScriptManager,
+        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, 
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.AssetManager = AssetManager;

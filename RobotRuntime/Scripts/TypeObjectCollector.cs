@@ -6,7 +6,7 @@ using Unity;
 
 namespace RobotRuntime.Scripts
 {
-    public class CustomTypeObjectCollector<T> : CustomTypeCollector<T>, ICustomTypeObjectCollector<T>, ICustomTypeCollector<T>
+    public class TypeObjectCollector<T> : TypeCollector<T>, ITypeObjectCollector<T>, ITypeCollector<T>
     {
         public IEnumerable<T> AllObjects { get { return m_AllObjects; } }
         public Dictionary<Type, T> TypeObjectMap { get; private set; }
@@ -17,7 +17,7 @@ namespace RobotRuntime.Scripts
 
         private readonly ILogger Logger;
         private readonly IUnityContainer Container;
-        public CustomTypeObjectCollector(IScriptLoader ScriptLoader, ILogger Logger, IUnityContainer Container) : base(ScriptLoader)
+        public TypeObjectCollector(IScriptLoader ScriptLoader, ILogger Logger, IUnityContainer Container) : base(ScriptLoader)
         {
             this.Logger = Logger;
             this.Container = Container;

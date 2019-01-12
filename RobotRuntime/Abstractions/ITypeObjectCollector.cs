@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RobotRuntime.Abstractions
 {
-    public interface ICustomTypeObjectCollector<T> : ICustomTypeCollector<T>
+    public interface ITypeObjectCollector<T> : ITypeCollector<T>
     {
         void RestoreDefaultObjects();
 

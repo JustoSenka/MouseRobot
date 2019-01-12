@@ -28,8 +28,8 @@ namespace Robot.Recordings
         private Dictionary<string, Type> m_CommandTypes;
 
         private ILogger Logger;
-        private readonly ICustomTypeCollector<Command> TypeCollector;
-        public CommandFactory(ILogger Logger, ICustomTypeCollector<Command> TypeCollector)
+        private readonly ITypeCollector<Command> TypeCollector;
+        public CommandFactory(ILogger Logger, ITypeCollector<Command> TypeCollector)
         {
             this.Logger = Logger;
             this.TypeCollector = TypeCollector;

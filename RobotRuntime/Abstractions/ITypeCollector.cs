@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RobotRuntime.Abstractions
 {
-    public interface ICustomTypeCollector<T>
+    public interface ITypeCollector<T>
     {
         IEnumerable<Type> AllTypes { get; }
         IEnumerable<Type> UserTypes { get; }

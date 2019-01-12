@@ -51,11 +51,11 @@ namespace RobotRuntime
             Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<ICustomTypeCollector<Command>, CustomTypeCollector<Command>>();
+            Container.RegisterType<ITypeCollector<Command>, TypeCollector<Command>>();
 
-            Container.RegisterType<ICustomTypeObjectCollector<IRunner>, CustomTypeObjectCollector<IRunner>>();
-            Container.RegisterType<ICustomTypeObjectCollector<FeatureDetector>, CustomTypeObjectCollector<FeatureDetector>>();
-            Container.RegisterType<ICustomTypeObjectCollector<BaseSettings>, CustomTypeObjectCollector<BaseSettings>>();
+            Container.RegisterType<ITypeObjectCollector<IRunner>, TypeObjectCollector<IRunner>>();
+            Container.RegisterType<ITypeObjectCollector<FeatureDetector>, TypeObjectCollector<FeatureDetector>>();
+            Container.RegisterType<ITypeObjectCollector<BaseSettings>, TypeObjectCollector<BaseSettings>>();
         }
     }
 }

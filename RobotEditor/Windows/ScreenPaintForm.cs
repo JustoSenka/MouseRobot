@@ -14,8 +14,8 @@ namespace RobotEditor.Windows
 
         private IEnumerable<IPaintOnScreen> m_OldPainters;
 
-        private ICustomTypeObjectCollector<IPaintOnScreen> TypeCollector;
-        public ScreenPaintForm(ICustomTypeObjectCollector<IPaintOnScreen> TypeCollector) : base()
+        private ITypeObjectCollector<IPaintOnScreen> TypeCollector;
+        public ScreenPaintForm(ITypeObjectCollector<IPaintOnScreen> TypeCollector) : base()
         {
             this.TypeCollector = TypeCollector;
 

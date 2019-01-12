@@ -22,8 +22,8 @@ namespace RobotEditor.Windows
 
         private new IUnityContainer Container;
         private ILogger Logger;
-        private ICustomTypeCollector<CommandProperties> TypeCollector;
-        public InspectorWindow(IUnityContainer Container, ILogger Logger, ICustomTypeCollector<CommandProperties> TypeCollector)
+        private ITypeCollector<CommandProperties> TypeCollector;
+        public InspectorWindow(IUnityContainer Container, ILogger Logger, ITypeCollector<CommandProperties> TypeCollector)
         {
             this.Container = Container;
             this.Logger = Logger;

@@ -90,8 +90,8 @@ namespace RobotEditor
 
             Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
 
-            Container.RegisterType<ICustomTypeCollector<CommandProperties>, CustomTypeCollector<CommandProperties>>();
-            Container.RegisterType<ICustomTypeObjectCollector<IPaintOnScreen>, CustomTypeObjectCollector<IPaintOnScreen>>();
+            Container.RegisterType<ITypeCollector<CommandProperties>, TypeCollector<CommandProperties>>();
+            Container.RegisterType<ITypeObjectCollector<IPaintOnScreen>, TypeObjectCollector<IPaintOnScreen>>();
         }
     }
 }

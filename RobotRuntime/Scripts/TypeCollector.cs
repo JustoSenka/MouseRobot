@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RobotRuntime.Scripts
 {
-    public class CustomTypeCollector<T> : ICustomTypeCollector<T>
+    public class TypeCollector<T> : ITypeCollector<T>
     {
         public IEnumerable<Type> AllTypes { get { return m_AllTypes; } }
         public IEnumerable<Type> UserTypes { get { return m_UserTypes; } }
@@ -17,7 +17,7 @@ namespace RobotRuntime.Scripts
         private Type[] m_AllTypes;
 
         private readonly IScriptLoader ScriptLoader;
-        public CustomTypeCollector(IScriptLoader ScriptLoader)
+        public TypeCollector(IScriptLoader ScriptLoader)
         {
             this.ScriptLoader = ScriptLoader;
 

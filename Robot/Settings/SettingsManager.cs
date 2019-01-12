@@ -24,8 +24,8 @@ namespace Robot.Settings
         private ILogger Logger;
         private IScriptLoader ScriptLoader;
         private IUnityContainer Container;
-        private ICustomTypeObjectCollector<BaseSettings> TypeCollector;
-        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager, ICustomTypeObjectCollector<BaseSettings> TypeCollector)
+        private ITypeObjectCollector<BaseSettings> TypeCollector;
+        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager, ITypeObjectCollector<BaseSettings> TypeCollector)
         {
             this.Container = Container;
             this.ScriptLoader = ScriptLoader;
