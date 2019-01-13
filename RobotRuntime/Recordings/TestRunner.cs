@@ -30,26 +30,29 @@ namespace RobotRuntime
         public event Action<LightTestFixture, Recording> TestPassed;
         public event Action<LightTestFixture, Recording> TestFailed;
 
-        private IAssetGuidManager AssetGuidManager;
-        private IScreenStateThread ScreenStateThread;
-        private IFeatureDetectionThread FeatureDetectionThread;
-        private IRunnerFactory RunnerFactory;
-        private IScriptLoader ScriptLoader;
-        private IRuntimeSettings RuntimeSettings;
-        private IRuntimeAssetManager RuntimeAssetManager;
+        private readonly IAssetGuidManager AssetGuidManager;
+        private readonly IScreenStateThread ScreenStateThread;
+        private readonly IFeatureDetectionThread FeatureDetectionThread;
+        private readonly IRunnerFactory RunnerFactory;
+        private readonly IScriptLoader ScriptLoader;
+        private readonly IRuntimeAssetManager RuntimeAssetManager;
+        private readonly IRuntimeSettings RuntimeSettings;
         public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
-            IRunnerFactory RunnerFactory, IScriptLoader ScriptLoader, IRuntimeSettings RuntimeSettings, IRuntimeAssetManager RuntimeAssetManager)
+            IRunnerFactory RunnerFactory, IScriptLoader ScriptLoader, IRuntimeAssetManager RuntimeAssetManager, IRuntimeSettings RuntimeSettings)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
             this.RunnerFactory = RunnerFactory;
             this.ScriptLoader = ScriptLoader;
-            this.RuntimeSettings = RuntimeSettings;
             this.RuntimeAssetManager = RuntimeAssetManager;
+            this.RuntimeSettings = RuntimeSettings;
         }
 
-        private void InitializeProject(string projectPath)
+        /// <summary>
+        /// This Method should only be called from command line. Editor sets settings on its own
+        /// </summary>
+        public void LoadSettings()
         {
             RuntimeSettings.LoadSettingsHardcoded();
         }
@@ -73,21 +76,10 @@ namespace RobotRuntime
         /// <summary>
         /// This method should solely be used when running from command line
         /// </summary>
-        public void StartRecording(string projectPath, string recordingName)
+        public void StartRecording(string recordingName)
         {
-            InitializeProject(projectPath);
-
             var importer = AssetImporter.FromPath(Path.Combine(Paths.RecordingPath, recordingName) + FileExtensions.RecordingD);
             StartRecording(importer.Load<LightRecording>());
-        }
-
-        /// <summary>
-        /// This method should solely be used when running from command line
-        /// </summary>
-        public void StartTests(string projectPath, string testFilter = "")
-        {
-            InitializeProject(projectPath);
-            StartTests(testFilter);
         }
 
         public void StartRecording(LightRecording lightRecording)

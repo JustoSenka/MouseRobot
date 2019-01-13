@@ -9,6 +9,10 @@ namespace RobotRuntime
         public string ProjectName => Path.GetFileName(Environment.CurrentDirectory);
         public event Action<string> NewProjectOpened;
 
+        public RuntimeProjectManager()
+        {
+        }
+
         public virtual void InitProject(string path)
         {
             Environment.CurrentDirectory = path;

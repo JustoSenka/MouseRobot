@@ -19,9 +19,9 @@ namespace RobotRuntime.Abstractions
         event Action<LightTestFixture, Recording> TestPassed;
         event Action<LightTestFixture, Recording> TestFailed;
 
-        void StartRecording(string projectPath, string recordingName);
-        void StartTests(string projectPath, string testFilter = ".");
+        void LoadSettings();
 
+        void StartRecording(string recordingName);
         void StartRecording(LightRecording lightRecording);
         void StartTests(string testFilter = ".");
 

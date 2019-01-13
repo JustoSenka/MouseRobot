@@ -32,9 +32,8 @@ namespace RobotRuntime.Logging
 
 namespace RobotRuntime
 {
-    [Flags]
     public enum LogType
     {
-        None = 0, Log = 1, Warning = 2, Error = 4, Debug = 8
+        None = 0, Log = 1, Warning, Error, Debug
     }
 }

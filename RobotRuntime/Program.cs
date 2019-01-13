@@ -30,7 +30,8 @@ namespace RobotRuntime
             projectManager.InitProject(args[0]);
 
             var testRunner = container.Resolve<ITestRunner>();
-            testRunner.StartRecording(args[0], args[1]);
+            testRunner.LoadSettings();
+            testRunner.StartRecording(args[1]);
         }
 
 
