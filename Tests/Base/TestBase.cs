@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Unity;
 using Unity.Lifetime;
 
@@ -47,47 +48,45 @@ namespace Tests
             }
         }
 
-        public static bool TryCleanUp()
+        private static Task<bool> CurrentCleanupTast;
+        public static Task<bool> TryCleanUp()
         {
-            return TryCleanDirectory(TempFolderPath);
+            if (CurrentCleanupTast == null || CurrentCleanupTast.IsCompleted)
+                CurrentCleanupTast = TryCleanDirectory(TempFolderPath);
+
+            return CurrentCleanupTast;
         }
 
-        public static bool TryCleanDirectory(string tempProjectPath)
+        public static Task<bool> TryCleanDirectory(string tempProjectPath)
         {
             System.GC.Collect();
             System.GC.WaitForPendingFinalizers();
 
-            if (!Directory.Exists(tempProjectPath))
+            return Task.Run(() =>
+            {
+                if (!Directory.Exists(tempProjectPath))
+                    return true;
+
+                foreach (var path in Directory.GetFiles(tempProjectPath, "*.*", SearchOption.AllDirectories))
+                {
+                    try
+                    {
+                        File.SetAttributes(path, FileAttributes.Normal);
+                        File.Delete(path);
+                    }
+                    catch { }
+                }
+
+                foreach (var dir in Directory.GetDirectories(tempProjectPath))
+                {
+                    try
+                    {
+                        Directory.Delete(dir, true);
+                    }
+                    catch { }
+                }
                 return true;
-
-            foreach (var path in Directory.GetFiles(tempProjectPath, "*.*", SearchOption.AllDirectories))
-            {
-                try
-                {
-                    File.SetAttributes(path, FileAttributes.Normal);
-                    File.Delete(path);
-                }
-                catch { }
-            }
-
-            foreach (var dir in Directory.GetDirectories(tempProjectPath))
-            {
-                try
-                {
-                    Directory.Delete(dir, true);
-                }
-                catch { }
-            }
-
-            try
-            {
-                Directory.Delete(tempProjectPath, true);
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
+            });
         }
 
         public static void CheckThatGuidsAreNotSame(Recording s1, Recording s2)
