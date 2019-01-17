@@ -9,6 +9,7 @@ namespace RobotRuntime.Scripts
     public class TypeObjectCollector<T> : TypeCollector<T>, ITypeObjectCollector<T>, ITypeCollector<T>
     {
         public IEnumerable<T> AllObjects { get { return m_AllObjects; } }
+        public IEnumerable<T> UserObjects { get { return m_UserObjects; } }
         public Dictionary<Type, T> TypeObjectMap { get; private set; }
 
         private T[] m_NativeObjects;
@@ -23,6 +24,7 @@ namespace RobotRuntime.Scripts
             this.Container = Container;
 
             CollectNativeTypes();
+            CollectUserTypes();
         }
 
         public void RestoreDefaultObjects()

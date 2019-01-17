@@ -9,12 +9,14 @@ using RobotRuntime.Perf;
 using RobotRuntime.Scripts;
 using System;
 using RobotRuntime.Logging;
+using Unity.Injection;
+using System.Linq;
 
 namespace RobotRuntime
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             if (args.Length < 2)
                 return;
@@ -31,7 +33,7 @@ namespace RobotRuntime
 
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.LoadSettings();
-            testRunner.StartRecording(args[1]);
+            testRunner.StartRecording(args[1]).Wait();
         }
 
 
@@ -52,11 +54,22 @@ namespace RobotRuntime
             Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<ITypeCollector<Command>, TypeCollector<Command>>();
+            Container.RegisterType(typeof(ITypeCollector<>), typeof(TypeCollector<>));
+            Container.RegisterType(typeof(ITypeObjectCollector<>), typeof(TypeObjectCollector<>));
 
-            Container.RegisterType<ITypeObjectCollector<IRunner>, TypeObjectCollector<IRunner>>();
-            Container.RegisterType<ITypeObjectCollector<FeatureDetector>, TypeObjectCollector<FeatureDetector>>();
-            Container.RegisterType<ITypeObjectCollector<BaseSettings>, TypeObjectCollector<BaseSettings>>();
+            // Kinda optional, will not fail because of integers, guids or booleans in constructors. Not really used currently.
+            // In perfect scenarion, Unity should not try to resolve class which has primitives in constructors
+            RegisterPrimitiveTypes(Container);
+        }
+
+        private static void RegisterPrimitiveTypes(UnityContainer Container)
+        {
+            var allPrimitiveTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.IsPrimitive);
+            foreach (var t in allPrimitiveTypes)
+                Container.RegisterType(t, new InjectionFactory((c) => default));
+
+            Container.RegisterType<Guid>(new InjectionConstructor(Guid.Empty.ToString()));
+            Container.RegisterType<DateTime>(new InjectionConstructor((long)0));
         }
     }
 }

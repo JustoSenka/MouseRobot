@@ -263,6 +263,7 @@
     <Compile Include="Settings\RuntimeSettings.cs" />
     <Compile Include="Tests\LightTestFixture.cs" />
     <Compile Include="Tests\TestData.cs" />
+    <Compile Include="Utils\ProcessUtility.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuid.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuidMap.cs" />
     <Compile Include="zCustomDataTypes\ISimilar.cs" />

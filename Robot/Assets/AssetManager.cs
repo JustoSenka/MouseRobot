@@ -125,20 +125,30 @@ namespace Robot
                 AssetGuidManager.Save();
         }
 
+        /// <summary>
+        /// Asset path must be with an extension, if not, it will not know how to save the asset
+        /// </summary>
         public Asset CreateAsset(object assetValue, string path)
         {
-            path = Paths.GetProjectRelativePath(path);
-            var asset = GetAsset(path);
+            var newPath = Paths.GetProjectRelativePath(path);
+
+            if (newPath.IsEmpty())
+            {
+                Logger.Log(LogType.Error, "Cannot save asset. Given path is invalid: " + path);
+                return null;
+            }
+
+            var asset = GetAsset(newPath);
             if (asset != null)
             {
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
                 asset.Update();
-                AssetUpdated?.Invoke(path);
+                AssetUpdated?.Invoke(newPath);
             }
             else
             {
-                asset = new Asset(path);
+                asset = new Asset(newPath);
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
                 asset.Update();

@@ -8,6 +8,7 @@ namespace RobotRuntime.Abstractions
         void RestoreDefaultObjects();
 
         IEnumerable<T> AllObjects { get; }
+        IEnumerable<T> UserObjects { get; }
         Dictionary<Type, T> TypeObjectMap { get; }
     }
 }

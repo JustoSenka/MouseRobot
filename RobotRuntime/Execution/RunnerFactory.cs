@@ -17,6 +17,7 @@ namespace RobotRuntime.Execution
             this.TypeCollector = TypeCollector;
 
             TypeCollector.NewTypesAppeared += UpdateDependencies;
+            UpdateDependencies();
         }
 
         public void PassDependencies(TestData TestData)

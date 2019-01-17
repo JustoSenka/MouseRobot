@@ -1,24 +1,13 @@
-﻿using Robot.Abstractions;
-using RobotRuntime;
+﻿using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
-using System.IO;
 using System.Linq;
-using Unity;
 
 namespace Tests.Base
 {
     public static class TestData
     {
-        public static string TempProjectPath
-        {
-            get
-            {
-                return Path.GetTempPath() + "\\MProject";
-            }
-        }
-
         public static LightTestFixture LightTestFixture
         {
             get

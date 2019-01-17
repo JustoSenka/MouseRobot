@@ -23,7 +23,7 @@ namespace Robot.Scripts
         public CompilerParameters CompilerParams { get; private set; } = new CompilerParameters();
 
         public event Action ScriptsRecompiled;
-        public bool IsCompiling { get; private set; } = false;
+        public bool IsCompiling => m_LastCompilationTask != null ? !m_LastCompilationTask.IsCompleted : false;
 
         private Task<bool> m_LastCompilationTask;
 
@@ -62,7 +62,6 @@ namespace Robot.Scripts
             if (IsCompiling)
                 return UpdateCompilationSources(sources);
 
-            IsCompiling = true;
             return m_LastCompilationTask = Task.Run(() =>
             {
                 return CompileCodeSync(sources);
@@ -111,8 +110,6 @@ namespace Robot.Scripts
                 m_ShouldRecompile = false;
                 return CompileCodeSync(m_TempSources);
             }
-
-            IsCompiling = false;
 
             if (results.Errors.HasErrors)
             {

@@ -9,6 +9,7 @@ using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Unity;
 using Unity.Lifetime;
 
@@ -16,6 +17,9 @@ namespace Tests
 {
     public static class TestBase
     {
+        public static string TempFolderPath => Path.Combine(Path.GetTempPath(), "MProjects");
+        public static string GenerateProjectPath() => Path.Combine(TempFolderPath, Guid.NewGuid().ToString().Substring(0, 11));
+
         public static IUnityContainer ConstructContainerForTests()
         {
             var container = new UnityContainer();
@@ -45,14 +49,36 @@ namespace Tests
 
         public static bool TryCleanDirectory(string tempProjectPath)
         {
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
+
             if (!Directory.Exists(tempProjectPath))
                 return true;
+
+            foreach (var path in Directory.GetFiles(tempProjectPath, "*.*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.Delete(path);
+                }
+                catch { }
+            }
+
+            foreach (var dir in Directory.GetDirectories(tempProjectPath))
+            {
+                try
+                {
+                    Directory.Delete(dir, true);
+                }
+                catch { }
+            }
 
             try
             {
                 Directory.Delete(tempProjectPath, true);
             }
-            catch
+            catch (Exception e)
             {
                 return false;
             }
@@ -87,6 +113,14 @@ namespace Tests
             var value = asset.Importer.Load<string>();
             //asset.Importer.Value = value.Replace("public int SomeInt { get; set; } = 5;", "public int SomeInt { get; set; } = 5; \n public int SomeInt2 { get; set; } = 10;");
             asset.Importer.Value += "// Comment";
+            asset.Importer.SaveAsset();
+        }
+
+        internal static void ReplaceTextInAsset(IAssetManager AssetManager, string assetPath, string regexFilter, string replacement)
+        {
+            var asset = AssetManager.GetAsset(assetPath);
+            var value = asset.Importer.Load<string>();
+            asset.Importer.Value = Regex.Replace(value, regexFilter, replacement);
             asset.Importer.SaveAsset();
         }
 

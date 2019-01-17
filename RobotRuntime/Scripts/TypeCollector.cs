@@ -23,7 +23,11 @@ namespace RobotRuntime.Scripts
 
             ScriptLoader.UserDomainReloaded += OnDomainReloaded;
 
+            // Callback from the first call will practically do nothing
+            // Since this object is created before the system using it
+            // System will subscribe to TypeCollector only after TypeCollector finishes its constructor
             CollectNativeTypes();
+            CollectUserTypes();
         }
 
         private void OnDomainReloaded()
@@ -48,7 +52,7 @@ namespace RobotRuntime.Scripts
 
         public bool IsNative(Type type)
         {
-            return m_NativeTypes.Contains(type);
+            return (m_NativeTypes != null) ? m_NativeTypes.Contains(type) : false;
         }
     }
 }

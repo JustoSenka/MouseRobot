@@ -16,13 +16,7 @@ namespace Tests.Integration
     [TestClass]
     public class AssetGuidManagerTests
     {
-        private string TempProjectPath
-        {
-            get
-            {
-                return System.IO.Path.GetTempPath() + "MProject";
-            }
-        }
+        private string TempProjectPath;
 
         private const string k_RecordingAPath = "Recordings\\A.mrb";
         private const string k_RecordingBPath = "Recordings\\B.mrb";
@@ -199,6 +193,8 @@ namespace Tests.Integration
         [TestInitialize]
         public void Initialize()
         {
+            TempProjectPath = TestBase.GenerateProjectPath();
+
             var container = new UnityContainer();
             RobotRuntime.Program.RegisterInterfaces(container);
             Robot.Program.RegisterInterfaces(container);

@@ -89,9 +89,6 @@ namespace RobotEditor
             Container.RegisterType<IScriptTemplates, ScriptTemplates>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
-
-            Container.RegisterType<ITypeCollector<CommandProperties>, TypeCollector<CommandProperties>>();
-            Container.RegisterType<ITypeObjectCollector<IPaintOnScreen>, TypeObjectCollector<IPaintOnScreen>>();
         }
     }
 }

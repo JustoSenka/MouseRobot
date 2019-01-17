@@ -35,6 +35,7 @@ namespace Robot.Recordings
             this.TypeCollector = TypeCollector;
 
             TypeCollector.NewTypesAppeared += CollectUserCommands;
+            CollectUserCommands();
         }
 
         private void CollectUserCommands()

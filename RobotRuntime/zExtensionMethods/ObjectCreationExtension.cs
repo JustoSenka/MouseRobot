@@ -13,15 +13,27 @@ namespace RobotRuntime
 
             foreach (var t in types)
             {
+                T instance = default;
+                Exception ex = default;
+
                 try
                 {
-                    var instance = (T) Container.Resolve(t);
-                    list.Add(instance);
+                    instance = (T) Container.Resolve(t);
                 }
                 catch (Exception e)
                 {
-                    Logger.Logi(LogType.Error, "Cannot resolve type: " + t.FullName, "Probably bad constructor. " + e.Message);
+                    ex = e;
+                    try
+                    {
+                        instance = (T) Activator.CreateInstance(t); // if UnityContainer cannot create object, try default ctor
+                    }
+                    catch { } // Probably doesn't have one
                 }
+
+                if (instance != default)
+                    list.Add(instance);
+                else
+                    Logger.Logi(LogType.Error, "Cannot resolve type: " + t.FullName, "Probably bad constructor. " + ex.Message);
             }
 
             return list;

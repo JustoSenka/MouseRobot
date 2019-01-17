@@ -17,13 +17,7 @@ namespace Tests.Integration
     [TestClass]
     public class TestRunnerManagerTests
     {
-        private string TempProjectPath
-        {
-            get
-            {
-                return System.IO.Path.GetTempPath() + "\\MProject";
-            }
-        }
+        private string TempProjectPath;
 
         private const string k_TestAPath = "Tests\\A.mrt";
         private const string k_TestBPath = "Tests\\B.mrt";
@@ -145,6 +139,8 @@ namespace Tests.Integration
         [TestInitialize]
         public void Initialize()
         {
+            TempProjectPath = TestBase.GenerateProjectPath();
+
             var container = new UnityContainer();
             RobotRuntime.Program.RegisterInterfaces(container);
             Robot.Program.RegisterInterfaces(container);

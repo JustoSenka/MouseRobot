@@ -20,6 +20,7 @@ namespace RobotEditor.Windows
             this.TypeCollector = TypeCollector;
 
             TypeCollector.NewTypesAppeared += SubscribeToAllPainters;
+            SubscribeToAllPainters();
 
             m_UpdateTimer.Interval = 30;
             m_UpdateTimer.Tick += CallInvalidate;

@@ -15,7 +15,7 @@ namespace Tests.Integration
     [TestClass]
     public class CustomCommandCompilationTests
     {
-        private string TempProjectPath => Path.Combine(Path.GetTempPath(), "MProject"/* + Guid.NewGuid().ToString()*/);
+        private string TempProjectPath;
 
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
@@ -31,7 +31,7 @@ namespace Tests.Integration
         [TestInitialize]
         public void Initialize()
         {
-            TestBase.TryCleanDirectory(TempProjectPath);
+            TempProjectPath = TestBase.GenerateProjectPath();
 
             var container = TestBase.ConstructContainerForTests();
 

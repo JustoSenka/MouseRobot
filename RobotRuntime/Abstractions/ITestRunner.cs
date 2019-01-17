@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 
@@ -14,16 +15,16 @@ namespace RobotRuntime.Abstractions
         event Action<LightTestFixture> FixtureIsBeingRun;
         event Action<LightTestFixture, Recording> TestIsBeingRun;
 
-        event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
+        event Action<LightTestFixture, Recording> FixtureSpecialRecordingFailed;
         event Action<LightTestFixture, Recording> FixtureSpecialRecordingSucceded;
         event Action<LightTestFixture, Recording> TestPassed;
         event Action<LightTestFixture, Recording> TestFailed;
 
         void LoadSettings();
 
-        void StartRecording(string recordingName);
-        void StartRecording(LightRecording lightRecording);
-        void StartTests(string testFilter = ".");
+        Task StartRecording(string recordingName);
+        Task StartRecording(LightRecording lightRecording);
+        Task StartTests(string testFilter = ".");
 
         void Stop();
     }

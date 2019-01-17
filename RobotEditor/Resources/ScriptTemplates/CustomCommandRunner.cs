@@ -33,8 +33,9 @@ namespace RobotEditor.Resources.ScriptTemplates
 
 			// Callbacks are necessary so hierarchy could highlight currently running command
             m_Callback?.Invoke(command.Guid);
-			
-			// Optional, depends on the commands it can run
+
+            // TODO: RUN METHOD
+            // Optional, depends on the commands it can run
             command.Run(TestData);
         }
     }

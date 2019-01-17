@@ -169,6 +169,9 @@
     <Compile Include="Integration\CustomCommandCompilationTests.cs" />
     <Compile Include="Base\TestBase.cs" />
     <Compile Include="Base\TestData.cs" />
+    <Compile Include="Integration\RuntimeTests.cs" />
+    <Compile Include="Integration\TypeCollectorIntegrationTests.cs" />
+    <Compile Include="Unit\TypeCollectorTests.cs" />
     <Compile Include="Unit\HierarchyManagerTests.cs" />
     <Compile Include="Integration\TestRunnerManagerTests.cs" />
     <Compile Include="Integration\TestFixtureTests.cs" />

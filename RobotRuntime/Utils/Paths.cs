@@ -20,7 +20,7 @@ namespace RobotRuntime.Utils
         public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
         public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
-        public static string ExtensionPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
+        public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
 
         public static string AppName { get { return "MouseRobot"; } }
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }

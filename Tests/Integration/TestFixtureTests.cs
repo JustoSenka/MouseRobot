@@ -17,13 +17,7 @@ namespace Tests.Integration
     [TestClass]
     public class TestFixtureTests
     {
-        private string TempProjectPath
-        {
-            get
-            {
-                return Path.GetTempPath() + "\\MProject";
-            }
-        }
+        private string TempProjectPath;
 
         private const string k_FixtureName = "fixture";
         private const string k_FixturePath = "Tests\\" + k_FixtureName + ".mrt";
@@ -260,6 +254,8 @@ namespace Tests.Integration
         [TestInitialize]
         public void Initialize()
         {
+            TempProjectPath = TestBase.GenerateProjectPath();
+
             Container = new UnityContainer();
             RobotRuntime.Program.RegisterInterfaces(Container);
             Robot.Program.RegisterInterfaces(Container);

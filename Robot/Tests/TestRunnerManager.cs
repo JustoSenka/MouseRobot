@@ -51,7 +51,7 @@ namespace Robot.Tests
             AssetManager.AssetRenamed += AddPathToListForRenaming;
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
 
-            TestRunner.FixtureSpecialScripFailed += OnTestFailed;
+            TestRunner.FixtureSpecialRecordingFailed += OnTestFailed;
             TestRunner.FixtureSpecialRecordingSucceded += OnTestPassed;
             TestRunner.TestFailed += OnTestFailed;
             TestRunner.TestPassed += OnTestPassed;

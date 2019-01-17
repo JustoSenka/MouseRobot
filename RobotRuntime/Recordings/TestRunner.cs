@@ -25,7 +25,7 @@ namespace RobotRuntime
         public event Action<LightTestFixture> FixtureIsBeingRun;
         public event Action<LightTestFixture, Recording> TestIsBeingRun;
 
-        public event Action<LightTestFixture, Recording> FixtureSpecialScripFailed;
+        public event Action<LightTestFixture, Recording> FixtureSpecialRecordingFailed;
         public event Action<LightTestFixture, Recording> FixtureSpecialRecordingSucceded;
         public event Action<LightTestFixture, Recording> TestPassed;
         public event Action<LightTestFixture, Recording> TestFailed;
@@ -76,20 +76,21 @@ namespace RobotRuntime
         /// <summary>
         /// This method should solely be used when running from command line
         /// </summary>
-        public void StartRecording(string recordingName)
+        public Task StartRecording(string recordingName)
         {
+            // TODO: use RuntimeAssetManager here
             var importer = AssetImporter.FromPath(Path.Combine(Paths.RecordingPath, recordingName) + FileExtensions.RecordingD);
-            StartRecording(importer.Load<LightRecording>());
+            return StartRecording(importer.Load<LightRecording>());
         }
 
-        public void StartRecording(LightRecording lightRecording)
+        public Task StartRecording(LightRecording lightRecording)
         {
             InitializeNewRun();
 
             TestData.TestFixture = lightRecording;
             RunnerFactory.PassDependencies(TestData);
 
-            new Thread(delegate ()
+            return Task.Run(() =>
             {
                 Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
 
@@ -100,18 +101,18 @@ namespace RobotRuntime
                 FeatureDetectionThread.Stop();
 
                 TestRunEnd?.Invoke();
-            }).Start();
+            });
         }
 
         /// <summary>
         /// Runs all tests from all test fixtures.
         /// Accepts Regex filter for fixture and test names.
         /// </summary>
-        public void StartTests(string testFilter = ".")
+        public Task StartTests(string testFilter = ".")
         {
             InitializeNewRun();
 
-            new Thread(delegate ()
+            return Task.Run(() =>
             {
                 Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
 
@@ -168,7 +169,7 @@ namespace RobotRuntime
                 FeatureDetectionThread.Stop();
 
                 TestRunEnd?.Invoke();
-            }).Start();
+            });
         }
 
         private void RunRecordingIfNotEmpty(IRunner recordingRunner, LightRecording recording)
@@ -185,7 +186,7 @@ namespace RobotRuntime
             var shouldFailTest = TestData.ShouldFailTest;
 
             if (LightTestFixture.IsSpecialRecording(recording) && shouldFailTest)
-                FixtureSpecialScripFailed?.Invoke(fixture, recording);
+                FixtureSpecialRecordingFailed?.Invoke(fixture, recording);
 
             else if (LightTestFixture.IsSpecialRecording(recording) && !shouldFailTest)
                 FixtureSpecialRecordingSucceded?.Invoke(fixture, recording);

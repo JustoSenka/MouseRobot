@@ -2,6 +2,7 @@
 using RobotRuntime.Tests;
 using System;
 using System.Reflection;
+using Unity.Attributes;
 
 namespace RobotRuntime
 {
@@ -17,6 +18,7 @@ namespace RobotRuntime
 
         public abstract void Run(TestData TestData);
 
+        [InjectionConstructor]
         public Command(Guid guid = default(Guid))
         {
             Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
