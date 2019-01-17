@@ -16,6 +16,20 @@ namespace Tests.Unit
     {
         IHierarchyManager RecordingManager;
 
+        [TestInitialize]
+        public void Initialize()
+        {
+            var container = TestBase.ConstructContainerForTests();
+            var mr = container.Resolve<IMouseRobot>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
+        }
+
         [TestMethod]
         public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
@@ -249,24 +263,6 @@ namespace Tests.Unit
                 foreach (var c in commands)
                     Assert.IsTrue(s.HasRegisteredGuid(c.Guid), $"Command {c.Name} is not registered in recording {s.Name}");
             }
-        }
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            var container = TestBase.ConstructContainerForTests();
-            var mr = container.Resolve<IMouseRobot>();
-            RecordingManager = container.Resolve<IHierarchyManager>();
-        }
-
-        [TestCleanup]
-        public void ResetRecordingManager()
-        {
-            for (int i = RecordingManager.LoadedRecordings.Count - 1; i >= 0; --i)
-            {
-                RecordingManager.RemoveRecording(RecordingManager.LoadedRecordings[i]);
-            }
-            RecordingManager.NewRecording();
         }
     }
 }

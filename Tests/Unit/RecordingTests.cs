@@ -13,6 +13,20 @@ namespace Tests.Unit
     {
         IHierarchyManager RecordingManager;
 
+        [TestInitialize]
+        public void Initialize()
+        {
+            var container = TestBase.ConstructContainerForTests();
+            var mr = container.Resolve<IMouseRobot>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
+        }
+
         [TestMethod]
         public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
@@ -365,24 +379,6 @@ namespace Tests.Unit
 
             TestBase.CheckThatGuidsAreSame(s1, s2);
             TestBase.CheckThatPtrsAreNotSame(s1, s2);
-        }
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            var container = TestBase.ConstructContainerForTests();
-            var mr = container.Resolve<IMouseRobot>();
-            RecordingManager = container.Resolve<IHierarchyManager>();
-        }
-
-        [TestCleanup]
-        public void ResetRecordingManager()
-        {
-            for (int i = RecordingManager.LoadedRecordings.Count - 1; i >= 0; --i)
-            {
-                RecordingManager.RemoveRecording(RecordingManager.LoadedRecordings[i]);
-            }
-            RecordingManager.NewRecording();
         }
     }
 }

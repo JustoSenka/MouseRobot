@@ -5,7 +5,6 @@ using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Settings;
-using System.IO;
 using System.Linq;
 using Unity;
 
@@ -28,14 +27,20 @@ namespace Tests.Integration
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
-            
             Container = TestBase.ConstructContainerForTests();
+
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
             ScriptManager = Container.Resolve<IScriptManager>();
             ScriptTemplates = Container.Resolve<IScriptTemplates>();
 
             ProjectManager.InitProject(TempProjectPath);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
         }
 
         [TestMethod]

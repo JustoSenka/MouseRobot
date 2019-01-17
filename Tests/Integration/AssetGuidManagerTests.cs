@@ -9,7 +9,6 @@ using System;
 using System.IO;
 using System.Linq;
 using Unity;
-using Unity.Lifetime;
 
 namespace Tests.Integration
 {
@@ -24,9 +23,27 @@ namespace Tests.Integration
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
-        IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IAssetGuidManager AssetGuidManager;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            TempProjectPath = TestBase.GenerateProjectPath();
+            var container = TestBase.ConstructContainerForTests(false);
+
+            var ProjectManager = container.Resolve<IProjectManager>();
+            AssetManager = container.Resolve<IAssetManager>();
+            AssetGuidManager = container.Resolve<IAssetGuidManager>();
+
+            ProjectManager.InitProject(TempProjectPath);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
+        }
 
         [TestMethod]
         public void NewAssets_UponRefresh_AreAddedToGuidTable()
@@ -190,56 +207,12 @@ namespace Tests.Integration
             importer.SaveAsset();
         }
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            TempProjectPath = TestBase.GenerateProjectPath();
-
-            var container = new UnityContainer();
-            RobotRuntime.Program.RegisterInterfaces(container);
-            Robot.Program.RegisterInterfaces(container);
-            container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = container.Resolve<ILogger>();
-
-            MouseRobot = container.Resolve<IMouseRobot>();
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            AssetGuidManager = container.Resolve<IAssetGuidManager>();
-
-            ProjectManager.InitProject(TempProjectPath);
-
-            CleanupRecordingsDirectory();
-            CleanupMetaDataDirectory();
-
-            AssetGuidManager.LoadMetaFiles();
-            AssetManager.Refresh();
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            CleanupRecordingsDirectory();
-            CleanupMetaDataDirectory();
-
-            AssetGuidManager.LoadMetaFiles();
-            AssetManager.Refresh();
-        }
-
-        private void CleanupMetaDataDirectory()
-        {
-            if (Directory.Exists(Paths.MetadataPath))
-            {
-                DirectoryInfo di = new DirectoryInfo(Paths.MetadataPath);
-                foreach (FileInfo file in di.GetFiles())
-                    file.Delete();
-            }
-        }
-
         private void CleanupRecordingsDirectory()
         {
-            if (Directory.Exists(TempProjectPath + "\\" + Paths.RecordingFolder))
+            var path = Path.Combine(TempProjectPath, Paths.RecordingFolder);
+            if (Directory.Exists(path))
             {
-                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.RecordingFolder);
+                DirectoryInfo di = new DirectoryInfo(path);
                 foreach (FileInfo file in di.GetFiles())
                     file.Delete();
             }

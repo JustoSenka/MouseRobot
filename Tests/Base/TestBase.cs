@@ -20,7 +20,7 @@ namespace Tests
         public static string TempFolderPath => Path.Combine(Path.GetTempPath(), "MProjects");
         public static string GenerateProjectPath() => Path.Combine(TempFolderPath, Guid.NewGuid().ToString().Substring(0, 11));
 
-        public static IUnityContainer ConstructContainerForTests()
+        public static IUnityContainer ConstructContainerForTests(bool passStaticDependencies = true)
         {
             var container = new UnityContainer();
             RobotRuntime.Program.RegisterInterfaces(container);
@@ -45,6 +45,11 @@ namespace Tests
                 filePath = Paths.GetUniquePath(filePath);
                 AssetManager.CreateAsset(script, filePath);
             }
+        }
+
+        public static bool TryCleanUp()
+        {
+            return TryCleanDirectory(TempFolderPath);
         }
 
         public static bool TryCleanDirectory(string tempProjectPath)
@@ -78,7 +83,7 @@ namespace Tests
             {
                 Directory.Delete(tempProjectPath, true);
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }

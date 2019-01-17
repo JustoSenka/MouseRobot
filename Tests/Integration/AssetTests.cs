@@ -2,15 +2,12 @@
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
-using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
 using Unity;
-using Unity.Lifetime;
 
 namespace Tests.Integration
 {
@@ -26,9 +23,27 @@ namespace Tests.Integration
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
-        IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IHierarchyManager RecordingManager;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            TempProjectPath = TestBase.GenerateProjectPath();
+            var container = TestBase.ConstructContainerForTests(false);
+
+            var ProjectManager = container.Resolve<IProjectManager>();
+            AssetManager = container.Resolve<IAssetManager>();
+            RecordingManager = container.Resolve<IHierarchyManager>();
+
+            ProjectManager.InitProject(TempProjectPath);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
+        }
 
         [TestMethod]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
@@ -53,7 +68,7 @@ namespace Tests.Integration
         [TestMethod]
         public void ReloadRecording_UpdatesRecordingRef_FromFile()
         {
-            var recording = RecordingManager.LoadedRecordings[0];
+            var recording = RecordingManager.NewRecording();
             RecordingManager.SaveRecording(recording, k_RecordingAPath);
             recording.AddCommand(new CommandSleep(5));
 
@@ -195,36 +210,6 @@ namespace Tests.Integration
             var importer = EditorAssetImporter.FromPath(path);
             importer.Value = new Recording(guid);
             importer.SaveAsset();
-        }
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            TempProjectPath = TestBase.GenerateProjectPath();
-
-            var container = new UnityContainer();
-            RobotRuntime.Program.RegisterInterfaces(container);
-            Robot.Program.RegisterInterfaces(container);
-
-            container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = container.Resolve<ILogger>();
-
-            MouseRobot = container.Resolve<IMouseRobot>();
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            RecordingManager = container.Resolve<IHierarchyManager>();
-
-            ProjectManager.InitProject(TempProjectPath);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.RecordingFolder);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-
-            AssetManager.Refresh();
         }
     }
 }

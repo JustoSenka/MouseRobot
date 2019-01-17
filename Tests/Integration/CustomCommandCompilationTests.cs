@@ -17,11 +17,9 @@ namespace Tests.Integration
     {
         private string TempProjectPath;
 
-        IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IHierarchyManager HierarchyManager;
         IScriptTemplates ScriptTemplates;
-        IScriptCompiler ScriptCompiler;
         IScriptManager ScriptManager;
         ITestFixtureManager TestFixtureManager;
         ICommandFactory CommandFactory;
@@ -32,15 +30,12 @@ namespace Tests.Integration
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
-
             var container = TestBase.ConstructContainerForTests();
 
-            MouseRobot = container.Resolve<IMouseRobot>();
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
             HierarchyManager = container.Resolve<IHierarchyManager>();
             ScriptManager = container.Resolve<IScriptManager>();
-            ScriptCompiler = container.Resolve<IScriptCompiler>();
             ScriptTemplates = container.Resolve<IScriptTemplates>();
             CommandFactory = container.Resolve<ICommandFactory>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
@@ -52,7 +47,7 @@ namespace Tests.Integration
         public void Cleanup()
         {
             Sync.WaitFor(() => !ScriptManager.IsCompilingOrReloadingAssemblies);
-            TestBase.TryCleanDirectory(TempProjectPath);
+            TestBase.TryCleanUp();
         }
 
         [TestMethod]

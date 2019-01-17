@@ -21,6 +21,12 @@ namespace Tests.Unit
 
         private string YamlLine { get { return YamlObject.GetIndentation(level) + PropertyName + separator + PropertyValue; } }
 
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            Logger.Instance = new FakeLogger();
+        }
+
         [TestMethod]
         public void YamlObject_ProducesCorrect_YamlString()
         {
@@ -400,12 +406,6 @@ namespace Tests.Unit
             Assert.AreEqual(f.Tests.Count(), newFixture.Tests.Count(), "Test count should be the same.");
             Assert.AreEqual(f.Setup.Name, newFixture.Setup.Name, "Setup names should be equal.");
             Assert.AreEqual(f.Setup.Commands.Count(), newFixture.Setup.Commands.Count(), "Setup command count should be the same.");
-        }
-
-        [TestInitialize]
-        public void InitializeTest()
-        {
-            Logger.Instance = new FakeLogger();
         }
     }
 }

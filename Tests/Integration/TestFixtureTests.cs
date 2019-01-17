@@ -2,15 +2,12 @@
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
-using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
-using RobotRuntime.Utils;
 using System.IO;
 using System.Linq;
 using Unity;
-using Unity.Lifetime;
 
 namespace Tests.Integration
 {
@@ -22,9 +19,9 @@ namespace Tests.Integration
         private const string k_FixtureName = "fixture";
         private const string k_FixturePath = "Tests\\" + k_FixtureName + ".mrt";
 
+        IUnityContainer Container;
         IAssetManager AssetManager;
         private ITestFixtureManager TestFixtureManager;
-        UnityContainer Container;
 
         private TestFixture TestFixture;
 
@@ -45,6 +42,26 @@ namespace Tests.Integration
                 f.Tests = new Recording[] { new Recording(), new Recording() }.ToList();
                 return f;
             }
+        }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            TempProjectPath = TestBase.GenerateProjectPath();
+            Container = TestBase.ConstructContainerForTests();
+
+            var ProjectManager = Container.Resolve<IProjectManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
+            TestFixture = Container.Resolve<TestFixture>();
+
+            ProjectManager.InitProject(TempProjectPath);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
         }
 
         [TestMethod]
@@ -249,36 +266,6 @@ namespace Tests.Integration
             Assert.AreEqual(a.Setup.Commands.Count(), b.Setup.Commands.Count(), "Setup command count missmatched");
             Assert.AreEqual(a.OneTimeTeardown.Commands.Count(), b.OneTimeTeardown.Commands.Count(), "teardown command count missmatched");
             Assert.AreEqual(a.Tests.Count, b.Tests.Count, "Test count missmatched");
-        }
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            TempProjectPath = TestBase.GenerateProjectPath();
-
-            Container = new UnityContainer();
-            RobotRuntime.Program.RegisterInterfaces(Container);
-            Robot.Program.RegisterInterfaces(Container);
-
-            Container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = Container.Resolve<ILogger>();
-
-            var ProjectManager = Container.Resolve<IProjectManager>();
-            AssetManager = Container.Resolve<IAssetManager>();
-            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
-            TestFixture = Container.Resolve<TestFixture>();
-
-            ProjectManager.InitProject(TempProjectPath);
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.TestsFolder);
-            foreach (FileInfo file in di.GetFiles())
-                file.Delete();
-
-            AssetManager.Refresh();
         }
     }
 }

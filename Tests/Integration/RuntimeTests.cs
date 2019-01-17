@@ -62,7 +62,7 @@ namespace Tests.Integration
         public void Cleanup()
         {
             Sync.WaitFor(() => !ScriptManager.IsCompilingOrReloadingAssemblies);
-            TestBase.TryCleanDirectory(TempProjectPath);
+            TestBase.TryCleanUp();
         }
 
         [TestMethod]

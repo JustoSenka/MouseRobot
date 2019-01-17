@@ -6,7 +6,6 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using System;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Unity;
@@ -30,7 +29,7 @@ namespace Tests.Unit
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
-            
+
             Container = TestBase.ConstructContainerForTests();
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
@@ -38,6 +37,12 @@ namespace Tests.Unit
             ScriptTemplates = Container.Resolve<IScriptTemplates>();
 
             ProjectManager.InitProject(TempProjectPath);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
         }
 
         [TestMethod]

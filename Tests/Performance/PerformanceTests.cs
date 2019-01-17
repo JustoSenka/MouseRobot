@@ -4,11 +4,8 @@ using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
-using RobotRuntime.Utils;
-using System.IO;
 using System.Linq;
 using Unity;
-using Unity.Lifetime;
 
 namespace Tests.Performance
 {
@@ -25,6 +22,28 @@ namespace Tests.Performance
         IAssetManager AssetManager;
         IAssetGuidManager AssetGuidManager;
         IProfiler Profiler;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            TempProjectPath = TestBase.GenerateProjectPath();
+            var container = TestBase.ConstructContainerForTests();
+
+            MouseRobot = container.Resolve<IMouseRobot>();
+            var ProjectManager = container.Resolve<IProjectManager>();
+            AssetManager = container.Resolve<IAssetManager>();
+            AssetGuidManager = container.Resolve<IAssetGuidManager>();
+            Profiler = container.Resolve<IProfiler>();
+
+            ProjectManager.InitProject(TempProjectPath);
+            AssetManager.Refresh();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            TestBase.TryCleanUp();
+        }
 
         [TestMethod]
         public void AssetRefreshTime_100_RecordingAssets() // 22 ms - 50 (guid)
@@ -73,61 +92,6 @@ namespace Tests.Performance
             var importer = EditorAssetImporter.FromPath(path);
             importer.Value = new Recording();
             importer.SaveAsset();
-        }
-
-        [TestInitialize]
-        public void Initialize()
-        {
-            TempProjectPath = TestBase.GenerateProjectPath();
-
-            var container = new UnityContainer();
-            RobotRuntime.Program.RegisterInterfaces(container);
-            Robot.Program.RegisterInterfaces(container);
-
-            container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
-            Logger.Instance = container.Resolve<ILogger>();
-
-            MouseRobot = container.Resolve<IMouseRobot>();
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            AssetGuidManager = container.Resolve<IAssetGuidManager>();
-            Profiler = container.Resolve<IProfiler>();
-
-            CleanupRecordingsDirectory();
-            CleanupMetaDataDirectory();
-
-            ProjectManager.InitProject(TempProjectPath);
-            AssetManager.Refresh();
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            CleanupRecordingsDirectory();
-            CleanupMetaDataDirectory();
-
-            AssetGuidManager.LoadMetaFiles();
-            AssetManager.Refresh();
-        }
-
-        private void CleanupMetaDataDirectory()
-        {
-            if (Directory.Exists(Paths.MetadataPath))
-            {
-                DirectoryInfo di = new DirectoryInfo(Paths.MetadataPath);
-                foreach (FileInfo file in di.GetFiles())
-                    file.Delete();
-            }
-        }
-
-        private void CleanupRecordingsDirectory()
-        {
-            if (Directory.Exists(TempProjectPath + "\\" + Paths.RecordingFolder))
-            {
-                DirectoryInfo di = new DirectoryInfo(TempProjectPath + "\\" + Paths.RecordingFolder);
-                foreach (FileInfo file in di.GetFiles())
-                    file.Delete();
-            }
         }
     }
 }
