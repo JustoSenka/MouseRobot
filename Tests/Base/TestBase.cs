@@ -7,6 +7,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
 using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -48,13 +49,10 @@ namespace Tests
             }
         }
 
-        private static Task<bool> CurrentCleanupTast;
-        public static Task<bool> TryCleanUp()
+        [AssemblyCleanup]
+        public static void TryCleanUp()
         {
-            if (CurrentCleanupTast == null || CurrentCleanupTast.IsCompleted)
-                CurrentCleanupTast = TryCleanDirectory(TempFolderPath);
-
-            return CurrentCleanupTast;
+            TryCleanDirectory(TempFolderPath);
         }
 
         public static Task<bool> TryCleanDirectory(string tempProjectPath)

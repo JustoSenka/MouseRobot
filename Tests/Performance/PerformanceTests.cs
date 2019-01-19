@@ -39,12 +39,6 @@ namespace Tests.Performance
             AssetManager.Refresh();
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            TestBase.TryCleanUp();
-        }
-
         [TestMethod]
         public void AssetRefreshTime_100_RecordingAssets() // 22 ms - 50 (guid)
         {

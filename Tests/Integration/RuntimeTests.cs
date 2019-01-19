@@ -58,13 +58,6 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            Sync.WaitFor(() => !ScriptManager.IsCompilingOrReloadingAssemblies);
-            TestBase.TryCleanUp();
-        }
-
         [TestMethod]
         public void RunningRecording_FromTestRunner_FiresCallbacksCorrectly()
         {

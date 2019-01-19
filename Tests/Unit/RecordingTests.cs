@@ -21,12 +21,6 @@ namespace Tests.Unit
             RecordingManager = container.Resolve<IHierarchyManager>();
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            TestBase.TryCleanUp();
-        }
-
         [TestMethod]
         public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {

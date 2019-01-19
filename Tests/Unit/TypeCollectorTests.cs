@@ -39,12 +39,6 @@ namespace Tests.Unit
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            TestBase.TryCleanUp();
-        }
-
         [TestMethod]
         public void TypeCollector_JustAfterCreation_HasAllNativeTypes()
         {

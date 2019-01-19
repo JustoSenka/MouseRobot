@@ -38,12 +38,6 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            TestBase.TryCleanUp();
-        }
-
         private LightTestFixture LightTestFixture
         {
             get

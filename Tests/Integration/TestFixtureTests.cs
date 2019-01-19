@@ -58,12 +58,6 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            TestBase.TryCleanUp();
-        }
-
         [TestMethod]
         public void AssetIsCreated_For_LightTestFixture()
         {
