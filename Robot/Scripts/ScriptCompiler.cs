@@ -56,7 +56,7 @@ namespace Robot.Scripts
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
-            // CompilerParams.IncludeDebugInformation = true;
+            CompilerParams.IncludeDebugInformation = true;
         }
 
         public Task<bool> CompileCode(params string[] sources)
@@ -105,7 +105,7 @@ namespace Robot.Scripts
                 else
                     Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
-                results = CodeProvider.CompileAssemblyFromSource(CompilerParams, sources);
+                results = CodeProvider.CompileAssemblyFromFile(CompilerParams, sources);
                 Profiler.Stop("ScriptCompiler_CompileCode");
             }
 

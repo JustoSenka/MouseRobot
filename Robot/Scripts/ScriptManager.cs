@@ -50,11 +50,11 @@ namespace Robot.Scripts
             lock (CompilationLock)
             {
                 var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-                var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
+                var scriptPaths = ScriptAssets.Select(a => a.Importer.Path); //.Where(s => s != null).Cast<string>();
 
                 if (IsCompilingOrReloadingAssemblies)
                 {
-                    ScriptCompiler.UpdateCompilationSources(scriptValues.ToArray());
+                    ScriptCompiler.UpdateCompilationSources(scriptPaths.ToArray());
 
                     // Always return the same task and never create additional tasks, or multiple domain reloads will happen after one compilation
                     // because script compiler also returns always the same task for compilation
@@ -67,7 +67,7 @@ namespace Robot.Scripts
                     {
                         ScriptCompiler.SetOutputPath(CustomAssemblyPath);
 
-                        var result = await ScriptCompiler.CompileCode(scriptValues.ToArray());
+                        var result = await ScriptCompiler.CompileCode(scriptPaths.ToArray());
 
                         if (result)
                         {

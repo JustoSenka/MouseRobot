@@ -2,6 +2,7 @@
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
@@ -23,6 +24,7 @@ namespace Tests.Integration
         IScriptManager ScriptManager;
         ITestFixtureManager TestFixtureManager;
         ICommandFactory CommandFactory;
+        IScriptLoader ScriptLoader;
 
         private const string k_CustomCommand = "Custom Command";
 
@@ -39,6 +41,7 @@ namespace Tests.Integration
             ScriptTemplates = container.Resolve<IScriptTemplates>();
             CommandFactory = container.Resolve<ICommandFactory>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
+            ScriptLoader = container.Resolve<IScriptLoader>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
@@ -52,6 +55,19 @@ namespace Tests.Integration
             var compileSucceeded = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
 
             Assert.IsTrue(compileSucceeded, "Script templates have compilation errors");
+        }
+
+        [TestMethod]
+        public void ScriptTemplates_Should_ProduceBothDllAndPdbFiles()
+        {
+            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var dllPath = ScriptLoader.UserAssemblyPath;
+            var pdbPath = dllPath.Replace(".dll", ".pdb");
+            
+            Assert.IsTrue(File.Exists(dllPath), "Dll path is missing: " + dllPath);
+            Assert.IsTrue(File.Exists(pdbPath), "Pdb path is missing: " + pdbPath);
         }
 
         [TestMethod]

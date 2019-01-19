@@ -99,9 +99,23 @@ namespace RobotRuntime.Scripts
                 Assembly assembly = null;
                 try
                 {
+                    // Get .pdb file path from dll path
+                    var fileName = Path.GetFileNameWithoutExtension(path);
+                    var dir = Path.GetDirectoryName(path);
+                    var pdbPath = Path.Combine(dir, fileName) + ".pdb";
+
                     // This is done in this particular way so we do not keep the file locked
-                    var bytes = File.ReadAllBytes(path);
-                    assembly = Assembly.Load(bytes);
+                    var dllBytes = File.ReadAllBytes(path);
+                    if (File.Exists(pdbPath))
+                    {
+                        var pdbBytes = File.ReadAllBytes(pdbPath);
+                        assembly = Assembly.Load(dllBytes, pdbBytes);
+                    }
+                    else
+                    {
+                        Logger.Log(LogType.Warning, "Cannot find debug symbols .pdb for assembly: " + path);
+                        assembly = Assembly.Load(dllBytes);
+                    }
                 }
                 catch (Exception)
                 {
