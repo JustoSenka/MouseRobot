@@ -28,6 +28,8 @@ namespace RobotRuntime
 
             Logger.Instance = container.Resolve<ILogger>();
 
+            container.Resolve<IScriptLoader>(); // Not referenced by runtime
+
             var projectManager = container.Resolve<IRuntimeProjectManager>();
             projectManager.InitProject(args[0]);
 

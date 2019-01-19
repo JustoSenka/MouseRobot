@@ -55,6 +55,7 @@ namespace Robot.Scripts
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
+           // CompilerParams.IncludeDebugInformation = true;
         }
 
         public Task<bool> CompileCode(params string[] sources)

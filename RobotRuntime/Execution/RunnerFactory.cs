@@ -2,6 +2,7 @@
 using RobotRuntime.Tests;
 using System;
 using System.Linq;
+using Unity;
 
 namespace RobotRuntime.Execution
 {
@@ -11,10 +12,12 @@ namespace RobotRuntime.Execution
 
         private ILogger Logger;
         private ITypeObjectCollector<IRunner> TypeCollector;
-        public RunnerFactory(ILogger Logger, ITypeObjectCollector<IRunner> TypeCollector)
+        IUnityContainer Container;
+        public RunnerFactory(ILogger Logger, ITypeObjectCollector<IRunner> TypeCollector, IUnityContainer Container)
         {
             this.Logger = Logger;
             this.TypeCollector = TypeCollector;
+            this.Container = Container;
 
             TypeCollector.NewTypesAppeared += UpdateDependencies;
             UpdateDependencies();
@@ -40,6 +43,19 @@ namespace RobotRuntime.Execution
             var runnerType = GetRunnerTypeForCommand(commandType);
             if (runnerType != null)
             {
+                var allTypes = TypeCollector.AllTypes.ToArray();
+                var allObjs = TypeCollector.AllObjects.ToArray();
+
+                var type = allTypes[5 % allTypes.Length];
+                var obj = Container.Resolve(runnerType);
+                var objFromType = Container.Resolve(obj.GetType()); 
+
+                var obj2 = Container.Resolve(type);
+
+                var a = runnerType == type;
+                var b = runnerType.Equals(type);
+
+
                 return TypeCollector.TypeObjectMap[runnerType];
             }
             else

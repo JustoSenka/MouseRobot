@@ -10,7 +10,7 @@ namespace RobotRuntime.Scripts
     {
         public IEnumerable<T> AllObjects { get { return m_AllObjects; } }
         public IEnumerable<T> UserObjects { get { return m_UserObjects; } }
-        public Dictionary<Type, T> TypeObjectMap { get; private set; }
+        public Dictionary<Type, T> TypeObjectMap { get; private set; } = new Dictionary<Type, T>();
 
         private T[] m_NativeObjects;
         private T[] m_UserObjects;
@@ -61,7 +61,7 @@ namespace RobotRuntime.Scripts
 
         private void BuildTypeObjectMap()
         {
-            TypeObjectMap = new Dictionary<Type, T>();
+            TypeObjectMap.Clear();
             foreach (var obj in AllObjects)
                 TypeObjectMap.Add(obj.GetType(), obj);
         }

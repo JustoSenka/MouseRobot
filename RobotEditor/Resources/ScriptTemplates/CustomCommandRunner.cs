@@ -14,16 +14,11 @@ namespace RobotEditor.Resources.ScriptTemplates
             // Constructor actually can ask for other managers if needed, like IHierarchyManager etc.
         }
 
+        // Contains useful data:
+        // if ShouldCancelRun is set to true, the test run will stop
+        // RunnerFactory is useful if command is nested and need to get other runners
+        // TestFixture can be used to get nested commands: LightRecording.Commands.GetNodeFromValue(command)
         public TestData TestData { set; get; }
-
-        public void PassDependencies(IRunnerFactory RunnerFactory, LightRecording TestFixture, CommandRunningCallback Callback, ValueWrapper<bool> ShouldCancelRun)
-        {
-            // if ShouldCancelRun is set to true, the test run will stop
-            // RunnerFactory is useful if command is nested and need to get other runners
-            // TestFixture can be used to get nested commands: LightRecording.Commands.GetNodeFromValue(command)
-
-            m_Callback = Callback;
-        }
 
         public void Run(IRunnable runnable)
         {
@@ -31,8 +26,8 @@ namespace RobotEditor.Resources.ScriptTemplates
 			
             var command = runnable as Command;
 
-			// Callbacks are necessary so hierarchy could highlight currently running command
-            m_Callback?.Invoke(command.Guid);
+            // Callbacks are necessary so hierarchy could highlight currently running command
+            TestData.InvokeCallback(command.Guid);
 
             // TODO: RUN METHOD
             // Optional, depends on the commands it can run

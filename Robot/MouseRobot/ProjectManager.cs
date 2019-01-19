@@ -21,7 +21,7 @@ namespace Robot
 
         private IAssetManager AssetManager;
         private IAssetGuidManager AssetGuidManager;
-        public ProjectManager(IAssetManager AssetManager, IAssetGuidManager AssetGuidManager)
+        public ProjectManager(IAssetManager AssetManager, IAssetGuidManager AssetGuidManager) : base(AssetGuidManager)
         {
             this.AssetManager = AssetManager;
             this.AssetGuidManager = AssetGuidManager;
