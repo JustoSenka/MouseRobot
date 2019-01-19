@@ -17,6 +17,7 @@ using Unity.Lifetime;
 
 namespace Tests
 {
+    [TestClass]
     public static class TestBase
     {
         public static string TempFolderPath => Path.Combine(Path.GetTempPath(), "MProjects");
@@ -52,7 +53,7 @@ namespace Tests
         [AssemblyCleanup]
         public static void TryCleanUp()
         {
-            TryCleanDirectory(TempFolderPath);
+            TryCleanDirectory(TempFolderPath).Wait();
         }
 
         public static Task<bool> TryCleanDirectory(string tempProjectPath)
