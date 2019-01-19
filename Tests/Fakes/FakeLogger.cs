@@ -50,5 +50,26 @@ namespace Tests
 
             OnLogReceived?.Invoke(log);
         }
+
+        public static IList<Log> CreateLogsFromConsoleOutput(string text)
+        {
+            var lines = text.Split('\n');
+
+            // I build enum string - value map because parsing for enums is really slow: Enum.TryParse(logTypeStr, out logType); // 3 ms
+            var values = Enum.GetValues(typeof(LogType)).Cast<LogType>();
+            var map = new Dictionary<string, LogType>(values.Count());
+            foreach (var value in values)
+                map.Add(value.ToString(), value);
+
+            return lines.Select(line =>
+            {
+                var colls = line.Split(new[] { "] " }, StringSplitOptions.None);
+                var logTypeStr = colls[0].Trim('[', '\n', '\r');
+                var header = colls[1].Trim(' ', '\n', '\r');
+                var logType = map[logTypeStr];
+
+                return new Log() { LogType = logType, Header = header};
+            }).ToList();
+        }
     }
 }

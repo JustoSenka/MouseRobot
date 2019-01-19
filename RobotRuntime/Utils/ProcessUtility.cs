@@ -42,9 +42,15 @@ namespace RobotRuntime.Utils
             processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
             var list = new List<string>();
-            var process = Process.Start(processStartInfo);
+            var process = new Process();
+            process.StartInfo = processStartInfo;
+
             process.OutputDataReceived += (sender, data) => list.Add(data.Data);
             process.ErrorDataReceived += (sender, data) => list.Add(data.Data);
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
             // var stdout = process.StandardOutput.ReadToEnd();
             // var error = process.StandardError.ReadToEnd();

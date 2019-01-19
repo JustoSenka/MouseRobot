@@ -168,7 +168,6 @@
     <Compile Include="Base\Sync.cs" />
     <Compile Include="Integration\CustomCommandCompilationTests.cs" />
     <Compile Include="Base\TestBase.cs" />
-    <Compile Include="Base\TestData.cs" />
     <Compile Include="Integration\RuntimeTests.cs" />
     <Compile Include="Integration\TypeCollectorIntegrationTests.cs" />
     <Compile Include="Unit\TypeCollectorTests.cs" />
@@ -187,6 +186,7 @@
     <Compile Include="Unit\RecordingTests.cs" />
     <Compile Include="Unit\StatusManagerTests.cs" />
     <Compile Include="Unit\YamlSerializerTests.cs" />
+    <Compile Include="Utils\ProcessUtilityTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RobotEditor\RobotEditor.csproj">

@@ -4,8 +4,6 @@ using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Commands;
-using RobotRuntime.Execution;
 using RobotRuntime.Recordings;
 using RobotRuntime.Utils;
 using System;
@@ -21,11 +19,9 @@ namespace Tests.Integration
     {
         private string TempProjectPath;
 
-        IMouseRobot MouseRobot;
         IAssetManager AssetManager;
         IHierarchyManager HierarchyManager;
         IScriptTemplates ScriptTemplates;
-        IScriptCompiler ScriptCompiler;
         IScriptManager ScriptManager;
         ITestFixtureManager TestFixtureManager;
         ICommandFactory CommandFactory;
@@ -43,15 +39,13 @@ namespace Tests.Integration
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
-            
+
             var container = TestBase.ConstructContainerForTests();
 
-            MouseRobot = container.Resolve<IMouseRobot>();
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
             HierarchyManager = container.Resolve<IHierarchyManager>();
             ScriptManager = container.Resolve<IScriptManager>();
-            ScriptCompiler = container.Resolve<IScriptCompiler>();
             ScriptTemplates = container.Resolve<IScriptTemplates>();
             CommandFactory = container.Resolve<ICommandFactory>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
@@ -79,14 +73,7 @@ namespace Tests.Integration
         [TestMethod]
         public void TestRunner_RunningCustomRecording_FiresCallbacksCorrectly()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
-
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-            CreateAndSaveTestRecording(k_RecordingPath, out Command c1, out Command c2, out Command c3, CommandFactory, k_CustomCommandName);
+            PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
 
             var list = new List<Guid>();
             TestRunner.TestData.CommandRunningCallback += (guid) => list.Add(guid);
@@ -104,14 +91,7 @@ namespace Tests.Integration
         [TestMethod]
         public void TestRunner_RunningCustomRecording_FromDifferentRunnerInSameProcess_Works()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
-
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-            CreateAndSaveTestRecording(k_RecordingPath, out Command c1, out Command c2, out Command c3, CommandFactory, k_CustomCommandName);
+            PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
 
             var list = new List<Guid>();
 
@@ -137,28 +117,30 @@ namespace Tests.Integration
             Assert.IsTrue(list.SequenceEqual(new[] { c1.Guid, c2.Guid, c3.Guid }));
         }
 
+
         [TestMethod]
         public void CommandLine_RunningCustomRecording_Works()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
-
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-            CreateAndSaveTestRecording(k_RecordingPath, out Command c1, out Command c2, out Command c3, CommandFactory, k_CustomCommandName);
+            PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
 
             ScriptManager.AllowCompilation = false;
 
             var res = ProcessUtility.StartFromCommandLine(
-                Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe"), 
+                Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe"),
                 TempProjectPath + " " + k_RecordingName);
 
-            Console.WriteLine(res);
+            var logs = FakeLogger.CreateLogsFromConsoleOutput(res);
+
+            Assert.AreEqual(3, logs.Count(log => log.Header == "CommandLog"));
+            Assert.AreEqual(3, logs.Count(log => log.Header == "RunnerLog"));
         }
 
-        [TestMethod]
+        // This test is not supported.
+        // AppDomain contains a lot of unneded assemblies due to many compilations and running command from main method
+        // will use incorrect command type, because no Static property provider exists in runtime thus
+        // custom commands will be deserialized with random type from domain.
+        // Inspecting the created CustomRunner with debugger will throw Internal C# Compiler Exception. This one is also interesting
+        // [TestMethod]
         public void Program_RunningCustomRecording_Works()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -175,7 +157,19 @@ namespace Tests.Integration
             RobotRuntime.Program.Main(new[] { Environment.CurrentDirectory, k_RecordingName });
         }
 
-        private Recording CreateAndSaveTestRecording(string name, out Command c1, out Command c2, out Command c3, 
+        private void PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3)
+        {
+            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+
+            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
+            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
+            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
+
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            CreateAndSaveTestRecording(k_RecordingPath, out c1, out c2, out c3, CommandFactory, k_CustomCommandName);
+        }
+
+        private Recording CreateAndSaveTestRecording(string name, out Command c1, out Command c2, out Command c3,
             ICommandFactory CommandFactory, string CommandName = "Sleep")
         {
             var r = HierarchyManager.NewRecording();
