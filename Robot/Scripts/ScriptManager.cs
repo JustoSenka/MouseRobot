@@ -1,9 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Utils;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +15,9 @@ namespace Robot.Scripts
     public class ScriptManager : IScriptManager
     {
         public bool AllowCompilation { get; set; } = true;
-        public bool IsCompilingOrReloadingAssemblies { get; private set; }
+        public bool IsCompilingOrReloadingAssemblies => (m_LastCompilationTask != null) ? !m_LastCompilationTask.IsCompleted : false;
+
+        private object CompilationLock = new object();
 
         private Task<bool> m_LastCompilationTask;
 
@@ -47,40 +47,40 @@ namespace Robot.Scripts
 
         public Task<bool> CompileScriptsAndReloadUserDomain()
         {
-            var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-            var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
-
-            if (IsCompilingOrReloadingAssemblies)
+            lock (CompilationLock)
             {
-                ScriptCompiler.UpdateCompilationSources(scriptValues.ToArray());
+                var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
+                var scriptValues = ScriptAssets.Select(a => a.Importer.Value).Where(s => s != null).Cast<string>();
 
-                // Always return the same task and never create additional tasks, or multiple domain reloads will happen after one compilation
-                // because script compiler also returns always the same task for compilation
-                return m_LastCompilationTask;
-            }
-
-            return m_LastCompilationTask = Task.Run(() =>
-            {
-                if (AllowCompilation)
+                if (IsCompilingOrReloadingAssemblies)
                 {
-                    IsCompilingOrReloadingAssemblies = true;
+                    ScriptCompiler.UpdateCompilationSources(scriptValues.ToArray());
 
-                    ScriptCompiler.SetOutputPath(CustomAssemblyPath);
-
-                    var result = ScriptCompiler.CompileCode(scriptValues.ToArray()).Result;
-
-                    if (result)
-                    {
-                        ScriptLoader.DestroyUserAppDomain();
-                        ScriptLoader.CreateUserAppDomain();
-                    }
-
-                    IsCompilingOrReloadingAssemblies = false;
-                    return result;
+                    // Always return the same task and never create additional tasks, or multiple domain reloads will happen after one compilation
+                    // because script compiler also returns always the same task for compilation
+                    return m_LastCompilationTask;
                 }
-                else
-                    return false;
-            });
+
+                return m_LastCompilationTask = Task.Run(async () =>
+                {
+                    if (AllowCompilation)
+                    {
+                        ScriptCompiler.SetOutputPath(CustomAssemblyPath);
+
+                        var result = await ScriptCompiler.CompileCode(scriptValues.ToArray());
+
+                        if (result)
+                        {
+                            ScriptLoader.DestroyUserAppDomain();
+                            ScriptLoader.CreateUserAppDomain();
+                        }
+
+                        return result;
+                    }
+                    else
+                        return false;
+                });
+            }
         }
 
         // TODO: Not used anymore. Should it be?

@@ -117,7 +117,6 @@ namespace Tests.Integration
             Assert.IsTrue(list.SequenceEqual(new[] { c1.Guid, c2.Guid, c3.Guid }));
         }
 
-
         [TestMethod]
         public void CommandLine_RunningCustomRecording_Works()
         {

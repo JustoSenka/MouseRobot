@@ -17,6 +17,7 @@ namespace RobotRuntime.Scripts
         public event Action UserDomainReloading;
 
         private Dictionary<string, Assembly> m_Assemblies = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+        private readonly object CreateUserDomainLock = new object();
 
         private IRuntimeAssetManager RuntimeAssetManager;
         private IProfiler Profiler;
@@ -48,17 +49,20 @@ namespace RobotRuntime.Scripts
         public void CreateUserAppDomain()
         {
             // TODO: Lock here to prevent race? Lock on DestroyUserDomain also?
-            Profiler.Start("ScriptLoader.ReloadAppDomain");
-
             if (m_Assemblies.Count != 0)
                 DestroyUserAppDomain();
 
-            LoadUserAssemblies();
-            UserDomainReloaded?.Invoke();
+            lock (CreateUserDomainLock)
+            {
+                Profiler.Start("ScriptLoader.ReloadAppDomain");
 
-            Logger.Log(LogType.Log, "User assemblies successfully loaded.");
+                LoadUserAssemblies();
+                UserDomainReloaded?.Invoke();
 
-            Profiler.Stop("ScriptLoader.ReloadAppDomain");
+                Logger.Log(LogType.Log, "User assemblies successfully loaded.");
+
+                Profiler.Stop("ScriptLoader.ReloadAppDomain");
+            }
         }
 
         public void LoadUserAssemblies()

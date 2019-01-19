@@ -31,6 +31,7 @@ namespace Robot.Scripts
         private string[] m_TempSources;
 
         private object CompilationLock = new object();
+        private object CompilationTaskLock = new object();
 
         private IProfiler Profiler;
         private IStatusManager StatusManager;
@@ -55,18 +56,21 @@ namespace Robot.Scripts
 
             CompilerParams.GenerateExecutable = false;
             CompilerParams.GenerateInMemory = false;
-           // CompilerParams.IncludeDebugInformation = true;
+            // CompilerParams.IncludeDebugInformation = true;
         }
 
         public Task<bool> CompileCode(params string[] sources)
         {
-            if (IsCompiling)
-                return UpdateCompilationSources(sources);
-
-            return m_LastCompilationTask = Task.Run(() =>
+            lock (CompilationTaskLock)
             {
-                return CompileCodeSync(sources);
-            });
+                if (IsCompiling)
+                    return UpdateCompilationSources(sources);
+
+                return m_LastCompilationTask = Task.Run(() =>
+                {
+                    return CompileCodeSync(sources);
+                });
+            }
         }
 
         public Task<bool> UpdateCompilationSources(params string[] sources)
