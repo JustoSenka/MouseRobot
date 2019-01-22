@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RobotRuntime.Utils
 {
     public static class Paths
     {
-        public static string RecordingFolder { get { return "Recordings"; } }
-        public static string ImageFolder { get { return "Images"; } }
-        public static string ScriptFolder { get { return "Scripts"; } }
+        public static string AssetsFolder { get { return "Assets"; } }
         public static string MetadataFolder { get { return "Metadata"; } }
-        public static string TestsFolder { get { return "Tests"; } }
-        public static string PluginFolder { get { return "Plugin"; } }
 
-        public static string RecordingPath { get { return Path.Combine(Environment.CurrentDirectory, RecordingFolder); } }
-        public static string ImagePath { get { return Path.Combine(Environment.CurrentDirectory, ImageFolder); } }
-        public static string ScriptPath { get { return Path.Combine(Environment.CurrentDirectory, ScriptFolder); } }
+        public static string AssetsPath { get { return Path.Combine(Environment.CurrentDirectory, AssetsFolder); } }
         public static string MetadataPath { get { return Path.Combine(Environment.CurrentDirectory, MetadataFolder); } }
-        public static string TestsPath { get { return Path.Combine(Environment.CurrentDirectory, TestsFolder); } }
-        public static string PluginPath { get { return Path.Combine(Environment.CurrentDirectory, PluginFolder); } }
 
         public static string AppName { get { return "MouseRobot"; } }
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
@@ -31,7 +23,7 @@ namespace RobotRuntime.Utils
 
         public static string[] ProjectPathArray
         {
-            get { return new[] { RecordingPath, ImagePath, ScriptPath, MetadataPath, TestsFolder, PluginFolder }; }
+            get { return new[] { AssetsPath, MetadataPath }; }
         }
 
         /// <summary>
@@ -40,7 +32,7 @@ namespace RobotRuntime.Utils
         public static string GetUniquePath(string path)
         {
             var ext = Path.GetExtension(path);
-            var pathNoExt = Path.Combine (Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            var pathNoExt = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
 
             if (!File.Exists(path))
                 return path;
@@ -58,48 +50,41 @@ namespace RobotRuntime.Utils
 
         public static string GetName(string path)
         {
-            /*var name = Regex.Match(path, @"[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value.
-                TrimStart('/', '\\').
-                TrimEnd(FileExtensions.Recording.ToCharArray()).
-                TrimEnd(FileExtensions.Timeline.ToCharArray()).
-                TrimEnd(FileExtensions.Image.ToCharArray()).
-                TrimEnd('.');*/
-
             return Path.GetFileNameWithoutExtension(path);
         }
 
-        public static IEnumerable<string> GetAllFilePaths(bool ignoreMetada = true)
+        public static IEnumerable<string> GetAllAssetPaths()
         {
-            foreach (var path in ProjectPathArray)
+            return Directory.GetFileSystemEntries(AssetsPath, "*", SearchOption.AllDirectories).Select(GetRelativePath);
+        }
+
+        public static string GetRelativePath(string fullPath)
+        {
+            var fullAbsolutePath = (File.Exists(fullPath)) ? new FileInfo(fullPath).FullName : new DirectoryInfo(fullPath).FullName;
+            var currentDirectory = new DirectoryInfo(Environment.CurrentDirectory).FullName;
+
+            if (fullAbsolutePath.StartsWith(currentDirectory))
             {
-                if (ignoreMetada && path == MetadataPath)
-                    continue;
-
-                foreach (string filePath in Directory.GetFiles(path))
-                {
-                    var folder = GetFolderFromExtension(filePath);
-                    var name = Path.GetFileName(filePath);
-
-                    if (folder != "" && name != null)
-                        yield return folder + "\\" + name;
-                }
+                // The +1 is to avoid the directory separator
+                return fullAbsolutePath.Substring(currentDirectory.Length + 1).Trim('\\', '/', ' ');
             }
+            else
+            {
+                Logger.Log(LogType.Error, "Unable to make relative path from: " + fullAbsolutePath +
+                    " where current environment path is: " + currentDirectory);
+            }
+
+            return ""; // Regex.Match(fullPath, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
         }
 
-        public static string GetNameWithExtension(string path)
+        public static string[] GetPathDirectoryElements(string path)
         {
-            var extension = Regex.Match(path, @"\.\w{2,8}$").Value;
-            return GetName(path) + extension;
+            return path.Split('\n').Select(NormalizePath).ToArray();
         }
 
-        public static string GetFolder(string path)
+        public static string NormalizePath(string path)
         {
-            return GetProjectRelativePath(path).Split('\\', '/')[0];
-        }
-
-        public static string GetProjectRelativePath(string path)
-        {
-            return Regex.Match(path, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
+            return path.Trim('\n', '\r', ' ', '\\', '/');
         }
 
         public static bool AreRelativePathsEqual(string s, string d)
@@ -107,38 +92,6 @@ namespace RobotRuntime.Utils
             s = s.ToLower();
             d = d.ToLower();
             return s == d;
-        }
-
-        public static string GetExtensionFromFolder(string folder)
-        {
-            if (folder == RecordingFolder)
-                return FileExtensions.Recording;
-            else if (folder == ImageFolder)
-                return FileExtensions.Image;
-            else if (folder == ScriptFolder)
-                return FileExtensions.Script;
-            else if (folder == TestsFolder)
-                return FileExtensions.Test;
-            else if (folder == PluginFolder)
-                return FileExtensions.Dll;
-            else
-                return "";
-        }
-
-        public static string GetFolderFromExtension(string path)
-        {
-            if (path.EndsWith(FileExtensions.Recording))
-                return RecordingFolder;
-            else if (path.EndsWith(FileExtensions.Image))
-                return ImageFolder;
-            else if (path.EndsWith(FileExtensions.Script))
-                return ScriptFolder;
-            else if (path.EndsWith(FileExtensions.Test))
-                return TestsFolder;
-            else if (path.EndsWith(FileExtensions.Dll) || path.EndsWith(FileExtensions.Exe))
-                return PluginFolder;
-            else
-                return "";
         }
     }
 }

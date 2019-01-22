@@ -14,9 +14,9 @@ namespace Tests.Performance
     {
         private string TempProjectPath;
 
-        private const string k_RecordingAPath = "Recordings\\A.mrb";
-        private const string k_RecordingBPath = "Recordings\\B.mrb";
-        private const string k_RecordingCPath = "Recordings\\C.mrb";
+        private const string k_RecordingAPath = "Assets\\A.mrb";
+        private const string k_RecordingBPath = "Assets\\B.mrb";
+        private const string k_RecordingCPath = "Assets\\C.mrb";
 
         IMouseRobot MouseRobot;
         IAssetManager AssetManager;
@@ -46,7 +46,7 @@ namespace Tests.Performance
             var name = "Refresh_Test_1";
 
             for (int i = 0; i < count; ++i)
-                CreateDummyRecordingWithImporter("Recordings\\A" + i + ".mrb");
+                CreateDummyRecordingWithImporter("Assets\\A" + i + ".mrb");
 
             Profiler.Start(name);
             AssetManager.Refresh();
@@ -67,7 +67,7 @@ namespace Tests.Performance
             var name = "Refresh_Test_2";
 
             for (int i = 0; i < count; ++i)
-                CreateDummyRecordingWithImporter("Recordings\\A" + i + ".mrb");
+                CreateDummyRecordingWithImporter("Assets\\A" + i + ".mrb");
 
             Profiler.Start(name);
             AssetManager.Refresh();

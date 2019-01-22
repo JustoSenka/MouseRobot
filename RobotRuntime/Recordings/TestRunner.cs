@@ -79,7 +79,7 @@ namespace RobotRuntime
         public Task StartRecording(string recordingName)
         {
             // TODO: use RuntimeAssetManager here
-            var importer = AssetImporter.FromPath(Path.Combine(Paths.RecordingPath, recordingName) + FileExtensions.RecordingD);
+            var importer = AssetImporter.FromPath(recordingName + FileExtensions.RecordingD);
             return StartRecording(importer.Load<LightRecording>());
         }
 

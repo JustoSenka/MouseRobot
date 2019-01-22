@@ -89,7 +89,7 @@ namespace Tests.Integration
 
             var oldCommandType = CommandFactory.Create(k_CustomCommand).GetType();
 
-            TestBase.ModifyScriptAsset(AssetManager, "Scripts\\CustomCommand.cs");
+            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommandType = CommandFactory.Create(k_CustomCommand).GetType();
@@ -106,7 +106,7 @@ namespace Tests.Integration
             var rec = HierarchyManager.NewRecording();
             rec.AddCommand(oldCommand);
 
-            TestBase.ModifyScriptAsset(AssetManager, "Scripts\\CustomCommand.cs");
+            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommand = rec.Commands.GetChild(0).value;
@@ -125,7 +125,7 @@ namespace Tests.Integration
             var oldRec = HierarchyManager.NewRecording();
             oldRec.AddCommand(oldCommand);
 
-            var recPath = Path.Combine(Paths.RecordingPath, "rec.mrb");
+            var recPath = Path.Combine(Paths.AssetsPath, "rec.mrb");
             HierarchyManager.SaveRecording(oldRec, recPath);
 
             var newRec = new Asset(recPath).Importer.Load<Recording>();
@@ -144,7 +144,7 @@ namespace Tests.Integration
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             testFixture.Setup.AddCommand(oldCommand);
 
-            TestBase.ModifyScriptAsset(AssetManager, "Scripts\\CustomCommand.cs");
+            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommand = testFixture.Setup.Commands.GetChild(0).value;
@@ -165,7 +165,7 @@ namespace Tests.Integration
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             testFixture.Setup.AddCommand(oldCommand);
 
-            var testPath = Path.Combine(Paths.TestsPath, "test.mrt");
+            var testPath = Path.Combine(Paths.AssetsPath, "test.mrt");
             TestFixtureManager.SaveTestFixture(testFixture, testPath);
 
             var newTestFixture = new Asset(testPath).Importer.Load<LightTestFixture>();
@@ -199,9 +199,9 @@ namespace Tests.Integration
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             testFixture.Setup.AddCommand(oldCommand);
 
-            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
-            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
-            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.TestsPath, "test.mrt"));
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.AssetsPath, "test.mrt"));
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.AssetsPath, "test.mrt"));
+            TestFixtureManager.SaveTestFixture(testFixture, Path.Combine(Paths.AssetsPath, "test.mrt"));
 
             var sameCommand = testFixture.Setup.Commands.GetChild(0).value;
 
@@ -228,7 +228,7 @@ namespace Tests.Integration
             var oldCommand = CommandFactory.Create(new CommandMove().Name);
             testFixture.Setup.AddCommand(oldCommand);
 
-            var testPath = Path.Combine(Paths.TestsPath, "test.mrt");
+            var testPath = Path.Combine(Paths.AssetsPath, "test.mrt");
             TestFixtureManager.SaveTestFixture(testFixture, testPath);
 
             var newTestFixture = new Asset(testPath).Importer.Load<LightTestFixture>();

@@ -131,11 +131,11 @@ namespace RobotEditor.Inspector
             {
                 var guid = DynamicCast(Command).Asset;
                 var path = AssetGuidManager.GetPath(guid);
-                return (path == null || path == "") ? "..." : Paths.GetName(path);
+                return path;
             }
             set
             {
-                Asset asset = AssetManager.GetAsset(Paths.ImageFolder, value);
+                Asset asset = AssetManager.GetAsset(value);
                 if (asset != null)
                     DynamicCast(Command).Asset = asset.Guid;
             }
@@ -150,11 +150,11 @@ namespace RobotEditor.Inspector
             {
                 var guid = DynamicCast(Command).Asset;
                 var path = AssetGuidManager.GetPath(guid);
-                return (path == null || path == "") ? "..." : Paths.GetName(path);
+                return path;
             }
             set
             {
-                Asset asset = AssetManager.GetAsset(Paths.RecordingFolder, value);
+                Asset asset = AssetManager.GetAsset(value);
                 if (asset != null)
                     DynamicCast(Command).Asset = asset.Guid;
             }

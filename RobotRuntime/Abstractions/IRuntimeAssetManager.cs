@@ -14,6 +14,5 @@ namespace RobotRuntime.Abstractions
         T GetAsset<T>(Guid guid) where T : class;
 
         IEnumerable<AssetImporter> AssetImporters { get; }
-        IEnumerable<object> Assets { get; }
     }
 }

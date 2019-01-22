@@ -17,9 +17,9 @@ namespace Tests.Integration
     {
         private string TempProjectPath;
 
-        private const string k_RecordingAPath = "Recordings\\A.mrb";
-        private const string k_RecordingBPath = "Recordings\\B.mrb";
-        private const string k_RecordingCPath = "Recordings\\C.mrb";
+        private const string k_RecordingAPath = "Assets\\A.mrb";
+        private const string k_RecordingBPath = "Assets\\B.mrb";
+        private const string k_RecordingCPath = "Assets\\C.mrb";
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
@@ -203,7 +203,7 @@ namespace Tests.Integration
 
         private void CleanupRecordingsDirectory()
         {
-            var path = Path.Combine(TempProjectPath, Paths.RecordingFolder);
+            var path = Path.Combine(TempProjectPath, Paths.AssetsPath);
             if (Directory.Exists(path))
             {
                 DirectoryInfo di = new DirectoryInfo(path);

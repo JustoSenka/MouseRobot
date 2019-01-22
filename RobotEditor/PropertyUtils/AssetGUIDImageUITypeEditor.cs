@@ -20,7 +20,7 @@ namespace RobotEditor.PropertyUtils
 
         public override void PaintValue(PaintValueEventArgs e)
         {
-            var asset = AssetManager.GetAsset(Paths.ImageFolder, e.Value.ToString());
+            var asset = AssetManager.GetAsset(e.Value.ToString());
             if (asset == null)
                 return;
             

@@ -15,10 +15,10 @@ namespace Tests.Integration
     {
         private string TempProjectPath;
 
-        private const string k_TestAPath = "Tests\\A.mrt";
-        private const string k_TestBPath = "Tests\\B.mrt";
-        private const string k_TestCPath = "Tests\\C.mrt";
-        private const string k_TestDPath = "Tests\\D.mrt";
+        private const string k_TestAPath = "Assets\\A.mrt";
+        private const string k_TestBPath = "Assets\\B.mrt";
+        private const string k_TestCPath = "Assets\\C.mrt";
+        private const string k_TestDPath = "Assets\\D.mrt";
 
         IAssetManager AssetManager;
         ITestRunnerManager TestRunnerManager;

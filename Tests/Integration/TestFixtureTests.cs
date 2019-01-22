@@ -17,7 +17,7 @@ namespace Tests.Integration
         private string TempProjectPath;
 
         private const string k_FixtureName = "fixture";
-        private const string k_FixturePath = "Tests\\" + k_FixtureName + ".mrt";
+        private const string k_FixturePath = "Assets\\" + k_FixtureName + ".mrt";
 
         IUnityContainer Container;
         IAssetManager AssetManager;

@@ -75,7 +75,7 @@ namespace Robot.RecordingCreation
         {
             var length = 2 - imageIndex.ToString().Length;
             var num = ((length == 1) ? "0" : "") + imageIndex;
-            return Paths.ImageFolder + "\\Crop_" + num + ".png";
+            return Paths.AssetsPath + "\\Crop_" + num + ".png";
         }
     }
 }

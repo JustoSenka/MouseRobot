@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -151,8 +153,33 @@ namespace RobotRuntime
 
         public static TreeNode FindNode(this TreeView treeView, string path)
         {
-            var folderNode = treeView.FindChild(Paths.GetFolder(path));
-            return folderNode.FindChild(Paths.GetName(path));
+            var dirs = Paths.GetPathDirectoryElements(path);
+            TreeNode currentNode = treeView.FindChild(dirs[0]);
+
+            try
+            {
+                foreach (var dir in dirs.Skip(1))
+                    currentNode = currentNode.FindChild(dir);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogType.Error, "Cannot find path in treeView: " + path, e.Message);
+            }
+
+            return currentNode;
+        }
+
+        public static string FindNodePath(this TreeNode treeNode)
+        {
+            var builder = new StringBuilder();
+            do
+            {
+                builder.Insert(0, treeNode.Name + Path.DirectorySeparatorChar);
+                treeNode = treeNode.Parent;
+            }
+            while (treeNode != null);
+
+            return Paths.NormalizePath(builder.ToString());
         }
 
         public static void Post(this AsyncOperation async, Action ac)

@@ -71,7 +71,7 @@ namespace Robot
             Profiler.Start("RecordingManager_SafeRecording");
 
             AssetManager.CreateAsset(recording, path);
-            recording.Path = Paths.GetProjectRelativePath(path);
+            recording.Path = Paths.GetRelativePath(path);
 
             RecordingSaved?.Invoke(recording);
 

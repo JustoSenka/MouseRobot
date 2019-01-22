@@ -70,7 +70,7 @@ namespace Robot.Tests
             Profiler.Start("TestFixtureManager_SaveFixture");
 
             fixture.Name = Paths.GetName(path);
-            fixture.Path = Paths.GetProjectRelativePath(path);
+            fixture.Path = Paths.GetRelativePath(path);
             AssetManager.CreateAsset(fixture.ToLightTestFixture(), path);
             fixture.IsDirty = false; // This will fire callback which will update UI dirty flag if needed.
 

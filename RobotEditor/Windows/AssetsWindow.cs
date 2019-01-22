@@ -16,8 +16,8 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
-    public partial class AssetsWindow : DockContent, IAssetsWindow
-    {
+    public partial class AssetsWindow : DockContent//, IAssetsWindow
+    {/*
         public event Action AssetSelected;
 
         private IAssetManager AssetManager;
@@ -297,5 +297,5 @@ namespace RobotEditor
         }
 
         #endregion
-    }
+    */}
 }

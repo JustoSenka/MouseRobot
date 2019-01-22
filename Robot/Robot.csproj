@@ -157,6 +157,7 @@
     <Compile Include="Abstractions\ICodeEditor.cs" />
     <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\AssetManagerV2.cs" />
     <Compile Include="Assets\ModifiedAssetCollector.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />

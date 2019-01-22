@@ -16,10 +16,10 @@ namespace Tests.Integration
     {
         private string TempProjectPath;
 
-        private const string k_RecordingAPath = "Recordings\\A.mrb";
-        private const string k_RecordingBPath = "Recordings\\B.mrb";
-        private const string k_RecordingCPath = "Recordings\\C.mrb";
-        private const string k_RecordingDPath = "Recordings\\D.mrb";
+        private const string k_RecordingAPath = "Assets\\A.mrb";
+        private const string k_RecordingBPath = "Assets\\B.mrb";
+        private const string k_RecordingCPath = "Assets\\C.mrb";
+        private const string k_RecordingDPath = "Assets\\D.mrb";
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 

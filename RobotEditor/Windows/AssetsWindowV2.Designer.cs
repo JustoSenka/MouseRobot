@@ -1,6 +1,6 @@
 ﻿namespace RobotEditor
 {
-    partial class AssetsWindow
+    partial class AssetsWindowV2
     {
         /// <summary>
         /// Required designer variable.
@@ -71,6 +71,7 @@
             this.reloadRecordingToolStripMenuItem.Name = "reloadRecordingToolStripMenuItem";
             this.reloadRecordingToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.reloadRecordingToolStripMenuItem.Text = "Reload Recording";
+            this.reloadRecordingToolStripMenuItem.Click += new System.EventHandler(this.reloadRecordingToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -83,6 +84,7 @@
             this.refreshToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
@@ -90,6 +92,7 @@
             this.renameToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.renameToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -109,6 +112,7 @@
             this.recompileRecordingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.K)));
             this.recompileRecordingsToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.recompileRecordingsToolStripMenuItem.Text = "Recompile Recordings";
+            this.recompileRecordingsToolStripMenuItem.Click += new System.EventHandler(this.recompileRecordingsToolStripMenuItem_Click);
             // 
             // regenerateSolutionToolStripMenuItem
             // 
@@ -116,6 +120,7 @@
             this.regenerateSolutionToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
             this.regenerateSolutionToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.regenerateSolutionToolStripMenuItem.Text = "Regenerate Solution";
+            this.regenerateSolutionToolStripMenuItem.Click += new System.EventHandler(this.regenerateSolutionToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -127,6 +132,7 @@
             this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
             this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.showInExplorerToolStripMenuItem.Text = "Show In Explorer";
+            this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
             // 
             // imageList1
             // 

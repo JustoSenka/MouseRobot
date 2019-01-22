@@ -44,7 +44,7 @@ namespace Tests
             {
                 var script = ScriptTemplates.GetTemplate(name);
                 var fileName = ScriptTemplates.GetTemplateFileName(name);
-                var filePath = Path.Combine(Paths.ScriptPath, fileName + ".cs");
+                var filePath = Path.Combine(Paths.AssetsPath, fileName + ".cs");
                 filePath = Paths.GetUniquePath(filePath);
                 AssetManager.CreateAsset(script, filePath);
             }

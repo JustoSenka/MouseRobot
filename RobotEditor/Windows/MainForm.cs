@@ -403,21 +403,15 @@ namespace RobotEditor
                 string unimportedPaths = "";
                 foreach (var path in openDialog.FileNames)
                 {
-                    var folder = Paths.GetFolderFromExtension(path);
-                    if (folder != "")
+                    var newPath = Path.Combine(Paths.AssetsPath, Path.GetFileName(path));
+                    try
                     {
-                        var newPath = folder + "\\" + Paths.GetNameWithExtension(path);
-                        try
-                        {
-                            File.Copy(path, newPath);
-                        }
-                        catch (IOException ex)
-                        {
-                            unimportedPaths += "\n " + ex.Message + " " + path;
-                        }
+                        File.Copy(path, newPath);
                     }
-                    else
-                        unimportedPaths += "\nUnsupported format: " + path;
+                    catch (IOException ex)
+                    {
+                        unimportedPaths += "\n " + ex.Message + " " + path;
+                    }
                 }
 
                 AssetManager.Refresh();
@@ -469,7 +463,7 @@ namespace RobotEditor
 
         private void assetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((AssetsWindow)m_AssetsWindow).Show(m_DockPanel);
+            ((AssetsWindowV2)m_AssetsWindow).Show(m_DockPanel);
         }
 
         private void profilerToolStripMenuItem_Click(object sender, EventArgs e)

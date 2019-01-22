@@ -36,7 +36,7 @@ namespace RobotRuntime.Assets
 
             m_PreloadedAssetsUpToDate = false;
 
-            var paths = Paths.GetAllFilePaths();
+            var paths = Paths.GetAllAssetPaths();
 
             foreach (var path in paths)
             {
@@ -123,7 +123,7 @@ namespace RobotRuntime.Assets
             }
         }
 
-        public IEnumerable<object> Assets
+        /*public IEnumerable<object> Assets
         {
             get
             {
@@ -132,6 +132,6 @@ namespace RobotRuntime.Assets
                 else
                     return m_GuidImporterMap.Select(pair => pair.Value.Value);
             }
-        }
+        }*/
     }
 }

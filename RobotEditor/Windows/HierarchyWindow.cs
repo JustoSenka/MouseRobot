@@ -332,7 +332,7 @@ namespace RobotEditor
         public void SaveSelectedRecordingWithDialog(Recording recording, bool updateUI = true)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
-            saveDialog.InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.RecordingFolder;
+            saveDialog.InitialDirectory = Paths.AssetsPath;
             saveDialog.Filter = string.Format("Mouse Robot File (*.{0})|*.{0}", FileExtensions.Recording);
             saveDialog.Title = "Select a path for recording to save.";
             saveDialog.FileName = recording.Name + FileExtensions.RecordingD;

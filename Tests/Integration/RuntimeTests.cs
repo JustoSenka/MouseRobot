@@ -30,10 +30,10 @@ namespace Tests.Integration
 
         private const string k_CustomCommandName = "Custom Command";
 
-        private const string k_RecordingName = "rec";
-        private const string k_RecordingPath = "Recordings\\" + k_RecordingName + ".mrb";
-        private const string k_CustomCommandPath = "Scripts\\CustomCommand.cs";
-        private const string k_CustomCommandRunnerPath = "Scripts\\CustomCommandRunner.cs";
+        private const string k_RecordingName = "Assets\\rec";
+        private const string k_RecordingPath = k_RecordingName + ".mrb";
+        private const string k_CustomCommandPath = "Assets\\CustomCommand.cs";
+        private const string k_CustomCommandRunnerPath = "Assets\\CustomCommandRunner.cs";
 
         [TestInitialize]
         public void Initialize()

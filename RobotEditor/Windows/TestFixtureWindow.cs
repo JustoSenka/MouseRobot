@@ -352,7 +352,7 @@ namespace RobotEditor
         {
             SaveFileDialog saveDialog = new SaveFileDialog
             {
-                InitialDirectory = Environment.CurrentDirectory + "\\" + Paths.TestsFolder,
+                InitialDirectory = Paths.AssetsPath,
                 Filter = string.Format("Test Fixture File (*.{0})|*.{0}", FileExtensions.Test),
                 Title = "Select a path for recording to save.",
                 FileName = m_TestFixture.Name + FileExtensions.TestD

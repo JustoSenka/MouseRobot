@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Logging;
 using RobotRuntime.Utils;
 using System;
@@ -10,11 +11,12 @@ using System.Linq;
 
 namespace Robot
 {
-    public class AssetManager// : IAssetManager
+    public class AssetManagerV2 : RuntimeAssetManager, IAssetManager, IRuntimeAssetManager
     {
-        public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
-        public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();
-        public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();
+        private Dictionary<Guid, Asset> GuidAssetTable { get; set; } = new Dictionary<Guid, Asset>();
+        private Dictionary<Guid, string> GuidPathTable { get; set; } = new Dictionary<Guid, string>();
+        private Dictionary<Guid, Int64> GuidHashTable { get; set; } = new Dictionary<Guid, Int64>();
+        private HashSet<string> m_Directories { get; set; } = new HashSet<string>();
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -24,10 +26,14 @@ namespace Robot
 
         public bool IsEditingAssets { get; private set; }
 
+        public IEnumerable<Asset> Assets => GuidAssetTable.Select(pair => pair.Value);
+        public IEnumerable<string> Directories => m_Directories;
+
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
         private IStatusManager StatusManager;
-        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager)
+        public AssetManagerV2(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger) :
+            base(AssetGuidManager, Logger, Profiler)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.Profiler = Profiler;
@@ -214,7 +220,7 @@ namespace Robot
                 AssetGuidManager.Save();
 
             AddAssetInternal(asset, true);
-            
+
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
@@ -222,20 +228,6 @@ namespace Robot
         {
             path = Paths.GetRelativePath(path);
             return Assets.FirstOrDefault((a) => Paths.AreRelativePathsEqual(a.Path, path));
-        }
-
-        public Asset GetAsset(string folder, string name)
-        {
-            /*
-            var path = folder + "\\" + name + "." + Paths.GetExtensionFromFolder(folder);
-
-            // TODO: This is VERY BAD. Need to remove this method. It does not allow same names with different extenstions
-            // to live. Maybe after Free Asset Structure is introduces.
-            // Really bad hack so executables are shown in asset db.
-            var asset = GetAsset(path);
-            asset = asset ?? GetAsset(path.Replace(".dll", ".exe"));
-            */
-            return null;// asset;
         }
 
         public void BeginAssetEditing()
@@ -254,14 +246,6 @@ namespace Robot
             BeginAssetEditing();
             ac.Invoke();
             EndAssetEditing();
-        }
-
-        public IEnumerable<Asset> Assets
-        {
-            get
-            {
-                return GuidAssetTable.Select(pair => pair.Value);
-            }
         }
 
         private void AddAssetInternal(Asset asset, bool silent = false)
