@@ -153,7 +153,7 @@ namespace RobotRuntime
 
         public static TreeNode FindNode(this TreeView treeView, string path)
         {
-            var dirs = Paths.GetPathDirectoryElements(path);
+            var dirs = Paths.GetPathDirectoryElementsWtihFileName(path);
             TreeNode currentNode = treeView.FindChild(dirs[0]);
 
             try
@@ -194,6 +194,11 @@ namespace RobotRuntime
         {
             return Regex.Replace(str, @"\r\n|\n\r|\n|\r", Environment.NewLine);
             // return Regex.Replace(str, $"{Environment.NewLine} +| +{Environment.NewLine}", Environment.NewLine).Trim();
+        }
+
+        public static string NormalizePath(this string str)
+        {
+            return Paths.NormalizePath(str);
         }
     }
 }

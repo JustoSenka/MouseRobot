@@ -27,7 +27,7 @@ namespace Robot
         public bool IsEditingAssets { get; private set; }
 
         public IEnumerable<Asset> Assets => GuidAssetTable.Select(pair => pair.Value);
-        public IEnumerable<string> Directories => m_Directories;
+        public IEnumerable<Asset> Directories => Assets.Where(a => a.Importer.GetType() == typeof(Assets.DirectoryImporter)); // m_Directories;
 
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
@@ -45,7 +45,7 @@ namespace Robot
             Profiler.Start("AssetManager_Refresh");
             BeginAssetEditing();
 
-            var paths = Paths.GetAllAssetPaths();
+            var paths = Paths.GetAllAssetPaths(true);
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
             // Detect renamed assets if application was closed, and assets were renamed via file system

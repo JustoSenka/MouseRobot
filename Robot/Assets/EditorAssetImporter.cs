@@ -25,8 +25,11 @@ namespace Robot
             else if (path.EndsWith(FileExtensions.DllD) || path.EndsWith(FileExtensions.ExeD))
                 return new PluginImporter(path);
 
+            else if (System.IO.Directory.Exists(path))
+                return new DirectoryImporter(path);
+
             else
-                return null;
+                return new TextAssetImporter(path);
         }
     }
 }

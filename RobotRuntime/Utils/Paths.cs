@@ -53,9 +53,13 @@ namespace RobotRuntime.Utils
             return Path.GetFileNameWithoutExtension(path);
         }
 
-        public static IEnumerable<string> GetAllAssetPaths()
+        public static IEnumerable<string> GetAllAssetPaths(bool includeAssetPath = false)
         {
-            return Directory.GetFileSystemEntries(AssetsPath, "*", SearchOption.AllDirectories).Select(GetRelativePath);
+            var allAntries = Directory.GetFileSystemEntries(AssetsPath, "*", SearchOption.AllDirectories).Select(GetRelativePath);
+            if (includeAssetPath)
+                allAntries = allAntries.Append(AssetsFolder);
+
+            return allAntries;
         }
 
         public static string GetRelativePath(string fullPath)
@@ -70,21 +74,56 @@ namespace RobotRuntime.Utils
             }
             else
             {
-                Logger.Log(LogType.Error, "Unable to make relative path from: " + fullAbsolutePath +
+                Logger.Log(LogType.Error, "Unable to make relative pa.th from: " + fullAbsolutePath +
                     " where current environment path is: " + currentDirectory);
             }
 
             return ""; // Regex.Match(fullPath, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
         }
 
+        /// <summary>
+        /// From path: "Assets/scripts/sc.mrb"
+        /// Will return: new [] { "Assets", "scripts", "sc.mrb" }
+        /// </summary>
+        public static string[] GetPathDirectoryElementsWtihFileName(string path)
+        {
+            return path.Split('\\', '/').Select(NormalizePath).ToArray();
+        }
+
+        /// <summary>
+        /// From path: "Assets/scripts/sc.mrb"
+        /// Will return: new [] { "Assets", "scripts" }
+        /// </summary>
         public static string[] GetPathDirectoryElements(string path)
         {
-            return path.Split('\n').Select(NormalizePath).ToArray();
+            var array = path.Split('\\', '/');
+            var lastElement = array.Length - 1;
+
+            return (Regex.IsMatch(array[lastElement], @"\w+\.\w{2,8}$")) ? // If last element is file with extension
+                array.Take(lastElement).Select(NormalizePath).ToArray() : 
+                array.Select(NormalizePath).ToArray();
+        }
+
+        /// <summary>
+        /// From path elements: { "Assets", "scripts", "sc.mrb" }
+        /// Will return: new [] { "Assets", "Assets/scripts", "Assets/scripts/sc.mrb" }
+        /// </summary>
+        public static string[] JoinDirectoryElementsIntoPaths(IEnumerable<string> elements)
+        {
+            var list = new List<string>();
+
+            var count = elements.Count();
+            for (int i = 0; i < count; i++)
+                list.Add(string.Join(Path.DirectorySeparatorChar.ToString(), elements.Take(i + 1).ToArray()));
+
+            return list.ToArray();
         }
 
         public static string NormalizePath(string path)
         {
-            return path.Trim('\n', '\r', ' ', '\\', '/');
+            return path.Trim('\n', '\r', ' ', '\\', '/').
+                Replace('/', Path.DirectorySeparatorChar).
+                Replace('\\', Path.DirectorySeparatorChar);
         }
 
         public static bool AreRelativePathsEqual(string s, string d)

@@ -70,7 +70,7 @@ namespace RobotRuntime
                 return new PluginImporter(path);
 
             else
-                return null;
+                return new TextAssetImporter(path);
         }
     }
 }

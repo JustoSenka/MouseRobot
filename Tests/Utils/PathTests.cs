@@ -60,5 +60,39 @@ namespace Tests.Utils
 
             Assert.IsTrue(string.IsNullOrEmpty(result));
         }
+
+        [TestMethod]
+        public void GetPathDirectoryElementsWtihFileName_ReturnCorrectElements()
+        {
+            var path = "Assets/scripts/sc.mrb";
+            var expected = new[] { "Assets", "scripts", "sc.mrb" };
+
+            var res = Paths.GetPathDirectoryElementsWtihFileName(path);
+
+            CollectionAssert.AreEqual(expected, res);
+        }
+
+        [TestMethod]
+        public void GetPathDirectoryElements_ReturnCorrectElements()
+        {
+            var path = "Assets/scripts/sc.mrb";
+            var expected = new[] { "Assets", "scripts" };
+
+            var res = Paths.GetPathDirectoryElements(path);
+
+            CollectionAssert.AreEqual(expected, res);
+        }
+
+        [TestMethod]
+        public void JoinDirectoryElementsIntoPaths_ReturnCorrectElements()
+        {
+            var path = "Assets/scripts/sc.mrb".NormalizePath();
+            var expected = new[] { "Assets", "Assets/scripts".NormalizePath(), "Assets/scripts/sc.mrb".NormalizePath() };
+
+            var elements = Paths.GetPathDirectoryElementsWtihFileName(path);
+            var res = Paths.JoinDirectoryElementsIntoPaths(elements);
+
+            CollectionAssert.AreEqual(expected, res);
+        }
     }
 }

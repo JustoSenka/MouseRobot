@@ -162,6 +162,7 @@
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Abstractions\IAssetManager.cs" />
+    <Compile Include="Assets\DirectoryImporter.cs" />
     <Compile Include="Assets\RecordingImporter.cs" />
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />

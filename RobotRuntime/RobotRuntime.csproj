@@ -189,6 +189,7 @@
     <Compile Include="Abstractions\IAssetGuidManager.cs" />
     <Compile Include="Assets\ImageImporter.cs" />
     <Compile Include="Assets\LightTestFixtureImporter.cs" />
+    <Compile Include="Assets\TextAssetImporter.cs" />
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Assets\LightRecordingImporter.cs" />
     <Compile Include="Commands\Command.cs" />
@@ -292,6 +293,7 @@
     <Compile Include="Utils\StandardColors.cs" />
     <Compile Include="zCustomDataTypes\ValueWrapper.cs" />
     <Compile Include="Utils\WinAPI.cs" />
+    <Compile Include="zExtensionMethods\TreeNodeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

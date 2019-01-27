@@ -1,4 +1,7 @@
-﻿namespace RobotEditor
+﻿using System;
+using BrightIdeasSoftware;
+
+namespace RobotEditor
 {
     partial class AssetsWindowV2
     {
@@ -30,8 +33,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindowV2));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Recordings");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Images");
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
@@ -39,14 +40,15 @@
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recompileRecordingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.regenerateSolutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.treeView = new RobotEditor.CustomControls.EditableTreeView();
-            this.addScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.contextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip
@@ -106,6 +108,12 @@
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(230, 6);
             // 
+            // addScriptToolStripMenuItem
+            // 
+            this.addScriptToolStripMenuItem.Name = "addScriptToolStripMenuItem";
+            this.addScriptToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.addScriptToolStripMenuItem.Text = "Add Script";
+            // 
             // recompileRecordingsToolStripMenuItem
             // 
             this.recompileRecordingsToolStripMenuItem.Name = "recompileRecordingsToolStripMenuItem";
@@ -143,50 +151,45 @@
             this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
             this.imageList1.Images.SetKeyName(3, "Script_ICO_256.png");
             // 
-            // treeView
+            // treeListView1
             // 
-            this.treeView.ContextMenuStrip = this.contextMenuStrip;
-            this.treeView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView.ImageIndex = 0;
-            this.treeView.ImageList = this.imageList1;
-            this.treeView.LabelEdit = true;
-            this.treeView.Location = new System.Drawing.Point(0, 0);
-            this.treeView.Name = "treeView";
-            treeNode1.Name = "Recordings";
-            treeNode1.Text = "Recordings";
-            treeNode2.Name = "Images";
-            treeNode2.Text = "Images";
-            this.treeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2});
-            this.treeView.SelectedImageIndex = 0;
-            this.treeView.Size = new System.Drawing.Size(402, 372);
-            this.treeView.TabIndex = 0;
+            this.treeListView.AllowDrop = true;
+            this.treeListView.CellEditUseWholeCell = false;
+            this.treeListView.ContextMenuStrip = this.contextMenuStrip;
+            this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.treeListView.LargeImageList = this.imageList1;
+            this.treeListView.Location = new System.Drawing.Point(0, 25);
+            this.treeListView.Name = "treeListView";
+            this.treeListView.ShowGroups = false;
+            this.treeListView.ShowImagesOnSubItems = true;
+            this.treeListView.Size = new System.Drawing.Size(469, 407);
+            this.treeListView.SmallImageList = this.imageList1;
+            this.treeListView.TabIndex = 1;
+            this.treeListView.UseCompatibleStateImageBehavior = false;
+            this.treeListView.View = System.Windows.Forms.View.Details;
+            this.treeListView.VirtualMode = true;
+            this.treeListView.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelCanDrop);
+            this.treeListView.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelDropped);
+            this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             // 
-            // addScriptToolStripMenuItem
-            // 
-            this.addScriptToolStripMenuItem.Name = "addScriptToolStripMenuItem";
-            this.addScriptToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
-            this.addScriptToolStripMenuItem.Text = "Add Script";
-            // 
-            // AssetsWindow
+            // AssetsWindowV2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(402, 372);
             this.ContextMenuStrip = this.contextMenuStrip;
-            this.Controls.Add(this.treeView);
+            this.Controls.Add(this.treeListView);
             this.HideOnClose = true;
-            this.Name = "AssetsWindow";
+            this.Name = "AssetsWindowV2";
             this.Text = "Assets";
             this.contextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private RobotEditor.CustomControls.EditableTreeView treeView;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
@@ -200,5 +203,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem regenerateSolutionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addScriptToolStripMenuItem;
+        private BrightIdeasSoftware.TreeListView treeListView;
     }
 }

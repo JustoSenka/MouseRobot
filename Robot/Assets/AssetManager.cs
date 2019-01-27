@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Robot
 {
-    public class AssetManager// : IAssetManager
+    public class AssetManager : IAssetManager
     {
         public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
         public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();

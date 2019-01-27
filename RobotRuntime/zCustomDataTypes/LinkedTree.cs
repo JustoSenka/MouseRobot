@@ -88,6 +88,11 @@ namespace RobotRuntime
             children.Remove(children.NodeAt(index));
         }
 
+        public void Clear()
+        {
+            children.Clear();
+        }
+
         public void MoveAfter(TreeNode<T> source, TreeNode<T> dest)
         {
             if (source == dest)

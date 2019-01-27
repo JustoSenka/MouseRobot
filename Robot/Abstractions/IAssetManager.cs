@@ -6,7 +6,6 @@ namespace Robot.Abstractions
     public interface IAssetManager
     {
         IEnumerable<Asset> Assets { get; }
-        IEnumerable<string> Directories { get; }
 
         /* No public refs, not needed maybe?
         Dictionary<Guid, Asset> GuidAssetTable { get; }

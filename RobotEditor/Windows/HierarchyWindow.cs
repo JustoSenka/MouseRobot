@@ -44,7 +44,6 @@ namespace RobotEditor
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-
             treeListView.Font = Fonts.Default;
 
             RecordingManager.CommandAddedToRecording += OnCommandAddedToRecording;
