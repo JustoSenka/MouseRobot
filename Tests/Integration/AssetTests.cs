@@ -122,7 +122,7 @@ namespace Tests.Integration
             var assetB = AssetManager.GetAsset(k_RecordingBPath);
             var assetC = AssetManager.GetAsset(k_RecordingCPath);
 
-            Assert.AreEqual(1, AssetManager.Assets.Count());
+            Assert.AreEqual(2, AssetManager.Assets.Count());
             Assert.IsNull(assetA, "Asset A should not exist anymore");
             Assert.IsNotNull(assetB, "Asset B should exist");
             Assert.IsNull(assetC, "Asset C should not exist anymore");
@@ -141,7 +141,7 @@ namespace Tests.Integration
             var assetB = AssetManager.GetAsset(k_RecordingBPath);
             var assetC = AssetManager.GetAsset(k_RecordingCPath);
 
-            Assert.AreEqual(3, AssetManager.Assets.Count());
+            Assert.AreEqual(4, AssetManager.Assets.Count());
             Assert.IsNotNull(assetA, "Asset A should exist");
             Assert.IsNotNull(assetB, "Asset B should exist");
             Assert.IsNotNull(assetC, "Asset C should exist");
@@ -157,7 +157,7 @@ namespace Tests.Integration
             File.Move(k_RecordingBPath, k_RecordingDPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(3, AssetManager.Assets.Count());
+            Assert.AreEqual(4, AssetManager.Assets.Count());
             Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_RecordingAPath).Guid, "A asset guid missmath");
             Assert.AreEqual(assetB.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
             Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset guid missmath");
@@ -177,7 +177,7 @@ namespace Tests.Integration
             File.Delete(k_RecordingAPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetManager.Assets.Count());
+            Assert.AreEqual(3, AssetManager.Assets.Count());
             Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
             Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset guid missmath");
             Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "A asset was renamed, so should not appear");
@@ -192,7 +192,7 @@ namespace Tests.Integration
 
             AssetManager.DeleteAsset(k_RecordingAPath);
 
-            Assert.AreEqual(1, AssetManager.Assets.Count());
+            Assert.AreEqual(2, AssetManager.Assets.Count());
             Assert.IsFalse(File.Exists(k_RecordingAPath), "Asset A should not exist on disk");
             Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "Asset A should not exist anymore");
             Assert.IsNotNull(AssetManager.GetAsset(k_RecordingBPath), "Asset B should exist");

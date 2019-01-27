@@ -47,7 +47,7 @@ namespace Tests.Integration
 
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset count missmatch");
             Assert.AreEqual(AssetManager.GetAsset(k_RecordingAPath).Guid, AssetGuidManager.GetGuid(k_RecordingAPath), "Asset guid missmatch");
             Assert.AreEqual(AssetManager.GetAsset(k_RecordingBPath).Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
@@ -64,8 +64,8 @@ namespace Tests.Integration
             File.Delete(k_RecordingCPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(1, AssetManager.Assets.Count(), "Asset count missmatch");
-            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset guid count missmatch");
+            Assert.AreEqual(2, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(4, AssetGuidManager.Paths.Count(), "Asset guid count missmatch");
 
             Assert.IsTrue(AssetGuidManager.ContainsValue(k_RecordingAPath), "Asset guid should still be in place");
             Assert.IsTrue(AssetGuidManager.ContainsValue(k_RecordingCPath), "Asset guid should still be in place");
@@ -81,7 +81,7 @@ namespace Tests.Integration
             File.Move(k_RecordingBPath, k_RecordingCPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset count missmatch");
             Assert.AreEqual(default(Guid), AssetGuidManager.GetGuid(k_RecordingBPath), "B asset was renamed");
 
             Assert.AreEqual(assetA.Guid, AssetGuidManager.GetGuid(k_RecordingAPath), "A path gives correct guid");
@@ -104,8 +104,8 @@ namespace Tests.Integration
             CreateDummyRecordingWithImporter(k_RecordingCPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetManager.Assets.Count(), "Asset count missmatch");
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
+            Assert.AreEqual(3, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
 
 
             Assert.AreEqual(guidA, AssetManager.GetAsset(k_RecordingAPath).Guid, "A asset has correct guid");
@@ -127,8 +127,8 @@ namespace Tests.Integration
             CreateDummyRecordingWithImporter(k_RecordingBPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetManager.Assets.Count(), "Asset count missmatch");
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
+            Assert.AreEqual(3, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
 
             Assert.AreEqual(guidA, AssetManager.GetAsset(k_RecordingAPath).Guid, "A path gives correct guid");
             Assert.AreEqual(guidB, AssetManager.GetAsset(k_RecordingBPath).Guid, "B path gives correct guid");
@@ -145,8 +145,8 @@ namespace Tests.Integration
             CreateDummyRecordingWithImporter(k_RecordingBPath);
             AssetManager.Refresh();
 
-            Assert.AreEqual(2, AssetManager.Assets.Count(), "Asset count missmatch");
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
+            Assert.AreEqual(3, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
 
             Assert.AreEqual(guidA, AssetManager.GetAsset(k_RecordingAPath).Guid, "A path gives correct guid");
             Assert.AreEqual(guidB, AssetManager.GetAsset(k_RecordingBPath).Guid, "B path gives correct guid");
@@ -158,7 +158,7 @@ namespace Tests.Integration
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
             var asset2 = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
 
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset count missmatch");
             Assert.AreEqual(asset.Guid, AssetGuidManager.GetGuid(k_RecordingAPath), "Asset guid missmatch");
             Assert.AreEqual(asset2.Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
@@ -171,8 +171,8 @@ namespace Tests.Integration
 
             AssetManager.DeleteAsset(k_RecordingAPath);
 
-            Assert.AreEqual(1, AssetManager.Assets.Count(), "Asset count missmatch");
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset guid count missmatch");
+            Assert.AreEqual(2, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset guid count missmatch");
 
             Assert.IsTrue(AssetGuidManager.ContainsValue(k_RecordingAPath), "Asset guid should still be in place");
             Assert.AreEqual(asset2.Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
@@ -186,7 +186,7 @@ namespace Tests.Integration
 
             AssetManager.RenameAsset(k_RecordingAPath, k_RecordingCPath);
 
-            Assert.AreEqual(2, AssetGuidManager.Paths.Count(), "Asset count missmatch");
+            Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Asset count missmatch");
             Assert.IsFalse(AssetGuidManager.ContainsValue(k_RecordingAPath), "A path should be deleted");
 
             Assert.AreEqual(default(Guid), AssetGuidManager.GetGuid(k_RecordingAPath), "Asset guid missmatch");
