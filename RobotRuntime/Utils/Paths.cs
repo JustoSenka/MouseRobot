@@ -64,6 +64,9 @@ namespace RobotRuntime.Utils
 
         public static string GetRelativePath(string fullPath)
         {
+            if (fullPath.IsEmpty())
+                return fullPath;
+
             var fullAbsolutePath = (File.Exists(fullPath)) ? new FileInfo(fullPath).FullName : new DirectoryInfo(fullPath).FullName;
             var currentDirectory = new DirectoryInfo(Environment.CurrentDirectory).FullName;
 

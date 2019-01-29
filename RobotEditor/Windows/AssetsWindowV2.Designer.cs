@@ -66,7 +66,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(234, 198);
+            this.contextMenuStrip.Size = new System.Drawing.Size(234, 220);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -102,6 +102,7 @@ namespace RobotEditor
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -151,7 +152,7 @@ namespace RobotEditor
             this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
             this.imageList1.Images.SetKeyName(3, "Script_ICO_256.png");
             // 
-            // treeListView1
+            // treeListView
             // 
             this.treeListView.AllowDrop = true;
             this.treeListView.CellEditUseWholeCell = false;
@@ -159,11 +160,11 @@ namespace RobotEditor
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.treeListView.LargeImageList = this.imageList1;
-            this.treeListView.Location = new System.Drawing.Point(0, 25);
+            this.treeListView.Location = new System.Drawing.Point(0, 0);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(469, 407);
+            this.treeListView.Size = new System.Drawing.Size(402, 372);
             this.treeListView.SmallImageList = this.imageList1;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
@@ -172,6 +173,7 @@ namespace RobotEditor
             this.treeListView.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelCanDrop);
             this.treeListView.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelDropped);
             this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
+            this.treeListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeListView_MouseDoubleClick);
             // 
             // AssetsWindowV2
             // 

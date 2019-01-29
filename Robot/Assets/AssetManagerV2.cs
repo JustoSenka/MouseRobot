@@ -176,8 +176,22 @@ namespace Robot
             path = Paths.GetRelativePath(path);
             var asset = GetAsset(path);
 
-            File.SetAttributes(path, FileAttributes.Normal);
-            File.Delete(path);
+            try
+            {
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                }
+                else
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.Delete(path);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogType.Error, "Cannot delete asset at path: " + path, e.Message);
+            }
 
             DeleteAssetInternal(asset);
         }

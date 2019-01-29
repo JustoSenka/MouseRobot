@@ -4,11 +4,14 @@ using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
+using RobotRuntime.Recordings;
+using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -64,8 +67,12 @@ namespace RobotEditor
             {
                 var imageListIndex = -1;
                 var node = (TreeNode<Asset>)x;
-                //imageListIndex = node.Recording != null ? 0 : imageListIndex;
-                //imageListIndex = node.Command != null ? 1 : imageListIndex;
+                imageListIndex = Directory.Exists(node.value.Path) ? 0 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.RecordingD) ? 1 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.ImageD) ? 2 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.ScriptD) ? 3 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.TestD) ? 3 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 3 : imageListIndex;
                 return imageListIndex;
             };
 
@@ -73,6 +80,8 @@ namespace RobotEditor
 
             treeListView.IsSimpleDragSource = true;
             treeListView.IsSimpleDropSink = true;
+
+            treeListView.TreeColumnRenderer.IsShowLines = false;
 
             nameColumn.Width = treeListView.Width;
             treeListView.Columns.Add(nameColumn);
@@ -93,27 +102,68 @@ namespace RobotEditor
                     foreach (var path in allElementPaths.Skip(1)) // Skipping Assets folder for performance reasons
                     {
                         var c = m_AssetTree.FindNodeFromPath(path);
-                        if (c == null) // Only add if asset or directory does not exist
+                        if (c == null) // Only add if asset or directory if it does not exist
                         {
                             var intermediateAsset = AssetManager.GetAsset(path);
+                            if (Logger.AssertIf(intermediateAsset == null, "Asset Manager does not know about this asset: " + path + " but Assets Window tried to draw it."))
+                                continue;
+
                             m_AssetTree.AddChildAtPath(path, intermediateAsset);
                         }
                     }
                 }
 
                 treeListView.Roots = m_AssetTree;
-
-                /*
-                for (int i = 0; i < treeListView.Items.Count; ++i)
-                    treeListView.Items[i].ImageIndex = 0;*/
-
                 treeListView.Refresh();
             }));
         }
 
+        private void treeListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (treeListView.SelectedObject == null)
+                return;
+
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            if (Logger.AssertIf(assetNode == null, $"Asset in database was not found but is visible in Assets Window: {treeListView.SelectedObject}. Please report a bug."))
+                return;
+
+            var asset = assetNode.value;
+            if (Logger.AssertIf(asset == null, $"Asset Node is created for tree view, but its value (Asset) is null: {assetNode}. Please report a bug."))
+                return;
+
+            if (asset.HoldsTypeOf(typeof(Recording)))
+            {
+                if (!RecordingManager.LoadedRecordings.Any(s => s.Name == asset.Name))
+                    RecordingManager.LoadRecording(asset.Path);
+            }
+            else if (asset.HoldsTypeOf(typeof(LightTestFixture)))
+            {
+                if (!TestFixtureManager.Contains(asset.Name))
+                {
+                    var lightTestFixture = asset.Importer.Load<LightTestFixture>();
+                    if (lightTestFixture != null)
+                    {
+                        lightTestFixture.Name = asset.Name;
+                        var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
+                        fixture.Path = asset.Path;
+                    }
+                }
+                // TODO: Send some message to main form to give focus to window is TestFixture is already open
+            }
+            else if (asset.Importer.GetType() == typeof(ScriptImporter))
+            {
+                Task.Run(() => CodeEditor.FocusFile(asset.Importer.Path));
+            }
+        }
+
         private void treeListView_SelectionChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            if (asset == null)
+                return;
+
+            AssetSelected?.Invoke();
         }
 
         private void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
@@ -124,12 +174,6 @@ namespace RobotEditor
         private void treeListView_ModelCanDrop(object sender, ModelDropEventArgs e)
         {
             throw new NotImplementedException();
-        }
-
-
-        private void OnAfterRenameNode(NodeLabelEditEventArgs obj)
-        {
-
         }
 
         public void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName)
@@ -156,14 +200,29 @@ namespace RobotEditor
 
         public Asset GetSelectedAsset()
         {
-            return null;
+            if (treeListView.SelectedObject == null)
+                return null;
+
+            var asset = treeListView.SelectedObject as TreeNode<Asset>;
+
+            if (asset == null || asset.value == null)
+                Logger.Logi(LogType.Error,
+                    "AssetWindow has asset selected, but the AssetManager has no such asset registered. Something went wrong, please report a bug.",
+                    $"Selected Object: '{treeListView.SelectedObject}'");
+
+            return asset.value;
         }
 
         #region Context Menu Items
 
         private void reloadRecordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            if (asset == null || !asset.HoldsTypeOf(typeof(Recording)))
+                return;
 
+            RecordingManager.LoadRecording(asset.Path);
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -173,7 +232,13 @@ namespace RobotEditor
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            if (asset == null)
+                return;
 
+            var path = Path.Combine(Environment.CurrentDirectory, asset.Path);
+            System.Diagnostics.Process.Start("explorer.exe", "/select, " + path);
         }
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
@@ -190,6 +255,16 @@ namespace RobotEditor
         {
             SolutionManager.GenerateNewProject();
             SolutionManager.GenerateNewSolution();
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            if (asset == null)
+                return;
+
+            AssetManager.DeleteAsset(asset.Path);
         }
 
         #endregion
