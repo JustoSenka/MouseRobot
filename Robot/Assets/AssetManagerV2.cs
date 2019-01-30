@@ -172,7 +172,20 @@ namespace Robot
         public void DeleteAsset(string path)
         {
             path = Paths.GetRelativePath(path).NormalizePath();
+            if (path.IsEmpty())
+            {
+                Logger.Log(LogType.Error, "Tried to delete empty directory. This might lead to really bad outcome!");
+                return;
+            }
+
             var asset = GetAsset(path);
+            if (asset == null)
+            {
+                Logger.Log(LogType.Error, "Cannot detele file or directory because Asset Manager does not know about this path." +
+                    " Not deleting anything for safety reasons: " + path);
+                return;
+            }
+
             var isDirectory = Directory.Exists(path);
 
             try
