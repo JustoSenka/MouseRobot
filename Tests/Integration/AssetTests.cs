@@ -198,6 +198,24 @@ namespace Tests.Integration
             Assert.IsNotNull(AssetManager.GetAsset(k_RecordingBPath), "Asset B should exist");
         }
 
+        [TestMethod]
+        public void DeleteDirectory_RemovesFromManager_AndFromDisk()
+        {
+            var path = "Assets\\someFolder";
+            Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path + "\\Assets");
+            AssetManager.Refresh();
+
+            AssetManager.CreateAsset(new Recording(guid), Path.Combine(path, k_RecordingAPath));
+            AssetManager.CreateAsset(new Recording(guid), Path.Combine(path, k_RecordingBPath));
+
+            Assert.AreEqual(5, AssetManager.Assets.Count(), "Not all assets were collected in the first place"); // Dirs included
+
+            AssetManager.DeleteAsset(path);
+
+            Assert.AreEqual(1, AssetManager.Assets.Count(), "After deletion, only one asset should be left");
+        }
+
         private static void CreateDummyRecordingWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);

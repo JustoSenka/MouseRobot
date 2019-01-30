@@ -115,6 +115,7 @@ namespace RobotEditor
 
                 treeListView.Roots = m_AssetTree;
                 treeListView.Refresh();
+                treeListView.Expand(m_AssetTree.GetChild(0));
             }));
         }
 

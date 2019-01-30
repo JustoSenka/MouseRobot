@@ -16,7 +16,6 @@ namespace Robot
         private Dictionary<Guid, Asset> GuidAssetTable { get; set; } = new Dictionary<Guid, Asset>();
         private Dictionary<Guid, string> GuidPathTable { get; set; } = new Dictionary<Guid, string>();
         private Dictionary<Guid, Int64> GuidHashTable { get; set; } = new Dictionary<Guid, Int64>();
-        private HashSet<string> m_Directories { get; set; } = new HashSet<string>();
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -27,7 +26,6 @@ namespace Robot
         public bool IsEditingAssets { get; private set; }
 
         public IEnumerable<Asset> Assets => GuidAssetTable.Select(pair => pair.Value);
-        public IEnumerable<Asset> Directories => Assets.Where(a => a.Importer.GetType() == typeof(Assets.DirectoryImporter)); // m_Directories;
 
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
@@ -52,7 +50,7 @@ namespace Robot
             foreach (var pair in AssetGuidManager.Paths.ToList())
             {
                 var path = pair.Value;
-                if (!File.Exists(path))
+                if (!File.Exists(path) && !Directory.Exists(path))
                 {
                     var guid = pair.Key;
                     var hash = AssetGuidManager.GetHash(guid);
@@ -72,7 +70,7 @@ namespace Robot
             // Detect Rename for assets in memory (while keeping existing asset references)
             foreach (var assetInMemory in Assets.ToList())
             {
-                if (!File.Exists(assetInMemory.Path))
+                if (!File.Exists(assetInMemory.Path) && !Directory.Exists(assetInMemory.Path))
                 {
                     // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
                     var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset =>
@@ -173,12 +171,13 @@ namespace Robot
         /// </summary>
         public void DeleteAsset(string path)
         {
-            path = Paths.GetRelativePath(path);
+            path = Paths.GetRelativePath(path).NormalizePath();
             var asset = GetAsset(path);
+            var isDirectory = Directory.Exists(path);
 
             try
             {
-                if (Directory.Exists(path))
+                if (isDirectory)
                 {
                     Directory.Delete(path, true);
                 }
@@ -191,6 +190,12 @@ namespace Robot
             catch (Exception e)
             {
                 Logger.Log(LogType.Error, "Cannot delete asset at path: " + path, e.Message);
+            }
+
+            if (isDirectory)
+            {
+                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(path)).ToArray())
+                    DeleteAssetInternal(assetInDir);
             }
 
             DeleteAssetInternal(asset);

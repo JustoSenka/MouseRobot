@@ -16,7 +16,7 @@ namespace RobotEditor.PropertyUtils
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(AssetManager.Assets.Where(a => a.HoldsTypeOf(typeof(Bitmap))).Select(a => a.Name).ToList());
+            return new StandardValuesCollection(AssetManager.Assets.Where(a => a.HoldsTypeOf(typeof(Bitmap))).Select(a => a.Path).ToList());
         }
     }
 }
