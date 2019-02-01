@@ -268,7 +268,8 @@ namespace RobotEditor
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (treeListView.SelectedObject != null)
+                treeListView.EditModel(treeListView.SelectedObject);
         }
 
         private void recompileRecordingsToolStripMenuItem_Click(object sender, EventArgs e)
