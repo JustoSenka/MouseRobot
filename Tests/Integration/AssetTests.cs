@@ -21,6 +21,8 @@ namespace Tests.Integration
         private const string k_RecordingCPath = "Assets\\C.mrb";
         private const string k_RecordingDPath = "Assets\\D.mrb";
 
+        private const string k_RecordingANestedPath = "Assets\\folder\\A.mrb";
+
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
         IAssetManager AssetManager;
@@ -42,7 +44,9 @@ namespace Tests.Integration
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
-            var asset2 = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
+
+            Directory.CreateDirectory(new FileInfo(k_RecordingANestedPath).Directory.FullName);
+            var asset2 = AssetManager.CreateAsset(new Recording(guid), k_RecordingANestedPath);
 
             Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
@@ -171,16 +175,14 @@ namespace Tests.Integration
             var assetB = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath);
             var assetC = AssetManager.CreateAsset(new Recording(guid), k_RecordingCPath);
 
-            // This will actually think that A was renamed to D, and B deleted
-            // this is due to having the same hash
             File.Move(k_RecordingBPath, k_RecordingDPath);
             File.Delete(k_RecordingAPath);
             AssetManager.Refresh();
 
             Assert.AreEqual(3, AssetManager.Assets.Count());
-            Assert.AreEqual(assetA.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
+            Assert.AreEqual(assetB.Guid, AssetManager.GetAsset(k_RecordingDPath).Guid, "B asset guid missmath");
             Assert.AreEqual(assetC.Guid, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset guid missmath");
-            Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "A asset was renamed, so should not appear");
+            Assert.IsNull(AssetManager.GetAsset(k_RecordingAPath), "A asset was deleted, so should not appear");
             Assert.IsNull(AssetManager.GetAsset(k_RecordingBPath), "B asset was renamed, so should not appear");
         }
 

@@ -83,6 +83,9 @@ namespace RobotEditor
 
             treeListView.TreeColumnRenderer.IsShowLines = false;
 
+            treeListView.LabelEdit = true;
+            treeListView.AfterLabelEdit += OnAfterLabelEdit;
+
             nameColumn.Width = treeListView.Width;
             treeListView.Columns.Add(nameColumn);
         }
@@ -117,6 +120,27 @@ namespace RobotEditor
                 treeListView.Refresh();
                 treeListView.Expand(m_AssetTree.GetChild(0));
             }));
+        }
+
+        private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            if (e.Label == "" || e.Label == null)
+            {
+                e.CancelEdit = true;
+                return;
+            }
+
+            try
+            {
+                var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+                var asset = assetNode.value;
+                var newPath = asset.Path.Replace(asset.Name + Path.GetExtension(asset.Path), e.Label + Path.GetExtension(asset.Path));
+                AssetManager.RenameAsset(asset.Path, newPath);
+            }
+            catch
+            {
+                e.CancelEdit = true;
+            }
         }
 
         private void treeListView_MouseDoubleClick(object sender, MouseEventArgs e)

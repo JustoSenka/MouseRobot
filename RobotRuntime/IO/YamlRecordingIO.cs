@@ -15,6 +15,7 @@ namespace RobotRuntime.IO
                 var text = File.ReadAllText(path);
                 var yamlTree = YamlSerializer.DeserializeYamlTree(text);
                 var s = Deserialize(yamlTree);
+                s.Name = Path.GetFileNameWithoutExtension(path);
                 return (T)((object) s);
             }
             catch (Exception e)
@@ -28,7 +29,9 @@ namespace RobotRuntime.IO
         {
             try
             {
-                var yamlTree = Serialize(objToWrite as LightRecording, 0);
+                var rec = objToWrite as LightRecording;
+                rec.Name = Path.GetFileNameWithoutExtension(path);
+                var yamlTree = Serialize(rec, 0);
                 var text = YamlSerializer.SerializeYamlTree(yamlTree);
                 File.WriteAllText(path, text);
             }

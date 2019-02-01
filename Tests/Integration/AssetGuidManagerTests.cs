@@ -92,21 +92,21 @@ namespace Tests.Integration
         }
 
         [TestMethod]
-        public void RenamedAssets_UponRefresh_AreGivenSameGuid()
+        public void RenamedAssets_UponRefresh_AreGivenSameGuid_EvenIfTheyWereDeletedAndRestored()
         {
             var guidA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath).Guid;
             var guidB = AssetManager.CreateAsset(new Recording(guid), k_RecordingBPath).Guid;
 
+            File.Move(k_RecordingBPath, "temp.mrb");
             CleanupRecordingsDirectory();
             AssetManager.Refresh();
 
             CreateDummyRecordingWithImporter(k_RecordingAPath);
-            CreateDummyRecordingWithImporter(k_RecordingCPath);
+            File.Move("temp.mrb", k_RecordingCPath);
             AssetManager.Refresh();
 
             Assert.AreEqual(3, AssetManager.Assets.Count(), "Asset count missmatch");
             Assert.AreEqual(3, AssetGuidManager.Paths.Count(), "Guid-Path map count missmatch");
-
 
             Assert.AreEqual(guidA, AssetManager.GetAsset(k_RecordingAPath).Guid, "A asset has correct guid");
             Assert.AreEqual(guidB, AssetManager.GetAsset(k_RecordingCPath).Guid, "C asset has correct guid");

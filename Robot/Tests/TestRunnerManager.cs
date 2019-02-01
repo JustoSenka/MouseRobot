@@ -163,6 +163,7 @@ namespace Robot.Tests
                 if (lightFixture == null)
                     continue;
 
+                // Use file name instead of serialized one
                 lightFixture.Name = asset.Name;
 
                 // Making a deep clone so modifying fixtures in other windows will not affect the status on TestRunner

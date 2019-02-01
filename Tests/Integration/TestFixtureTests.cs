@@ -30,7 +30,7 @@ namespace Tests.Integration
             get
             {
                 var f = new LightTestFixture();
-                f.Name = "TestName";
+                f.Name = k_FixtureName;
                 f.Setup = new Recording();
                 f.TearDown = new Recording();
                 f.OneTimeSetup = new Recording();
