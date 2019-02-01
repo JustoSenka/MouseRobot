@@ -253,12 +253,6 @@
     <Compile Include="Windows\AssetsWindowV2.Designer.cs">
       <DependentUpon>AssetsWindowV2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Windows\AssetsWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Windows\AssetsWindow.Designer.cs">
-      <DependentUpon>AssetsWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Drawing\IPaintOnScreen.cs" />
     <Compile Include="Windows\Base\InvisibleForm.cs">
       <SubType>Form</SubType>
@@ -350,9 +344,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\AssetsWindowV2.resx">
       <DependentUpon>AssetsWindowV2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows\AssetsWindow.resx">
-      <DependentUpon>AssetsWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\ConsoleWindow.resx">
       <DependentUpon>ConsoleWindow.cs</DependentUpon>

@@ -463,7 +463,7 @@ namespace RobotEditor
 
         private void assetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((AssetsWindowV2)m_AssetsWindow).Show(m_DockPanel);
+            ((AssetsWindow)m_AssetsWindow).Show(m_DockPanel);
         }
 
         private void profilerToolStripMenuItem_Click(object sender, EventArgs e)

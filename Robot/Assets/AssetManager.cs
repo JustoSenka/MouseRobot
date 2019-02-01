@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Logging;
 using RobotRuntime.Utils;
 using System;
@@ -10,11 +11,11 @@ using System.Linq;
 
 namespace Robot
 {
-    public class AssetManager : IAssetManager
+    public class AssetManager : RuntimeAssetManager, IAssetManager, IRuntimeAssetManager
     {
-        public Dictionary<Guid, Asset> GuidAssetTable { get; private set; } = new Dictionary<Guid, Asset>();
-        public Dictionary<Guid, string> GuidPathTable { get; private set; } = new Dictionary<Guid, string>();
-        public Dictionary<Guid, Int64> GuidHashTable { get; private set; } = new Dictionary<Guid, Int64>();
+        private Dictionary<Guid, Asset> GuidAssetTable { get; set; } = new Dictionary<Guid, Asset>();
+        private Dictionary<Guid, string> GuidPathTable { get; set; } = new Dictionary<Guid, string>();
+        private Dictionary<Guid, Int64> GuidHashTable { get; set; } = new Dictionary<Guid, Int64>();
 
         public event Action RefreshFinished;
         public event Action<string, string> AssetRenamed;
@@ -24,10 +25,13 @@ namespace Robot
 
         public bool IsEditingAssets { get; private set; }
 
+        public IEnumerable<Asset> Assets => GuidAssetTable.Select(pair => pair.Value);
+
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
         private IStatusManager StatusManager;
-        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager)
+        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger) :
+            base(AssetGuidManager, Logger, Profiler)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.Profiler = Profiler;
@@ -39,14 +43,14 @@ namespace Robot
             Profiler.Start("AssetManager_Refresh");
             BeginAssetEditing();
 
-            var paths = Paths.GetAllAssetPaths();
+            var paths = Paths.GetAllAssetPaths(true);
             var assetsOnDisk = paths.Select(path => new Asset(path));
 
             // Detect renamed assets if application was closed, and assets were renamed via file system
             foreach (var pair in AssetGuidManager.Paths.ToList())
             {
                 var path = pair.Value;
-                if (!File.Exists(path))
+                if (!File.Exists(path) && !Directory.Exists(path))
                 {
                     var guid = pair.Key;
                     var hash = AssetGuidManager.GetHash(guid);
@@ -66,7 +70,7 @@ namespace Robot
             // Detect Rename for assets in memory (while keeping existing asset references)
             foreach (var assetInMemory in Assets.ToList())
             {
-                if (!File.Exists(assetInMemory.Path))
+                if (!File.Exists(assetInMemory.Path) && !Directory.Exists(assetInMemory.Path))
                 {
                     // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
                     var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset =>
@@ -167,11 +171,45 @@ namespace Robot
         /// </summary>
         public void DeleteAsset(string path)
         {
-            path = Paths.GetRelativePath(path);
-            var asset = GetAsset(path);
+            path = Paths.GetRelativePath(path).NormalizePath();
+            if (path.IsEmpty())
+            {
+                Logger.Log(LogType.Error, "Tried to delete empty directory. This might lead to really bad outcome!");
+                return;
+            }
 
-            File.SetAttributes(path, FileAttributes.Normal);
-            File.Delete(path);
+            var asset = GetAsset(path);
+            if (asset == null)
+            {
+                Logger.Log(LogType.Error, "Cannot detele file or directory because Asset Manager does not know about this path." +
+                    " Not deleting anything for safety reasons: " + path);
+                return;
+            }
+
+            var isDirectory = Directory.Exists(path);
+
+            try
+            {
+                if (isDirectory)
+                {
+                    Directory.Delete(path, true);
+                }
+                else
+                {
+                    File.SetAttributes(path, FileAttributes.Normal);
+                    File.Delete(path);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogType.Error, "Cannot delete asset at path: " + path, e.Message);
+            }
+
+            if (isDirectory)
+            {
+                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(path)).ToArray())
+                    DeleteAssetInternal(assetInDir);
+            }
 
             DeleteAssetInternal(asset);
         }
@@ -214,7 +252,7 @@ namespace Robot
                 AssetGuidManager.Save();
 
             AddAssetInternal(asset, true);
-            
+
             AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
@@ -222,20 +260,6 @@ namespace Robot
         {
             path = Paths.GetRelativePath(path);
             return Assets.FirstOrDefault((a) => Paths.AreRelativePathsEqual(a.Path, path));
-        }
-
-        public Asset GetAsset(string folder, string name)
-        {
-            /*
-            var path = folder + "\\" + name + "." + Paths.GetExtensionFromFolder(folder);
-
-            // TODO: This is VERY BAD. Need to remove this method. It does not allow same names with different extenstions
-            // to live. Maybe after Free Asset Structure is introduces.
-            // Really bad hack so executables are shown in asset db.
-            var asset = GetAsset(path);
-            asset = asset ?? GetAsset(path.Replace(".dll", ".exe"));
-            */
-            return null;// asset;
         }
 
         public void BeginAssetEditing()
@@ -254,14 +278,6 @@ namespace Robot
             BeginAssetEditing();
             ac.Invoke();
             EndAssetEditing();
-        }
-
-        public IEnumerable<Asset> Assets
-        {
-            get
-            {
-                return GuidAssetTable.Select(pair => pair.Value);
-            }
         }
 
         private void AddAssetInternal(Asset asset, bool silent = false)

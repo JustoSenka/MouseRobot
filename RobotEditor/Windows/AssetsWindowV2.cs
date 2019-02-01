@@ -17,7 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
-    public partial class AssetsWindowV2 : DockContent, IAssetsWindow
+    public partial class AssetsWindow : DockContent, IAssetsWindow
     {
         public event Action AssetSelected;
 
@@ -31,7 +31,7 @@ namespace RobotEditor
         private ICodeEditor CodeEditor;
         private ILogger Logger;
         private IScriptTemplates ScriptTemplates;
-        public AssetsWindowV2(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
+        public AssetsWindow(IAssetManager AssetManager, IHierarchyManager RecordingManager, ITestFixtureManager TestFixtureManager,
             IScriptManager ScriptManager, ISolutionManager SolutionManager, ICodeEditor CodeEditor, ILogger Logger, IScriptTemplates ScriptTemplates)
         {
             this.AssetManager = AssetManager;

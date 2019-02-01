@@ -71,7 +71,7 @@ namespace RobotEditor
         {
             //Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IMainForm, MainForm>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IAssetsWindow, AssetsWindowV2>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IAssetsWindow, AssetsWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IHierarchyWindow, HierarchyWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IInspectorWindow, InspectorWindow>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfilerWindow, ProfilerWindow>(new ContainerControlledLifetimeManager());

@@ -3,7 +3,7 @@ using BrightIdeasSoftware;
 
 namespace RobotEditor
 {
-    partial class AssetsWindowV2
+    partial class AssetsWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@ namespace RobotEditor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindowV2));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindow));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
