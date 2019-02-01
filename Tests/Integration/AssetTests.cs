@@ -224,6 +224,34 @@ namespace Tests.Integration
         }
 
         [TestMethod]
+        public void CreateFolderAsset_AddsAssetToManager_AndCreatesDirAtDisk()
+        {
+            var path = "Assets\\someFolder";
+            AssetManager.CreateAsset(null, path);
+
+            Assert.AreEqual(2, AssetManager.Assets.Count(), "Two dir assets should be known");
+            Assert.AreEqual(path.NormalizePath(), AssetManager.GetAsset(path).Importer.Load<string>().NormalizePath());
+        }
+
+        [TestMethod]
+        public void CreateAsset_WhenFolderDoesNotExist_ReturnsNull()
+        {
+            var path = "Assets\\non existant folder\\rec.mrb";
+            var res = AssetManager.CreateAsset(new Recording(), path);
+
+            Assert.IsNull(res, "Cannot create assets when folder does not exist");
+        }
+
+        [TestMethod]
+        public void CreateFolderAsset_WhenFolderDoesNotExist_ReturnsNull()
+        {
+            var path = "Assets\\non existant folder\\someFolder";
+            var res = AssetManager.CreateAsset(null, path);
+            
+            Assert.IsNull(res, "Cannot create assets when folder does not exist");
+        }
+
+        [TestMethod]
         public void AssetManager_CanAddTwoAssets_WithSameName_ButDifferentExtension()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -275,6 +303,36 @@ namespace Tests.Integration
 
             Directory.Move(folderA, folderB);
             AssetManager.Refresh();
+
+            Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
+
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(assetPathRecB).Importer.HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(assetPathFixB).Importer.HoldsType());
+
+            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(assetPathRecB).Guid);
+            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(assetPathFixB).Guid);
+        }
+
+        [TestMethod]
+        public void RenameFolder_FromAssetManager_WithAssetsInside_WillKeepAllGuids()
+        {
+            var folderA = "Assets\\folderA\\";
+            var folderB = "Assets\\folderB\\";
+
+            AssetManager.CreateAsset(null, folderA);
+
+            var assetPathRecA = folderA + "rec.mrb";
+            var assetPathFixA = folderA + "fix.mrt";
+
+            var assetPathRecB = folderB + "rec.mrb";
+            var assetPathFixB = folderB + "fix.mrt";
+
+            var rec = AssetManager.CreateAsset(new Recording(), assetPathRecA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), assetPathFixA);
+
+            AssetManager.RenameAsset(folderA, folderB);
+
+            Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
 
             Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(assetPathRecB).Importer.HoldsType());
             Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(assetPathFixB).Importer.HoldsType());

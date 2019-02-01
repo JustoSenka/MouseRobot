@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Robot.Assets
 {
@@ -11,7 +12,7 @@ namespace Robot.Assets
 
         protected override object LoadAsset() => Path;
 
-        public override void SaveAsset() { }
+        public override void SaveAsset() => Directory.CreateDirectory(Path); 
 
         public override Type HoldsType() => typeof(string);
     }

@@ -84,6 +84,36 @@ namespace RobotRuntime.Utils
             return ""; // Regex.Match(fullPath, @"[^\\^/.]+[/\\]{1}[^\\^/.]+\.\w{2,8}$").Value;
         }
 
+        public static bool IsDirectory(string path)
+        {
+            if (path == null)
+                return false;
+
+            path = path.Trim();
+
+            if (Directory.Exists(path))
+                return true;
+
+            if (File.Exists(path))
+                return false;
+
+            // neither file nor directory exists. guess intention
+
+            // if has trailing slash then it's a directory
+            if (new[] { "\\", "/" }.Any(x => path.EndsWith(x)))
+                return true; // ends with slash
+
+            // if has extension then its a file; directory otherwise
+            return string.IsNullOrWhiteSpace(Path.GetExtension(path));
+        }
+
+        public static string GetPathParent(string path)
+        {
+            path = path.NormalizePath();
+            var els = GetPathDirectoryElementsWtihFileName(path);
+            return Path.Combine(els.Take(els.Length - 1).ToArray());
+        }
+
         /// <summary>
         /// From path: "Assets/scripts/sc.mrb"
         /// Will return: new [] { "Assets", "scripts", "sc.mrb" }

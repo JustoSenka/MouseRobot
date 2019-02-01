@@ -94,5 +94,27 @@ namespace Tests.Utils
 
             CollectionAssert.AreEqual(expected, res);
         }
+
+        [TestMethod]
+        public void GetParentPath_ReturnsCorrectPath_OnFile()
+        {
+            var path = "Assets/scripts/sc.mrb".NormalizePath();
+            var parentPath = "Assets/scripts".NormalizePath();
+
+            var res = Paths.GetPathParent(path);
+
+            Assert.AreEqual(parentPath, res);
+        }
+
+        [TestMethod]
+        public void GetParentPath_ReturnsCorrectPath_OnFolder()
+        {
+            var path = "Assets/scripts/some folder".NormalizePath();
+            var parentPath = "Assets/scripts".NormalizePath();
+
+            var res = Paths.GetPathParent(path);
+
+            Assert.AreEqual(parentPath, res);
+        }
     }
 }

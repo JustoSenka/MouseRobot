@@ -130,29 +130,37 @@ namespace Robot
         }
 
         /// <summary>
-        /// Asset path must be with an extension, if not, it will not know how to save the asset
+        /// Asset path must be with an extension, if not, it will not know how to save the asset.
+        /// If asset path is without extension, folder at path will be created
         /// </summary>
         public Asset CreateAsset(object assetValue, string path)
         {
-            var newPath = Paths.GetRelativePath(path);
+            path = Paths.GetRelativePath(path).NormalizePath();
 
-            if (newPath.IsEmpty())
+            if (path.IsEmpty())
             {
                 Logger.Log(LogType.Error, "Cannot save asset. Given path is invalid: " + path);
                 return null;
             }
 
-            var asset = GetAsset(newPath);
+            var asset = GetAsset(path);
             if (asset != null)
             {
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
                 asset.Update();
-                AssetUpdated?.Invoke(newPath);
+                AssetUpdated?.Invoke(path);
             }
             else
             {
-                asset = new Asset(newPath);
+                var dirParent = Paths.GetPathParent(path);
+                if (!Directory.Exists(dirParent))
+                {
+                    Logger.Log(LogType.Error, "Cannot create asset if parent directory does not exists: " + dirParent);
+                    return null;
+                }
+
+                asset = new Asset(path);
                 asset.Importer.Value = assetValue;
                 asset.Importer.SaveAsset();
                 asset.Update();
@@ -229,12 +237,31 @@ namespace Robot
         /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
+            sourcePath = Paths.GetRelativePath(sourcePath).NormalizePath();
+            destPath = Paths.GetRelativePath(destPath).NormalizePath();
+
             var asset = GetAsset(sourcePath);
+            if (asset == null)
+            {
+                Logger.Log(LogType.Error, "Cannot rename asset because it is not known by asset manager.");
+                return;
+            }
 
-            File.SetAttributes(sourcePath, FileAttributes.Normal);
-            File.Move(sourcePath, destPath);
+            var isDirectory = Directory.Exists(sourcePath);
+            if (isDirectory)
+            {
+                Directory.Move(sourcePath, destPath);
 
-            RenameAssetInternal(sourcePath, destPath);
+                // Renames directory and all assets inside
+                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(sourcePath)).Select(a => a.Path).ToArray())
+                    RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
+            }
+            else
+            {
+                File.SetAttributes(sourcePath, FileAttributes.Normal);
+                File.Move(sourcePath, destPath);
+                RenameAssetInternal(sourcePath, destPath);
+            }
         }
 
         private void RenameAssetInternal(string sourcePath, string destPath)
