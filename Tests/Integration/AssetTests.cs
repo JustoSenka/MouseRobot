@@ -4,6 +4,7 @@ using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
+using RobotRuntime.Tests;
 using System;
 using System.IO;
 using System.Linq;
@@ -21,12 +22,15 @@ namespace Tests.Integration
         private const string k_RecordingCPath = "Assets\\C.mrb";
         private const string k_RecordingDPath = "Assets\\D.mrb";
 
+        private const string k_FixtureAPath = "Assets\\A.mrt";
+
         private const string k_RecordingANestedPath = "Assets\\folder\\A.mrb";
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
         IAssetManager AssetManager;
         IHierarchyManager RecordingManager;
+        ITestFixtureManager TestFixtureManager;
 
         [TestInitialize]
         public void Initialize()
@@ -37,6 +41,7 @@ namespace Tests.Integration
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
             RecordingManager = container.Resolve<IHierarchyManager>();
+            TestFixtureManager = container.Resolve<ITestFixtureManager>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
@@ -216,6 +221,66 @@ namespace Tests.Integration
             AssetManager.DeleteAsset(path);
 
             Assert.AreEqual(1, AssetManager.Assets.Count(), "After deletion, only one asset should be left");
+        }
+
+        [TestMethod]
+        public void AssetManager_CanAddTwoAssets_WithSameName_ButDifferentExtension()
+        {
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixtureAPath);
+
+            AssetManager.Refresh();
+
+            Assert.AreEqual(3, AssetManager.Assets.Count(), "Two assets + directory should be found");
+        }
+
+        [TestMethod]
+        public void AssetManager_CanRefreshTwoAssets_WithSameName_ButDifferentExtension()
+        {
+            CreateDummyRecordingWithImporter(k_RecordingAPath);
+            AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixtureAPath);
+
+            Assert.AreEqual(2, AssetManager.Assets.Count(), "One assets + directory should be found");
+            AssetManager.Refresh();
+
+            Assert.AreEqual(3, AssetManager.Assets.Count(), "Two assets + directory should be found");
+        }
+
+        [TestMethod]
+        public void AssetManager_CanReturnTwoAssets_WithSameName_ButDifferentExtension()
+        {
+            AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixtureAPath);
+
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecordingAPath).Importer.HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixtureAPath).Importer.HoldsType());
+        }
+
+        [TestMethod]
+        public void RenameFolder_WithAssetsInside_WillKeepAllGuids()
+        {
+            var folderA = "Assets\\folderA\\";
+            var folderB = "Assets\\folderB\\";
+
+            Directory.CreateDirectory(folderA);
+
+            var assetPathRecA = folderA + "rec.mrb";
+            var assetPathFixA = folderA + "fix.mrt";
+
+            var assetPathRecB = folderB + "rec.mrb";
+            var assetPathFixB = folderB + "fix.mrt";
+
+            var rec = AssetManager.CreateAsset(new Recording(), assetPathRecA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), assetPathFixA);
+
+            Directory.Move(folderA, folderB);
+            AssetManager.Refresh();
+
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(assetPathRecB).Importer.HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(assetPathFixB).Importer.HoldsType());
+
+            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(assetPathRecB).Guid);
+            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(assetPathFixB).Guid);
         }
 
         private static void CreateDummyRecordingWithImporter(string path)
