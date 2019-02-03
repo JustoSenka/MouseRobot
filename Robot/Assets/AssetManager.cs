@@ -216,10 +216,17 @@ namespace Robot
             if (isDirectory)
             {
                 foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(path)).ToArray())
-                    DeleteAssetInternal(assetInDir);
+                {
+                    if (assetInDir == asset) // Fire callbacks only for folder asset, UI is responsible to deal with it
+                        DeleteAssetInternal(assetInDir);
+                    else
+                        DeleteAssetInternal(assetInDir, silent: true);
+                }
             }
-
-            DeleteAssetInternal(asset);
+            else
+            {
+                DeleteAssetInternal(asset);
+            }
         }
 
         private void DeleteAssetInternal(Asset asset, bool silent = false)
@@ -254,7 +261,12 @@ namespace Robot
 
                 // Renames directory and all assets inside
                 foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(sourcePath)).Select(a => a.Path).ToArray())
-                    RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
+                {
+                    if (assetInDir == sourcePath) // Fire callbacks only for folder asset, UI is responsible to deal with it
+                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
+                    else
+                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath), silent: true);
+                }
             }
             else
             {
@@ -264,7 +276,7 @@ namespace Robot
             }
         }
 
-        private void RenameAssetInternal(string sourcePath, string destPath)
+        private void RenameAssetInternal(string sourcePath, string destPath, bool silent = false)
         {
             var asset = GetAsset(sourcePath);
             var value = asset.Importer.Value;
@@ -280,7 +292,8 @@ namespace Robot
 
             AddAssetInternal(asset, true);
 
-            AssetRenamed?.Invoke(sourcePath, destPath);
+            if (!silent)
+                AssetRenamed?.Invoke(sourcePath, destPath);
         }
 
         public Asset GetAsset(string path)

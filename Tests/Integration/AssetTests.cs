@@ -23,8 +23,16 @@ namespace Tests.Integration
         private const string k_RecordingDPath = "Assets\\D.mrb";
 
         private const string k_FixtureAPath = "Assets\\A.mrt";
-
         private const string k_RecordingANestedPath = "Assets\\folder\\A.mrb";
+
+        private const string k_FolderA = "Assets\\folderA\\";
+        private const string k_FolderB = "Assets\\folderB\\";
+
+        private const string k_RecInFolderA = k_FolderA + "rec.mrb";
+        private const string k_FixInFolderA = k_FolderA + "fix.mrt";
+
+        private const string k_RecInFolderB = k_FolderB + "rec.mrb";
+        private const string k_FixInFolderB = k_FolderB + "fix.mrt";
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
 
@@ -247,7 +255,7 @@ namespace Tests.Integration
         {
             var path = "Assets\\non existant folder\\someFolder";
             var res = AssetManager.CreateAsset(null, path);
-            
+
             Assert.IsNull(res, "Cannot create assets when folder does not exist");
         }
 
@@ -287,58 +295,96 @@ namespace Tests.Integration
         [TestMethod]
         public void RenameFolder_WithAssetsInside_WillKeepAllGuids()
         {
-            var folderA = "Assets\\folderA\\";
-            var folderB = "Assets\\folderB\\";
+            Directory.CreateDirectory(k_FolderA);
 
-            Directory.CreateDirectory(folderA);
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
 
-            var assetPathRecA = folderA + "rec.mrb";
-            var assetPathFixA = folderA + "fix.mrt";
-
-            var assetPathRecB = folderB + "rec.mrb";
-            var assetPathFixB = folderB + "fix.mrt";
-
-            var rec = AssetManager.CreateAsset(new Recording(), assetPathRecA);
-            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), assetPathFixA);
-
-            Directory.Move(folderA, folderB);
+            Directory.Move(k_FolderA, k_FolderB);
             AssetManager.Refresh();
 
             Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(assetPathRecB).Importer.HoldsType());
-            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(assetPathFixB).Importer.HoldsType());
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).Importer.HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).Importer.HoldsType());
 
-            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(assetPathRecB).Guid);
-            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(assetPathFixB).Guid);
+            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(k_RecInFolderB).Guid);
+            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);
         }
 
         [TestMethod]
         public void RenameFolder_FromAssetManager_WithAssetsInside_WillKeepAllGuids()
         {
-            var folderA = "Assets\\folderA\\";
-            var folderB = "Assets\\folderB\\";
+            AssetManager.CreateAsset(null, k_FolderA);
 
-            AssetManager.CreateAsset(null, folderA);
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
 
-            var assetPathRecA = folderA + "rec.mrb";
-            var assetPathFixA = folderA + "fix.mrt";
-
-            var assetPathRecB = folderB + "rec.mrb";
-            var assetPathFixB = folderB + "fix.mrt";
-
-            var rec = AssetManager.CreateAsset(new Recording(), assetPathRecA);
-            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), assetPathFixA);
-
-            AssetManager.RenameAsset(folderA, folderB);
+            AssetManager.RenameAsset(k_FolderA, k_FolderB);
 
             Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(assetPathRecB).Importer.HoldsType());
-            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(assetPathFixB).Importer.HoldsType());
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).Importer.HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).Importer.HoldsType());
 
-            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(assetPathRecB).Guid);
-            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(assetPathFixB).Guid);
+            Assert.AreEqual(rec.Guid, AssetManager.GetAsset(k_RecInFolderB).Guid);
+            Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);
+        }
+
+        [TestMethod]
+        public void RenameFolder_WithAssetsInside_WillFireOnlyOneCallback()
+        {
+            AssetManager.CreateAsset(null, k_FolderA);
+
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
+
+            var callbackitCount = 0;
+            AssetManager.AssetRenamed += (from, to) =>
+            {
+                callbackitCount++;
+                Assert.AreEqual(k_FolderA.NormalizePath(), from);
+                Assert.AreEqual(k_FolderB.NormalizePath(), to);
+            };
+
+            AssetManager.RenameAsset(k_FolderA, k_FolderB);
+
+            Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
+        }
+
+        [TestMethod]
+        public void DeleteFolder_WithAssetsInside_WillFireOnlyOneCallback()
+        {
+            AssetManager.CreateAsset(null, k_FolderA);
+
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
+
+            var callbackitCount = 0;
+            AssetManager.AssetDeleted += (path) =>
+            {
+                callbackitCount++;
+                Assert.AreEqual(k_FolderA.NormalizePath(), path);
+            };
+
+            AssetManager.DeleteAsset(k_FolderA);
+
+            Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
+        }
+
+        [TestMethod]
+        public void RenameFolder_WithAssetsInside_DoesNotCallAssetDeletedCallbacks()
+        {
+            AssetManager.CreateAsset(null, k_FolderA);
+
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
+
+            var callbackitCount = 0;
+            AssetManager.AssetDeleted += _ => callbackitCount++;
+            AssetManager.RenameAsset(k_FolderA, k_FolderB);
+
+            Assert.AreEqual(0, callbackitCount, "Asset Deleted callback should not be fired");
         }
 
         private static void CreateDummyRecordingWithImporter(string path)
