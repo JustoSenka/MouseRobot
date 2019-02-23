@@ -45,7 +45,6 @@
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGrid.SelectedObject = this;
             this.propertyGrid.Size = new System.Drawing.Size(514, 482);
             this.propertyGrid.TabIndex = 1;
             this.propertyGrid.ToolbarVisible = false;
@@ -59,7 +58,7 @@
             this.imageDetectionSettingsToolStripMenuItem,
             this.compilerSettingsToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(207, 92);
+            this.contextMenuStrip.Size = new System.Drawing.Size(207, 70);
             // 
             // recordingSettingsToolStripMenuItem
             // 

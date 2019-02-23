@@ -26,7 +26,8 @@ namespace RobotEditor
             SettingsManager.SettingsRestored += OnSettingsRestored;
 
             InitializeComponent();
-            ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
+            propertyGrid.HandleCreated += (sender, args) => 
+                ShowSettings(SettingsManager.GetSettings<RecordingSettings>());
         }
 
         private void OnSettingsRestored()
