@@ -74,16 +74,16 @@ namespace RobotEditor.Properties {
         ///   Looks up a localized string similar to using RobotRuntime;
         ///using System;
         ///using RobotRuntime.Tests;
+        ///using RobotRuntime.Execution;
         ///
-        ///namespace CustomNamespace
+        ///namespace RobotEditor.Resources.ScriptTemplates
         ///{
         ///    [Serializable]
         ///    // [RunnerType(typeof(CustomCommandRunner))] // Can also use already implemented types: SimpleCommandRunner etc.
         ///    // [PropertyDesignerType(&quot;CustomCommandDesigner&quot;)] // Optional, will specify how to draw command in inspector
         ///    public class CustomCommand : Command
         ///    {
-        ///        // This is what will appear in dropdown in inspector under Command Type. Must be unique
-        ///        public ove [rest of string was truncated]&quot;;.
+        ///        // This is what will appear in dropdown in inspector u [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CustomCommand {
             get {
@@ -92,8 +92,7 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using CustomNamespace;
-        ///using Robot.Abstractions;
+        ///   Looks up a localized string similar to using Robot.Abstractions;
         ///using RobotEditor.Inspector;
         ///using RobotEditor.Utils;
         ///using System.ComponentModel;
@@ -108,7 +107,9 @@ namespace RobotEditor.Properties {
         ///            Properties = TypeDescriptor.GetProperties(this);
         ///        }
         ///
-        ///        public override void HideProperties(ref DynamicTypeDes [rest of string was truncated]&quot;;.
+        ///        public override void HideProperties(ref DynamicTypeDescriptor dt)
+        ///        {
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CustomCommandDesigner {
             get {
@@ -133,9 +134,8 @@ namespace RobotEditor.Properties {
         ///            // Constructor actually can ask for other managers if needed, like IHierarchyManager etc.
         ///        }
         ///
-        ///        public TestData TestData { set; get; }
-        ///
-        ///        public void P [rest of string was truncated]&quot;;.
+        ///        // Contains useful data:
+        ///        // if ShouldCancelRun is set  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CustomCommandRunner {
             get {
@@ -178,10 +178,10 @@ namespace RobotEditor.Properties {
         ///        // Constructor can ask for dependencies, IAssetManager, IMouseRobot etc.
         ///        public CustomScreenPainter()
         ///        {
-        ///            Invalidate.Invoke();
+        ///            Invalidate?.Invoke();
         ///        }
         ///
-        ///        // Call invalidate if you want OnPaint method to be called. Unless it won&apos;t draw anything [rest of string was truncated]&quot;;.
+        ///        // Call invalidate if you want OnPaint method to be called. Unless it won&apos;t draw anythin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CustomScreenPainter {
             get {
@@ -340,6 +340,24 @@ namespace RobotEditor.Properties {
             get {
                 object obj = ResourceManager.GetObject("LogWarning_d_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this asset? .
+        /// </summary>
+        internal static string S_ConfirmAssetDeletionMessage {
+            get {
+                return ResourceManager.GetString("S_ConfirmAssetDeletionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this folder and all of its contents inside?.
+        /// </summary>
+        internal static string S_ConfirmFolderDeletionMessage {
+            get {
+                return ResourceManager.GetString("S_ConfirmFolderDeletionMessage", resourceCulture);
             }
         }
         

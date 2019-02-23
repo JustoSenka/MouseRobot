@@ -217,4 +217,10 @@
   <data name="CustomScreenPainter" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\scripttemplates\customscreenpainter.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="S_ConfirmAssetDeletionMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this asset? </value>
+  </data>
+  <data name="S_ConfirmFolderDeletionMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this folder and all of its contents inside?</value>
+  </data>
 </root>

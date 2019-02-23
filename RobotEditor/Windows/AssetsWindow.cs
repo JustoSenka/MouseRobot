@@ -358,7 +358,17 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
-            AssetManager.DeleteAsset(asset.Path);
+            // Put correct message in the message box
+            var isFile = File.Exists(asset.Path);
+            var msg = (isFile ? Properties.Resources.S_ConfirmAssetDeletionMessage
+                : Properties.Resources.S_ConfirmFolderDeletionMessage) +
+                "\n\n\t" + asset.Path;
+
+            // Show dialog to confirm deletion
+            var res = FlexibleMessageBox.Show(msg, "Confirm deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (res == DialogResult.OK)
+                AssetManager.DeleteAsset(asset.Path);
+
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
