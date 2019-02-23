@@ -134,7 +134,7 @@ namespace RobotEditor
                     treeListView.Items[i].ImageIndex = 0;
 
                 treeListView.Refresh();
-
+                
                 callbackAfterRefresh?.Invoke();
             }));
         }

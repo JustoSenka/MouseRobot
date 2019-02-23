@@ -279,7 +279,6 @@ namespace Robot
         private void RenameAssetInternal(string sourcePath, string destPath, bool silent = false)
         {
             var asset = GetAsset(sourcePath);
-            var value = asset.Importer.Value;
             var guid = asset.Guid;
 
             DeleteAssetInternal(asset, true);

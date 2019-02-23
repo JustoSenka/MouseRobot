@@ -37,7 +37,6 @@ namespace RobotEditor
             this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.addScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,7 +56,6 @@ namespace RobotEditor
             this.reloadRecordingToolStripMenuItem,
             this.toolStripMenuItem2,
             this.refreshToolStripMenuItem,
-            this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripMenuItem1,
             this.addScriptToolStripMenuItem,
@@ -66,7 +64,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(234, 220);
+            this.contextMenuStrip.Size = new System.Drawing.Size(234, 176);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -87,14 +85,6 @@ namespace RobotEditor
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
-            // renameToolStripMenuItem
-            // 
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
-            this.renameToolStripMenuItem.Text = "Rename";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -175,7 +165,7 @@ namespace RobotEditor
             this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             this.treeListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeListView_MouseDoubleClick);
             // 
-            // AssetsWindowV2
+            // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -183,7 +173,7 @@ namespace RobotEditor
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
             this.HideOnClose = true;
-            this.Name = "AssetsWindowV2";
+            this.Name = "AssetsWindow";
             this.Text = "Assets";
             this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
@@ -196,7 +186,6 @@ namespace RobotEditor
         private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem reloadRecordingToolStripMenuItem;

@@ -8,7 +8,7 @@ namespace RobotRuntime
     public delegate void TreeVisitor<T>(T nodeData);
 
     [Serializable]
-    public class TreeNode<T> : IEnumerable<TreeNode<T>>, ICloneable
+    public class TreeNode<T> : IEnumerable<TreeNode<T>>, ICloneable, IComparable<TreeNode<T>>
     {
         public T value;
 
@@ -236,6 +236,14 @@ namespace RobotRuntime
                 clone.children.AddLast(childClone);
             }
             return clone;
+        }
+
+        public int CompareTo(TreeNode<T> other)
+        {
+            if (value is IComparable<T> comparable)
+                return comparable.CompareTo(other.value);
+            else
+                return value.ToString().CompareTo(other.value.ToString());
         }
     }
 }

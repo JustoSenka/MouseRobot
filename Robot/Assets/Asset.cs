@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Robot
 {
-    public class Asset
+    public class Asset : IComparable<Asset>
     {
         public string Name { get; private set; }
         public Int64 Hash { get; private set; }
@@ -77,6 +77,11 @@ namespace Robot
         public override string ToString()
         {
             return Name;
+        }
+
+        public int CompareTo(Asset other)
+        {
+            return System.IO.Path.GetFileName(Path).CompareTo(System.IO.Path.GetFileName(other.Path));
         }
     }
 }

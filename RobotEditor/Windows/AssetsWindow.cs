@@ -1,4 +1,6 @@
-﻿using BrightIdeasSoftware;
+﻿#define ENABLE_UI_TESTING
+
+using BrightIdeasSoftware;
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
@@ -47,8 +49,12 @@ namespace RobotEditor
             AutoScaleMode = AutoScaleMode.Dpi;
             treeListView.Font = Fonts.Default;
 
-            treeListView.HandleCreated += OnRefreshFinished;
-            AssetManager.RefreshFinished += () => OnRefreshFinished(this, null);
+            AssetManager.RefreshFinished += OnRefreshFinished;
+            AssetManager.AssetCreated += OnAssetCreated;
+            AssetManager.AssetDeleted += OnAssetDeleted;
+            AssetManager.AssetRenamed += OnAssetRenamed;
+
+            treeListView.HandleCreated += ForceRefresh;
 
             contextMenuStrip.HandleCreated += (s, e) => AddMenuItemsForScriptTemplates(contextMenuStrip, "addScriptToolStripMenuItem");
 
@@ -61,7 +67,7 @@ namespace RobotEditor
             treeListView.ChildrenGetter = x => x as TreeNode<Asset>; // Becasue TreeNode : IEnumerable
 
             var nameColumn = new OLVColumn("Name", "Name");
-            nameColumn.AspectGetter = x => (x as TreeNode<Asset>).value.ToString();
+            nameColumn.AspectGetter = x => Path.GetFileName((x as TreeNode<Asset>).value.Path);
 
             nameColumn.ImageGetter += delegate (object x)
             {
@@ -75,6 +81,9 @@ namespace RobotEditor
                 imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 3 : imageListIndex;
                 return imageListIndex;
             };
+
+            nameColumn.Sortable = true;
+            treeListView.Sorting = SortOrder.Ascending;
 
             treeListView.UseCellFormatEvents = true;
 
@@ -90,7 +99,9 @@ namespace RobotEditor
             treeListView.Columns.Add(nameColumn);
         }
 
-        private void OnRefreshFinished(object sender, EventArgs e)
+        #region AssetManager Callbacks
+
+        private void ForceRefresh(object sender, EventArgs e)
         {
             treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
@@ -116,11 +127,64 @@ namespace RobotEditor
                     }
                 }
 
+                OnRefreshFinished();
+            }));
+        }
+
+        private void OnRefreshFinished()
+        {
+            treeListView.InvokeIfCreated(new MethodInvoker(() =>
+            {
                 treeListView.Roots = m_AssetTree;
+                treeListView.Sort(0);
                 treeListView.Refresh();
                 treeListView.Expand(m_AssetTree.GetChild(0));
             }));
         }
+
+        private void OnAssetCreated(string path)
+        {
+            treeListView.InvokeIfCreated(new MethodInvoker(() =>
+            {
+                var asset = AssetManager.GetAsset(path);
+                var assetPath = asset.Importer.Path;
+                var allDirElements = Paths.GetPathDirectoryElementsWtihFileName(assetPath);
+                var allElementPaths = Paths.JoinDirectoryElementsIntoPaths(allDirElements);
+                foreach (var elementPath in allElementPaths)
+                {
+                    var c = m_AssetTree.FindNodeFromPath(elementPath);
+                    if (c == null) // Only add if asset or directory if it does not exist
+                    {
+                        var intermediateAsset = AssetManager.GetAsset(elementPath);
+                        if (Logger.AssertIf(intermediateAsset == null, "Asset Manager does not know about this asset: " + elementPath + " but Assets Window tried to draw it."))
+                            continue;
+
+                        m_AssetTree.AddChildAtPath(elementPath, intermediateAsset);
+                    }
+                }
+                OnRefreshFinished();
+            }));
+        }
+
+        private void OnAssetDeleted(string path)
+        {
+            treeListView.InvokeIfCreated(new MethodInvoker(() =>
+            {
+                var node = m_AssetTree.FindNodeFromPath(path);
+                node.parent.RemoveAt(node.Index);
+                OnRefreshFinished();
+            }));
+        }
+
+        private void OnAssetRenamed(string arg1, string arg2)
+        {
+            treeListView.InvokeIfCreated(new MethodInvoker(() =>
+            {
+                OnRefreshFinished();
+            }));
+        }
+
+        #endregion
 
         private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
         {
@@ -294,5 +358,18 @@ namespace RobotEditor
         }
 
         #endregion
+
+        private void ASSERT_TreeViewIsTheSameAsInRecordingManager()
+        {
+#if ENABLE_UI_TESTING
+            foreach(var asset in AssetManager.Assets)
+            {
+                var node = m_AssetTree.FindNodeFromPath(asset.Path);
+                var assetFound = node.value is Asset value && value.Path == asset.Path;
+
+                Logger.AssertIf(!assetFound, $"Asset was not found in AssetsWindow, but exists in AssetManager: {asset.Path}");
+            }
+#endif
+        }
     }
 }

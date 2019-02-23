@@ -32,7 +32,7 @@ namespace RobotRuntime
             try
             {
                 foreach (var dir in pathElements)
-                    currentNode = currentNode.FindChild(dir);
+                    currentNode = currentNode.FindChild(Path.GetFileNameWithoutExtension(dir));
             }
             catch (Exception e)
             {
