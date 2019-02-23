@@ -50,6 +50,7 @@ namespace RobotEditor
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -62,6 +63,7 @@ namespace RobotEditor
             this.toolStripMenuItem2,
             this.refreshToolStripMenuItem,
             this.deleteToolStripMenuItem,
+            this.newFolderToolStripMenuItem,
             this.toolStripMenuItem1,
             this.addScriptToolStripMenuItem,
             this.recompileRecordingsToolStripMenuItem,
@@ -69,7 +71,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(234, 176);
+            this.contextMenuStrip.Size = new System.Drawing.Size(234, 220);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -220,6 +222,14 @@ namespace RobotEditor
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
+            // newFolderToolStripMenuItem
+            // 
+            this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
+            this.newFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(233, 22);
+            this.newFolderToolStripMenuItem.Text = "New Folder";
+            this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.newFolderToolStripMenuItem_Click);
+            // 
             // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,5 +268,6 @@ namespace RobotEditor
         private System.Windows.Forms.ToolStripButton ToolstripExpandAll;
         private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
         private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
+        private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
     }
 }

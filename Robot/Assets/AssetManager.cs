@@ -215,18 +215,16 @@ namespace Robot
 
             if (isDirectory)
             {
-                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(path)).ToArray())
+                var pathsInsideTheDir = path + Path.DirectorySeparatorChar;
+                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(pathsInsideTheDir)).ToArray())
                 {
-                    if (assetInDir == asset) // Fire callbacks only for folder asset, UI is responsible to deal with it
-                        DeleteAssetInternal(assetInDir);
-                    else
-                        DeleteAssetInternal(assetInDir, silent: true);
+                    //Do not fire callbacks for inner assets in the dir. If base folder is deleted, 
+                    // it's obvious that everythign inside is also deleted. UI will deal with it
+                    DeleteAssetInternal(assetInDir, silent: true);
                 }
             }
-            else
-            {
-                DeleteAssetInternal(asset);
-            }
+
+            DeleteAssetInternal(asset);
         }
 
         private void DeleteAssetInternal(Asset asset, bool silent = false)

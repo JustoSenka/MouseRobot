@@ -34,7 +34,7 @@ namespace RobotRuntime.Utils
             var ext = Path.GetExtension(path);
             var pathNoExt = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
 
-            if (!File.Exists(path))
+            if (!File.Exists(path) && !Directory.Exists(path))
                 return path;
 
             string finalPath = "";
@@ -43,7 +43,7 @@ namespace RobotRuntime.Utils
             {
                 finalPath = $"{pathNoExt}_{num++}{ext}";
             }
-            while (File.Exists(finalPath));
+            while (File.Exists(finalPath) || Directory.Exists(finalPath));
 
             return finalPath;
         }

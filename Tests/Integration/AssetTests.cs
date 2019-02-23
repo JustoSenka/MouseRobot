@@ -387,6 +387,23 @@ namespace Tests.Integration
             Assert.AreEqual(0, callbackitCount, "Asset Deleted callback should not be fired");
         }
 
+        [TestMethod]
+        public void DeleteFolder_WillNotDeleteUnecessaryFoldersAndAssets_WhichStartWithSameString()
+        {
+            var folderA = "Assets\\FolderA";
+            var folderB = "Assets\\FolderAB";
+            var recording = "Assets\\FolderAWhichIsActuallyAsset.mrb";
+            AssetManager.CreateAsset(null, folderA);
+            AssetManager.CreateAsset(null, folderB);
+            AssetManager.CreateAsset(new Recording(), recording);
+
+            AssetManager.DeleteAsset(k_FolderA);
+
+            Assert.IsNull(AssetManager.GetAsset(folderA), "FolderA should have been deleted");
+            Assert.IsNotNull(AssetManager.GetAsset(folderB), "FolderA should have not been deleted");
+            Assert.IsNotNull(AssetManager.GetAsset(recording), "FolderA should have not been deleted");
+        }
+
         private static void CreateDummyRecordingWithImporter(string path)
         {
             var importer = EditorAssetImporter.FromPath(path);

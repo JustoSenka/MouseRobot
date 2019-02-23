@@ -361,6 +361,31 @@ namespace RobotEditor
             AssetManager.DeleteAsset(asset.Path);
         }
 
+        private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            asset = asset == null ? m_AssetTree.GetChild(0).value : asset;
+
+            var isFile = File.Exists(asset.Path);
+            var dirPath = isFile ? Paths.GetRelativePath(Path.GetDirectoryName(asset.Path)) : asset.Path;
+            var preferredPath = Path.Combine(dirPath, "New Folder");
+            var uniqueDirPath = Paths.GetUniquePath(preferredPath);
+
+            AssetManager.CreateAsset(null, uniqueDirPath);
+
+            // Expand parent node if folder was created inside it
+            if (!isFile)
+                treeListView.Expand(assetNode);
+
+            // Move Selection to newly selected folder
+            var addedUiObject = m_AssetTree.FindNodeFromPath(uniqueDirPath);
+            if (addedUiObject != null)
+                treeListView.SelectedObject = addedUiObject;
+            else
+                Logger.Logi(LogType.Error, "Cannot select newly created folder, something must've gone wrong in AssetsWindow");
+        }
+
         #endregion
 
         #region ToolStrip Buttons
