@@ -306,6 +306,7 @@ namespace RobotEditor
             visualStudioToolStripExtender.SetStyle(m_ProfilerWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_ConsoleWindow.ToolStrip, version, theme);
             visualStudioToolStripExtender.SetStyle(m_TestRunnerWindow.ToolStrip, version, theme);
+            visualStudioToolStripExtender.SetStyle(m_AssetsWindow.ToolStrip, version, theme);
             m_ProfilerWindow.FrameSlider.BackColor = theme.ColorPalette.CommandBarToolbarDefault.Background;
 
             foreach (var window in TestFixtureWindows)

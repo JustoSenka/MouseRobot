@@ -6,6 +6,8 @@ namespace RobotEditor.Abstractions
 {
     public interface IAssetsWindow
     {
+        ToolStrip ToolStrip { get; }
+
         event Action AssetSelected;
 
         Asset GetSelectedAsset();

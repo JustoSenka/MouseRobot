@@ -46,8 +46,13 @@ namespace RobotEditor
             this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStrip
@@ -150,11 +155,11 @@ namespace RobotEditor
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.treeListView.LargeImageList = this.imageList1;
-            this.treeListView.Location = new System.Drawing.Point(0, 0);
+            this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(402, 372);
+            this.treeListView.Size = new System.Drawing.Size(402, 347);
             this.treeListView.SmallImageList = this.imageList1;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
@@ -165,6 +170,56 @@ namespace RobotEditor
             this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             this.treeListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeListView_MouseDoubleClick);
             // 
+            // toolStrip
+            // 
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolstripExpandAll,
+            this.ToolstripExpandOne,
+            this.ToolstripCollapseAll});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+            this.toolStrip.Size = new System.Drawing.Size(402, 25);
+            this.toolStrip.TabIndex = 3;
+            this.toolStrip.Text = "toolStrip";
+            // 
+            // ToolstripExpandAll
+            // 
+            this.ToolstripExpandAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolstripExpandAll.Image = global::RobotEditor.Properties.Resources.ExpandAll_16;
+            this.ToolstripExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolstripExpandAll.Name = "ToolstripExpandAll";
+            this.ToolstripExpandAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripExpandAll.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripExpandAll.Text = "toolStripButton1";
+            this.ToolstripExpandAll.ToolTipText = "Expand All Items";
+            this.ToolstripExpandAll.Click += new System.EventHandler(this.ToolstripExpandAll_Click);
+            // 
+            // ToolstripExpandOne
+            // 
+            this.ToolstripExpandOne.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolstripExpandOne.Image = global::RobotEditor.Properties.Resources.ExpandOne_16;
+            this.ToolstripExpandOne.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolstripExpandOne.Name = "ToolstripExpandOne";
+            this.ToolstripExpandOne.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripExpandOne.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripExpandOne.Text = "toolStripButton2";
+            this.ToolstripExpandOne.ToolTipText = "Expand First Level";
+            this.ToolstripExpandOne.Click += new System.EventHandler(this.ToolstripExpandOne_Click);
+            // 
+            // ToolstripCollapseAll
+            // 
+            this.ToolstripCollapseAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ToolstripCollapseAll.Image = global::RobotEditor.Properties.Resources.CollapseAll_16;
+            this.ToolstripCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ToolstripCollapseAll.Name = "ToolstripCollapseAll";
+            this.ToolstripCollapseAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.ToolstripCollapseAll.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripCollapseAll.Text = "toolStripButton3";
+            this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
+            this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
+            // 
             // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -172,12 +227,16 @@ namespace RobotEditor
             this.ClientSize = new System.Drawing.Size(402, 372);
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
+            this.Controls.Add(this.toolStrip);
             this.HideOnClose = true;
             this.Name = "AssetsWindow";
             this.Text = "Assets";
             this.contextMenuStrip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).EndInit();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -195,5 +254,9 @@ namespace RobotEditor
         private System.Windows.Forms.ToolStripMenuItem regenerateSolutionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addScriptToolStripMenuItem;
         private BrightIdeasSoftware.TreeListView treeListView;
+        internal System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripButton ToolstripExpandAll;
+        private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
+        private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
     }
 }

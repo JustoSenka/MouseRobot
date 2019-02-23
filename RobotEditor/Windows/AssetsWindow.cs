@@ -23,6 +23,8 @@ namespace RobotEditor
     {
         public event Action AssetSelected;
 
+        public ToolStrip ToolStrip { get { return toolStrip; } }
+
         private TreeNode<Asset> m_AssetTree = new TreeNode<Asset>();
 
         private IAssetManager AssetManager;
@@ -140,6 +142,8 @@ namespace RobotEditor
                 treeListView.Refresh();
                 treeListView.Expand(m_AssetTree.GetChild(0));
             }));
+
+            ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         private void OnAssetCreated(string path)
@@ -359,13 +363,42 @@ namespace RobotEditor
 
         #endregion
 
+        #region ToolStrip Buttons
+
+        private void ToolstripExpandAll_Click(object sender, EventArgs e)
+        {
+            treeListView.ExpandAll();
+        }
+
+        private void ToolstripExpandOne_Click(object sender, EventArgs e)
+        {
+            treeListView.CollapseAll();
+            treeListView.Expand(m_AssetTree.GetChild(0));
+            foreach (var node in m_AssetTree.GetChild(0))
+                treeListView.Expand(node);
+        }
+
+        private void ToolstripCollapseAll_Click(object sender, EventArgs e)
+        {
+            treeListView.CollapseAll();
+            treeListView.Expand(m_AssetTree.GetChild(0));
+        }
+
+        #endregion
+
         private void ASSERT_TreeViewIsTheSameAsInRecordingManager()
         {
 #if ENABLE_UI_TESTING
-            foreach(var asset in AssetManager.Assets)
+            // On first refresh asset tree is empty since it was not initialized and callbacks earlied out
+            // But AssetManager will have all the assets, so this method will print lots of errors
+            // Skipping for first time
+            if (m_AssetTree.Count() == 0)
+                return;
+
+            foreach (var asset in AssetManager.Assets)
             {
                 var node = m_AssetTree.FindNodeFromPath(asset.Path);
-                var assetFound = node.value is Asset value && value.Path == asset.Path;
+                var assetFound = node != null && node.value is Asset value && value.Path == asset.Path;
 
                 Logger.AssertIf(!assetFound, $"Asset was not found in AssetsWindow, but exists in AssetManager: {asset.Path}");
             }
