@@ -27,6 +27,7 @@ namespace Tests.Integration
 
         private const string k_FolderA = "Assets\\folderA\\";
         private const string k_FolderB = "Assets\\folderB\\";
+        private const string k_FolderANested = "Assets\\folderA\\nestedFolder";
 
         private const string k_RecInFolderA = k_FolderA + "rec.mrb";
         private const string k_FixInFolderA = k_FolderA + "fix.mrt";
@@ -402,6 +403,21 @@ namespace Tests.Integration
             Assert.IsNull(AssetManager.GetAsset(folderA), "FolderA should have been deleted");
             Assert.IsNotNull(AssetManager.GetAsset(folderB), "FolderA should have not been deleted");
             Assert.IsNotNull(AssetManager.GetAsset(recording), "FolderA should have not been deleted");
+        }
+
+        [TestMethod]
+        public void CannotRenameFolder_ToBe_InsideItself()
+        {
+            var originalAsset = AssetManager.CreateAsset(null, k_FolderA);
+            AssetManager.RenameAsset(k_FolderA, k_FolderANested);
+
+            var oldAsset = AssetManager.GetAsset(k_FolderA);
+            var newAsset = AssetManager.GetAsset(k_FolderANested);
+            var warningCount = Logger.Instance.LogList.Count(log => log.LogType == LogType.Warning);
+
+            Assert.AreEqual(originalAsset, oldAsset);
+            Assert.IsNull(newAsset);
+            Assert.AreEqual(1, warningCount);
         }
 
         private static void CreateDummyRecordingWithImporter(string path)
