@@ -290,13 +290,14 @@ namespace RobotEditor
             var isOriginalTargetFolder = Paths.IsDirectory(targetNode.value.Path);
 
             // If dropping in between some nodes, we actually want to put it inside the parent node
-            var isBetween = !isOriginalTargetFolder && (e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem);
-            var newTarget = isBetween ? targetNode.parent : targetNode;
+            var isBetween = e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem;
+            var newTarget = !isBetween ? targetNode : targetNode.parent.value == null ? targetNode : targetNode.parent;
 
             var sourcePath = sourceNode.value.Path;
             var newTargetPath = Path.Combine(newTarget.value.Path, Path.GetFileName(sourcePath));
 
-            var canBeDropped = sourcePath != newTargetPath && !newTargetPath.StartsWith(sourcePath);
+            var canBeDropped = sourcePath != newTargetPath && !newTargetPath.StartsWith(sourcePath) &&
+                newTargetPath != sourcePath;
 
             e.DropSink.CanDropBetween = true;
             e.DropSink.CanDropOnItem = isOriginalTargetFolder;
