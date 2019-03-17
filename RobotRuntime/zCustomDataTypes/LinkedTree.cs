@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace RobotRuntime
@@ -8,6 +9,7 @@ namespace RobotRuntime
     public delegate void TreeVisitor<T>(T nodeData);
 
     [Serializable]
+    [DebuggerDisplay("Value = {value}")]
     public class TreeNode<T> : IEnumerable<TreeNode<T>>, ICloneable, IComparable<TreeNode<T>>
     {
         public T value;
@@ -27,8 +29,8 @@ namespace RobotRuntime
             this.value = value;
             children = new LinkedList<TreeNode<T>>();
         }
-
-        public void Join(TreeNode<T> anotherTree)
+        
+        public void AddNode(TreeNode<T> anotherTree)
         {
             children.AddLast(anotherTree);
             anotherTree.parent = this;

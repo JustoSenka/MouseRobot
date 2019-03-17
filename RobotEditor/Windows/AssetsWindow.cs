@@ -141,9 +141,9 @@ namespace RobotEditor
                 treeListView.Sort(0);
                 treeListView.Refresh();
                 treeListView.Expand(m_AssetTree.GetChild(0));
-            }));
 
-            ASSERT_TreeViewIsTheSameAsInRecordingManager();
+                ASSERT_TreeViewIsTheSameAsInRecordingManager();
+            }));
         }
 
         private void OnAssetCreated(string path)
@@ -175,15 +175,30 @@ namespace RobotEditor
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
                 var node = m_AssetTree.FindNodeFromPath(path);
+                if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetDeleted callback: " + path))
+                    return;
+
                 node.parent.RemoveAt(node.Index);
                 OnRefreshFinished();
             }));
         }
 
-        private void OnAssetRenamed(string arg1, string arg2)
+        private void OnAssetRenamed(string from, string to)
         {
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
+                var node = m_AssetTree.FindNodeFromPath(from);
+                if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetRenamed callback: " + from))
+                    return;
+
+                var dirPath = Path.GetDirectoryName(to);
+                var parentNode = m_AssetTree.FindNodeFromPath(dirPath);
+                if (Logger.AssertIf(node == null, "parentNode could not be found in UI in OnAssetRenamed callback: " + dirPath + " :: " + to))
+                    return;
+
+                node.parent.RemoveAt(node.Index);
+                parentNode.AddNode(node);
+
                 OnRefreshFinished();
             }));
         }
@@ -259,14 +274,47 @@ namespace RobotEditor
             AssetSelected?.Invoke();
         }
 
-        private void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void treeListView_ModelCanDrop(object sender, ModelDropEventArgs e)
         {
-            throw new NotImplementedException();
+            var targetNode = e.TargetModel as TreeNode<Asset>;
+            var sourceNode = e.SourceModels[0] as TreeNode<Asset>;
+
+            if (targetNode == null || sourceNode == null || targetNode.value == null)
+            {
+                e.Effect = DragDropEffects.None;
+                e.DropSink.CanDropBetween = true;
+                e.DropSink.CanDropOnItem = false;
+                return;
+            }
+
+            var isOriginalTargetFolder = Paths.IsDirectory(targetNode.value.Path);
+
+            // If dropping in between some nodes, we actually want to put it inside the parent node
+            var isBetween = !isOriginalTargetFolder && (e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem);
+            var newTarget = isBetween ? targetNode.parent : targetNode;
+
+            var sourcePath = sourceNode.value.Path;
+            var newTargetPath = Path.Combine(newTarget.value.Path, Path.GetFileName(sourcePath));
+
+            var canBeDropped = sourcePath != newTargetPath && !newTargetPath.StartsWith(sourcePath);
+
+            e.DropSink.CanDropBetween = true;
+            e.DropSink.CanDropOnItem = isOriginalTargetFolder;
+            e.Effect = canBeDropped ? DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        private void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
+        {
+            var targetNode = e.TargetModel as TreeNode<Asset>;
+            var sourceNode = e.SourceModels[0] as TreeNode<Asset>;
+
+            var isBetween = e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem;
+            if (isBetween)
+                targetNode = targetNode.parent;
+
+            var sourcePath = sourceNode.value.Path;
+            var targetPath = Path.Combine(targetNode.value.Path, Path.GetFileName(sourcePath));
+            AssetManager.RenameAsset(sourcePath, targetPath);
         }
 
         public void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName)

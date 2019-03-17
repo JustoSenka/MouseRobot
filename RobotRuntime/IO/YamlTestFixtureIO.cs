@@ -53,13 +53,13 @@ namespace RobotRuntime.IO
             foreach (var n in YamlSerializer.SerializeSimpleProperties(fixture, level + 1))
                 tree.AddChild(n);
             
-            tree.Join(YamlRecordingIO.Serialize(fixture.Setup.ToLightRecording(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.TearDown.ToLightRecording(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeSetup.ToLightRecording(), level + 1));
-            tree.Join(YamlRecordingIO.Serialize(fixture.OneTimeTeardown.ToLightRecording(), level + 1));
+            tree.AddNode(YamlRecordingIO.Serialize(fixture.Setup.ToLightRecording(), level + 1));
+            tree.AddNode(YamlRecordingIO.Serialize(fixture.TearDown.ToLightRecording(), level + 1));
+            tree.AddNode(YamlRecordingIO.Serialize(fixture.OneTimeSetup.ToLightRecording(), level + 1));
+            tree.AddNode(YamlRecordingIO.Serialize(fixture.OneTimeTeardown.ToLightRecording(), level + 1));
 
             foreach(var t in fixture.Tests)
-                tree.Join(YamlRecordingIO.Serialize(t.ToLightRecording(), level + 1));
+                tree.AddNode(YamlRecordingIO.Serialize(t.ToLightRecording(), level + 1));
 
             return tree;
         }

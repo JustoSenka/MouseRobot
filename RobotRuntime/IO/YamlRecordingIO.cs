@@ -58,7 +58,7 @@ namespace RobotRuntime.IO
         private static void SerializeCommandsRecursively(TreeNode<YamlObject> parent, TreeNode<Command> commandToAdd, int level)
         {
             var commandYamlObject = YamlCommandIO.Serialize(commandToAdd.value, level);
-            parent.Join(commandYamlObject);
+            parent.AddNode(commandYamlObject);
 
             foreach (var childNode in commandToAdd)
                 SerializeCommandsRecursively(commandYamlObject, childNode, level + 1);

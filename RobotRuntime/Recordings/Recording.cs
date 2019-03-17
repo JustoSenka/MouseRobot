@@ -70,7 +70,7 @@ namespace RobotRuntime.Recordings
 
             var nodeToAddCommand = parentCommand == null ? Commands : Commands.GetNodeFromValue(parentCommand);
 
-            nodeToAddCommand.Join(commandNode);
+            nodeToAddCommand.AddNode(commandNode);
 
             CommandAddedToRecording?.Invoke(this, parentCommand, commandNode.value);
 
@@ -151,7 +151,7 @@ namespace RobotRuntime.Recordings
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;
-            nodeToAddCommand.Join(commandNode);
+            nodeToAddCommand.AddNode(commandNode);
             Commands.MoveAfter(commandNode.value, commandAfter);
 
             CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
@@ -178,7 +178,7 @@ namespace RobotRuntime.Recordings
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;
-            nodeToAddCommand.Join(commandNode);
+            nodeToAddCommand.AddNode(commandNode);
             Commands.MoveBefore(commandNode.value, commandAfter);
 
             CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));

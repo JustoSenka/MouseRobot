@@ -238,10 +238,18 @@ namespace Robot
         }
 
         /// <summary>
-        /// Renames asset from memory and renames its corresponding file. Asset will keep the same guid and GuidMap will be updated
+        /// Renames asset from memory and renames its corresponding file. Asset will keep the same guid and GuidMap will be updated.
+        /// If directory is renamed, all assets inside will update their path
+        /// Whole file path can be renamed, which will result into moving it to different directory
         /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
+            if (sourcePath == destPath)
+            {
+                Logger.Log(LogType.Warning, "Tried to rename asset but source file name and destination are the same: " + sourcePath);
+                return;
+            }
+
             sourcePath = Paths.GetRelativePath(sourcePath).NormalizePath();
             destPath = Paths.GetRelativePath(destPath).NormalizePath();
 
@@ -252,17 +260,21 @@ namespace Robot
                 return;
             }
 
-            var isDirectory = Directory.Exists(sourcePath);
+            var isDirectory = Paths.IsDirectory(sourcePath);
             if (isDirectory)
             {
+                if (destPath.StartsWith(sourcePath))
+                {
+                    Logger.Log(LogType.Warning, "Folder cannot be moved inside itself: " + sourcePath);
+                    return;
+                }
+
                 Directory.Move(sourcePath, destPath);
 
                 // Renames directory and all assets inside
                 foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(sourcePath)).Select(a => a.Path).ToArray())
                 {
-                    if (assetInDir == sourcePath) // Fire callbacks only for folder asset, UI is responsible to deal with it
-                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
-                    else
+                    if (assetInDir != sourcePath) // Fire callbacks only for folder asset, UI is responsible to deal with it
                         RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath), silent: true);
                 }
             }
@@ -270,8 +282,10 @@ namespace Robot
             {
                 File.SetAttributes(sourcePath, FileAttributes.Normal);
                 File.Move(sourcePath, destPath);
-                RenameAssetInternal(sourcePath, destPath);
             }
+
+            // Rename in db the actual file or folder
+            RenameAssetInternal(sourcePath, destPath);
         }
 
         private void RenameAssetInternal(string sourcePath, string destPath, bool silent = false)

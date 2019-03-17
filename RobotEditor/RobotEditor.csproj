@@ -206,6 +206,7 @@
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
     <Compile Include="Drawing\VisualizationPainter.cs" />
     <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
+    <Compile Include="Editor\DragObject.cs" />
     <Compile Include="Editor\ProjectSelectionDialog.cs" />
     <Compile Include="Hierarchy\TestNode.cs" />
     <Compile Include="Inspector\RecordingProperties.cs" />

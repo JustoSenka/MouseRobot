@@ -1,12 +1,14 @@
 ﻿using RobotRuntime;
 using RobotRuntime.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Robot
 {
+    [DebuggerDisplay("Name = {Name}")]
     public class Asset : IComparable<Asset>
     {
         public string Name { get; private set; }
