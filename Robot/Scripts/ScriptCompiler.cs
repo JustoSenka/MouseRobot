@@ -26,6 +26,7 @@ namespace Robot.Scripts
         public bool IsCompiling => m_LastCompilationTask != null ? !m_LastCompilationTask.IsCompleted : false;
 
         private Task<bool> m_LastCompilationTask;
+        private string m_OutputPath;
 
         private bool m_ShouldRecompile = false;
         private string[] m_TempSources;
@@ -87,6 +88,8 @@ namespace Robot.Scripts
         {
             StatusManager.Add("ScriptCompiler", 2, new Status("", "Compiling...", StandardColors.Orange));
 
+            var tempPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()) + FileExtensions.DllD;
+
             CompilerResults results = null;
             lock (CompilationLock)
             {
@@ -95,6 +98,9 @@ namespace Robot.Scripts
                 CompilerParams.ReferencedAssemblies.Clear();
                 CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultRobotReferences);
                 CompilerParams.ReferencedAssemblies.AddRange(CompilerSettings.DefaultCompilerReferences);
+
+                // Outputing to temp dir in case original files are being used right now, so compilation does not fail
+                CompilerParams.OutputAssembly = tempPath;
 
                 var settings = SettingsManager.GetSettings<CompilerSettings>();
                 if (settings != null)
@@ -116,6 +122,14 @@ namespace Robot.Scripts
                 return CompileCodeSync(m_TempSources);
             }
 
+            if (!results.Errors.HasErrors)
+                ReplaceOldAssembly(tempPath, m_OutputPath);
+
+            return PrintErrors(results);
+        }
+
+        private bool PrintErrors(CompilerResults results)
+        {
             if (results.Errors.HasErrors)
             {
                 foreach (CompilerError error in results.Errors)
@@ -137,9 +151,34 @@ namespace Robot.Scripts
             }
         }
 
+        /// <summary>
+        /// Replaces old Dll and Pdb files with newly compiled ones. 
+        /// </summary>
+        private static void ReplaceOldAssembly(string tempPath, string outputPath)
+        {
+            var pdbTempPath = Path.Combine(Path.GetDirectoryName(tempPath), Path.GetFileNameWithoutExtension(tempPath)) + ".pdb";
+            var pdbOutputPath = Path.Combine(Path.GetDirectoryName(outputPath), Path.GetFileNameWithoutExtension(outputPath)) + ".pdb";
+
+            if (File.Exists(tempPath))
+            {
+                if (File.Exists(outputPath))
+                    File.Delete(outputPath);
+
+                File.Move(tempPath, outputPath);
+            }
+
+            if (File.Exists(pdbTempPath))
+            {
+                if (File.Exists(pdbOutputPath))
+                    File.Delete(pdbOutputPath);
+
+                File.Move(pdbTempPath, pdbOutputPath);
+            }
+        }
+
         public void SetOutputPath(string customAssemblyPath)
         {
-            CompilerParams.OutputAssembly = customAssemblyPath;
+            m_OutputPath = customAssemblyPath;
         }
     }
 }
