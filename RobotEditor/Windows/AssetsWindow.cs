@@ -329,15 +329,44 @@ namespace RobotEditor
                     var item = new ToolStripMenuItem(name);
                     item.Click += (sender, eventArgs) =>
                     {
+                        GetDirectoryPathFromSelection(out TreeNode<Asset> assetNode, out bool isFile, out string dirPath);
+
                         var script = ScriptTemplates.GetTemplate(name);
                         var fileName = ScriptTemplates.GetTemplateFileName(name);
-                        var filePath = Path.Combine(Paths.AssetsPath, fileName + ".cs");
+                        var filePath = Path.Combine(dirPath, fileName + ".cs");
                         filePath = Paths.GetUniquePath(filePath);
                         AssetManager.CreateAsset(script, filePath);
+
+                        // Expand parent node if folder was created inside it
+                        if (!isFile)
+                            treeListView.Expand(assetNode);
+
+                        // Move Selection to newly selected folder
+                        var addedUiObject = m_AssetTree.FindNodeFromPath(filePath);
+                        if (addedUiObject != null)
+                            treeListView.SelectedObject = addedUiObject;
+                        else
+                            Logger.Logi(LogType.Error, "Cannot select newly created asset, something must've gone wrong in AssetsWindow");
+
                     };
                     menuItem.DropDownItems.Add(item);
                 }
             }));
+        }
+
+        /// <summary>
+        /// If folder is selected, will return folder path
+        /// If file is selected, will return path of directory where that file exists
+        /// If nothing is selected, will return Assets folder
+        /// </summary>
+        private void GetDirectoryPathFromSelection(out TreeNode<Asset> assetNode, out bool isFile, out string dirPath)
+        {
+            assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            asset = asset == null ? m_AssetTree.GetChild(0).value : asset;
+
+            isFile = File.Exists(asset.Path);
+            dirPath = isFile ? Paths.GetRelativePath(Path.GetDirectoryName(asset.Path)) : asset.Path;
         }
 
         public Asset GetSelectedAsset()
@@ -422,12 +451,8 @@ namespace RobotEditor
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
-            var asset = assetNode?.value;
-            asset = asset == null ? m_AssetTree.GetChild(0).value : asset;
+            GetDirectoryPathFromSelection(out TreeNode<Asset> assetNode, out bool isFile, out string dirPath);
 
-            var isFile = File.Exists(asset.Path);
-            var dirPath = isFile ? Paths.GetRelativePath(Path.GetDirectoryName(asset.Path)) : asset.Path;
             var preferredPath = Path.Combine(dirPath, "New Folder");
             var uniqueDirPath = Paths.GetUniquePath(preferredPath);
 
