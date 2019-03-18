@@ -362,8 +362,8 @@ namespace RobotEditor
         private void GetDirectoryPathFromSelection(out TreeNode<Asset> assetNode, out bool isFile, out string dirPath)
         {
             assetNode = treeListView.SelectedObject as TreeNode<Asset>;
-            var asset = assetNode?.value;
-            asset = asset == null ? m_AssetTree.GetChild(0).value : asset;
+            assetNode = assetNode == null ? m_AssetTree.GetChild(0) : assetNode;
+            var asset = assetNode.value;
 
             isFile = File.Exists(asset.Path);
             dirPath = isFile ? Paths.GetRelativePath(Path.GetDirectoryName(asset.Path)) : asset.Path;
@@ -403,12 +403,9 @@ namespace RobotEditor
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
-            var asset = assetNode?.value;
-            if (asset == null)
-                return;
+            GetDirectoryPathFromSelection(out TreeNode<Asset> assetNode, out bool _, out string _);
 
-            var path = Path.Combine(Environment.CurrentDirectory, asset.Path);
+            var path = Path.Combine(Environment.CurrentDirectory, assetNode.value.Path);
             System.Diagnostics.Process.Start("explorer.exe", "/select, " + path);
         }
 
