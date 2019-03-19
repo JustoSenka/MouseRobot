@@ -214,6 +214,21 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+        ///&lt;!--DockPanel configuration file. Author: Weifen Luo, all rights reserved.--&gt;
+        ///&lt;!--!!! AUTOMATICALLY GENERATED FILE. DO NOT MODIFY !!!--&gt;
+        ///&lt;DockPanel FormatVersion=&quot;1.0&quot; DockLeftPortion=&quot;200&quot; DockRightPortion=&quot;200&quot; DockTopPortion=&quot;150&quot; DockBottomPortion=&quot;150&quot; ActiveDocumentPane=&quot;7&quot; ActivePane=&quot;7&quot;&gt;
+        ///  &lt;Contents Count=&quot;8&quot;&gt;
+        ///    &lt;Content ID=&quot;0&quot; PersistString=&quot;RobotEditor.TestRunnerWindow&quot; AutoHidePortion=&quot;0.25&quot; IsHidden=&quot;False&quot; IsFloat=&quot;False&quot; /&gt;
+        ///    &lt;Content ID=&quot;1&quot; Pe [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DefaultDockLayout {
+            get {
+                return ResourceManager.GetString("DefaultDockLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ExpandAll_16 {

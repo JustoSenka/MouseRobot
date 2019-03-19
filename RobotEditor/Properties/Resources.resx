@@ -223,4 +223,7 @@
   <data name="S_ConfirmFolderDeletionMessage" xml:space="preserve">
     <value>Are you sure you want to delete this folder and all of its contents inside?</value>
   </data>
+  <data name="DefaultDockLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\misc\defaultdocklayout.config;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>
