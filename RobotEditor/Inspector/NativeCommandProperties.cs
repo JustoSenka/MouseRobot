@@ -105,7 +105,7 @@ namespace RobotEditor.Inspector
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue(0)]
-        [DisplayName("Timeout")]
+        [DisplayName("Timeout (ms)")]
         public int Timeout
         {
             get { return DynamicCast(Command).Timeout; }

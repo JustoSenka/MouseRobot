@@ -13,7 +13,7 @@ namespace RobotRuntime.Commands
         public override bool CanBeNested { get { return true; } }
 
         public Guid Asset { get; set; }
-        public int Timeout { get; set; }
+        public int Timeout { get; set; } = 1000;
         public bool ExpectTrue { get; set; }
 
         public CommandIfImageVisible() : base() { }
