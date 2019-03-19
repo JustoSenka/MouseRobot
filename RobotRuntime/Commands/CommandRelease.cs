@@ -35,9 +35,16 @@ namespace RobotRuntime.Commands
         {
             if (!DontMove)
                 WinAPI.MouseMoveTo(X, Y);
-            WinAPI.PerformActionUp(MouseButton.Left);
-            WinAPI.PerformActionUp(MouseButton.Right);
-            WinAPI.PerformActionUp(MouseButton.Middle);
+
+            if (WinAPI.CurrentMouseState.HasFlag(WinAPI.MouseEventFlags.LeftDown))
+                WinAPI.PerformActionUp(MouseButton.Left);
+
+            if (WinAPI.CurrentMouseState.HasFlag(WinAPI.MouseEventFlags.RightDown))
+                WinAPI.PerformActionUp(MouseButton.Right);
+
+            if (WinAPI.CurrentMouseState.HasFlag(WinAPI.MouseEventFlags.MiddleDown))
+                WinAPI.PerformActionUp(MouseButton.Middle);
+
         }
 
         public override string ToString()

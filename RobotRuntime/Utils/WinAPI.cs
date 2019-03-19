@@ -12,6 +12,8 @@ namespace RobotRuntime.Utils.Win32
 
         public const int TimeBetweenActions = 5;
 
+        public static MouseEventFlags CurrentMouseState = MouseEventFlags.LeftUp | MouseEventFlags.MiddleUp | MouseEventFlags.RightUp;
+
         [Flags]
         public enum MouseEventFlags
         {
@@ -59,8 +61,34 @@ namespace RobotRuntime.Utils.Win32
             Point position = GetCursorPosition();
             MouseMoveTo(position.X, position.Y);
 
+            UpdateCurrentMouseState(value);
             mouse_event((int)value, position.X, position.Y, 0, 0);
             Thread.Sleep(TimeBetweenActions);
+        }
+
+        private static void UpdateCurrentMouseState(MouseEventFlags flag)
+        {
+            switch (flag)
+            {
+                case MouseEventFlags.LeftDown:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.LeftDown) & ~MouseEventFlags.LeftUp;
+                    break;
+                case MouseEventFlags.LeftUp:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.LeftUp) & ~MouseEventFlags.LeftDown;
+                    break;
+                case MouseEventFlags.MiddleDown:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.MiddleDown) & ~MouseEventFlags.MiddleUp;
+                    break;
+                case MouseEventFlags.MiddleUp:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.MiddleUp) & ~MouseEventFlags.MiddleDown;
+                    break;
+                case MouseEventFlags.RightDown:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.RightDown) & ~MouseEventFlags.RightUp;
+                    break;
+                case MouseEventFlags.RightUp:
+                    CurrentMouseState = (CurrentMouseState | MouseEventFlags.RightUp) & ~MouseEventFlags.RightDown;
+                    break;
+            }
         }
 
         public static void PerformActionDown(MouseButton value)
