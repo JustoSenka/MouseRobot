@@ -74,12 +74,14 @@ namespace RobotRuntime
         }
 
         /// <summary>
-        /// This method should solely be used when running from command line
+        /// This method should solely be used when running from command line.
+        /// Starts a recording by path. Works with or without extension.
         /// </summary>
         public Task StartRecording(string recordingName)
         {
             // TODO: use RuntimeAssetManager here
-            var importer = AssetImporter.FromPath(recordingName + FileExtensions.RecordingD);
+            recordingName = Path.HasExtension(recordingName) ? recordingName : recordingName + FileExtensions.RecordingD;
+            var importer = AssetImporter.FromPath(recordingName);
             return StartRecording(importer.Load<LightRecording>());
         }
 

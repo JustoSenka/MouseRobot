@@ -1,8 +1,8 @@
-﻿using RobotRuntime.Abstractions;
+﻿using RobotRuntime;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Logging;
 using System;
 using System.Collections.Generic;
-using RobotRuntime;
-using RobotRuntime.Logging;
 using System.Linq;
 
 namespace Tests
@@ -65,10 +65,20 @@ namespace Tests
             {
                 var colls = line.Split(new[] { "] " }, StringSplitOptions.None);
                 var logTypeStr = colls[0].Trim('[', '\n', '\r');
-                var header = colls[1].Trim(' ', '\n', '\r');
-                var logType = map[logTypeStr];
 
-                return new Log() { LogType = logType, Header = header};
+                if (colls.Length == 2 && map.ContainsKey(logTypeStr))
+                {
+                    var header = colls[1].Trim(' ', '\n', '\r');
+                    var logType = map[logTypeStr];
+
+                    Logger.Log(logType, header);
+                    return new Log() { LogType = logType, Header = header };
+                }
+                else
+                {
+                    Logger.Log(LogType.None, "Unrecognized log line: " + line);
+                    return new Log() { LogType = LogType.None, Header = "Unrecognized log line: " + line };
+                }
             }).ToList();
         }
     }

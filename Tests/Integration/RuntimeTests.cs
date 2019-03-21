@@ -35,6 +35,8 @@ namespace Tests.Integration
         private const string k_CustomCommandPath = "Assets\\CustomCommand.cs";
         private const string k_CustomCommandRunnerPath = "Assets\\CustomCommandRunner.cs";
 
+        private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
+
         [TestInitialize]
         public void Initialize()
         {
@@ -124,15 +126,15 @@ namespace Tests.Integration
 
             ScriptManager.AllowCompilation = false;
 
-            var res = ProcessUtility.StartFromCommandLine(
-                Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe"),
-                TempProjectPath + " " + k_RecordingName);
+            var res = ProcessUtility.StartFromCommandLine(ExecutablePath, $"-p {TempProjectPath} -r {k_RecordingName}");
 
             var logs = FakeLogger.CreateLogsFromConsoleOutput(res);
 
             Assert.AreEqual(3, logs.Count(log => log.Header == "CommandLog"));
             Assert.AreEqual(3, logs.Count(log => log.Header == "RunnerLog"));
         }
+
+        
 
         // This test is not supported.
         // AppDomain contains a lot of unneded assemblies due to many compilations and running command from main method

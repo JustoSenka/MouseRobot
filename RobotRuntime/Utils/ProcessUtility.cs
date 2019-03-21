@@ -39,7 +39,6 @@ namespace RobotRuntime.Utils
             processStartInfo.RedirectStandardOutput = true;
             processStartInfo.RedirectStandardError = true;
             processStartInfo.CreateNoWindow = true;
-            processStartInfo.WorkingDirectory = Environment.CurrentDirectory;
 
             var list = new List<string>();
             var process = new Process();

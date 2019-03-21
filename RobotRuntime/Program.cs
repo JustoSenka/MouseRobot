@@ -1,16 +1,17 @@
-﻿using RobotRuntime.Abstractions;
+﻿using CommandLine;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Assets;
-using Unity;
-using Unity.Lifetime;
-using RobotRuntime.Graphics;
-using RobotRuntime.Settings;
 using RobotRuntime.Execution;
+using RobotRuntime.Graphics;
+using RobotRuntime.Logging;
 using RobotRuntime.Perf;
 using RobotRuntime.Scripts;
+using RobotRuntime.Settings;
 using System;
-using RobotRuntime.Logging;
-using Unity.Injection;
 using System.Linq;
+using Unity;
+using Unity.Injection;
+using Unity.Lifetime;
 
 namespace RobotRuntime
 {
@@ -18,26 +19,46 @@ namespace RobotRuntime
     {
         public static void Main(string[] args)
         {
-            if (args.Length < 2)
-                return;
-
-            Environment.CurrentDirectory = args[0];
-
+            // FIRST THING (Register all the dependencies)
             var container = new UnityContainer();
             RegisterInterfaces(container);
-
             Logger.Instance = container.Resolve<ILogger>();
+
+            // SECOND THING (Parse command line arguments)
+            var o = Parser.Default.ParseArguments<Options>(args).MapResult(op => op, errors =>
+            {
+                foreach (var e in errors)
+                    Logger.Log(LogType.Error, "Cannot parse command line argument: " + e);
+
+                return default;
+            });
 
             container.Resolve<IScriptLoader>(); // Not referenced by runtime
 
+            // Initialize project
             var projectManager = container.Resolve<IRuntimeProjectManager>();
-            projectManager.InitProject(args[0]);
+            projectManager.InitProject(o.ProjectPath);
 
+            // Run tests or recordings
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.LoadSettings();
-            testRunner.StartRecording(args[1]).Wait();
+            testRunner.StartRecording(o.Recording).Wait();
         }
 
+        private class Options
+        {
+            [Option('p', "projectPath", Required = true, HelpText = "Project path.")]
+            public string ProjectPath { get; set; }
+
+            [Option('t', "testFilter", Required = false, HelpText = "Regex Test Filter for which tests to run.", Default = ".")]
+            public string TestFilter { get; set; }
+
+            [Option('r', "recording", Required = false, HelpText = "Run single recording by path.", Default = "")]
+            public string Recording { get; set; }
+
+            [Option('o', "output", Required = false, HelpText = "Output file path with extension.", Default = "TestResults.txt")]
+            public string Output { get; set; }
+        }
 
         public static void RegisterInterfaces(UnityContainer Container)
         {
@@ -59,11 +80,14 @@ namespace RobotRuntime
             Container.RegisterType(typeof(ITypeCollector<>), typeof(TypeCollector<>));
             Container.RegisterType(typeof(ITypeObjectCollector<>), typeof(TypeObjectCollector<>));
 
-            // Kinda optional, will not fail because of integers, guids or booleans in constructors. Not really used currently.
-            // In perfect scenarion, Unity should not try to resolve class which has primitives in constructors
+            // Registering also primitive types, just in case user code tries to inject primitives via constructor, which is not a good idea
             RegisterPrimitiveTypes(Container);
         }
 
+        /// <summary>
+        /// It is here so resolving will not fail because of integers, guids or booleans in constructors. Not really used currently.
+        /// In perfect scenarion, Unity should not try to resolve class which has primitives in constructors.
+        /// </summary>
         private static void RegisterPrimitiveTypes(UnityContainer Container)
         {
             var allPrimitiveTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.IsPrimitive);
