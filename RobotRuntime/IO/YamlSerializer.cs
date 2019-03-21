@@ -41,12 +41,14 @@ namespace RobotRuntime.IO
             {
                 var type = objToWrite.GetType();
                 var field = type.GetField(propNode.value.property, k_BindingFlags);
+                field = field == null ? type.GetField(YamlObject.AddBackingFieldText(propNode.value.property), k_BindingFlags) : field;
 
                 // If field == null, property lives in base type
                 if (field == null)
                 {
                     type = objToWrite.GetType().BaseType;
                     field = type.GetField(propNode.value.property, k_BindingFlags);
+                    field = field == null ? type.GetField(YamlObject.AddBackingFieldText(propNode.value.property), k_BindingFlags) : field;
                 }
 
                 var fieldType = field?.FieldType;

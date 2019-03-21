@@ -59,11 +59,11 @@ namespace Tests.Unit
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
         private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left, guid);
         private string serializedCommand => @"CommandPress: 
-  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-  <X>k__BackingField: 50
-  <Y>k__BackingField: 70
-  <DontMove>k__BackingField: False
-  <MouseButton>k__BackingField: Left".FixLineEndings();
+  Guid: 12345678-9abc-def0-1234-567890123456
+  X: 50
+  Y: 70
+  DontMove: False
+  MouseButton: Left".FixLineEndings();
 
         [TestMethod]
         public void Command_ProducesCorrect_YamlString()
@@ -116,22 +116,22 @@ namespace Tests.Unit
             }
         }
         private string serializedRecording => @"LightRecording: 
-  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-  <Name>k__BackingField: TestName
+  Guid: 12345678-9abc-def0-1234-567890123456
+  Name: TestName
   CommandForImage: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-    <Timeout>k__BackingField: 1850
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Asset: 00000000-0000-0000-0000-000000000000
+    Timeout: 1850
     CommandPress: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 55
-      <Y>k__BackingField: 66
-      <DontMove>k__BackingField: True
-      <MouseButton>k__BackingField: Left
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 55
+      Y: 66
+      DontMove: True
+      MouseButton: Left
   CommandMove: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <X>k__BackingField: 10
-    <Y>k__BackingField: 20".FixLineEndings();
+    Guid: 12345678-9abc-def0-1234-567890123456
+    X: 10
+    Y: 20".FixLineEndings();
 
         [TestMethod]
         public void Recording_ProducesCorrect_YamlString()
@@ -245,93 +245,93 @@ namespace Tests.Unit
 
         #region private string serializedFixture => @"LightTestFixture: 
         private string serializedFixture => @"LightTestFixture: 
-  <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-  <Name>k__BackingField: TestName
+  Guid: 12345678-9abc-def0-1234-567890123456
+  Name: TestName
   LightRecording: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Name>k__BackingField: Setup
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Name: Setup
     CommandForImage: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-      <Timeout>k__BackingField: 1850
+      Guid: 12345678-9abc-def0-1234-567890123456
+      Asset: 00000000-0000-0000-0000-000000000000
+      Timeout: 1850
       CommandPress: 
-        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-        <X>k__BackingField: 55
-        <Y>k__BackingField: 66
-        <DontMove>k__BackingField: True
-        <MouseButton>k__BackingField: Left
+        Guid: 12345678-9abc-def0-1234-567890123456
+        X: 55
+        Y: 66
+        DontMove: True
+        MouseButton: Left
     CommandMove: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 10
-      <Y>k__BackingField: 20
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 10
+      Y: 20
   LightRecording: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Name>k__BackingField: TearDown
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Name: TearDown
     CommandForImage: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-      <Timeout>k__BackingField: 1850
+      Guid: 12345678-9abc-def0-1234-567890123456
+      Asset: 00000000-0000-0000-0000-000000000000
+      Timeout: 1850
       CommandPress: 
-        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-        <X>k__BackingField: 55
-        <Y>k__BackingField: 66
-        <DontMove>k__BackingField: True
-        <MouseButton>k__BackingField: Left
+        Guid: 12345678-9abc-def0-1234-567890123456
+        X: 55
+        Y: 66
+        DontMove: True
+        MouseButton: Left
     CommandMove: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 10
-      <Y>k__BackingField: 20
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 10
+      Y: 20
   LightRecording: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Name>k__BackingField: OneTimeSetup
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Name: OneTimeSetup
     CommandForImage: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-      <Timeout>k__BackingField: 1850
+      Guid: 12345678-9abc-def0-1234-567890123456
+      Asset: 00000000-0000-0000-0000-000000000000
+      Timeout: 1850
       CommandPress: 
-        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-        <X>k__BackingField: 55
-        <Y>k__BackingField: 66
-        <DontMove>k__BackingField: True
-        <MouseButton>k__BackingField: Left
+        Guid: 12345678-9abc-def0-1234-567890123456
+        X: 55
+        Y: 66
+        DontMove: True
+        MouseButton: Left
     CommandMove: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 10
-      <Y>k__BackingField: 20
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 10
+      Y: 20
   LightRecording: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Name>k__BackingField: OneTimeTeardown
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Name: OneTimeTeardown
     CommandForImage: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-      <Timeout>k__BackingField: 1850
+      Guid: 12345678-9abc-def0-1234-567890123456
+      Asset: 00000000-0000-0000-0000-000000000000
+      Timeout: 1850
       CommandPress: 
-        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-        <X>k__BackingField: 55
-        <Y>k__BackingField: 66
-        <DontMove>k__BackingField: True
-        <MouseButton>k__BackingField: Left
+        Guid: 12345678-9abc-def0-1234-567890123456
+        X: 55
+        Y: 66
+        DontMove: True
+        MouseButton: Left
     CommandMove: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 10
-      <Y>k__BackingField: 20
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 10
+      Y: 20
   LightRecording: 
-    <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-    <Name>k__BackingField: TestName
+    Guid: 12345678-9abc-def0-1234-567890123456
+    Name: TestName
     CommandForImage: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <Asset>k__BackingField: 00000000-0000-0000-0000-000000000000
-      <Timeout>k__BackingField: 1850
+      Guid: 12345678-9abc-def0-1234-567890123456
+      Asset: 00000000-0000-0000-0000-000000000000
+      Timeout: 1850
       CommandPress: 
-        <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-        <X>k__BackingField: 55
-        <Y>k__BackingField: 66
-        <DontMove>k__BackingField: True
-        <MouseButton>k__BackingField: Left
+        Guid: 12345678-9abc-def0-1234-567890123456
+        X: 55
+        Y: 66
+        DontMove: True
+        MouseButton: Left
     CommandMove: 
-      <Guid>k__BackingField: 12345678-9abc-def0-1234-567890123456
-      <X>k__BackingField: 10
-      <Y>k__BackingField: 20".FixLineEndings();
+      Guid: 12345678-9abc-def0-1234-567890123456
+      X: 10
+      Y: 20".FixLineEndings();
         #endregion
 
 

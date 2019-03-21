@@ -2,6 +2,12 @@
 
 namespace RobotRuntime.IO
 {
+    /// <summary>
+    /// Is used to specify properties and values.
+    /// Can take both property name or backing field name
+    /// Can read both property name or backing field name
+    /// Will only serialize property name, and remove obscure backing field text from it
+    /// </summary>
     public struct YamlObject
     {
         public short level;
@@ -11,8 +17,10 @@ namespace RobotRuntime.IO
         public YamlObject(int level, string property, object value)
         {
             this.level = (short)level;
-            this.property = property;
             this.value = value != null ? value.ToString() : "";
+            this.property = property;
+
+            this.property = RemoveBackingFieldText(property);
         }
 
         /// <summary>
@@ -25,15 +33,18 @@ namespace RobotRuntime.IO
         /// </summary>
         public YamlObject(string YamlLine)
         {
-            var matches = Regex.Match(YamlLine, @"^( *)([\W\w]+)(:[ ]?)([\w\W]*)$");
-            level = (short)( matches.Groups[1].Value.Length / 2);
-            property = matches.Groups[2].Value;
-            value = matches.Groups.Count > 4 ? matches.Groups[4].Value : "";
+            var match = Regex.Match(YamlLine, @"^( *)([\W\w]+)(:[ ]?)([\w\W]*)$");
+            level = (short)( match.Groups[1].Value.Length / 2);
+            property = match.Groups[2].Value;
+            value = match.Groups.Count > 4 ? match.Groups[4].Value : "";
+
+            this.property = RemoveBackingFieldText(property);
         }
 
         public override string ToString()
         {
-            return GetIndentation(level) + property + ": " + value;
+            var p = RemoveBackingFieldText(property);
+            return GetIndentation(level) + p + ": " + value;
         }
 
         public static string GetIndentation(int level)
@@ -44,6 +55,17 @@ namespace RobotRuntime.IO
                 str += "  ";
 
             return str;
+        }
+
+        public static string RemoveBackingFieldText(string prop)
+        {
+            var p = Regex.Match(prop, @"<(\w+)>k__BackingField")?.Groups?[1].Value;
+            return string.IsNullOrEmpty(p) ? prop : p;
+        }
+
+        public static string AddBackingFieldText(string prop)
+        {
+            return prop.Contains("k__BackingField") ? prop : $"<{prop}>k__BackingField";
         }
     }
 }

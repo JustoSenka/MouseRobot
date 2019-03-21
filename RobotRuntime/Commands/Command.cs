@@ -19,9 +19,9 @@ namespace RobotRuntime
         public abstract void Run(TestData TestData);
 
         [InjectionConstructor]
-        public Command(Guid guid = default(Guid))
+        public Command(Guid guid = default)
         {
-            Guid = guid == default(Guid) ? Guid.NewGuid() : guid;
+            Guid = guid == default ? Guid.NewGuid() : guid;
         }
 
         public virtual object Clone()

@@ -14,7 +14,7 @@ namespace RobotRuntime.IO
             var commandObject = new YamlObject(level, command.GetType().Name, "");
             var tree = new TreeNode<YamlObject>(commandObject);
 
-            tree.AddChild(new YamlObject(level + 1, "<Guid>k__BackingField", command.Guid));
+            tree.AddChild(new YamlObject(level + 1, "Guid", command.Guid));
 
             var objs = YamlSerializer.SerializeSimpleProperties(command, level + 1);
 
