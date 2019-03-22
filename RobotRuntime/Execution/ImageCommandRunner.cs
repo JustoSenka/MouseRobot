@@ -80,21 +80,19 @@ namespace RobotRuntime.Execution
         private static void GetImageAndTimeout(TreeNode<Command> node, out Guid image, out int timeout)
         {
             var command = node.value;
-            if (command is CommandForImage)
+            if (command is CommandForImage c)
             {
-                var c = (CommandForImage)command;
                 image = c.Asset;
                 timeout = c.Timeout;
             }
-            else if (command is CommandForeachImage)
+            else if (command is CommandForeachImage c1)
             {
-                var c = (CommandForeachImage)command;
-                image = c.Asset;
-                timeout = c.Timeout;
+                image = c1.Asset;
+                timeout = c1.Timeout;
             }
             else
             {
-                image = default(Guid);
+                image = default;
                 timeout = 0;
             }
         }

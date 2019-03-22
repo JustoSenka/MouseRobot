@@ -12,10 +12,10 @@ using System.IO;
 using System.Linq;
 using Unity;
 
-namespace Tests.Integration
+namespace Tests.Runtime
 {
     [TestClass]
-    public class RuntimeTests
+    public class RunningCustomRecording
     {
         private string TempProjectPath;
 
@@ -23,7 +23,6 @@ namespace Tests.Integration
         IHierarchyManager HierarchyManager;
         IScriptTemplates ScriptTemplates;
         IScriptManager ScriptManager;
-        ITestFixtureManager TestFixtureManager;
         ICommandFactory CommandFactory;
         ITestRunner TestRunner;
         ILogger Logger;
@@ -50,7 +49,6 @@ namespace Tests.Integration
             ScriptManager = container.Resolve<IScriptManager>();
             ScriptTemplates = container.Resolve<IScriptTemplates>();
             CommandFactory = container.Resolve<ICommandFactory>();
-            TestFixtureManager = container.Resolve<ITestFixtureManager>();
             TestRunner = container.Resolve<ITestRunner>();
             Logger = container.Resolve<ILogger>();
 
@@ -127,14 +125,11 @@ namespace Tests.Integration
             ScriptManager.AllowCompilation = false;
 
             var res = ProcessUtility.StartFromCommandLine(ExecutablePath, $"-p {TempProjectPath} -r {k_RecordingName}");
-
             var logs = FakeLogger.CreateLogsFromConsoleOutput(res);
 
             Assert.AreEqual(3, logs.Count(log => log.Header == "CommandLog"));
             Assert.AreEqual(3, logs.Count(log => log.Header == "RunnerLog"));
         }
-
-        
 
         // This test is not supported.
         // AppDomain contains a lot of unneded assemblies due to many compilations and running command from main method

@@ -10,9 +10,9 @@ namespace RobotRuntime.Execution
     {
         private TestData m_TestData;
 
-        private ILogger Logger;
-        private ITypeObjectCollector<IRunner> TypeCollector;
-        IUnityContainer Container;
+        private readonly ILogger Logger;
+        private readonly ITypeObjectCollector<IRunner> TypeCollector;
+        private readonly IUnityContainer Container;
         public RunnerFactory(ILogger Logger, ITypeObjectCollector<IRunner> TypeCollector, IUnityContainer Container)
         {
             this.Logger = Logger;
@@ -60,7 +60,8 @@ namespace RobotRuntime.Execution
             }
             else
             {
-                Logger.Logi(LogType.Error, "Threre is no Runner registered that would support type: " + commandType);
+                // Will spew errors for all SimpleCommands which don't need to have the attribute
+                // Logger.Logi(LogType.Error, "Threre is no Runner registered that would support type: " + commandType);
                 return TypeCollector.TypeObjectMap[typeof(SimpleCommandRunner)];
             }
         }
@@ -73,7 +74,7 @@ namespace RobotRuntime.Execution
         private Type GetRunnerTypeForCommand(Type commandType)
         {
             var attribute = commandType.GetCustomAttributes(false).OfType<RunnerTypeAttribute>().FirstOrDefault();
-            return attribute != null ? attribute.type : null;
+            return attribute?.type;
         }
     }
 }

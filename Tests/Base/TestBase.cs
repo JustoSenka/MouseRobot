@@ -60,6 +60,7 @@ namespace Tests
         {
             System.GC.Collect();
             System.GC.WaitForPendingFinalizers();
+            System.GC.Collect();
 
             return Task.Run(() =>
             {

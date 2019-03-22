@@ -1,26 +1,27 @@
-﻿using RobotRuntime.Abstractions;
-using RobotRuntime.Tests;
+﻿using RobotRuntime.Tests;
 
 namespace RobotRuntime.Execution
 {
+    /// <summary>
+    /// This command will just forward call to Command.Run
+    /// Compatible with all and any commands out there
+    /// </summary>
     public class SimpleCommandRunner : IRunner
     {
         public TestData TestData { set; get; }
 
         public SimpleCommandRunner()
         {
-            
+
         }
-        
+
         public void Run(IRunnable runnable)
         {
-            if (!TestData.RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
+            if (!(runnable is Command command))
             {
                 Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
                 return;
             }
-
-            var command = runnable as Command;
 
             TestData.InvokeCallback(command.Guid);
             command.Run(TestData);

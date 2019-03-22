@@ -167,11 +167,18 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <EmbeddedResource Include="Base\CommandLog.cs" />
     <Compile Include="Integration\AssetGuidManagerTests.cs" />
     <Compile Include="Base\Sync.cs" />
     <Compile Include="Integration\CustomCommandCompilationTests.cs" />
     <Compile Include="Base\TestBase.cs" />
-    <Compile Include="Integration\RuntimeTests.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Runtime\RunningTestsWithFilter.cs" />
+    <Compile Include="Runtime\RunningCustomRecording.cs" />
     <Compile Include="Integration\TypeCollectorIntegrationTests.cs" />
     <Compile Include="Unit\TypeCollectorTests.cs" />
     <Compile Include="Unit\HierarchyManagerTests.cs" />
@@ -210,7 +217,12 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

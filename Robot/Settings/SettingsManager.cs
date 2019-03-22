@@ -21,10 +21,10 @@ namespace Robot.Settings
 
         private ObjectIO m_Serializer = new JsonObjectIO();
 
-        private ILogger Logger;
-        private IScriptLoader ScriptLoader;
-        private IUnityContainer Container;
-        private ITypeObjectCollector<BaseSettings> TypeCollector;
+        private readonly ILogger Logger;
+        private readonly IScriptLoader ScriptLoader;
+        private readonly IUnityContainer Container;
+        private readonly ITypeObjectCollector<BaseSettings> TypeCollector;
         public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager, ITypeObjectCollector<BaseSettings> TypeCollector)
         {
             this.Container = Container;

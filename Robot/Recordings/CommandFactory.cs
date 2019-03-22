@@ -40,7 +40,7 @@ namespace Robot.Recordings
 
         private void CollectUserCommands()
         {
-            var dummyCommands = TypeCollector.AllTypes.Select(type => ((Command)Activator.CreateInstance(type))).ToArray();
+            var dummyCommands = TypeCollector.AllTypes.TryResolveTypes<Command>(null, Logger).ToArray();
             m_CommandNames = dummyCommands.Select(c => c.Name).ToArray();
 
             m_CommandTypes = new Dictionary<string, Type>();

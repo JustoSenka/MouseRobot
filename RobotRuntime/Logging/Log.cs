@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace RobotRuntime.Logging
 {
+    [DebuggerDisplay("[{LogType}] {Header}")]
     public struct Log
     {
         public string Header { get; set; }

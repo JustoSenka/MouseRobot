@@ -39,10 +39,15 @@ namespace RobotRuntime
             var projectManager = container.Resolve<IRuntimeProjectManager>();
             projectManager.InitProject(o.ProjectPath);
 
-            // Run tests or recordings
+            // Initialize test runner
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.LoadSettings();
-            testRunner.StartRecording(o.Recording).Wait();
+
+            // Run tests or recordings
+            if (o.Recording != "")
+                testRunner.StartRecording(o.Recording).Wait();
+            else
+                testRunner.StartTests(o.TestFilter).Wait();
         }
 
         private class Options
@@ -50,7 +55,7 @@ namespace RobotRuntime
             [Option('p', "projectPath", Required = true, HelpText = "Project path.")]
             public string ProjectPath { get; set; }
 
-            [Option('t', "testFilter", Required = false, HelpText = "Regex Test Filter for which tests to run.", Default = ".")]
+            [Option('f', "filter", Required = false, HelpText = "Regex Test Filter for which tests to run.", Default = ".")]
             public string TestFilter { get; set; }
 
             [Option('r', "recording", Required = false, HelpText = "Run single recording by path.", Default = "")]

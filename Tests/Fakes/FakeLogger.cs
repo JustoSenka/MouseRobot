@@ -3,6 +3,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Tests
@@ -37,12 +38,19 @@ namespace Tests
 
         public void Logi(LogType logType, string str)
         {
-            Logi(logType, str, "");
+            var i = this.IsTheCaller() ? 1 : 0;
+            InternalLog(logType, str, null, i + 2);
         }
 
-        public void Logi(LogType logType, string obj, string description)
+        public void Logi(LogType logType, string str, string description)
         {
-            var log = new Log(logType, obj, description, null);
+            var i = this.IsTheCaller() ? 1 : 0;
+            InternalLog(logType, str, description, i + 2);
+        }
+
+        private void InternalLog(LogType logType, string obj, string description, int skipFrames)
+        {
+            var log = new Log(logType, obj, description, new StackTrace(skipFrames));
             m_LogList.Add(log);
 
             var str = "[" + logType + "] " + log.Header;

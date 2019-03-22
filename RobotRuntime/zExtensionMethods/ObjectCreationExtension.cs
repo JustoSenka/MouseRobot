@@ -33,7 +33,7 @@ namespace RobotRuntime
                 if (instance != default)
                     list.Add(instance);
                 else
-                    Logger.Logi(LogType.Error, "Cannot resolve type: " + t.FullName, "Probably bad constructor. " + ex.Message);
+                    Logger.Logi(LogType.Error, "Cannot resolve type: " + t.FullName, "Make sure ctor is correct and/or empty ctor exists. " + ex.Message);
             }
 
             return list;
