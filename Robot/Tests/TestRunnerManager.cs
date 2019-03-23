@@ -30,7 +30,8 @@ namespace Robot.Tests
         private readonly ITestStatusManager TestStatusManager;
         private readonly IAssetManager AssetManager;
         private readonly IProfiler Profiler;
-        public TestRunnerManager(IUnityContainer Container, ITestStatusManager TestStatusManager, IAssetManager AssetManager, IProfiler Profiler)
+        private readonly ITestRunner TestRunner;
+        public TestRunnerManager(IUnityContainer Container, ITestStatusManager TestStatusManager, IAssetManager AssetManager, IProfiler Profiler, ITestRunner TestRunner)
         {
             this.Container = Container;
             this.TestStatusManager = TestStatusManager;
@@ -44,6 +45,13 @@ namespace Robot.Tests
             AssetManager.AssetDeleted += AddPathToList;
             AssetManager.AssetRenamed += AddPathToListForRenaming;
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
+
+            TestRunner.TestRunEnd += OnTestsFinished;
+        }
+
+        private void OnTestsFinished()
+        {
+            TestStatusManager.OutputTestRunStatusToFile();
         }
 
         #region AssetManager Callbacks

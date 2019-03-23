@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
+using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +19,7 @@ namespace RobotRuntime.Tests
         private readonly object m_TestStatusDictionaryLock = new object();
 
         public event Action TestStatusUpdated;
-        public string OutputFilePath => "LatestTestRunStatus.txt";
+        public string OutputFilePath => Path.Combine(Paths.RoamingAppdataPath, "LatestTestRunStatus.txt");
 
         public TestStatusManager(ITestRunner TestRunner)
         {
@@ -31,7 +32,7 @@ namespace RobotRuntime.Tests
 
         public IEnumerable<string> GetFormattedTestRunStatus() => CurrentStatus
             .Where(p => p.Value != TestStatus.None)
-            .Select(p => $"{p.Value.ToString()}: {p.Key.fix}.{p.Key.rec}");
+            .Select(p => $"{p.Value.ToString()}: \"{p.Key.fix}.{p.Key.rec}\"");
 
 
         public void OutputTestRunStatusToFile(string path = "")
@@ -39,7 +40,7 @@ namespace RobotRuntime.Tests
             if (path.IsEmpty())
                 path = OutputFilePath;
 
-            File.WriteAllText(path, JsonConvert.SerializeObject(GetFormattedTestRunStatus()));
+            File.WriteAllLines(path, GetFormattedTestRunStatus());
         }
 
         /// <summary>

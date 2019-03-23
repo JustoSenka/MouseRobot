@@ -1,14 +1,17 @@
 ﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Tests;
+using System;
+using System.IO;
 using Unity;
 
 namespace Tests.Runtime
 {
     [TestFixture]
-    public class RunningTestsWithFilter : TestWithCleanup
+    public class RunningTestsProducesOutput : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -18,8 +21,6 @@ namespace Tests.Runtime
         IScriptManager ScriptManager;
         ICommandFactory CommandFactory;
         ITestStatusManager TestStatusManager;
-
-        ILogger Logger;
 
         private const string k_CustomCommandPath = "Assets\\CommandLog.cs";
 
@@ -38,29 +39,23 @@ namespace Tests.Runtime
             CommandFactory = container.Resolve<ICommandFactory>();
             TestStatusManager = container.Resolve<ITestStatusManager>();
 
-            Logger = container.Resolve<ILogger>();
+            container.Resolve<ITestRunnerManager>(); // This one outputs test results to file, but is not referenced by anything
 
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestCase("Test15", false, new[] { 11, 12, 15, 13, 14 })]
-        [TestCase("Fixture1.Test15", false, new[] { 11, 12, 15, 13, 14 })]
-        [TestCase("Test(15|16)", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
-        [TestCase("Fixture1", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
-        [TestCase("Fixture", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("Test2", false, new[] { 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("Fixture1|Test26", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 26, 23, 24 })]
+        private readonly static string[] m_Results = new[]
+        {
+            "Passed: \"fixture1.Test15\"",
+            @"Passed: ""fixture1.Test15""
+Passed: ""fixture1.Test16""",
+        };
 
-        [TestCase("Test15", true, new[] { 11, 12, 15, 13, 14 })]
-        [TestCase("Fixture1.Test15", true, new[] { 11, 12, 15, 13, 14 })]
-        [TestCase("Test(15|16)", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
-        [TestCase("Fixture1", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
-        [TestCase("Fixture", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("Test2", true, new[] { 21, 22, 25, 23, 22, 26, 23, 24 })]
-        [TestCase("Fixture1|Test26", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 26, 23, 24 })]
-        public void RunningTests_WithFilter(string filter, bool useCommandLine, int[] expectedOrder)
+        [TestCase("Test15", false, 0)]
+        [TestCase("Test15", true, 0)]
+        [TestCase("Fixture(1|2)\\.Test(15|16)", false, 1)]
+        [TestCase("Fixture(1|2)\\.Test(15|16)", true, 1)]
+        public void WithFilter(string filter, bool useCommandLine, int expectedResultIndex)
         {
             AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
@@ -68,7 +63,10 @@ namespace Tests.Runtime
             TestFixtureUtils.PrepareProjectWithTestFixtures(TestFixtureManager, CommandFactory);
             var logs = TestFixtureUtils.RunTestsAndGetLogs(TestRunner, filter, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
 
-            TestFixtureUtils.AssertIfCommandLogsAreOutOfOrder(logs, expectedOrder);
+            FileAssert.Exists(TestStatusManager.OutputFilePath);
+
+            Assert.AreEqual(m_Results[expectedResultIndex].FixLineEndings().Trim('\n', '\r', ' '),
+                File.ReadAllText(TestStatusManager.OutputFilePath).FixLineEndings().Trim('\n', '\r', ' '));
         }
     }
 }

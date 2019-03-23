@@ -171,6 +171,7 @@
   </Choose>
   <ItemGroup>
     <EmbeddedResource Include="Base\CommandLog.cs" />
+    <Compile Include="Base\TestFixtureUtils.cs" />
     <Compile Include="Base\TestWithCleanup.cs" />
     <Compile Include="Integration\AssetGuidManagerTests.cs" />
     <Compile Include="Base\Sync.cs" />
@@ -181,6 +182,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Runtime\RunnintTestsProducesOutput.cs" />
     <Compile Include="Runtime\RunningTestsWithFilter.cs" />
     <Compile Include="Runtime\RunningCustomRecording.cs" />
     <Compile Include="Integration\TypeCollectorIntegrationTests.cs" />

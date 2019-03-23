@@ -208,7 +208,6 @@ namespace RobotEditor
         {
             m_HighlightedNode = null;
             UpdateTestStatusIconsAsync();
-            TestStatusManager.OutputTestRunStatusToFile();
         }
 
         private void UpdateTestStatusIconsAsync()
