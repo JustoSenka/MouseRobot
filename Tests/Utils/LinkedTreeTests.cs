@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime;
 
 namespace Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class LinkedTreeTests
     {
-        [TestMethod]
+        [Test]
         public void LinkedTree_GetChild_ReturnsCorrectChild()
         {
             var tree = new TreeNode<int>();
@@ -20,7 +20,7 @@ namespace Tests.Utils
             Assert.AreEqual(2, tree.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_InsertChild_InsertsInCorrectPositions()
         {
             var tree = new TreeNode<int>();
@@ -41,7 +41,7 @@ namespace Tests.Utils
             Assert.AreEqual(5, tree.GetChild(5).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_IndexOf_InsertsInCorrectPositions()
         {
             var tree = new TreeNode<int>();
@@ -55,7 +55,7 @@ namespace Tests.Utils
             Assert.AreEqual(2, tree.IndexOf(2));
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveAfter_MiddleWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -71,7 +71,7 @@ namespace Tests.Utils
             Assert.AreEqual(2, tree.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveAfter_LastWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -87,7 +87,7 @@ namespace Tests.Utils
             Assert.AreEqual(0, tree.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveAfter_FirstWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -105,7 +105,7 @@ namespace Tests.Utils
             Assert.AreEqual(3, tree.GetChild(3).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveBefore_MiddleWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -121,7 +121,7 @@ namespace Tests.Utils
             Assert.AreEqual(1, tree.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveBefore_LastWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -137,7 +137,7 @@ namespace Tests.Utils
             Assert.AreEqual(2, tree.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveBefore_FirstWorksFine()
         {
             var tree = new TreeNode<int>();
@@ -155,7 +155,7 @@ namespace Tests.Utils
             Assert.AreEqual(3, tree.GetChild(3).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_Parent_GivesCorrectParent()
         {
             var tree = new TreeNode<string>("recording");
@@ -174,7 +174,7 @@ namespace Tests.Utils
             Assert.AreEqual("recording", node_11.parent.parent.value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_GetNodeFromValue_GivesCorrectNode()
         {
             var tree = new TreeNode<string>("recording");
@@ -196,7 +196,7 @@ namespace Tests.Utils
             Assert.AreEqual("11", tree.GetNodeFromValue("11").value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveAfter_CanWorkWithDifferentNodeLevels()
         {
             var tree = new TreeNode<string>("recording");
@@ -218,7 +218,7 @@ namespace Tests.Utils
             Assert.AreEqual("00", node_1.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_MoveBefore_CanWorkWithMultipleObjects()
         {
             var tree = new TreeNode<string>("recording");
@@ -240,7 +240,7 @@ namespace Tests.Utils
             Assert.AreEqual("11", node_1.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void LinkedTree_Clone_MakesDeepCopy()
         {
             var tree = new TreeNode<int>();

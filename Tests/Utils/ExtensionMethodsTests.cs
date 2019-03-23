@@ -1,21 +1,21 @@
 ﻿using System;
 using Robot;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using RobotRuntime;
 
 namespace Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class ExtensionMethodsTests
     {
-        [TestMethod]
+        [Test]
         public void IsTheCaller_WithinTheSameClass_ReturnsTrue()
         {
             var result = CallMethodFromSameClass.Call(typeof(AnyClass));
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsTheCaller_WithinTheSameClass_ReturnsTrue_EvenWhenCheckingOnSelf()
         {
             var result = CallMethodFromSameClass.Call(typeof(CallMethodFromSameClass));
@@ -36,21 +36,21 @@ namespace Tests.Utils
             }
         }
 
-        [TestMethod]
+        [Test]
         public void IsTheCaller_WithinDifferentClasses_ReturnsTrue_WhenCorrectClassIsProvided()
         {
             var result = CallMethodFromOtherClass.Call(typeof(CallMethodFromOtherClass));
             Assert.IsTrue(result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsTheCaller_WithinDifferentClasses_ReturnsFalse_WhenSelfClassIsProvided()
         {
             var result = CallMethodFromOtherClass.Call(typeof(CallMethodFromSameClass));
             Assert.IsFalse(result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsTheCaller_WithinDifferentClasses_ReturnsFalse_IfClassToFarInStackIsProvided()
         {
             var result = CallMethodFromOtherClass.Call(typeof(ExtensionMethodsTests));

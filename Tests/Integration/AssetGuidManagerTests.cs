@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
@@ -12,7 +12,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class AssetGuidManagerTests
     {
         private string TempProjectPath;
@@ -26,7 +26,7 @@ namespace Tests.Integration
         IAssetManager AssetManager;
         IAssetGuidManager AssetGuidManager;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -39,7 +39,7 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void NewAssets_UponRefresh_AreAddedToGuidTable()
         {
             CreateDummyRecordingWithImporter(k_RecordingAPath);
@@ -52,7 +52,7 @@ namespace Tests.Integration
             Assert.AreEqual(AssetManager.GetAsset(k_RecordingBPath).Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void DeletedAssets_UponRefresh_AreNotRemovedFromGuidTable()
         {
             CreateDummyRecordingWithImporter(k_RecordingAPath);
@@ -72,7 +72,7 @@ namespace Tests.Integration
             Assert.AreEqual(AssetManager.GetAsset(k_RecordingBPath).Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void RenamedAssets_UponRefresh_AreRenamedInGuidTable()
         {
             var assetA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -91,7 +91,7 @@ namespace Tests.Integration
             Assert.AreEqual(k_RecordingCPath, AssetGuidManager.GetPath(assetB.Guid), "B gives different path");
         }
 
-        [TestMethod]
+        [Test]
         public void RenamedAssets_UponRefresh_AreGivenSameGuid_EvenIfTheyWereDeletedAndRestored()
         {
             var guidA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath).Guid;
@@ -115,7 +115,7 @@ namespace Tests.Integration
             Assert.AreEqual(guidB, AssetGuidManager.GetGuid(k_RecordingCPath), "C path gives correct guid");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_GivesAssetsSameGuid_IfTheyWereAlreadyKnown()
         {
             var guidA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath).Guid;
@@ -134,7 +134,7 @@ namespace Tests.Integration
             Assert.AreEqual(guidB, AssetManager.GetAsset(k_RecordingBPath).Guid, "B path gives correct guid");
         }
 
-        [TestMethod]
+        [Test]
         public void DeletingAndRestoringAsset_WillGiveItSameGuid_AsItHadOriginally()
         {
             var guidA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath).Guid;
@@ -152,7 +152,7 @@ namespace Tests.Integration
             Assert.AreEqual(guidB, AssetManager.GetAsset(k_RecordingBPath).Guid, "B path gives correct guid");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateAsset_AddsItToGuidTable()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -163,7 +163,7 @@ namespace Tests.Integration
             Assert.AreEqual(asset2.Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteAsset_DoesNotRemoveIt_FromGuidTable()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -178,7 +178,7 @@ namespace Tests.Integration
             Assert.AreEqual(asset2.Guid, AssetGuidManager.GetGuid(k_RecordingBPath), "Asset guid missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void RenameAsset_RenamesItInGuidTable()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);

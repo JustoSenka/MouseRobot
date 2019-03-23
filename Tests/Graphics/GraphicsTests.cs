@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace Tests.Graphics
 {
-    [TestClass]
+    [TestFixture]
     public class GraphicsTests
     {
-        [TestMethod]
+        [Test]
         public void FindImageInsideAnotherImage()
         {
             // ScreenShot and smaller screenshot

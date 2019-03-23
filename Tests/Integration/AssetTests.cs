@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
@@ -12,7 +12,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class AssetTests
     {
         private string TempProjectPath;
@@ -41,7 +41,7 @@ namespace Tests.Integration
         IHierarchyManager RecordingManager;
         ITestFixtureManager TestFixtureManager;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -54,7 +54,7 @@ namespace Tests.Integration
 
             ProjectManager.InitProject(TempProjectPath);
         }
-        [TestMethod]
+        [Test]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -66,7 +66,7 @@ namespace Tests.Integration
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateAsset_CreatesFile_AndAddsToAssetManager()
         {
             var recording = new Recording(guid);
@@ -76,7 +76,7 @@ namespace Tests.Integration
             Assert.AreEqual(AssetManager.GetAsset(k_RecordingAPath).Importer.Load<Recording>(), recording, "Asset value did not match the recording");
         }
 
-        [TestMethod]
+        [Test]
         public void ReloadRecording_UpdatesRecordingRef_FromFile()
         {
             var recording = RecordingManager.NewRecording();
@@ -90,7 +90,7 @@ namespace Tests.Integration
             Assert.AreEqual(0, recording2.Commands.Count(), "Recording should not have commands");
         }
 
-        [TestMethod]
+        [Test]
         public void RenameAsset_RenamesFile_AndKeepsAllReferencesIntact()
         {
             var recording = new Recording(guid);
@@ -107,7 +107,7 @@ namespace Tests.Integration
             Assert.IsTrue(File.Exists(k_RecordingBPath), "New file should exist on disk");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_WithFileBeingRenamedOnFileSystem_AcceptsRenameAndKeepsAllReferences()
         {
             var recording = new Recording(guid);
@@ -125,7 +125,7 @@ namespace Tests.Integration
             Assert.IsTrue(File.Exists(k_RecordingBPath), "New file should exist on disk");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_WithDeletedFiles_RemovesThemFromManager()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -146,7 +146,7 @@ namespace Tests.Integration
             Assert.IsNull(assetC, "Asset C should not exist anymore");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_WithNewFiles_AddsThemToManager()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -165,7 +165,7 @@ namespace Tests.Integration
             Assert.IsNotNull(assetC, "Asset C should exist");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_WithRenamedFiles_HavingOtherFilesWithSameHash_AcceptsRename()
         {
             var assetA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -182,7 +182,7 @@ namespace Tests.Integration
             Assert.IsNull(AssetManager.GetAsset(k_RecordingBPath), "B asset was renamed, so should not appear");
         }
 
-        [TestMethod]
+        [Test]
         public void Refresh_WithRenamedFiles_AndOneBeingDeleted_AcceptsRename()
         {
             var assetA = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -200,7 +200,7 @@ namespace Tests.Integration
             Assert.IsNull(AssetManager.GetAsset(k_RecordingBPath), "B asset was renamed, so should not appear");
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteAsset_RemovesFromManager_AndFromDisk()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -214,7 +214,7 @@ namespace Tests.Integration
             Assert.IsNotNull(AssetManager.GetAsset(k_RecordingBPath), "Asset B should exist");
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteDirectory_RemovesFromManager_AndFromDisk()
         {
             var path = "Assets\\someFolder";
@@ -232,7 +232,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, AssetManager.Assets.Count(), "After deletion, only one asset should be left");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateFolderAsset_AddsAssetToManager_AndCreatesDirAtDisk()
         {
             var path = "Assets\\someFolder";
@@ -242,7 +242,7 @@ namespace Tests.Integration
             Assert.AreEqual(path.NormalizePath(), AssetManager.GetAsset(path).Importer.Load<string>().NormalizePath());
         }
 
-        [TestMethod]
+        [Test]
         public void CreateAsset_WhenFolderDoesNotExist_ReturnsNull()
         {
             var path = "Assets\\non existant folder\\rec.mrb";
@@ -251,7 +251,7 @@ namespace Tests.Integration
             Assert.IsNull(res, "Cannot create assets when folder does not exist");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateFolderAsset_WhenFolderDoesNotExist_ReturnsNull()
         {
             var path = "Assets\\non existant folder\\someFolder";
@@ -260,7 +260,7 @@ namespace Tests.Integration
             Assert.IsNull(res, "Cannot create assets when folder does not exist");
         }
 
-        [TestMethod]
+        [Test]
         public void AssetManager_CanAddTwoAssets_WithSameName_ButDifferentExtension()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -271,7 +271,7 @@ namespace Tests.Integration
             Assert.AreEqual(3, AssetManager.Assets.Count(), "Two assets + directory should be found");
         }
 
-        [TestMethod]
+        [Test]
         public void AssetManager_CanRefreshTwoAssets_WithSameName_ButDifferentExtension()
         {
             CreateDummyRecordingWithImporter(k_RecordingAPath);
@@ -283,7 +283,7 @@ namespace Tests.Integration
             Assert.AreEqual(3, AssetManager.Assets.Count(), "Two assets + directory should be found");
         }
 
-        [TestMethod]
+        [Test]
         public void AssetManager_CanReturnTwoAssets_WithSameName_ButDifferentExtension()
         {
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
@@ -293,7 +293,7 @@ namespace Tests.Integration
             Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixtureAPath).Importer.HoldsType());
         }
 
-        [TestMethod]
+        [Test]
         public void RenameFolder_WithAssetsInside_WillKeepAllGuids()
         {
             Directory.CreateDirectory(k_FolderA);
@@ -313,7 +313,7 @@ namespace Tests.Integration
             Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);
         }
 
-        [TestMethod]
+        [Test]
         public void RenameFolder_FromAssetManager_WithAssetsInside_WillKeepAllGuids()
         {
             AssetManager.CreateAsset(null, k_FolderA);
@@ -332,7 +332,7 @@ namespace Tests.Integration
             Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);
         }
 
-        [TestMethod]
+        [Test]
         public void RenameFolder_WithAssetsInside_WillFireOnlyOneCallback()
         {
             AssetManager.CreateAsset(null, k_FolderA);
@@ -353,7 +353,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteFolder_WithAssetsInside_WillFireOnlyOneCallback()
         {
             AssetManager.CreateAsset(null, k_FolderA);
@@ -373,7 +373,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
         }
 
-        [TestMethod]
+        [Test]
         public void RenameFolder_WithAssetsInside_DoesNotCallAssetDeletedCallbacks()
         {
             AssetManager.CreateAsset(null, k_FolderA);
@@ -388,7 +388,7 @@ namespace Tests.Integration
             Assert.AreEqual(0, callbackitCount, "Asset Deleted callback should not be fired");
         }
 
-        [TestMethod]
+        [Test]
         public void DeleteFolder_WillNotDeleteUnecessaryFoldersAndAssets_WhichStartWithSameString()
         {
             var folderA = "Assets\\FolderA";
@@ -405,7 +405,7 @@ namespace Tests.Integration
             Assert.IsNotNull(AssetManager.GetAsset(recording), "FolderA should have not been deleted");
         }
 
-        [TestMethod]
+        [Test]
         public void CannotRenameFolder_ToBe_InsideItself()
         {
             var originalAsset = AssetManager.CreateAsset(null, k_FolderA);

@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotEditor.PropertyUtils;
@@ -7,7 +7,6 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
 using RobotRuntime.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,7 +16,7 @@ using Unity.Lifetime;
 
 namespace Tests
 {
-    [TestClass]
+    [TestFixture]
     public static class TestBase
     {
         public static string TempFolderPath => Path.Combine(Path.GetTempPath(), "MProjects");
@@ -50,7 +49,7 @@ namespace Tests
             }
         }
 
-        [AssemblyCleanup]
+        [OneTimeTearDown]
         public static void TryCleanUp()
         {
             TryCleanDirectory(TempFolderPath).Wait();

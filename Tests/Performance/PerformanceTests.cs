@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
@@ -9,7 +9,7 @@ using Unity;
 
 namespace Tests.Performance
 {
-    [TestClass]
+    [TestFixture]
     public class PerformanceTests
     {
         private string TempProjectPath;
@@ -23,7 +23,7 @@ namespace Tests.Performance
         IAssetGuidManager AssetGuidManager;
         IProfiler Profiler;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -39,7 +39,7 @@ namespace Tests.Performance
             AssetManager.Refresh();
         }
 
-        [TestMethod]
+        [Test]
         public void AssetRefreshTime_100_RecordingAssets() // 22 ms - 50 (guid)
         {
             int count = 100;
@@ -60,7 +60,7 @@ namespace Tests.Performance
             Assert.IsTrue(timeTaken < 150, "This test took 50% longer than usual");
         }
 
-        [TestMethod]
+        [Test]
         public void AssetRefreshTime_1000_RecordingAssets() // 120 ms -- 180 (guid)
         {
             int count = 1000;

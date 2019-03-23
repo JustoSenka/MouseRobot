@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime.Perf;
 using System;
 using System.Linq;
 
 namespace Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class LimitedStackTests
     {
-        [TestMethod]
+        [Test]
         public void LimitedStack_HasCorrectCount_InNonOverflowScenario()
         {
             var stack = new LimitedStack<int>(5);
@@ -20,7 +20,7 @@ namespace Tests.Utils
             Assert.AreEqual(3, stack.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_HasCorrectCount_InOverflowScenario()
         {
             var stack = new LimitedStack<int>(3);
@@ -33,7 +33,7 @@ namespace Tests.Utils
             Assert.AreEqual(3, stack.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_HasCorrectValues_InOrder_NoOverflow()
         {
             var stack = new LimitedStack<int>(3);
@@ -47,7 +47,7 @@ namespace Tests.Utils
             Assert.AreEqual(1, arr[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_HasCorrectValues_InOrder_AfterOverflow()
         {
             var stack = new LimitedStack<int>(3);
@@ -65,7 +65,7 @@ namespace Tests.Utils
             Assert.AreEqual(3, arr[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_PopGivesBackCorrectValues_NoOverflow()
         {
             var stack = new LimitedStack<int>(4);
@@ -82,7 +82,7 @@ namespace Tests.Utils
             Assert.AreEqual(0, stack.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_PopGivesBackCorrectValues_AfterOverflow()
         {
             var stack = new LimitedStack<int>(4);
@@ -104,7 +104,7 @@ namespace Tests.Utils
             Assert.AreEqual(0, stack.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_AddingValuesAfterPopping_WithOverflow_StillGivesCorrectOrder()
         {
             var stack = new LimitedStack<int>(4);
@@ -135,7 +135,7 @@ namespace Tests.Utils
             Assert.AreEqual(4, arr.Length);
         }
 
-        [TestMethod]
+        [Test]
         public void LimitedStack_PopingEmptyStack_Throws()
         {
             var stack = new LimitedStack<int>(4);

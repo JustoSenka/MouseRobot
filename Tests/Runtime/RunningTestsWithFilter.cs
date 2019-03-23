@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
@@ -15,7 +15,7 @@ using Unity;
 
 namespace Tests.Runtime
 {
-    [TestClass]
+    [TestFixture]
     public class RunningTestsWithFilter
     {
         private string TempProjectPath;
@@ -32,7 +32,7 @@ namespace Tests.Runtime
         private const string k_TestFixturePath = "Assets\\fixture.mrt";
         private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -51,7 +51,7 @@ namespace Tests.Runtime
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunner_RunningCustomRecording_Works()
         {
             File.WriteAllText(k_CustomCommandPath, Properties.Resources.CommandLog);
@@ -67,7 +67,7 @@ namespace Tests.Runtime
             AssertIfCommandLogsAreOutOfOrder(logs, 1, 2, 11, 3, 4);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandLine_RunningCustomRecording_Works()
         {
             File.WriteAllText(k_CustomCommandPath, Properties.Resources.CommandLog);
@@ -117,7 +117,7 @@ namespace Tests.Runtime
         {
             Assert.AreEqual(logNr.Length, logs.Length, "Log count missmatched");
             foreach (var (log, nr) in logs.Zip(logNr, (l, n) => (l, n)))
-                Assert.AreEqual($"CommandLog: {nr}", log.Header, true, CultureInfo.InvariantCulture);
+                Assert.AreEqual($"CommandLog: {nr}", log.Header);
         }
     }
 }

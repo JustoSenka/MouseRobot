@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Commands;
@@ -8,12 +8,12 @@ using Unity;
 
 namespace Tests.Unit
 {
-    [TestClass]
+    [TestFixture]
     public class RecordingTests
     {
         IHierarchyManager RecordingManager;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             var container = TestBase.ConstructContainerForTests();
@@ -21,13 +21,13 @@ namespace Tests.Unit
             RecordingManager = container.Resolve<IHierarchyManager>();
         }
 
-        [TestMethod]
+        [Test]
         public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
             Assert.AreEqual(1, RecordingManager.LoadedRecordings.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandAfter_WorksWithinSameLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -44,7 +44,7 @@ namespace Tests.Unit
         }
 
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandBefore_WorksWithinSameLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -60,7 +60,7 @@ namespace Tests.Unit
             Assert.AreEqual(c3, s.Commands.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommand_MultipleTimes_WorksWithinSameLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -83,7 +83,7 @@ namespace Tests.Unit
             Assert.AreEqual(c1, s.Commands.GetChild(2).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandAfter_WorksToUpperLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -103,7 +103,7 @@ namespace Tests.Unit
             Assert.AreEqual(c3, n1.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandBefore_WorksToUpperLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -123,7 +123,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, n1.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandAfter_WorksToLowerLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -142,7 +142,7 @@ namespace Tests.Unit
             Assert.AreEqual(c12, s.Commands.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveCommandBefore_WorksToLowerLevel()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -161,7 +161,7 @@ namespace Tests.Unit
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_MoveNestedCommands_MovesAllChildCommandsAlso()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -181,7 +181,7 @@ namespace Tests.Unit
             Assert.AreEqual(c22, n2.GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_InsertCommand_InsertsCommandInCorrectPosition()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -204,7 +204,7 @@ namespace Tests.Unit
             Assert.AreEqual(c5, s.Commands.GetChild(4).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_AddCommandNode_AddAllCommandsWithIt()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -225,7 +225,7 @@ namespace Tests.Unit
             Assert.AreEqual(c22, s.Commands.GetChild(0).GetChild(0).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_RemoveCommand_RemovesItWithChildren()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -245,7 +245,7 @@ namespace Tests.Unit
             Assert.IsFalse(s.Select(n => n.value).Contains(c22));
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_InsertCommandNode_AfterTopLevelCommand()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -264,7 +264,7 @@ namespace Tests.Unit
             Assert.AreEqual(c12, s.Commands.GetChild(1).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_InsertCommandNode_BeforeTopLevelCommand()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -283,7 +283,7 @@ namespace Tests.Unit
             Assert.AreEqual(c12, s.Commands.GetChild(0).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_InsertCommandNode_AfterBottomLevelCommand()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -307,7 +307,7 @@ namespace Tests.Unit
             Assert.AreEqual(c21, child.GetChild(1).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_InsertCommandNode_BeforeBottomLevelCommand()
         {
             var s = RecordingManager.LoadedRecordings[0];
@@ -332,7 +332,7 @@ namespace Tests.Unit
         }
 
 
-        [TestMethod]
+        [Test]
         public void Guid_ToLightRecordingIsCorrect()
         {
             var recording = new Recording();
@@ -343,7 +343,7 @@ namespace Tests.Unit
             Assert.AreEqual(guid, lightRecording.Guid, "Guids should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void Guid_FromLightRecordingIsCorrect()
         {
             var recording = new Recording();
@@ -354,7 +354,7 @@ namespace Tests.Unit
             Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void Guid_FromLightRecordingCtorIsCorrect()
         {
             var recording = new Recording();
@@ -365,7 +365,7 @@ namespace Tests.Unit
             Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void Guids_AfterCloningRecording_AreSame()
         {
             var s1 = new Recording();

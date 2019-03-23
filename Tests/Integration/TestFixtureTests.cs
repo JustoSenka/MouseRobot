@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime;
@@ -11,7 +11,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class TestFixtureTests
     {
         private string TempProjectPath;
@@ -44,7 +44,7 @@ namespace Tests.Integration
             }
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -58,14 +58,14 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void AssetIsCreated_For_LightTestFixture()
         {
             var asset = AssetManager.CreateAsset(LightTestFixture, k_FixturePath);
             Assert.IsTrue(File.Exists(asset.Path), "Test fixture asset should have been created at path: " + k_FixturePath);
         }
 
-        [TestMethod]
+        [Test]
         public void AssetIsCreated_For_TestFixture()
         {
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
@@ -73,7 +73,7 @@ namespace Tests.Integration
             Assert.IsTrue(File.Exists(asset.Path), "Test fixture asset should have been created at path: " + k_FixturePath);
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_FromLightTestFixture_ConvertsCorrectlyBack()
         {
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
@@ -81,7 +81,7 @@ namespace Tests.Integration
             CheckIfLightTestFixturesAreEqual(LightTestFixture, newLightFixture);
         }
 
-        [TestMethod]
+        [Test]
         public void LightTestFixture_LoadedFromImporter_IsCorrect()
         {
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
@@ -91,7 +91,7 @@ namespace Tests.Integration
             CheckIfLightTestFixturesAreEqual(LightTestFixture, newLightFixture);
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_LoadedFromImporter_AndConverted_IsCorrect()
         {
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
@@ -104,7 +104,7 @@ namespace Tests.Integration
             CheckIfTestFixturesAreEqual(TestFixture, newTestFixture);
         }
 
-        [TestMethod]
+        [Test]
         public void SavingFixtureVia_TestFixtureManager_ProducesCorrectAsset()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -119,7 +119,7 @@ namespace Tests.Integration
             CheckIfLightTestFixturesAreEqual(lightFixture, newLightFixture);
         }
 
-        [TestMethod]
+        [Test]
         public void SavingFixture_ToPath_WillAdjustTheNameOfFixture()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -131,7 +131,7 @@ namespace Tests.Integration
             Assert.AreEqual(k_FixtureName, fixture.Name, "Names should be adjusted according to path");
         }
 
-        [TestMethod]
+        [Test]
         public void ApplyLightFixtureValues_CorrectlyAppliesFixtureNames()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -141,7 +141,7 @@ namespace Tests.Integration
             Assert.AreEqual(lightFixture.Name, fixture.Name, "Names should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void ApplyLightFixtureValues_CorrectlyAppliesFixtureGuid()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -153,7 +153,7 @@ namespace Tests.Integration
             Assert.AreEqual(guid, fixture.Guid, "Guids should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void ToLightFixtureValues_CorrectlySetsFixtureGuid()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -167,7 +167,7 @@ namespace Tests.Integration
             Assert.AreEqual(guid, newLightTestFixture.Guid, "Guids should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_EqualsOperator_ForNewFixtures_ReturnsTrue()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
@@ -176,7 +176,7 @@ namespace Tests.Integration
             Assert.IsTrue(fixture1.Similar(fixture2), "Fixture.Equals returned false for similar two new identical fixtures");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_EqualsOperator_ForIdenticalFixtures_ReturnsTrue()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
@@ -188,7 +188,7 @@ namespace Tests.Integration
             Assert.IsTrue(fixture1.Similar(fixture2), "Fixture.Equals returned false for similar two new identical fixtures");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_EqualsOperator_ForFixturesWithDifferentRecordings_ReturnsFalse()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
@@ -202,7 +202,7 @@ namespace Tests.Integration
             Assert.IsFalse(fixture1.Similar(fixture2), "Fixture.Equals returned true for for different fixtures");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_EqualsOperator_ForFixturesWithDifferentCommands_ReturnsFalse()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
@@ -216,7 +216,7 @@ namespace Tests.Integration
             Assert.IsFalse(fixture1.Similar(fixture2), "Fixture.Equals returned true for for different fixtures");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_EqualsOperator_ForDifferentFixtures_ReturnsFalse()
         {
             var fixture1 = TestFixtureManager.NewTestFixture();
@@ -228,7 +228,7 @@ namespace Tests.Integration
             Assert.IsFalse(fixture2.Similar(fixture1), "Fixture2.Equals returned true for for different fixtures");
         }
 
-        [TestMethod]
+        [Test]
         public void TestFixture_FromLightTestFixture_KeepsSameCommandAndRecordingGuids()
         {
             var cachedLightTestFixture = LightTestFixture;

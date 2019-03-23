@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
@@ -14,7 +14,7 @@ using Unity;
 
 namespace Tests.Runtime
 {
-    [TestClass]
+    [TestFixture]
     public class RunningCustomRecording
     {
         private string TempProjectPath;
@@ -36,7 +36,7 @@ namespace Tests.Runtime
 
         private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -55,7 +55,7 @@ namespace Tests.Runtime
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunner_RunningRecording_FiresCallbacksCorrectly()
         {
             CreateAndSaveTestRecording(k_RecordingPath, out Command c1, out Command c2, out Command c3, CommandFactory);
@@ -70,7 +70,7 @@ namespace Tests.Runtime
             Assert.IsTrue(list.SequenceEqual(new[] { c1.Guid, c2.Guid, c3.Guid }));
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunner_RunningCustomRecording_FiresCallbacksCorrectly()
         {
             PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
@@ -88,7 +88,7 @@ namespace Tests.Runtime
             Assert.IsTrue(list.SequenceEqual(new[] { c1.Guid, c2.Guid, c3.Guid }));
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunner_RunningCustomRecording_FromDifferentRunnerInSameProcess_Works()
         {
             PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
@@ -117,7 +117,7 @@ namespace Tests.Runtime
             Assert.IsTrue(list.SequenceEqual(new[] { c1.Guid, c2.Guid, c3.Guid }));
         }
 
-        [TestMethod]
+        [Test]
         public void CommandLine_RunningCustomRecording_Works()
         {
             PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3);
@@ -136,7 +136,7 @@ namespace Tests.Runtime
         // will use incorrect command type, because no Static property provider exists in runtime thus
         // custom commands will be deserialized with random type from domain.
         // Inspecting the created CustomRunner with debugger will throw Internal C# Compiler Exception. This one is also interesting
-        // [TestMethod]
+        // [Test]
         public void Program_RunningCustomRecording_Works()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);

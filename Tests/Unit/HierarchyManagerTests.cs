@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Commands;
@@ -11,12 +11,12 @@ using Unity;
 
 namespace Tests.Unit
 {
-    [TestClass]
+    [TestFixture]
     public class HierarchyManagerTests
     {
         IHierarchyManager RecordingManager;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             var container = TestBase.ConstructContainerForTests();
@@ -24,13 +24,13 @@ namespace Tests.Unit
             RecordingManager = container.Resolve<IHierarchyManager>();
         }
 
-        [TestMethod]
+        [Test]
         public void NewlyCreatedRecordingManager_WillHaveOneRecordingOpen()
         {
             Assert.AreEqual(1, RecordingManager.LoadedRecordings.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_NewRecording_WillCreateSecondEmptyRecording()
         {
             RecordingManager.NewRecording();
@@ -45,7 +45,7 @@ namespace Tests.Unit
             return s;
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandAfter_ToOtherRecording_MovesFullNode()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -59,7 +59,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s2.Commands.GetChild(1).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandBefore_ToOtherRecording_MovesFullNode()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -73,7 +73,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s2.Commands.GetChild(0).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandAfter_ToOtherRecordingButNotRoot_AlsoWorks()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -87,7 +87,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s2.Commands.GetChild(0).GetChild(1).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandBefore_ToOtherRecordingButNotRoot_AlsoWorks()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -101,7 +101,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s2.Commands.GetChild(0).GetChild(0).GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandAfter_FromChildToRoot_AlsoWorks()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -115,7 +115,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s2.Commands.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandBefore_FromChildToRoot_AlsoWorks()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -130,7 +130,7 @@ namespace Tests.Unit
         }
 
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandAfter_SameRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -142,7 +142,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s1.Commands.GetChild(1).value);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_MoveCommandBefore_SameRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -154,7 +154,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, s1.Commands.GetChild(0).value);
         }
 
-        [TestMethod]
+        [Test]
         public void Recordings_HaveCorrectGuids_AfterMovingCommandToOtherRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -165,7 +165,7 @@ namespace Tests.Unit
             CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
-        [TestMethod]
+        [Test]
         public void Scrips_HaveCorrectGuids_AfterDuplicatingCommand()
         {
             var s = NewTestRecording(out Command c1, out Command c11);
@@ -176,7 +176,7 @@ namespace Tests.Unit
             CheckIfRecordingsHasAllCorrectGuids(s);
         }
 
-        [TestMethod]
+        [Test]
         public void Recordings_HaveCorrectGuids_AfterDuplicatingCommand_AndMovingBackAndForthBetweenRecordings()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -191,7 +191,7 @@ namespace Tests.Unit
             CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
-        [TestMethod]
+        [Test]
         public void Recordings_HaveCorrectGuids_AfterDuplicatingRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -200,7 +200,7 @@ namespace Tests.Unit
             CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
-        [TestMethod]
+        [Test]
         public void Recordings_HaveCorrectGuids_AfterDuplicatingRecording_AndMovingCommandsToIt()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -212,7 +212,7 @@ namespace Tests.Unit
             CheckIfRecordingsHasAllCorrectGuids(s1, s2);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_CloneNewRecording_RegeneratesCommandAndRecordingGuids()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -222,7 +222,7 @@ namespace Tests.Unit
             TestBase.CheckThatPtrsAreNotSame(s1, s2);
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_GetRecordingFromCommand_FindsCorrectRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);
@@ -233,7 +233,7 @@ namespace Tests.Unit
             Assert.AreEqual(s2, recording, "Recordings missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void RecordingManager_GetRecordingFromCommandGuid_FindsCorrectRecording()
         {
             var s1 = NewTestRecording(out Command c1, out Command c11);

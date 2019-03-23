@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
@@ -10,7 +10,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class TypeCollectorIntegrationTests
     {
         private string TempProjectPath;
@@ -23,7 +23,7 @@ namespace Tests.Integration
         private const string k_CustomCommandName = "Custom Command";
         private const string k_CustomCommandClassName = "CustomCommand";
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -37,7 +37,7 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandFactory_CollectsCommands_Correctly()
         {
             var CommandFactory = Container.Resolve<ICommandFactory>();
@@ -50,7 +50,7 @@ namespace Tests.Integration
             Assert.AreEqual(collector.AllTypes.Count(), CommandFactory.CommandNames.Count(), "Object count should be the same after compilation");
         }
 
-        [TestMethod]
+        [Test]
         public void SettingsManager_CollectsSettings_Correctly()
         {
             var SettingsManager = Container.Resolve<ISettingsManager>();

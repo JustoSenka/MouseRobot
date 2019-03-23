@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
@@ -12,7 +12,7 @@ using Unity;
 
 namespace Tests.Unit
 {
-    [TestClass]
+    [TestFixture]
     public class TypeCollectorTests
     {
         private string TempProjectPath;
@@ -25,7 +25,7 @@ namespace Tests.Unit
         private const string k_CustomCommandName = "Custom Command";
         private const string k_CustomCommandClassName = "CustomCommand";
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -39,7 +39,7 @@ namespace Tests.Unit
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void TypeCollector_JustAfterCreation_HasAllNativeTypes()
         {
             var collector = Container.Resolve<ITypeCollector<Command>>();
@@ -49,7 +49,7 @@ namespace Tests.Unit
             Assert.IsTrue(collector.AllTypes.Count() > 4, "Pretty arbitrary, just in case both these methods stop functioning");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeObjectCollector_JustAfterCreation_HasAllNativeTypes()
         {
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
@@ -60,7 +60,7 @@ namespace Tests.Unit
             Assert.IsTrue(collector.AllTypes.Count() > 4, "Pretty arbitrary, just in case both these methods stop functioning");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeObjectCollector_JustAfterCreation_HasCorrectNativeObjects()
         {
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
@@ -70,7 +70,7 @@ namespace Tests.Unit
             Assert.IsTrue(collector.AllTypes.Count() > 4, "Pretty arbitrary, just in case both these methods stop functioning");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeObjectCollector_JustAfterCreation_HasNativeObjectsInstantiated()
         {
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
@@ -81,7 +81,7 @@ namespace Tests.Unit
             Assert.AreEqual(c1.ToString(), c2.ToString(), "Commands should be the same");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeCollector_JustAfterCreation_HasUserTypes()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -93,7 +93,7 @@ namespace Tests.Unit
             Assert.AreEqual(k_CustomCommandClassName, collector.UserTypes.ElementAt(0).Name, "Command class name missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeObjectCollector_JustAfterCreation_HasUserObjects()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -105,7 +105,7 @@ namespace Tests.Unit
             Assert.IsTrue(Regex.IsMatch(collector.UserObjects.ElementAt(0).ToString(), "Custom *Command", RegexOptions.IgnoreCase), "Command object representation missmatch");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeCollector_AfterRecompilation_GetsNewUserTypes()
         {
             var collector = Container.Resolve<ITypeCollector<Command>>();
@@ -117,7 +117,7 @@ namespace Tests.Unit
             Assert.AreEqual(allObjects + 1, collector.AllTypes.Count(), "Type count should increase");
         }
 
-        [TestMethod]
+        [Test]
         public void TypeObjectCollector_AfterRecompilation_GetsNewUserObjects()
         {
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();

@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using System.Drawing;
 
 namespace Tests.Unit
 {
-    [TestClass]
+    [TestFixture]
     public class StatusManagerTests
     {
         IStatusManager StatusManager;
@@ -15,7 +15,7 @@ namespace Tests.Unit
         Status statusB = new Status("b", "b", Color.Blue);
         Status statusC = new Status("c", "c", Color.Blue);
 
-        [TestInitialize]
+        [SetUp]
         public void CreateStatusManager()
         {
             StatusManager = new StatusManager();
@@ -23,20 +23,20 @@ namespace Tests.Unit
             statusFromCallback = default(Status);
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_DefaultStatus_IsNotNullStruct()
         {
             Assert.AreNotEqual(default(Status), StatusManager.Status, "Default status should always be there");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_DefaultStatus_IsPriorityOf_10()
         {
             StatusManager.Add("a", 11, statusA);
             Assert.AreEqual(defaultStatus, StatusManager.Status, "Default status should have been returned");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_Status_GivesTopPrioritizedStatus()
         {
             StatusManager.Add("a", 8, statusA);
@@ -46,7 +46,7 @@ namespace Tests.Unit
             Assert.AreEqual(statusB, StatusManager.Status, "Status structs missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_Status_GivesLastStatusAdded_IfPrioritiesAreEqual()
         {
             StatusManager.Add("a", 8, statusA);
@@ -56,7 +56,7 @@ namespace Tests.Unit
             Assert.AreEqual(statusC, StatusManager.Status, "Status structs missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_OverridingStatus_WithSameName_DoNotAddAditionalElements()
         {
             StatusManager.Add("a", 5, statusA);
@@ -68,7 +68,7 @@ namespace Tests.Unit
             Assert.AreEqual(defaultStatus, StatusManager.Status, "Default status should have been returned");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_OverridingStatus_WithSameName_AndDifferentPriorities_DoNotAddAditionalElements()
         {
             StatusManager.Add("a", 5, statusA);
@@ -80,7 +80,7 @@ namespace Tests.Unit
             Assert.AreEqual(defaultStatus, StatusManager.Status, "Default status should have been returned");
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_RemovingStatuses_WillBringBackLessPrioritizeStatuses()
         {
             StatusManager.Add("a", 5, statusA);
@@ -101,7 +101,7 @@ namespace Tests.Unit
 
         Status statusFromCallback;
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_WillFireWithCorrectStatus()
         {
             StatusManager.Add("a", 5, statusA);
@@ -115,7 +115,7 @@ namespace Tests.Unit
             StatusManager.StatusUpdated -= EventCallback;
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_WillFireWithCorrectStatus_IfLowerPriorityIsAdded()
         {
             StatusManager.Add("a", 2, statusA);
@@ -129,7 +129,7 @@ namespace Tests.Unit
             StatusManager.StatusUpdated -= EventCallback;
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_ForOverridingStatus_IsCalledWithCorrectStatus()
         {
             StatusManager.Add("a", 4, statusA);
@@ -143,7 +143,7 @@ namespace Tests.Unit
             StatusManager.StatusUpdated -= EventCallback;
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_ForOverridingStatus_IsCalledWithCorrectStatus_WhenRaisingPriority()
         {
             StatusManager.Add("a", 4, statusA);
@@ -156,7 +156,7 @@ namespace Tests.Unit
             StatusManager.StatusUpdated -= EventCallback;
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_ForRemovingStatus_IsCalledWithCorrectValue()
         {
             StatusManager.Add("a", 4, statusA);
@@ -169,7 +169,7 @@ namespace Tests.Unit
             StatusManager.StatusUpdated -= EventCallback;
         }
 
-        [TestMethod]
+        [Test]
         public void StatusManager_StatusUpdatedEvent_ForRemovingStatus_WillReturnDefaultIfItsPriorityIsTheHighest()
         {
             StatusManager.Add("a", 15, statusA);

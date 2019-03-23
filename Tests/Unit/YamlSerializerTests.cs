@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.IO;
@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace Tests.Unit
 {
-    [TestClass]
+    [TestFixture]
     public class YamlSerializerTests
     {
         private const short level = 2;
@@ -21,20 +21,20 @@ namespace Tests.Unit
 
         private string YamlLine { get { return YamlObject.GetIndentation(level) + PropertyName + separator + PropertyValue; } }
 
-        [TestInitialize]
+        [SetUp]
         public void InitializeTest()
         {
             Logger.Instance = new FakeLogger();
         }
 
-        [TestMethod]
+        [Test]
         public void YamlObject_ProducesCorrect_YamlString()
         {
             var obj = new YamlObject(level, PropertyName, PropertyValue);
             Assert.AreEqual(YamlLine, obj.ToString(), "Yaml Lines should be identical");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlString_ProducesCorrect_YamlObject()
         {
             var obj = new YamlObject(YamlLine);
@@ -44,7 +44,7 @@ namespace Tests.Unit
             Assert.AreEqual(PropertyValue.ToString(), obj.value, "Property value missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void CommandWith_Enumerations_AreReadFine()
         {
             var command = new CommandPress(5, 5, false, MouseButton.Right);
@@ -65,7 +65,7 @@ namespace Tests.Unit
   DontMove: False
   MouseButton: Left".FixLineEndings();
 
-        [TestMethod]
+        [Test]
         public void Command_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlCommandIO.Serialize(command, 0);
@@ -73,7 +73,7 @@ namespace Tests.Unit
             Assert.AreEqual(serializedCommand, yamlString, "Strings missmatched.");
         }
 
-        [TestMethod]
+        [Test]
         public void Command_ProducesCorrect_YamlObject()
         {
             var yamlObj = YamlCommandIO.Serialize(command, 0);
@@ -83,7 +83,7 @@ namespace Tests.Unit
             Assert.AreEqual(5, props.Length, "Command object should have 3 properties.");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlObject_ProducesCorrect_Command()
         {
             var yamlObj = YamlCommandIO.Serialize(command, 0);
@@ -91,7 +91,7 @@ namespace Tests.Unit
             Assert.AreEqual(command.ToString(), newCommand.ToString(), "Command strings should be equal.");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlString_ProducesCorrect_CommandYamlObject()
         {
             var tree = YamlSerializer.DeserializeYamlTree(serializedCommand);
@@ -133,7 +133,7 @@ namespace Tests.Unit
     X: 10
     Y: 20".FixLineEndings();
 
-        [TestMethod]
+        [Test]
         public void Recording_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlRecordingIO.Serialize(Recording.ToLightRecording());
@@ -146,7 +146,7 @@ namespace Tests.Unit
             StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
-        [TestMethod]
+        [Test]
         public void Recording_ProducesCorrect_YamlObj()
         {
             var yamlObj = YamlRecordingIO.Serialize(Recording.ToLightRecording());
@@ -163,7 +163,7 @@ namespace Tests.Unit
             Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlString_ProducesCorrect_RecordingYamlObject()
         {
             var yamlObj = YamlSerializer.DeserializeYamlTree(serializedRecording);
@@ -181,7 +181,7 @@ namespace Tests.Unit
             Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlObject_ProducesCorrect_Recording()
         {
             var s = Recording;
@@ -197,7 +197,7 @@ namespace Tests.Unit
         private readonly Guid guidObject = new Guid(guidString);
         private class ObjectWithGuid { public Guid Guid; }
 
-        [TestMethod]
+        [Test]
         public void GuidsInObject_ProducesCorrect_YamlObject()
         {
             var expectedYamlObject = new YamlObject(0, "Guid", guidObject);
@@ -210,7 +210,7 @@ namespace Tests.Unit
             Assert.AreEqual(expectedYamlObject.value, props.First().value, "Guid values should be identical.");
         }
 
-        [TestMethod]
+        [Test]
         public void GuidsInYamlObject_ProducesCorrect_ClassObject()
         {
             var serializedYamlObject = new YamlObject(0, "Guid", guidObject);
@@ -335,7 +335,7 @@ namespace Tests.Unit
         #endregion
 
 
-        [TestMethod]
+        [Test]
         public void Fixture_ProducesCorrect_YamlString()
         {
             var yamlObj = YamlTestFixtureIO.Serialize(Fixture);
@@ -348,7 +348,7 @@ namespace Tests.Unit
             StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
-        [TestMethod]
+        [Test]
         public void Fixture_ProducesCorrect_YamlObj()
         {
             var yamlObj = YamlTestFixtureIO.Serialize(Fixture);
@@ -359,7 +359,7 @@ namespace Tests.Unit
             Assert.AreEqual("LightRecording", children[2].value.property, "Recording type missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlString_ProducesCorrect_FixtureYamlObject()
         {
             var yamlObj = YamlSerializer.DeserializeYamlTree(serializedFixture);
@@ -371,7 +371,7 @@ namespace Tests.Unit
             Assert.AreEqual("LightRecording", children[2].value.property, "Recording type missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlObject_ProducesCorrect_Fixture()
         {
             var f = Fixture;
@@ -393,7 +393,7 @@ namespace Tests.Unit
             StringAssert.Contains(actual, expected, "Strings missmatched.");
         }
 
-        [TestMethod]
+        [Test]
         public void YamlString_ProducesCorrect_Fixture()
         {
             var f = Fixture;

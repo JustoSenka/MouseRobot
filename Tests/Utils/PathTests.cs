@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime;
 using RobotRuntime.Utils;
 using System;
 
 namespace Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class PathTests
     {
-        /*[TestMethod]
+        /*[Test]
         public void TestDifferencesDueToBackstepsDontMatter()
         {
             var format1 = Paths.NormalizeFilepath("c:\\windows\\system32");
@@ -17,7 +17,7 @@ namespace Tests.Utils
             Assert.AreEqual(format1, format2);
         }*/
 
-        [TestMethod]
+        [Test]
         public void TestDifferencesInCapitolizationDontMatter()
         {
             var format1 = Paths.NormalizePath("c:\\windows\\system32\r");
@@ -26,7 +26,7 @@ namespace Tests.Utils
             Assert.AreEqual(format1, format2);
         }
 
-        [TestMethod]
+        [Test]
         public void TestDifferencesInFinalSlashDontMatter()
         {
             var format1 = Paths.NormalizePath("c:\\windows\\system32");
@@ -35,7 +35,7 @@ namespace Tests.Utils
             Assert.AreEqual(format1, format2);
         }
 
-        [TestMethod]
+        [Test]
         public void TestCanCalculateRelativePath()
         {
             var rootPath = "c:\\windows";
@@ -48,7 +48,7 @@ namespace Tests.Utils
             Assert.AreEqual(expectedResult, result);
         }
 
-        [TestMethod]
+        [Test]
         public void TestThrowsExceptionIfRootDoesntMatchFullPath()
         {
             Logger.Instance = new FakeLogger();
@@ -61,7 +61,7 @@ namespace Tests.Utils
             Assert.IsTrue(string.IsNullOrEmpty(result));
         }
 
-        [TestMethod]
+        [Test]
         public void GetPathDirectoryElementsWtihFileName_ReturnCorrectElements()
         {
             var path = "Assets/scripts/sc.mrb";
@@ -72,7 +72,7 @@ namespace Tests.Utils
             CollectionAssert.AreEqual(expected, res);
         }
 
-        [TestMethod]
+        [Test]
         public void GetPathDirectoryElements_ReturnCorrectElements()
         {
             var path = "Assets/scripts/sc.mrb";
@@ -83,7 +83,7 @@ namespace Tests.Utils
             CollectionAssert.AreEqual(expected, res);
         }
 
-        [TestMethod]
+        [Test]
         public void JoinDirectoryElementsIntoPaths_ReturnCorrectElements()
         {
             var path = "Assets/scripts/sc.mrb".NormalizePath();
@@ -95,7 +95,7 @@ namespace Tests.Utils
             CollectionAssert.AreEqual(expected, res);
         }
 
-        [TestMethod]
+        [Test]
         public void GetParentPath_ReturnsCorrectPath_OnFile()
         {
             var path = "Assets/scripts/sc.mrb".NormalizePath();
@@ -106,7 +106,7 @@ namespace Tests.Utils
             Assert.AreEqual(parentPath, res);
         }
 
-        [TestMethod]
+        [Test]
         public void GetParentPath_ReturnsCorrectPath_OnFolder()
         {
             var path = "Assets/scripts/some folder".NormalizePath();

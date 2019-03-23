@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotRuntime.IO;
@@ -10,7 +10,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class TestRunnerManagerTests
     {
         private string TempProjectPath;
@@ -24,7 +24,7 @@ namespace Tests.Integration
         ITestRunnerManager TestRunnerManager;
         ITestFixtureManager TestFixtureManager;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -57,7 +57,7 @@ namespace Tests.Integration
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaTestFixtureManager()
         {
             var fixture = TestFixtureManager.NewTestFixture();
@@ -70,7 +70,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, TestRunnerManager.TestFixtures[0].Tests.Count, "Only one test should be present");
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager()
         {
             var lightFixture = LightTestFixture;
@@ -82,7 +82,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, TestRunnerManager.TestFixtures[0].Tests.Count, "Only one test should be present");
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaAssetManager_IfTwoFixturesAreSaved()
         {
             var lightFixture = LightTestFixture;
@@ -94,7 +94,7 @@ namespace Tests.Integration
             Assert.AreEqual(2, TestRunnerManager.TestFixtures.Count, "Two test fixture should be present");
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyLoadsTestsFixtures_IfSavedViaFileSystem()
         {
             var lightFixture = LightTestFixture;
@@ -107,7 +107,7 @@ namespace Tests.Integration
             Assert.AreEqual(1, TestRunnerManager.TestFixtures[0].Tests.Count, "Only one test should be present");
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyRemovesFixtures_WhenDeletingThemOnDisk()
         {
             var lightFixture = LightTestFixture;
@@ -125,7 +125,7 @@ namespace Tests.Integration
             Assert.AreEqual("C", TestRunnerManager.TestFixtures[0].Name, "Test fixture names missmatched");
         }
 
-        [TestMethod]
+        [Test]
         public void TestRunnerManager_CorrectlyHandlesFixtures_WhenRenamingThemOnDisk()
         {
             var lightFixture = LightTestFixture;

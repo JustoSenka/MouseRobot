@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
@@ -13,7 +13,7 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestClass]
+    [TestFixture]
     public class CustomCommandCompilationTests
     {
         private string TempProjectPath;
@@ -28,7 +28,7 @@ namespace Tests.Integration
 
         private const string k_CustomCommand = "Custom Command";
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestBase.GenerateProjectPath();
@@ -46,7 +46,7 @@ namespace Tests.Integration
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [TestMethod]
+        [Test]
         public void ScriptTemplates_ShouldNotHave_CompilationErrors()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -57,7 +57,7 @@ namespace Tests.Integration
             Assert.IsTrue(compileSucceeded, "Script templates have compilation errors");
         }
 
-        [TestMethod]
+        [Test]
         public void ScriptTemplates_Should_ProduceBothDllAndPdbFiles()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -70,7 +70,7 @@ namespace Tests.Integration
             Assert.IsTrue(File.Exists(pdbPath), "Pdb path is missing: " + pdbPath);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandFactory_CanCreate_CustomCommand()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -81,7 +81,7 @@ namespace Tests.Integration
             Assert.AreEqual(5, ((dynamic)command).SomeInt, "Command some int default value differs");
         }
 
-        [TestMethod]
+        [Test]
         public void CommandFactory_UpdatesCommandType_AfterRecompile()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -96,7 +96,7 @@ namespace Tests.Integration
             Assert.AreNotEqual(oldCommandType, newCommandType, "CommandFactory should give different commands after recompilation");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_InsideLoadedRecordingIsUpdated_AfterRecompile()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -113,7 +113,7 @@ namespace Tests.Integration
             Assert.AreNotEqual(oldCommand.GetType(), newCommand.GetType(), "Commands in recordings loded in hierarchy should be replaced with new one after recompilation");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_SerializingAndDeserializing_KeepsItsType()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -134,7 +134,7 @@ namespace Tests.Integration
             Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_InsideTestFixtureIsUpdates_AdterRecompile()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -152,7 +152,7 @@ namespace Tests.Integration
             Assert.AreNotEqual(oldCommand.GetType(), newCommand.GetType(), "Commands in loaded test fixture should be replaced with new onw after recompilation");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_SerializingAndDeserializing_InsideTestFixture_KeepsItsType()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -174,7 +174,7 @@ namespace Tests.Integration
             Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_CreatedFromFactory_AlwaysHasSameType()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -187,7 +187,7 @@ namespace Tests.Integration
             Assert.AreEqual(c1.GetType(), c2.GetType(), "CommandFactory should always give same type commands");
         }
 
-        [TestMethod]
+        [Test]
         public void CustomCommand_KeepsItsType_WhileBeingSavedInOtherAssets()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
@@ -218,7 +218,7 @@ namespace Tests.Integration
             };
         }
 
-        [TestMethod]
+        [Test]
         public void NativeCommand_SerializingAndDeserializing_InsideTestFixture_KeepsItsType()
         {
             TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);

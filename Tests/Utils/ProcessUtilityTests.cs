@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using RobotRuntime.Utils;
 
 namespace Tests.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class ProcessUtilityTests
     {
-        [TestMethod]
+        [Test]
         public void RunningCommandFromCommandLine_ReturnsConsoleOutput()
         {
             var result = ProcessUtility.StartFromCommandLine("cmd", "/c echo success");
