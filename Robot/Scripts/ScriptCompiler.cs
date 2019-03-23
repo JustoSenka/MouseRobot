@@ -111,7 +111,19 @@ namespace Robot.Scripts
                 else
                     Logger.Logi(LogType.Error, "CompilerSettings is null. It should not be. Compiler references cannot be added due to this. Please report a bug.");
 
-                results = CodeProvider.CompileAssemblyFromFile(CompilerParams, sources);
+                try
+                {
+                    results = CodeProvider.CompileAssemblyFromFile(CompilerParams, sources);
+                }
+                catch (FileNotFoundException fe)
+                {
+                    Logger.Logi(LogType.Error, "Roslyn compiler could not be found, did the build process failed to copy it? " + fe.Message);
+                }
+                catch (Exception e)
+                {
+                    Logger.Logi(LogType.Error, "Roslyn compiler threw an exception: " + e.Message);
+                }
+
                 Profiler.Stop("ScriptCompiler_CompileCode");
             }
 
