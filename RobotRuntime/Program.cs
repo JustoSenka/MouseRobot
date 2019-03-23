@@ -7,7 +7,9 @@ using RobotRuntime.Logging;
 using RobotRuntime.Perf;
 using RobotRuntime.Scripts;
 using RobotRuntime.Settings;
+using RobotRuntime.Tests;
 using System;
+using System.IO;
 using System.Linq;
 using Unity;
 using Unity.Injection;
@@ -34,6 +36,7 @@ namespace RobotRuntime
             });
 
             container.Resolve<IScriptLoader>(); // Not referenced by runtime
+            var TestStatusManager = container.Resolve<ITestStatusManager>(); // Not referenced by runtime
 
             // Initialize project
             var projectManager = container.Resolve<IRuntimeProjectManager>();
@@ -48,6 +51,9 @@ namespace RobotRuntime
                 testRunner.StartRecording(o.Recording).Wait();
             else
                 testRunner.StartTests(o.TestFilter).Wait();
+
+            // Output test run status to specified or default file path
+            TestStatusManager.OutputTestRunStatusToFile(o.Output);
         }
 
         private class Options
@@ -80,6 +86,7 @@ namespace RobotRuntime
             Container.RegisterType<IScriptLoader, ScriptLoaderNoDomain>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRuntimeProjectManager, RuntimeProjectManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ITestStatusManager, TestStatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType(typeof(ITypeCollector<>), typeof(TypeCollector<>));

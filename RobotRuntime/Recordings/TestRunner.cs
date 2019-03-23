@@ -2,12 +2,10 @@
 using RobotRuntime.Execution;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
-using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace RobotRuntime

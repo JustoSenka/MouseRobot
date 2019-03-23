@@ -25,13 +25,15 @@ namespace RobotEditor
 
         private TestNode m_HighlightedNode;
 
-        private IMouseRobot MouseRobot;
-        private ITestRunnerManager TestRunnerManager;
-        private ITestRunner TestRunner;
-        public TestRunnerWindow(IMouseRobot MouseRobot, ITestRunnerManager TestRunnerManager, ITestRunner TestRunner)
+        private readonly IMouseRobot MouseRobot;
+        private readonly ITestRunnerManager TestRunnerManager;
+        private readonly ITestStatusManager TestStatusManager;
+        private readonly ITestRunner TestRunner;
+        public TestRunnerWindow(IMouseRobot MouseRobot, ITestRunnerManager TestRunnerManager, ITestStatusManager TestStatusManager, ITestRunner TestRunner)
         {
             this.MouseRobot = MouseRobot;
             this.TestRunnerManager = TestRunnerManager;
+            this.TestStatusManager = TestStatusManager;
             this.TestRunner = TestRunner;
 
             InitializeComponent();
@@ -43,7 +45,7 @@ namespace RobotEditor
             TestRunnerManager.TestFixtureRemoved += OnTestFixtureRemoved;
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;
 
-            TestRunnerManager.TestStatusUpdated += UpdateTestStatusIconsAsync;
+            TestStatusManager.TestStatusUpdated += UpdateTestStatusIconsAsync;
 
             TestRunner.TestRunEnd += OnTestRunEnd;
             TestRunner.FixtureIsBeingRun += OnFixtureIsBeingRun;
@@ -81,13 +83,12 @@ namespace RobotEditor
 
                 if (node.TestFixture != null)
                 {
-                    return (int)TestRunnerManager.GetFixtureStatus(fixture);
+                    return (int)TestStatusManager.GetFixtureStatus(fixture.ToLightTestFixture());
                 }
                 else
                 {
-                    var tuple = new Tuple<string, string>(fixture.Name, node.Recording.Name);
-
-                    TestRunnerManager.TestStatusDictionary.TryGetValue(tuple, out TestStatus status);
+                    var tuple = (fixture.Name, node.Recording.Name);
+                    TestStatusManager.CurrentStatus.TryGetValue(tuple, out TestStatus status);
 
                     return (int)status;
                 }
@@ -207,6 +208,7 @@ namespace RobotEditor
         {
             m_HighlightedNode = null;
             UpdateTestStatusIconsAsync();
+            TestStatusManager.OutputTestRunStatusToFile();
         }
 
         private void UpdateTestStatusIconsAsync()
@@ -287,7 +289,7 @@ namespace RobotEditor
 
         private void runFailedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var names = TestRunnerManager.TestStatusDictionary.Where(pair => pair.Value == TestStatus.Failed).
+            var names = TestStatusManager.CurrentStatus.Where(pair => pair.Value == TestStatus.Failed).
                 Select(pair => pair.Key.Item1 + "\\." + pair.Key.Item2);
 
             var filter = BuildTestFilter(names);
@@ -297,7 +299,7 @@ namespace RobotEditor
 
         private void runNotRunToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var names = TestRunnerManager.TestStatusDictionary.Where(pair => pair.Value == TestStatus.None).
+            var names = TestStatusManager.CurrentStatus.Where(pair => pair.Value == TestStatus.None).
                 Select(pair => pair.Key.Item1 + "\\." + pair.Key.Item2);
 
             var filter = BuildTestFilter(names);
