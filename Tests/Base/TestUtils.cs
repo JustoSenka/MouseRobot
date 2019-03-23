@@ -17,7 +17,7 @@ using Unity.Lifetime;
 namespace Tests
 {
     [TestFixture]
-    public static class TestBase
+    public static class TestUtils
     {
         public static string TempFolderPath => Path.Combine(Path.GetTempPath(), "MProjects");
         public static string GenerateProjectPath() => Path.Combine(TempFolderPath, Guid.NewGuid().ToString().Substring(0, 11));
@@ -47,12 +47,6 @@ namespace Tests
                 filePath = Paths.GetUniquePath(filePath);
                 AssetManager.CreateAsset(script, filePath);
             }
-        }
-
-        [OneTimeTearDown]
-        public static void TryCleanUp()
-        {
-            TryCleanDirectory(TempFolderPath).Wait();
         }
 
         public static Task<bool> TryCleanDirectory(string tempProjectPath)

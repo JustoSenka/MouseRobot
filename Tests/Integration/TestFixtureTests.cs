@@ -12,7 +12,7 @@ using Unity;
 namespace Tests.Integration
 {
     [TestFixture]
-    public class TestFixtureTests
+    public class TestFixtureTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -47,8 +47,8 @@ namespace Tests.Integration
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            Container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            Container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
@@ -238,8 +238,8 @@ namespace Tests.Integration
 
             Assert.AreEqual(fixture1.Guid, fixture2.Guid, "Fixtures should have same guids");
 
-            TestBase.CheckThatGuidsAreSame(fixture1.Setup, fixture2.Setup);
-            TestBase.CheckThatPtrsAreSame(fixture1.Setup, fixture2.Setup);
+            TestUtils.CheckThatGuidsAreSame(fixture1.Setup, fixture2.Setup);
+            TestUtils.CheckThatPtrsAreSame(fixture1.Setup, fixture2.Setup);
         }
 
         private void CheckIfLightTestFixturesAreEqual(LightTestFixture a, LightTestFixture b)

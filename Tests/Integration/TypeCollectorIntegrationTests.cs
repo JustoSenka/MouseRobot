@@ -11,7 +11,7 @@ using Unity;
 namespace Tests.Integration
 {
     [TestFixture]
-    public class TypeCollectorIntegrationTests
+    public class TypeCollectorIntegrationTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -26,8 +26,8 @@ namespace Tests.Integration
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            Container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            Container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
@@ -44,7 +44,7 @@ namespace Tests.Integration
             var collector = Container.Resolve<ITypeCollector<Command>>();
             Assert.AreEqual(collector.AllTypes.Count(), CommandFactory.CommandNames.Count(), "Object count should be the same before compilation");
 
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             Assert.AreEqual(collector.AllTypes.Count(), CommandFactory.CommandNames.Count(), "Object count should be the same after compilation");
@@ -57,7 +57,7 @@ namespace Tests.Integration
             var collector = Container.Resolve<ITypeCollector<BaseSettings>>();
             Assert.AreEqual(collector.AllTypes.Count(), SettingsManager.Settings.Count(), "Object count should be the same before compilation");
 
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             Assert.AreEqual(collector.AllTypes.Count(), SettingsManager.Settings.Count(), "Object count should be the same after compilation");

@@ -14,7 +14,7 @@ using Unity;
 namespace Tests.Integration
 {
     [TestFixture]
-    public class CustomCommandCompilationTests
+    public class CustomCommandCompilationTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -31,8 +31,8 @@ namespace Tests.Integration
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            var container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            var container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
@@ -49,7 +49,7 @@ namespace Tests.Integration
         [Test]
         public void ScriptTemplates_ShouldNotHave_CompilationErrors()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var compileSucceeded = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
@@ -60,7 +60,7 @@ namespace Tests.Integration
         [Test]
         public void ScriptTemplates_Should_ProduceBothDllAndPdbFiles()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var dllPath = ScriptLoader.UserAssemblyPath;
@@ -73,7 +73,7 @@ namespace Tests.Integration
         [Test]
         public void CommandFactory_CanCreate_CustomCommand()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var command = CommandFactory.Create(k_CustomCommand);
@@ -84,12 +84,12 @@ namespace Tests.Integration
         [Test]
         public void CommandFactory_UpdatesCommandType_AfterRecompile()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var oldCommandType = CommandFactory.Create(k_CustomCommand).GetType();
 
-            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
+            TestUtils.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommandType = CommandFactory.Create(k_CustomCommand).GetType();
@@ -99,14 +99,14 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_InsideLoadedRecordingIsUpdated_AfterRecompile()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             var rec = HierarchyManager.NewRecording();
             rec.AddCommand(oldCommand);
 
-            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
+            TestUtils.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommand = rec.Commands.GetChild(0).value;
@@ -116,7 +116,7 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_SerializingAndDeserializing_KeepsItsType()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint();
@@ -137,14 +137,14 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_InsideTestFixtureIsUpdates_AdterRecompile()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var testFixture = TestFixtureManager.NewTestFixture();
             var oldCommand = CommandFactory.Create(k_CustomCommand);
             testFixture.Setup.AddCommand(oldCommand);
 
-            TestBase.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
+            TestUtils.ModifyScriptAsset(AssetManager, "Assets\\CustomCommand.cs");
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var newCommand = testFixture.Setup.Commands.GetChild(0).value;
@@ -155,7 +155,7 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_SerializingAndDeserializing_InsideTestFixture_KeepsItsType()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
             CommandFactory.NewUserCommands += () => Console.WriteLine("New Commands Appeared");
 
@@ -177,7 +177,7 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_CreatedFromFactory_AlwaysHasSameType()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var testFixture = TestFixtureManager.NewTestFixture();
@@ -190,7 +190,7 @@ namespace Tests.Integration
         [Test]
         public void CustomCommand_KeepsItsType_WhileBeingSavedInOtherAssets()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             SubscribeToEventAndAssertThatNoDomainReloadsAreHappeningAfterThisPoint();
@@ -221,7 +221,7 @@ namespace Tests.Integration
         [Test]
         public void NativeCommand_SerializingAndDeserializing_InsideTestFixture_KeepsItsType()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var testFixture = TestFixtureManager.NewTestFixture();

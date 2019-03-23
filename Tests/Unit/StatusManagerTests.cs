@@ -6,7 +6,7 @@ using System.Drawing;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class StatusManagerTests
+    public class StatusManagerTests : TestWithCleanup
     {
         IStatusManager StatusManager;
 

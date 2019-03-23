@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class YamlSerializerTests
+    public class YamlSerializerTests : TestWithCleanup
     {
         private const short level = 2;
         private const string PropertyName = "SomeInt";

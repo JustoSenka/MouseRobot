@@ -247,8 +247,6 @@ namespace RobotEditor
             }
         }
 
-        #endregion
-
         private void treeListView_DoubleClick(object sender, EventArgs e)
         {
             var selected = treeListView.SelectedObject;
@@ -267,6 +265,8 @@ namespace RobotEditor
                 StopRunButton.Enabled = !MouseRobot.IsRecording && MouseRobot.IsPlaying;
             }));
         }
+
+        #endregion
 
         #region Run Tests Toolstrip Buttons
 

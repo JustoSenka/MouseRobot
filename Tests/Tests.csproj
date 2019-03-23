@@ -171,10 +171,11 @@
   </Choose>
   <ItemGroup>
     <EmbeddedResource Include="Base\CommandLog.cs" />
+    <Compile Include="Base\TestWithCleanup.cs" />
     <Compile Include="Integration\AssetGuidManagerTests.cs" />
     <Compile Include="Base\Sync.cs" />
     <Compile Include="Integration\CustomCommandCompilationTests.cs" />
-    <Compile Include="Base\TestBase.cs" />
+    <Compile Include="Base\TestUtils.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

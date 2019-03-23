@@ -11,7 +11,7 @@ using Unity;
 namespace Tests.Integration
 {
     [TestFixture]
-    public class TestRunnerManagerTests
+    public class TestRunnerManagerTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -27,8 +27,8 @@ namespace Tests.Integration
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            var container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            var container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();

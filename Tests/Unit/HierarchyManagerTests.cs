@@ -12,14 +12,14 @@ using Unity;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class HierarchyManagerTests
+    public class HierarchyManagerTests : TestWithCleanup
     {
         IHierarchyManager RecordingManager;
 
         [SetUp]
         public void Initialize()
         {
-            var container = TestBase.ConstructContainerForTests();
+            var container = TestUtils.ConstructContainerForTests();
             var mr = container.Resolve<IMouseRobot>();
             RecordingManager = container.Resolve<IHierarchyManager>();
         }
@@ -218,8 +218,8 @@ namespace Tests.Unit
             var s1 = NewTestRecording(out Command c1, out Command c11);
             var s2 = RecordingManager.NewRecording(s1);
 
-            TestBase.CheckThatGuidsAreNotSame(s1, s2);
-            TestBase.CheckThatPtrsAreNotSame(s1, s2);
+            TestUtils.CheckThatGuidsAreNotSame(s1, s2);
+            TestUtils.CheckThatPtrsAreNotSame(s1, s2);
         }
 
         [Test]

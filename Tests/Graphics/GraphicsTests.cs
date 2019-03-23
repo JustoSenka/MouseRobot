@@ -3,7 +3,7 @@
 namespace Tests.Graphics
 {
     [TestFixture]
-    public class GraphicsTests
+    public class GraphicsTests : TestWithCleanup
     {
         [Test]
         public void FindImageInsideAnotherImage()

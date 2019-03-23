@@ -1,14 +1,11 @@
 ﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
-using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
-using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using Unity;
@@ -16,7 +13,7 @@ using Unity;
 namespace Tests.Runtime
 {
     [TestFixture]
-    public class RunningTestsWithFilter
+    public class RunningTestsWithFilter : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -29,14 +26,15 @@ namespace Tests.Runtime
         ILogger Logger;
 
         private const string k_CustomCommandPath = "Assets\\CommandLog.cs";
-        private const string k_TestFixturePath = "Assets\\fixture.mrt";
+        private const string k_TestFixturePath1 = "Assets\\fixture1.mrt";
+        private const string k_TestFixturePath2 = "Assets\\fixture2.mrt";
         private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
 
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            var container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            var container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = container.Resolve<IProjectManager>();
 
@@ -51,56 +49,76 @@ namespace Tests.Runtime
             ProjectManager.InitProject(TempProjectPath);
         }
 
-        [Test]
-        public void TestRunner_RunningCustomRecording_Works()
+        [TestCase("Test15", false, new[] { 11, 12, 15, 13, 14 })]
+        [TestCase("Fixture1.Test15", false, new[] { 11, 12, 15, 13, 14 })]
+        [TestCase("Test(15|16)", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
+        [TestCase("Fixture1", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
+        [TestCase("Fixture", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("Test2", false, new[] { 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("Fixture1|Test26", false, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 26, 23, 24 })]
+
+        [TestCase("Test15", true, new[] { 11, 12, 15, 13, 14 })]
+        [TestCase("Fixture1.Test15", true, new[] { 11, 12, 15, 13, 14 })]
+        [TestCase("Test(15|16)", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
+        [TestCase("Fixture1", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14 })]
+        [TestCase("Fixture", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("Test2", true, new[] { 21, 22, 25, 23, 22, 26, 23, 24 })]
+        [TestCase("Fixture1|Test26", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 26, 23, 24 })]
+        public void RunningTests_WithFilter(string filter, bool useCommandLine, int[] expectedOrder)
         {
-            File.WriteAllText(k_CustomCommandPath, Properties.Resources.CommandLog);
-            AssetManager.Refresh();
+            AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
-            CreateTestFixture();
+            PrepareProjectWithTestFixtures();
+            var logs = RunTestsAndGetLogs(filter, useCommandLine);
 
-            TestRunner.LoadSettings();
-            TestRunner.StartTests("Test1").Wait();
-            var logs = Logger.LogList.Where(log => log.Header.Contains("CommandLog")).ToArray();
-
-            AssertIfCommandLogsAreOutOfOrder(logs, 1, 2, 11, 3, 4);
+            AssertIfCommandLogsAreOutOfOrder(logs, expectedOrder);
         }
 
-        [Test]
-        public void CommandLine_RunningCustomRecording_Works()
+        private Log[] RunTestsAndGetLogs(string filter, bool useCommandLine)
         {
-            File.WriteAllText(k_CustomCommandPath, Properties.Resources.CommandLog);
-            AssetManager.Refresh();
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-
-            CreateTestFixture();
-
-            var res = ProcessUtility.StartFromCommandLine(ExecutablePath, $"-p {TempProjectPath} -f Test1");
-            var logs = FakeLogger.CreateLogsFromConsoleOutput(res).Where(log => log.Header.Contains("CommandLog")).ToArray();
-
-            AssertIfCommandLogsAreOutOfOrder(logs, 1, 2, 11, 3, 4);
+            if (useCommandLine)
+            {
+                var args = filter.IsEmpty() ? $"-p {TempProjectPath}" : $"-p {TempProjectPath} -f {filter}";
+                var res = ProcessUtility.StartFromCommandLine(ExecutablePath, args);
+                return FakeLogger.CreateLogsFromConsoleOutput(res).Where(log => log.Header.Contains("CommandLog")).ToArray();
+            }
+            else
+            {
+                // TestRunner.LoadSettings();
+                TestRunner.StartTests(filter).Wait();
+                return Logger.LogList.Where(log => log.Header.Contains("CommandLog")).ToArray();
+            }
         }
 
-        private void CreateTestFixture()
+        private void PrepareProjectWithTestFixtures()
+        {
+            var f1 = CreateLightTestFixture("Fixture1", 10);
+            var f2 = CreateLightTestFixture("Fixture2", 20);
+
+            TestFixtureManager.SaveTestFixture(TestFixtureManager.NewTestFixture(f1), k_TestFixturePath1);
+            TestFixtureManager.SaveTestFixture(TestFixtureManager.NewTestFixture(f2), k_TestFixturePath2);
+        }
+
+        private LightTestFixture CreateLightTestFixture(string name, int fixIndex)
         {
             var f = new LightTestFixture
             {
-                Name = "Fixture",
-                Setup = CreateTestRecording(2),
-                TearDown = CreateTestRecording(3),
-                OneTimeSetup = CreateTestRecording(1),
-                OneTimeTeardown = CreateTestRecording(4),
+                Name = name,
+                OneTimeSetup = CreateTestRecording(fixIndex + 1),
+                Setup = CreateTestRecording(fixIndex + 2),
+                TearDown = CreateTestRecording(fixIndex + 3),
+                OneTimeTeardown = CreateTestRecording(fixIndex + 4),
             };
 
             f.Setup.Name = LightTestFixture.k_Setup;
             f.TearDown.Name = LightTestFixture.k_TearDown;
             f.OneTimeSetup.Name = LightTestFixture.k_OneTimeSetup;
             f.OneTimeTeardown.Name = LightTestFixture.k_OneTimeTeardown;
-            f.Tests = new Recording[] { CreateTestRecording(11, "Test1"), CreateTestRecording(22, "Test2") }.ToList();
-
-            var t = TestFixtureManager.NewTestFixture(f);
-            TestFixtureManager.SaveTestFixture(t, k_TestFixturePath);
+            f.Tests = new Recording[] { CreateTestRecording(fixIndex + 5, $"Test{fixIndex + 5}"), CreateTestRecording(fixIndex + 6, $"Test{fixIndex + 6}") }.ToList();
+            return f;
         }
 
         private Recording CreateTestRecording(int number, string name = "")

@@ -47,12 +47,11 @@ namespace RobotRuntime.Utils
             process.OutputDataReceived += (sender, data) => list.Add(data.Data);
             process.ErrorDataReceived += (sender, data) => list.Add(data.Data);
 
+            Logger.Log(LogType.Log, "Executing bash: " + $"{processStartInfo.FileName} {processStartInfo.Arguments}");
+
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
-
-            // var stdout = process.StandardOutput.ReadToEnd();
-            // var error = process.StandardError.ReadToEnd();
 
             process.WaitForExit();
 

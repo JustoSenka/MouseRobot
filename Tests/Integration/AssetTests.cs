@@ -13,7 +13,7 @@ using Unity;
 namespace Tests.Integration
 {
     [TestFixture]
-    public class AssetTests
+    public class AssetTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -44,8 +44,8 @@ namespace Tests.Integration
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            var container = TestBase.ConstructContainerForTests(false);
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            var container = TestUtils.ConstructContainerForTests(false);
 
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();

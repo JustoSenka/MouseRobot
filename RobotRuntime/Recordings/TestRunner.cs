@@ -112,6 +112,9 @@ namespace RobotRuntime
         /// </summary>
         public Task StartTests(string testFilter = ".")
         {
+            if (string.IsNullOrEmpty(testFilter))
+                testFilter = ".";
+
             InitializeNewRun();
 
             return Task.Run(() =>
@@ -126,9 +129,9 @@ namespace RobotRuntime
 
                 foreach (var fixture in fixtures)
                 {
-                    var fixtureMathesFilter = Regex.IsMatch(fixture.Name, testFilter);
+                    var fixtureMathesFilter = Regex.IsMatch(fixture.Name, testFilter, RegexOptions.IgnoreCase);
 
-                    var isThereASingleTestMatchingFilter = fixture.Tests.Any(test => Regex.IsMatch(fixture.Name + "." + test.Name, testFilter));
+                    var isThereASingleTestMatchingFilter = fixture.Tests.Any(test => Regex.IsMatch(fixture.Name + "." + test.Name, testFilter, RegexOptions.IgnoreCase));
                     if (!isThereASingleTestMatchingFilter && !fixtureMathesFilter)
                         continue;
 
@@ -140,7 +143,7 @@ namespace RobotRuntime
 
                     foreach (var test in fixture.Tests)
                     {
-                        var testMathesFilter = Regex.IsMatch(fixture.Name + "." + test.Name, testFilter);
+                        var testMathesFilter = Regex.IsMatch(fixture.Name + "." + test.Name, testFilter, RegexOptions.IgnoreCase);
                         if (!fixtureMathesFilter && !testMathesFilter)
                             continue;
 

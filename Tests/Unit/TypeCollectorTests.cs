@@ -13,7 +13,7 @@ using Unity;
 namespace Tests.Unit
 {
     [TestFixture]
-    public class TypeCollectorTests
+    public class TypeCollectorTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -28,9 +28,9 @@ namespace Tests.Unit
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
+            TempProjectPath = TestUtils.GenerateProjectPath();
 
-            Container = TestBase.ConstructContainerForTests();
+            Container = TestUtils.ConstructContainerForTests();
             var ProjectManager = Container.Resolve<IProjectManager>();
             AssetManager = Container.Resolve<IAssetManager>();
             ScriptManager = Container.Resolve<IScriptManager>();
@@ -84,7 +84,7 @@ namespace Tests.Unit
         [Test]
         public void TypeCollector_JustAfterCreation_HasUserTypes()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var collector = Container.Resolve<ITypeCollector<Command>>();
@@ -96,7 +96,7 @@ namespace Tests.Unit
         [Test]
         public void TypeObjectCollector_JustAfterCreation_HasUserObjects()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
@@ -111,7 +111,7 @@ namespace Tests.Unit
             var collector = Container.Resolve<ITypeCollector<Command>>();
             var allObjects = collector.AllTypes.Count();
 
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             Assert.AreEqual(allObjects + 1, collector.AllTypes.Count(), "Type count should increase");
@@ -123,7 +123,7 @@ namespace Tests.Unit
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
             var allObjects = collector.AllObjects.Count();
 
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
             Assert.AreEqual(allObjects + 1, collector.AllObjects.Count(), "Object count should increase");

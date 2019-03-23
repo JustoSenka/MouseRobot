@@ -10,7 +10,7 @@ using Unity;
 namespace Tests.Performance
 {
     [TestFixture]
-    public class PerformanceTests
+    public class PerformanceTests : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -26,8 +26,8 @@ namespace Tests.Performance
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
-            var container = TestBase.ConstructContainerForTests();
+            TempProjectPath = TestUtils.GenerateProjectPath();
+            var container = TestUtils.ConstructContainerForTests();
 
             MouseRobot = container.Resolve<IMouseRobot>();
             var ProjectManager = container.Resolve<IProjectManager>();

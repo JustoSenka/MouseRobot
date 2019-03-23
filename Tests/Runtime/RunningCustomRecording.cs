@@ -15,7 +15,7 @@ using Unity;
 namespace Tests.Runtime
 {
     [TestFixture]
-    public class RunningCustomRecording
+    public class RunningCustomRecording : TestWithCleanup
     {
         private string TempProjectPath;
 
@@ -39,9 +39,9 @@ namespace Tests.Runtime
         [SetUp]
         public void Initialize()
         {
-            TempProjectPath = TestBase.GenerateProjectPath();
+            TempProjectPath = TestUtils.GenerateProjectPath();
 
-            var container = TestBase.ConstructContainerForTests();
+            var container = TestUtils.ConstructContainerForTests();
 
             var ProjectManager = container.Resolve<IProjectManager>();
             AssetManager = container.Resolve<IAssetManager>();
@@ -95,7 +95,7 @@ namespace Tests.Runtime
 
             var list = new List<Guid>();
 
-            var container = TestBase.ConstructContainerForTests();
+            var container = TestUtils.ConstructContainerForTests();
             container.Resolve<IScriptLoader>(); // Not referenced by runtime
             var logger = container.Resolve<ILogger>();
 
@@ -139,11 +139,11 @@ namespace Tests.Runtime
         // [Test]
         public void Program_RunningCustomRecording_Works()
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
 
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
 
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
             CreateAndSaveTestRecording(k_RecordingPath, out Command c1, out Command c2, out Command c3, CommandFactory, k_CustomCommandName);
@@ -155,11 +155,11 @@ namespace Tests.Runtime
 
         private void PrepareRecordingWith3CustomCommands(out Command c1, out Command c2, out Command c3)
         {
-            TestBase.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
+            TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
 
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
-            TestBase.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *\[RunnerType", "[RunnerType");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"CommandLog\");");
+            TestUtils.ReplaceTextInAsset(AssetManager, k_CustomCommandRunnerPath, @"// *TODO: RUN METHOD", "Logger.Log(LogType.Log, \"RunnerLog\");");
 
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
             CreateAndSaveTestRecording(k_RecordingPath, out c1, out c2, out c3, CommandFactory, k_CustomCommandName);
