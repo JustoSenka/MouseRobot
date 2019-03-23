@@ -48,13 +48,15 @@ namespace Tests.Runtime
         {
             "Passed: \"fixture1.Test15\"",
             @"Passed: ""fixture1.Test15""
-Passed: ""fixture1.Test16""",
+Passed: ""fixture1.Test16""
+Passed: ""fixture2.Test25""
+Passed: ""fixture2.Test26""",
         };
 
         [TestCase("Test15", false, 0)]
         [TestCase("Test15", true, 0)]
-        [TestCase("Fixture(1|2)\\.Test(15|16)", false, 1)]
-        [TestCase("Fixture(1|2)\\.Test(15|16)", true, 1)]
+        [TestCase("Fixture(1|2)\\.Test(15|16|25|26)", false, 1)]
+        [TestCase("Fixture(1|2)\\.Test(15|16|25|26)", true, 1)]
         public void WithFilter(string filter, bool useCommandLine, int expectedResultIndex)
         {
             AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
