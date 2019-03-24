@@ -117,3 +117,16 @@ Is used to find position of image on screen. Can be used to replace default Imag
 Can be used for storing custom settings. Those settings can be accessed by user scripts using SettingsManager.GetSettings<CustomSettings>(). Settings are automatically save to AppData folder when application exits and are loaded on application startup or after script recompilation. If application quits unexpectedly, settings will not be saved.
 
 Settings can also be saved manually using SettingsManager.SaveSettings
+
+## Command Line Integration
+
+RobotRuntime.exe can be used to load project and run tests from command line. Produces test result report. Supported command line arguments:
+
++  -p, --projectPath    Required. Project path.
++  -f, --filter         (Default: .) Regex Test Filter for which tests to run.
++  -r, --recording      (Default: ) Run single recording by path.
++  -o, --output         (Default: TestResults.txt) Output file path with extension.
++  --help               Display this help screen.
++  --version            Display version information.
+
+Example: `RobotRuntime.exe -p C:\MyProject -f SomeTestName`
