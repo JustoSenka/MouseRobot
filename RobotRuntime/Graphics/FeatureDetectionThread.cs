@@ -25,7 +25,22 @@ namespace RobotRuntime.Graphics
         public bool WasLastCheckSuccess { get; private set; }
         public int TimeSinceLastFind { get; private set; }
 
-        public string DetectorName { get; set; } = DetectorNamesHardcoded.SURF;
+        // TODO: This is very vulnerable public field. User can change it and everything would break.
+        // Find a better way to pass settings to this class
+        /// <summary>
+        /// This detector is set from SettingsManager or RuntimeSettings
+        /// </summary>
+        public string DefaultDetectorName { get; set; } = DetectorNamesHardcoded.Default; 
+
+        /// <summary>
+        /// This detector is set from commands when they want to override default detector.
+        /// </summary>
+        public string DetectorName { get; set; } = DetectorNamesHardcoded.Default;
+
+        /// <summary>
+        /// Return detector from Settings, if user did not override it with anything else than default.
+        /// </summary>
+        public string PrefferedDetector => DetectorName.Equals(DetectorNamesHardcoded.Default, StringComparison.InvariantCultureIgnoreCase) ? DefaultDetectorName : DetectorName;
 
         private Stopwatch m_Watch = new Stopwatch();
 
@@ -76,7 +91,7 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name + "_CloneScreen");
 
             Profiler.Start(Name + "_FindMatch");
-            var points = FindImagePositions();
+            var points = FindImagePositions(PrefferedDetector);
             var success = ValidatePointsCorrectness(points);
             Profiler.Stop(Name + "_FindMatch");
 
@@ -98,7 +113,7 @@ namespace RobotRuntime.Graphics
             Profiler.Stop(Name);
         }
 
-        public void StartNewImageSearch(Bitmap sampleImage)
+        public void StartNewImageSearch(Bitmap sampleImage, string detector)
         {
             lock (m_SampleImageLock)
             {
@@ -108,6 +123,7 @@ namespace RobotRuntime.Graphics
                 WasImageFound = false;
                 LastKnownPositions = null;
                 TimeSinceLastFind = 0;
+                DetectorName = detector;
                 m_Watch.Restart();
             }
         }
@@ -115,9 +131,9 @@ namespace RobotRuntime.Graphics
         /// <summary>
         /// Returns center points of all found images
         /// </summary>
-        public Point[] FindImageSync(Bitmap sampleImage, int timeout)
+        public Point[] FindImageSync(Bitmap sampleImage, string detector, int timeout)
         {
-            StartNewImageSearch(sampleImage);
+            StartNewImageSearch(sampleImage, detector);
             while (timeout > TimeSinceLastFind)
             {
                 Task.Delay(5).Wait(); // It will probably wait 15-30 ms, depending on thread clock, find better solution
@@ -128,9 +144,9 @@ namespace RobotRuntime.Graphics
             return null;
         }
 
-        private Point[][] FindImagePositions()
+        private Point[][] FindImagePositions(string detectorName)
         {
-            var detector = FeatureDetectorFactory.GetFromCache(DetectorName);
+            var detector = FeatureDetectorFactory.GetFromCache(detectorName);
 
             lock (m_SampleImageLock)
             {

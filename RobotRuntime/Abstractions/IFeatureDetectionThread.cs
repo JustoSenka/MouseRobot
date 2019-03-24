@@ -7,6 +7,7 @@ namespace RobotRuntime.Abstractions
     {
         object ObservedImageLock { get; }
 
+        string DefaultDetectorName { get; set; }
         string DetectorName { get; set; }
 
         Point[][] LastKnownPositions { get; }
@@ -17,7 +18,7 @@ namespace RobotRuntime.Abstractions
 
         event Action<Point[][]> PositionFound;
 
-        void StartNewImageSearch(Bitmap sampleImage);
-        Point[] FindImageSync(Bitmap sampleImage, int timeout);
+        void StartNewImageSearch(Bitmap sampleImage, string detector);
+        Point[] FindImageSync(Bitmap sampleImage, string detector, int timeout);
     }
 }

@@ -22,6 +22,7 @@ namespace RobotEditor.PropertyUtils
             typeof(RecordingGUIDStringConverter).GetProperty("AssetManager", StaticNonPublic).SetValue(null, AssetManager);
 
             typeof(DetectorNameStringConverter).GetProperty("FeatureDetectorFactory", StaticNonPublic).SetValue(null, FeatureDetectorFactory);
+            typeof(DetectorNameStringConverterWithDefault).GetProperty("FeatureDetectorFactory", StaticNonPublic).SetValue(null, FeatureDetectorFactory);
 
             typeof(CommandNameStringConverter).GetProperty("CommandFactory", StaticNonPublic).SetValue(null, CommandFactory);
 

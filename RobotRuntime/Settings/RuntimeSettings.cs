@@ -31,7 +31,7 @@ namespace RobotRuntime.Settings
         {
             ScreenStateThread.FPS = settings.ScreenImageUpdateFPS;
             FeatureDetectionThread.FPS = settings.ImageDetectionFPS;
-            FeatureDetectionThread.DetectorName = settings.DetectionMode;
+            FeatureDetectionThread.DefaultDetectorName = settings.DetectionMode;
         }
     }
 }

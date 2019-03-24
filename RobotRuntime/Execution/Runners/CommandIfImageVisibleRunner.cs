@@ -2,17 +2,14 @@
 using RobotRuntime.Commands;
 using RobotRuntime.Tests;
 using System.Drawing;
-using System.Linq;
 
 namespace RobotRuntime.Execution
 {
-    public class CommandIfImageVisibleRunner : IRunner
+    public class CommandIfImageVisibleRunner : NestedCommandRunner, IRunner
     {
-        public TestData TestData { set; get; }
-
-        private IRuntimeAssetManager RuntimeAssetManager;
-        private IFeatureDetectionThread FeatureDetectionThread;
-        private ILogger Logger;
+        protected readonly IRuntimeAssetManager RuntimeAssetManager;
+        protected readonly IFeatureDetectionThread FeatureDetectionThread;
+        protected readonly ILogger Logger;
         public CommandIfImageVisibleRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
@@ -20,75 +17,64 @@ namespace RobotRuntime.Execution
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
 
-        public void Run(IRunnable runnable)
+        private Point[] m_Points;
+        private bool WasImageFound = false;
+        private bool ShouldContinueCommandExecution = false;
+
+        /// <summary>
+        /// Gets image from attached assets. Finds that image on screen and saves coordinates
+        /// </summary>
+        protected override bool BeforeRunningParentCommand(ref Command baseCommand)
         {
-            if (!TestData.RunnerFactory.DoesRunnerSupportType(this.GetType(), runnable.GetType()))
+            if (!(baseCommand is CommandIfImageVisible command))
             {
-                Logger.Logi(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
-                return;
+                Logger.Logi(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + baseCommand.GetType());
+                return true;
             }
 
-            var command = runnable as CommandIfImageVisible;
-            var commandNode = TestData.TestFixture.Commands.FirstOrDefault(n => n.value == command);
-
             if (Logger.AssertIf(command.Asset.IsDefault(), "Command does not have valid image referenced: " + command.ToString()))
-                return;
+                return true;
 
             var image = RuntimeAssetManager.GetAsset<Bitmap>(command.Asset);
             if (image == null)
-            {
-                TestData.ShouldFailTest = true;
-                return;
-            }
+                return true;
 
-            TestData.InvokeCallback(commandNode.value.Guid);
-            var points = FeatureDetectionThread.FindImageSync(image, command.Timeout);
+            m_Points = FeatureDetectionThread.FindImageSync(image, command.DetectionMode, command.Timeout);
+            WasImageFound = !(m_Points == null || m_Points.Length == 0);
 
-            // Image was not found
-            if (points == null || points.Length == 0)
-            {
-                if (command.ExpectTrue)
-                    return;
+            // If image was not found, but we expect it to be found. Return false and not fail the test on purpose, 
+            // Make sure to not run commands nested inside
+            // Same with if image was found, but we wanted it to be not found
+            ShouldContinueCommandExecution = (command.ExpectTrue && WasImageFound) || (!command.ExpectTrue && !WasImageFound);
 
-                foreach (var childNode in commandNode)
-                {
-                    if (TestData.ShouldCancelRun)
-                        return;
-
-                    var runner = TestData.RunnerFactory.GetFor(childNode.value.GetType());
-                    runner.Run(childNode.value);
-                }
-            }
-            else // Image was found
-            {
-                if (!command.ExpectTrue)
-                    return;
-
-                foreach (var p in points)
-                {
-                    command.Run(TestData);
-
-                    foreach (var childNode in commandNode)
-                    {
-                        if (TestData.ShouldCancelRun)
-                            return;
-
-                        OverrideCommandPropertiesIfExist(childNode.value, p.X, "X");
-                        OverrideCommandPropertiesIfExist(childNode.value, p.Y, "Y");
-
-                        var runner = TestData.RunnerFactory.GetFor(childNode.value.GetType());
-                        runner.Run(childNode.value);
-                    }
-                }
-            }
+            return false;
         }
 
-        private static void OverrideCommandPropertiesIfExist(Command command, object value, string prop)
+        protected override bool RunChildCommands(Command[] commands)
         {
-            var destProp = command.GetType().GetProperty(prop);
+            if (!ShouldContinueCommandExecution)
+                return false;
 
-            if (destProp != null)
-                destProp.SetValue(command, value);
+            if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
+                return true;
+
+            // TODO: Should this also have foreach version of it?
+            if (WasImageFound)
+            {
+                foreach (var c in commands)
+                {
+                    c.SetPropertyIfExist("X", m_Points[0].X);
+                    c.SetPropertyIfExist("Y", m_Points[0].Y);
+                }
+            }
+
+            if (base.RunChildCommands(commands))
+            {
+                TestData.ShouldFailTest = true;
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Settings;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
@@ -10,6 +11,9 @@ namespace RobotRuntime.Graphics
         public IEnumerable<FeatureDetector> Detectors => TypeCollector.AllObjects;
         public IEnumerable<string> DetectorNames { get { return TypeCollector.AllObjects.Select(d => d.Name); } }
 
+        private FeatureDetector DefaultDetector;
+        private readonly string m_DefaultDetectorName = DetectorNamesHardcoded.Default;
+
         private ILogger Logger;
         private IUnityContainer Container;
         private ITypeObjectCollector<FeatureDetector> TypeCollector;
@@ -18,6 +22,8 @@ namespace RobotRuntime.Graphics
             this.Container = Container;
             this.Logger = Logger;
             this.TypeCollector = TypeCollector;
+
+            DefaultDetector = new FeatureDetectorPP();
         }
 
         /// <summary>
@@ -39,6 +45,9 @@ namespace RobotRuntime.Graphics
 
         private FeatureDetector FindDetectorOfName(string Name)
         {
+            if (Name.Equals(m_DefaultDetectorName, System.StringComparison.InvariantCultureIgnoreCase))
+                return DefaultDetector;
+
             var detector = TypeCollector.AllObjects.FirstOrDefault(d => d.Name.Equals(Name));
 
             if (detector == null)

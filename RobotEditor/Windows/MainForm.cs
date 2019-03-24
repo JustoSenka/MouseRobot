@@ -237,7 +237,10 @@ namespace RobotEditor
 
             m_ScreenPreviewWindow.Preview(asset);
             if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
-                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>());
+            {
+                var settings = SettingsManager.GetSettings<FeatureDetectionSettings>();
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.DetectionMode);
+            }
         }
 
         private void ShowSelectedObjectInInspector(BaseHierarchyManager BaseHierarchyManager, object obj)

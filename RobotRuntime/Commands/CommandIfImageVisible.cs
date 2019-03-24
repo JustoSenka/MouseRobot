@@ -15,6 +15,7 @@ namespace RobotRuntime.Commands
         public Guid Asset { get; set; }
         public int Timeout { get; set; } = 1000;
         public bool ExpectTrue { get; set; }
+        public string DetectionMode { get; set; } = "Default";
 
         public CommandIfImageVisible() : base() { }
         public CommandIfImageVisible(Guid guid) : base(guid) { }

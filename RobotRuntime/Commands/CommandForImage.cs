@@ -15,6 +15,7 @@ namespace RobotRuntime.Commands
         public Guid Asset { get; set; }
         public int Timeout { get; set; } = 1000;
         public bool ForEach { get; set; }
+        public string DetectionMode { get; set; } = "Default";
 
         public CommandForImage() : base() { }
         public CommandForImage(Guid guid) : base(guid) { }

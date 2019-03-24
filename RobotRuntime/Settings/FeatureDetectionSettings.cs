@@ -13,6 +13,7 @@ namespace RobotRuntime.Settings
 
     public static class DetectorNamesHardcoded
     {
+        public static string Default { get { return "Default"; } }
         public static string PixelPerfect { get { return "PixelPerfect"; } }
         public static string SURF { get { return "SURF"; } }
         public static string Template { get { return "Template"; } }

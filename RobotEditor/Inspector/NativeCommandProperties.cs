@@ -48,6 +48,7 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
                 AddProperty(dt, "ForEach");
+                AddProperty(dt, "DetectionMode");
             }
             else if (Command is CommandSleep)
             {
@@ -65,7 +66,8 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                AddProperty(dt, "ExpectTrue");
+                AddProperty(dt, "ExpectTrue"); 
+                AddProperty(dt, "DetectionMode"); 
             }
         }
 
@@ -196,6 +198,16 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).ExpectTrue; }
             set { DynamicCast(Command).ExpectTrue = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("Default")]
+        [DisplayName("Image Detection Mode")]
+        [TypeConverter(typeof(DetectorNameStringConverterWithDefault))]
+        public string DetectionMode
+        {
+            get { return DynamicCast(Command).DetectionMode; }
+            set { DynamicCast(Command).DetectionMode = value; }
         }
     }
 }

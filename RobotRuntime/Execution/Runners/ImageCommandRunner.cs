@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
+using RobotRuntime.Settings;
 using RobotRuntime.Tests;
 using System;
 using System.Drawing;
@@ -18,14 +19,14 @@ namespace RobotRuntime.Execution
             this.FeatureDetectionThread = FeatureDetectionThread;
         }
 
-        private Point[] points;
+        private Point[] m_Points;
 
         /// <summary>
         /// Gets image from attached assets. Finds that image on screen and saves coordinates
         /// </summary>
         protected override bool BeforeRunningParentCommand(ref Command command)
         {
-            GetImageAndTimeout(command, out Guid imageGuid, out int timeout);
+            GetImageAndTimeout(command, out Guid imageGuid, out int timeout, out string DetectionMode);
 
             if (Logger.AssertIf(imageGuid.IsDefault(), "Command does not have valid image referenced: " + command.ToString()))
                 return true;
@@ -34,8 +35,8 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return true;
 
-            points = FeatureDetectionThread.FindImageSync(image, timeout);
-            if (points == null || points.Length == 0)
+            m_Points = FeatureDetectionThread.FindImageSync(image, DetectionMode, timeout);
+            if (m_Points == null || m_Points.Length == 0)
                 return true;
 
             return false;
@@ -43,7 +44,7 @@ namespace RobotRuntime.Execution
 
         protected override bool RunChildCommands(Command[] commands)
         {
-            foreach (var p in points)
+            foreach (var p in m_Points)
             {
                 if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
                     return true;
@@ -64,26 +65,20 @@ namespace RobotRuntime.Execution
             return false;
         }
 
-        private static void GetImageAndTimeout(Command command, out Guid image, out int timeout)
+        private static void GetImageAndTimeout(Command command, out Guid image, out int timeout, out string DetectionMode)
         {
             if (command is CommandForImage c)
             {
                 image = c.Asset;
                 timeout = c.Timeout;
+                DetectionMode = c.DetectionMode;
             }
             else
             {
                 image = default;
                 timeout = 0;
+                DetectionMode = DetectorNamesHardcoded.Default;
             }
-        }
-
-        private static void OverrideCommandPropertiesIfExist(Command command, object value, string prop)
-        {
-            var destProp = command.GetType().GetProperty(prop);
-
-            if (destProp != null)
-                destProp.SetValue(command, value);
         }
     }
 }
