@@ -201,6 +201,8 @@
     <Compile Include="Tests\TestFixtureManager.cs" />
     <Compile Include="Tests\TestRunnerManager.cs" />
     <Compile Include="Utils\CodeEditorVS.cs" />
+    <Compile Include="Utils\Win32\HotkeyCallbacks.cs" />
+    <Compile Include="Abstractions\IHotkeyCallbacks.cs" />
     <Compile Include="Utils\Win32\InputCallbacks.cs" />
     <Compile Include="Utils\Win32\KeyEvent.cs" />
   </ItemGroup>

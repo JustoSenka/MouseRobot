@@ -38,6 +38,8 @@ namespace Robot
             Container.RegisterType<ISolutionManager, SolutionManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ICodeEditor, CodeEditorVS>(new ContainerControlledLifetimeManager());
 
+            Container.RegisterType<IHotkeyCallbacks, HotkeyCallbacks>(new ContainerControlledLifetimeManager());
+
             // non singletons
             Container.RegisterType<IModifiedAssetCollector, ModifiedAssetCollector>();
         }

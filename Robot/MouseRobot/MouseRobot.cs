@@ -33,15 +33,15 @@ namespace Robot
         }
         private AsyncOperation m_AsyncOperationOnUI;
 
-        private IHierarchyManager HierarchyManager;
-        private ITestRunner TestRunner;
-        private IRecordingManager RecordingManager;
-        private IRuntimeSettings RuntimeSettings;
-        private IScreenStateThread ScreenStateThread;
-        private IFeatureDetectionThread FeatureDetectionThread;
-        private ISettingsManager SettingsManager;
-        private IInputCallbacks InputCallbacks;
-        private IStatusManager StatusManager;
+        private readonly IHierarchyManager HierarchyManager;
+        private readonly ITestRunner TestRunner;
+        private readonly IRecordingManager RecordingManager;
+        private readonly IRuntimeSettings RuntimeSettings;
+        private readonly IScreenStateThread ScreenStateThread;
+        private readonly IFeatureDetectionThread FeatureDetectionThread;
+        private readonly ISettingsManager SettingsManager;
+        private readonly IInputCallbacks InputCallbacks;
+        private readonly IStatusManager StatusManager;
         public MouseRobot(IHierarchyManager HierarchyManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IInputCallbacks InputCallbacks, IStatusManager StatusManager)
@@ -104,7 +104,6 @@ namespace Robot
                         return;
                     }
 
-                    InputCallbacks.Init();
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
                     RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());

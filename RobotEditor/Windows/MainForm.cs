@@ -50,21 +50,21 @@ namespace RobotEditor
         private IHierarchyManager RecordingManager;
         private IAssetManager AssetManager;
         private IScreenStateThread ScreenStateThread;
-        private IInputCallbacks InputCallbacks;
         private IStatusManager StatusManager;
         private ITestFixtureManager TestFixtureManager;
         private ITestRunner TestRunner;
         private IProjectManager ProjectManager;
 
         private IScriptTemplates ScriptTemplates;
+        private IHotkeyCallbacks HotkeyCallbacks;
 
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
-            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread, IInputCallbacks InputCallbacks,
+            IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
-            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates)
+            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks)
         {
             this.Container = Container;
 
@@ -75,7 +75,6 @@ namespace RobotEditor
             this.RecordingManager = RecordingManager;
             this.AssetManager = AssetManager;
             this.ScreenStateThread = ScreenStateThread;
-            this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
             this.TestFixtureManager = TestFixtureManager;
             this.TestRunner = TestRunner;
@@ -91,6 +90,7 @@ namespace RobotEditor
             this.m_TestRunnerWindow = TestRunnerWindow;
 
             this.ScriptTemplates = ScriptTemplates;
+            this.HotkeyCallbacks = HotkeyCallbacks;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -115,7 +115,7 @@ namespace RobotEditor
             actionOnRec.SelectedIndex = 2;
             actionOnPlay.SelectedIndex = 2;
 
-            InputCallbacks.InputEvent += OnInputEvent;
+            RegisterFormHotkeys(HotkeyCallbacks);
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
             m_HierarchyWindow.OnSelectionChanged += ShowSelectedObjectInInspector;
@@ -134,6 +134,19 @@ namespace RobotEditor
             menuStrip.HandleCreated += (s, e) => m_AssetsWindow.AddMenuItemsForScriptTemplates(menuStrip, "addScriptToolStripMenuItem");
 
             ((Form)ScreenPaintForm).Show();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            HotkeyCallbacks.ProcessCallback(m);
+            base.WndProc(ref m);
+        }
+
+        private void RegisterFormHotkeys(IHotkeyCallbacks HotkeyCallbacks)
+        {
+            HotkeyCallbacks.RegisterForm(this);
+            HotkeyCallbacks.Register(Keys.F1, () => playButton_Click(null, null));
+            HotkeyCallbacks.Register(Keys.F2, () => recordButton_Click(null, null));
         }
 
         private void OnFormActivated(object sender, EventArgs e)
@@ -214,15 +227,6 @@ namespace RobotEditor
         private void OnVisualizationStateChanged(bool isVisualizationOn)
         {
             UpdateToolstripButtonStates();
-        }
-
-        private void OnInputEvent(KeyEvent obj)
-        {
-            if (obj.IsKeyDown() && obj.keyCode == Keys.F1)
-                playButton_Click(null, null);
-
-            if (obj.IsKeyDown() && obj.keyCode == Keys.F2)
-                recordButton_Click(null, null);
         }
 
         private void OnAssetSelected()
