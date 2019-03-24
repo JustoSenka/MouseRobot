@@ -4,6 +4,7 @@ using System;
 using System.Text.RegularExpressions;
 using RobotEditor.Abstractions;
 using RobotRuntime.Utils;
+using RobotRuntime;
 
 namespace RobotEditor.Hierarchy
 {

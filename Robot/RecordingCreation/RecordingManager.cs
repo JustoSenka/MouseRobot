@@ -1,5 +1,4 @@
 ﻿using Robot.Abstractions;
-using Robot.Recordings;
 using Robot.Settings;
 using Robot.Utils.Win32;
 using RobotRuntime;
@@ -164,7 +163,7 @@ namespace Robot.RecordingCreation
                     m_ImageAssetUnderCursor = FindImage(e.Point);
                     if (m_ImageAssetUnderCursor != null)
                     {
-                        m_ParentCommand = new CommandForeachImage(m_ImageAssetUnderCursor.Guid, timeOut);
+                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut, true);
                         HierarchyManager.ActiveRecording.AddCommand(m_ParentCommand);
                         m_ForImage = true;
                     }
@@ -175,7 +174,7 @@ namespace Robot.RecordingCreation
                     m_ImageAssetUnderCursor = FindImage(e.Point);
                     if (m_ImageAssetUnderCursor != null)
                     {
-                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut);
+                        m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut, false);
                         HierarchyManager.ActiveRecording.AddCommand(m_ParentCommand);
                         m_ForEachImage = true;
                     }

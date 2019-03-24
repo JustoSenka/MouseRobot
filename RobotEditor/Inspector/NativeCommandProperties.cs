@@ -4,7 +4,6 @@ using RobotEditor.PropertyUtils;
 using RobotEditor.Utils;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
-using RobotRuntime.Utils;
 using RobotRuntime.Utils.Win32;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -44,10 +43,11 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
             }
-            else if (Command is CommandForImage || Command is CommandForeachImage || Command is CommandIfImageVisible)
+            else if (Command is CommandForImage)
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
+                AddProperty(dt, "ForEach");
             }
             else if (Command is CommandSleep)
             {
@@ -63,6 +63,8 @@ namespace RobotEditor.Inspector
             }
             if (Command is CommandIfImageVisible)
             {
+                AddProperty(dt, "Asset");
+                AddProperty(dt, "Timeout");
                 AddProperty(dt, "ExpectTrue");
             }
         }
@@ -110,6 +112,15 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).Timeout; }
             set { DynamicCast(Command).Timeout = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue(false)]
+        [DisplayName("Run for multiple found images?")]
+        public bool ForEach
+        {
+            get { return DynamicCast(Command).ForEach; }
+            set { DynamicCast(Command).ForEach = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]

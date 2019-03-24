@@ -30,7 +30,6 @@ namespace Robot.Tests
         private readonly ITestStatusManager TestStatusManager;
         private readonly IAssetManager AssetManager;
         private readonly IProfiler Profiler;
-        private readonly ITestRunner TestRunner;
         public TestRunnerManager(IUnityContainer Container, ITestStatusManager TestStatusManager, IAssetManager AssetManager, IProfiler Profiler, ITestRunner TestRunner)
         {
             this.Container = Container;
