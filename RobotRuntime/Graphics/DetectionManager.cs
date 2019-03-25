@@ -31,10 +31,10 @@ namespace RobotRuntime.Graphics
         }
 
         /// <summary>
-        /// Returns center points of all found images.
+        /// Returns rects of all found images
         /// Thread safe, does not use any class fields
         /// </summary>
-        public async Task<Point[]> FindImage(Bitmap sampleImage, string detectorName, int timeout)
+        public async Task<Point[][]> FindImageRects(Bitmap sampleImage, string detectorName, int timeout)
         {
             if (timeout < 50)
             {
@@ -75,6 +75,16 @@ namespace RobotRuntime.Graphics
         }
 
         /// <summary>
+        /// Returns center points of all found images.
+        /// Thread safe, does not use any class fields
+        /// </summary>
+        public async Task<Point[]> FindImage(Bitmap sampleImage, string detectorName, int timeout)
+        {
+            var rects = await FindImageRects(sampleImage, detectorName, timeout);
+            return rects?.Select(p => p.FindCenter()).ToArray();
+        }
+
+        /// <summary>
         /// If user specifies detector which is not "default", give user detector
         /// Else, give detector which was set in global settings file
         /// </summary>
@@ -87,7 +97,7 @@ namespace RobotRuntime.Graphics
         /// Runs while loop in a task to find image, while constantly taking screenshots
         /// Returns an array of center points of images found
         /// </summary>
-        private async Task<Point[]> FindPointsInternal(Bitmap sampleImage, FeatureDetector detector, int timeout)
+        private async Task<Point[][]> FindPointsInternal(Bitmap sampleImage, FeatureDetector detector, int timeout)
         {
             var cts = new CancellationTokenSource();
             cts.CancelAfter(timeout);
@@ -97,18 +107,18 @@ namespace RobotRuntime.Graphics
                 var success = false;
                 while (true)
                 {
-                    Profiler.Start("ImageManager_CloneScreen");
+                    //Profiler.Start("ImageManager_TakeScreenshot");
                     var observedImage = BitmapUtility.TakeScreenshot();
-                    Profiler.Stop("ImageManager_CloneScreen");
+                    //Profiler.Stop("ImageManager_TakeScreenshot");
 
-                    Profiler.Start("ImageManager_FindImage");
+                    //Profiler.Start("ImageManager_FindImage");
                     var points = FindImagePositions(detector, sampleImage, observedImage);
-                    Profiler.Stop("ImageManager_FindImage");
+                    //Profiler.Stop("ImageManager_FindImage");
 
                     success = ValidatePointsCorrectness(points, sampleImage.Width, sampleImage.Height);
 
                     if (success)
-                        return points.Select(p => p.FindCenter()).ToArray();
+                        return points;
 
                     if (cts.Token.IsCancellationRequested)
                         return null;
