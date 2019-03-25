@@ -7,12 +7,10 @@ namespace RobotRuntime.Settings
 {
     public class RuntimeSettings : IRuntimeSettings
     {
-        IScreenStateThread ScreenStateThread;
-        IFeatureDetectionThread FeatureDetectionThread;
-        public RuntimeSettings(IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread)
+        private readonly IDetectionManager DetectionManager;
+        public RuntimeSettings(IDetectionManager DetectionManager)
         {
-            this.ScreenStateThread = ScreenStateThread;
-            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.DetectionManager = DetectionManager;
         }
 
         /// <summary>
@@ -26,12 +24,9 @@ namespace RobotRuntime.Settings
         }
 
         // TODO: Probably add read here, since runtime also needs to read settings from file somehow imo
-        // Probably settings should be per command, maybe diff commands should have diff settings
         public void ApplySettings(FeatureDetectionSettings settings)
         {
-            ScreenStateThread.FPS = settings.ScreenImageUpdateFPS;
-            FeatureDetectionThread.FPS = settings.ImageDetectionFPS;
-            FeatureDetectionThread.DefaultDetectorName = settings.DetectionMode;
+            DetectionManager.ApplySettings(settings);
         }
     }
 }

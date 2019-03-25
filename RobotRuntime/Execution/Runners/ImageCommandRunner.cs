@@ -10,13 +10,13 @@ namespace RobotRuntime.Execution
     public class ImageCommandRunner : NestedCommandRunner, IRunner
     {
         protected readonly IRuntimeAssetManager RuntimeAssetManager;
-        protected readonly IFeatureDetectionThread FeatureDetectionThread;
+        protected readonly IDetectionManager DetectionManager;
         protected readonly ILogger Logger;
-        public ImageCommandRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
+        public ImageCommandRunner(IDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Logger = Logger;
-            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.DetectionManager = DetectionManager;
         }
 
         private Point[] m_Points;
@@ -35,7 +35,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return true;
 
-            m_Points = FeatureDetectionThread.FindImageSync(image, DetectionMode, timeout);
+            m_Points = DetectionManager.FindImage(image, DetectionMode, timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
                 return true;
 

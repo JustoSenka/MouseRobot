@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace RobotRuntime.Abstractions
+namespace Robot.Abstractions
 {
     public interface IFeatureDetectionThread : IStableRepeatingThread
     {

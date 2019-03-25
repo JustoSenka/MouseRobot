@@ -76,9 +76,7 @@ namespace RobotRuntime
             Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
             Container.RegisterType<IAssetGuidManager, AssetGuidManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRuntimeAssetManager, RuntimeAssetManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IFeatureDetectionThread, FeatureDetectionThread>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRuntimeSettings, RuntimeSettings>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScreenStateThread, ScreenStateThread>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestRunner, TestRunner>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
@@ -87,6 +85,8 @@ namespace RobotRuntime
             Container.RegisterType<IRuntimeProjectManager, RuntimeProjectManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ITestStatusManager, TestStatusManager>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IDetectionManager, DetectionManager>(new ContainerControlledLifetimeManager());
+
             Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType(typeof(ITypeCollector<>), typeof(TypeCollector<>));

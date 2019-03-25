@@ -155,7 +155,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\ICodeEditor.cs" />
+    <Compile Include="Abstractions\IFeatureDetectionThread.cs" />
     <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
+    <Compile Include="Abstractions\IScreenStateThread.cs" />
+    <Compile Include="Abstractions\IStableRepeatingThread.cs" />
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\AssetManager.cs" />
     <Compile Include="Assets\ModifiedAssetCollector.cs" />
@@ -165,6 +168,9 @@
     <Compile Include="Assets\RecordingImporter.cs" />
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
+    <Compile Include="Graphics\FeatureDetectionThread.cs" />
+    <Compile Include="Graphics\ScreenStateThread.cs" />
+    <Compile Include="Graphics\StableRepeatingThread.cs" />
     <Compile Include="MouseRobot\ProjectManager.cs" />
     <Compile Include="Abstractions\IScriptCompiler.cs" />
     <Compile Include="Abstractions\IScriptManager.cs" />

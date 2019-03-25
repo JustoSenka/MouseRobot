@@ -1,9 +1,9 @@
-﻿using RobotRuntime.Abstractions;
+﻿using Robot.Abstractions;
 using System;
 using System.Diagnostics;
 using System.Threading;
 
-namespace RobotRuntime.Graphics
+namespace Robot.Graphics
 {
     public abstract class StableRepeatingThread : IStableRepeatingThread
     {
@@ -85,7 +85,7 @@ namespace RobotRuntime.Graphics
                     Thread.Sleep(FrameTimeMax - elapsed);
 
                 m_Stopwatch.Reset();
-                
+
                 Update?.Invoke();
             }
         }

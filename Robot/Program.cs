@@ -10,6 +10,7 @@ using Robot.Tests;
 using Robot.Assets;
 using Robot.Utils;
 using RobotRuntime.Abstractions;
+using Robot.Graphics;
 
 namespace Robot
 {
@@ -39,6 +40,9 @@ namespace Robot
             Container.RegisterType<ICodeEditor, CodeEditorVS>(new ContainerControlledLifetimeManager());
 
             Container.RegisterType<IHotkeyCallbacks, HotkeyCallbacks>(new ContainerControlledLifetimeManager());
+
+            Container.RegisterType<IFeatureDetectionThread, FeatureDetectionThread>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IScreenStateThread, ScreenStateThread>(new ContainerControlledLifetimeManager());
 
             // non singletons
             Container.RegisterType<IModifiedAssetCollector, ModifiedAssetCollector>();

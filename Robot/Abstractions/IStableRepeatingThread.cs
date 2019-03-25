@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RobotRuntime.Abstractions
+namespace Robot.Abstractions
 {
     public interface IStableRepeatingThread
     {

@@ -1,4 +1,6 @@
-﻿using RobotRuntime.Abstractions;
+﻿using Robot.Abstractions;
+using RobotRuntime.Abstractions;
+using RobotRuntime.Graphics;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
@@ -8,7 +10,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RobotRuntime.Graphics
+namespace Robot.Graphics
 {
     public class FeatureDetectionThread : StableRepeatingThread, IFeatureDetectionThread
     {
@@ -90,10 +92,10 @@ namespace RobotRuntime.Graphics
             }
             Profiler.Stop(Name + "_CloneScreen");
 
-            Profiler.Start(Name + "_FindMatch");
+            Profiler.Start(Name + "_FindImage");
             var points = FindImagePositions(PrefferedDetector);
             var success = ValidatePointsCorrectness(points);
-            Profiler.Stop(Name + "_FindMatch");
+            Profiler.Stop(Name + "_FindImage");
 
             if (success)
             {

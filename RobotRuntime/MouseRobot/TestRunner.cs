@@ -29,18 +29,14 @@ namespace RobotRuntime
         public event Action<LightTestFixture, Recording> TestFailed;
 
         private readonly IAssetGuidManager AssetGuidManager;
-        private readonly IScreenStateThread ScreenStateThread;
-        private readonly IFeatureDetectionThread FeatureDetectionThread;
         private readonly IRunnerFactory RunnerFactory;
         private readonly IScriptLoader ScriptLoader;
         private readonly IRuntimeAssetManager RuntimeAssetManager;
         private readonly IRuntimeSettings RuntimeSettings;
-        public TestRunner(IAssetGuidManager AssetGuidManager, IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread,
-            IRunnerFactory RunnerFactory, IScriptLoader ScriptLoader, IRuntimeAssetManager RuntimeAssetManager, IRuntimeSettings RuntimeSettings)
+        public TestRunner(IAssetGuidManager AssetGuidManager, IRunnerFactory RunnerFactory, IScriptLoader ScriptLoader, 
+            IRuntimeAssetManager RuntimeAssetManager, IRuntimeSettings RuntimeSettings)
         {
             this.AssetGuidManager = AssetGuidManager;
-            this.ScreenStateThread = ScreenStateThread;
-            this.FeatureDetectionThread = FeatureDetectionThread;
             this.RunnerFactory = RunnerFactory;
             this.ScriptLoader = ScriptLoader;
             this.RuntimeAssetManager = RuntimeAssetManager;
@@ -63,12 +59,6 @@ namespace RobotRuntime
 
             AssetGuidManager.LoadMetaFiles();
             RuntimeAssetManager.CollectAllImporters();
-
-            if (!ScreenStateThread.IsAlive)
-                ScreenStateThread.Start();
-
-            if (!FeatureDetectionThread.IsAlive)
-                FeatureDetectionThread.Start();
         }
 
         /// <summary>
@@ -96,9 +86,6 @@ namespace RobotRuntime
 
                 var runner = RunnerFactory.GetFor(lightRecording.GetType());
                 runner.Run(lightRecording);
-
-                ScreenStateThread.Stop();
-                FeatureDetectionThread.Stop();
 
                 TestRunEnd?.Invoke();
             });
@@ -167,9 +154,6 @@ namespace RobotRuntime
                     RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.OneTimeTeardown);
                     CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeTeardown);
                 }
-
-                ScreenStateThread.Stop();
-                FeatureDetectionThread.Stop();
 
                 TestRunEnd?.Invoke();
             });

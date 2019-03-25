@@ -8,13 +8,13 @@ namespace RobotRuntime.Execution
     public class CommandIfImageVisibleRunner : NestedCommandRunner, IRunner
     {
         protected readonly IRuntimeAssetManager RuntimeAssetManager;
-        protected readonly IFeatureDetectionThread FeatureDetectionThread;
+        protected readonly IDetectionManager DetectionManager;
         protected readonly ILogger Logger;
-        public CommandIfImageVisibleRunner(IFeatureDetectionThread FeatureDetectionThread, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
+        public CommandIfImageVisibleRunner(IDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Logger = Logger;
-            this.FeatureDetectionThread = FeatureDetectionThread;
+            this.DetectionManager = DetectionManager;
         }
 
         private Point[] m_Points;
@@ -39,7 +39,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return true;
 
-            m_Points = FeatureDetectionThread.FindImageSync(image, command.DetectionMode, command.Timeout);
+            m_Points = DetectionManager.FindImage(image, command.DetectionMode, command.Timeout).Result;
             WasImageFound = !(m_Points == null || m_Points.Length == 0);
 
             // If image was not found, but we expect it to be found. Return false and not fail the test on purpose, 

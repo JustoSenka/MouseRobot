@@ -1,4 +1,5 @@
-﻿using RobotRuntime.Abstractions;
+﻿using Robot.Abstractions;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Perf;
 using RobotRuntime.Utils;
 using SharpDX;
@@ -11,7 +12,7 @@ using System.Drawing.Imaging;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
-namespace RobotRuntime.Graphics
+namespace Robot.Graphics
 {
     public class ScreenStateThread : StableRepeatingThread, IScreenStateThread
     {

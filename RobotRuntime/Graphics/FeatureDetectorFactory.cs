@@ -1,5 +1,6 @@
 ﻿using RobotRuntime.Abstractions;
 using RobotRuntime.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
@@ -40,7 +41,15 @@ namespace RobotRuntime.Graphics
         public FeatureDetector Create(string Name)
         {
             var detector = FindDetectorOfName(Name);
-            return (FeatureDetector)Container.Resolve(detector.GetType());
+            try
+            {
+                return (FeatureDetector)Container.Resolve(detector.GetType());
+            }
+            catch (Exception e)
+            {
+                Logger.Logi(LogType.Error,"Cannot create image detector of name: " + Name, e.Message);
+            }
+            return null;
         }
 
         private FeatureDetector FindDetectorOfName(string Name)
