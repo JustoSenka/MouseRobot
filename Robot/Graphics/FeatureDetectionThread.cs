@@ -4,25 +4,22 @@ using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Robot.Graphics
 {
     public class FeatureDetectionThread : StableRepeatingThread, IFeatureDetectionThread
     {
-        public Bitmap ObservedImage { get; private set; }
-
-        public object ObservedImageLock { get { return m_ObservedImageLock; } }
-        private object m_ObservedImageLock = new object();
-
-        private Bitmap m_SampleImage;
-        private object m_SampleImageLock = new object();
-
         public Point[][] LastKnownPositions { get; private set; }
         public bool WasImageFound { get; private set; }
         public bool WasLastCheckSuccess { get; private set; }
         public int TimeSinceLastFind { get; private set; }
 
         public event Action<Point[][]> PositionFound;
+
+        private Bitmap m_SampleImage;
+        private Bitmap m_ObservedImage;
+        private readonly object m_SampleImageLock = new object();
 
         private string m_DetectorName;
         private Stopwatch m_Watch = new Stopwatch();
@@ -45,27 +42,26 @@ namespace Robot.Graphics
         {
             base.Init();
 
-            //ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
+            m_ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
             ScreenStateThread.Initialized += ScreenStateThreadInitialized;
         }
 
         private void ScreenStateThreadInitialized()
         {
-            //ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
+            m_ObservedImage = new Bitmap(ScreenStateThread.Width, ScreenStateThread.Height, PixelFormat.Format32bppArgb);
         }
 
         protected override void ThreadAction()
         {
-            /*
             lock (ScreenStateThread.ScreenBmpLock)
             {
-                BitmapUtility.Clone32BPPBitmap(ScreenStateThread.ScreenBmp, ObservedImage);
-            }*/
+                BitmapUtility.Clone32BPPBitmap(ScreenStateThread.ScreenBmp, m_ObservedImage);
+            }
 
-            if (m_SampleImage == null)
+            if (m_SampleImage == null || m_ObservedImage == null)
                 return;
 
-            var points = DetectionManager.FindImageRects(m_SampleImage, m_DetectorName, 1000).Result;
+            var points = DetectionManager.FindImageRects(m_SampleImage, m_ObservedImage, m_DetectorName).Result;
 
             if (points != null)
             {

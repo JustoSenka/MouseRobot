@@ -11,11 +11,10 @@ namespace RobotRuntime.Graphics
     public class DetectionManager : IDetectionManager
     {
         private const float k_RectangleTolerance = 0.4f;
-
         private string m_DefaultDetector = DetectorNamesHardcoded.Default;
 
-        private IProfiler Profiler;
-        private IFeatureDetectorFactory FeatureDetectorFactory;
+        private readonly IProfiler Profiler;
+        private readonly IFeatureDetectorFactory FeatureDetectorFactory;
         public DetectionManager(IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory)
         {
             this.Profiler = Profiler;
@@ -31,17 +30,46 @@ namespace RobotRuntime.Graphics
         }
 
         /// <summary>
-        /// Returns rects of all found images
-        /// Thread safe, does not use any class fields
+        /// Returns rects of all found images. Constantly takes screenshots until timeout finishes or image is found.
+        /// If timeout is 0, will try only once with first taken screenshot
+        /// If timeout is bigger but still smaller than 100ms there is a big chance image will not be found because it takes longer to take screenshot
         /// </summary>
         public async Task<Point[][]> FindImageRects(Bitmap sampleImage, string detectorName, int timeout)
         {
-            if (timeout < 50)
-            {
-                Logger.Log(LogType.Error, "Timeout is too small, image detection will early out. Timeout (ms): " + timeout);
-                return null;
-            }
+            return await FindImageRectsInternal(sampleImage, detectorName, timeout);
+        }
 
+        /// <summary>
+        /// Returns rects of all found images. Tries only once with compare with given screenshot.
+        /// Faster than other overload.
+        /// </summary>
+        public async Task<Point[][]> FindImageRects(Bitmap sampleImage, Bitmap observedImage, string detectorName)
+        {
+            return await FindImageRectsInternal(sampleImage, detectorName, 0, observedImage);
+        }
+
+        /// <summary>
+        /// Returns center points of all found images.
+        /// Thread safe, does not use any class fields
+        /// </summary>
+        public async Task<Point[]> FindImage(Bitmap sampleImage, string detectorName, int timeout)
+        {
+            var rects = await FindImageRects(sampleImage, detectorName, timeout);
+            return rects?.Select(p => p.FindCenter()).ToArray();
+        }
+
+        /// <summary>
+        /// Returns center points of all found images.
+        /// Thread safe, does not use any class fields
+        /// </summary>
+        public async Task<Point[]> FindImage(Bitmap sampleImage, Bitmap observedImage, string detectorName)
+        {
+            var rects = await FindImageRects(sampleImage, observedImage, detectorName);
+            return rects?.Select(p => p.FindCenter()).ToArray();
+        }
+
+        private async Task<Point[][]> FindImageRectsInternal(Bitmap sampleImage, string detectorName, int timeout, Bitmap observedImage = null)
+        {
             if (sampleImage == null)
             {
                 Logger.Log(LogType.Error, "Sample image was null. Did it fail to find correct asset from GUID?");
@@ -65,23 +93,13 @@ namespace RobotRuntime.Graphics
             if (detector == null)
                 return null;
 
-            var points = await FindPointsInternal(clonedSampleImage, detector, timeout);
+            var points = await FindPointRectsInternal(clonedSampleImage, detector, timeout);
 
             // Image was not found
             if (points == null || points.Length == 0)
                 return null;
 
             return points;
-        }
-
-        /// <summary>
-        /// Returns center points of all found images.
-        /// Thread safe, does not use any class fields
-        /// </summary>
-        public async Task<Point[]> FindImage(Bitmap sampleImage, string detectorName, int timeout)
-        {
-            var rects = await FindImageRects(sampleImage, detectorName, timeout);
-            return rects?.Select(p => p.FindCenter()).ToArray();
         }
 
         /// <summary>
@@ -95,43 +113,49 @@ namespace RobotRuntime.Graphics
 
         /// <summary>
         /// Runs while loop in a task to find image, while constantly taking screenshots
-        /// Returns an array of center points of images found
+        /// Or does the operation once if timeout was 0 or user provided his own observed image
         /// </summary>
-        private async Task<Point[][]> FindPointsInternal(Bitmap sampleImage, FeatureDetector detector, int timeout)
+        private async Task<Point[][]> FindPointRectsInternal(Bitmap sampleImage, FeatureDetector detector, int timeout, Bitmap observedImage = null)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(timeout);
+            if (timeout == 0)
+                observedImage = BitmapUtility.TakeScreenshot();
 
-            return await Task.Run(async () =>
+            // If timeout was 0 or user provided his own observed image, do the search only once without a task
+            if (observedImage != null)
             {
-                var success = false;
-                while (true)
+                var points = FindImageRectPositions(detector, sampleImage, observedImage);
+                var success = ValidatePointsCorrectness(points, sampleImage.Width, sampleImage.Height);
+                return success ? points : null;
+            }
+            else
+            {
+                var cts = new CancellationTokenSource();
+                cts.CancelAfter(timeout);
+
+                return await Task.Run(async () =>
                 {
-                    //Profiler.Start("ImageManager_TakeScreenshot");
-                    var observedImage = BitmapUtility.TakeScreenshot();
-                    //Profiler.Stop("ImageManager_TakeScreenshot");
+                    while (true)
+                    {
+                        observedImage = BitmapUtility.TakeScreenshot();
+                        var points = FindImageRectPositions(detector, sampleImage, observedImage);
+                        var success = ValidatePointsCorrectness(points, sampleImage.Width, sampleImage.Height);
 
-                    //Profiler.Start("ImageManager_FindImage");
-                    var points = FindImagePositions(detector, sampleImage, observedImage);
-                    //Profiler.Stop("ImageManager_FindImage");
+                        if (success)
+                            return points;
 
-                    success = ValidatePointsCorrectness(points, sampleImage.Width, sampleImage.Height);
+                        if (cts.Token.IsCancellationRequested)
+                            return null;
 
-                    if (success)
-                        return points;
-
-                    if (cts.Token.IsCancellationRequested)
-                        return null;
-
-                    await Task.Delay(40);
-                }
-            }, cts.Token);
+                        await Task.Delay(40);
+                    }
+                }, cts.Token);
+            }
         }
 
         /// <summary>
         /// Returns array of positions for given image and detector
         /// </summary>
-        private static Point[][] FindImagePositions(FeatureDetector detector, Bitmap sampleImage, Bitmap observedImage)
+        private static Point[][] FindImageRectPositions(FeatureDetector detector, Bitmap sampleImage, Bitmap observedImage)
         {
             if (detector.SupportsMultipleMatches)
                 return detector.FindImageMultiplePos(sampleImage, observedImage).ToArray();
