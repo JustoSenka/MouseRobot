@@ -5,6 +5,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
+using RobotRuntime.Utils.Win32;
 using System.Drawing;
 using Unity;
 
@@ -21,6 +22,7 @@ namespace Tests.Runtime
         IScriptManager ScriptManager;
         ICommandFactory CommandFactory;
         ITestStatusManager TestStatusManager;
+        IHierarchyManager HierarchyManager;
 
         private const string k_FixturePath = "Assets\\Fixture.mrt";
 
@@ -44,6 +46,7 @@ namespace Tests.Runtime
             ScriptManager = Container.Resolve<IScriptManager>();
             CommandFactory = Container.Resolve<ICommandFactory>();
             TestStatusManager = Container.Resolve<ITestStatusManager>();
+            HierarchyManager = Container.Resolve<IHierarchyManager>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
@@ -76,6 +79,34 @@ namespace Tests.Runtime
 
             var expectedLogcount = runCommandsIfImageWasFound != isImageSmall ? 3 : 1;
             Assert.AreEqual(expectedLogcount, logs.Length, "Log length missmatch");
+        }
+
+        private const string k_RecordingPath = "Assets\\rec.mrb";
+
+        [Test]
+        public void MoveMouseToImage([Values(true, false)] bool useCommandLine)
+        {
+            AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
+            AssetManager.CreateAsset(Properties.Resources.BigImageDetectorFake, k_CustomFeatureDetectorPath);
+            var image = CreateImage(false);
+
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            var positionBefore = WinAPI.GetCursorPosition();
+
+            var r = HierarchyManager.NewRecording();
+            r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 2));
+            var parentCommand = r.AddCommand(new CommandForImage(image.Guid, 1000, false, k_DetectorWhichOnlyFindsBigImages));
+            r.AddCommand(new CommandMove(0, 0), parentCommand);
+            HierarchyManager.SaveRecording(r, k_RecordingPath);
+
+            var logs = TestFixtureUtils.RunRecordingAndGetLogs(TestRunner, k_RecordingPath, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
+            var currentPos = WinAPI.GetCursorPosition();
+            WinAPI.SetCursorPosition(positionBefore); //Reset cursor position to original
+
+            Assert.AreEqual(1, logs.Length, "Log length missmatch");
+            TestFixtureUtils.AssertIfCommandLogsAreOutOfOrder(logs, 2);
+
+            Assert.AreEqual(new Point(15, 15), currentPos, "Mouse was in incorrect position");
         }
 
         private Asset CreateImage(bool isImageSmall)

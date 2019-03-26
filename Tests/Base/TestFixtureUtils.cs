@@ -18,6 +18,21 @@ namespace Tests
         public const string k_TestFixturePath1 = "Assets\\fixture1.mrt";
         public const string k_TestFixturePath2 = "Assets\\fixture2.mrt";
 
+        public static Log[] RunRecordingAndGetLogs(ITestRunner TestRunner, string recordingPath, bool useCommandLine, string projectPath, string outputFilePath)
+        {
+            if (useCommandLine)
+            {
+                var args = $"-p {projectPath} -r {recordingPath} -o {outputFilePath}";
+                var res = ProcessUtility.StartFromCommandLine(ExecutablePath, args);
+                return FakeLogger.CreateLogsFromConsoleOutput(res).Where(log => log.Header.Contains("CommandLog")).ToArray();
+            }
+            else
+            {
+                TestRunner.StartRecording(recordingPath).Wait();
+                return Logger.Instance.LogList.Where(log => log.Header.Contains("CommandLog")).ToArray();
+            }
+        }
+
         public static Log[] RunTestsAndGetLogs(ITestRunner TestRunner, string filter, bool useCommandLine, string projectPath, string outputFilePath)
         {
             if (useCommandLine)
