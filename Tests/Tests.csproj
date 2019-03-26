@@ -170,7 +170,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <EmbeddedResource Include="Base\CommandLog.cs" />
+    <EmbeddedResource Include="Base\Resources\CommandLog.cs" />
+    <EmbeddedResource Include="Base\Resources\FeatureDetectorBiggerThan10px.cs" />
     <Compile Include="Base\TestFixtureUtils.cs" />
     <Compile Include="Base\TestWithCleanup.cs" />
     <Compile Include="Integration\AssetGuidManagerTests.cs" />
@@ -182,6 +183,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Runtime\RunningImageCommands.cs" />
     <Compile Include="Runtime\RunnintTestsProducesOutput.cs" />
     <Compile Include="Runtime\RunningTestsWithFilter.cs" />
     <Compile Include="Runtime\RunningCustomRecording.cs" />

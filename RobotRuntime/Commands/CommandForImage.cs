@@ -19,7 +19,7 @@ namespace RobotRuntime.Commands
 
         public CommandForImage() : base() { }
         public CommandForImage(Guid guid) : base(guid) { }
-        public CommandForImage(Guid asset, int timeOut, bool forEach, Guid guid = default(Guid)) : base(guid)
+        public CommandForImage(Guid asset, int timeOut, bool forEach, string DetectionMode = "Default", Guid guid = default(Guid)) : base(guid)
         {
             Asset = asset;
             Timeout = timeOut;
@@ -28,7 +28,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandForImage(Asset, Timeout, ForEach, Guid);
+            return new CommandForImage(Asset, Timeout, ForEach, DetectionMode, Guid);
         }
 
         public override void Run(TestData TestData) { }

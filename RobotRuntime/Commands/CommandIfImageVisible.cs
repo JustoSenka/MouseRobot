@@ -19,7 +19,7 @@ namespace RobotRuntime.Commands
 
         public CommandIfImageVisible() : base() { }
         public CommandIfImageVisible(Guid guid) : base(guid) { }
-        public CommandIfImageVisible(Guid asset, int timeOut, bool ExpectTrue, Guid guid = default(Guid)) : base(guid)
+        public CommandIfImageVisible(Guid asset, int timeOut, bool ExpectTrue, string DetectionMode = "Default", Guid guid = default(Guid)) : base(guid)
         {
             Asset = asset;
             Timeout = timeOut;
@@ -28,7 +28,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandIfImageVisible(Asset, Timeout, ExpectTrue, Guid);
+            return new CommandIfImageVisible(Asset, Timeout, ExpectTrue, DetectionMode, Guid);
         }
 
         public override void Run(TestData TestData) { }

@@ -61,11 +61,13 @@ namespace Tests.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using RobotRuntime;
+        ///   Looks up a localized string similar to using System;
+        ///using RobotRuntime;
         ///using RobotRuntime.Tests;
         ///
         ///namespace CustomNamespace
         ///{
+        ///    [Serializable]
         ///    public class CommandLog : Command
         ///    {
         ///        public override string Name =&gt; &quot;CommandLog&quot;;
@@ -77,18 +79,36 @@ namespace Tests.Properties {
         ///
         ///        public override void Run(TestData TestData)
         ///        {
-        ///            Logger.Log(LogType.Log, Name);
+        ///            Logger.Log(LogType.Log, &quot;CommandLog: &quot; + Number);
         ///        }
         ///
-        ///        public CommandLog(int number)
-        ///        {
-        ///            Number = number;
-        ///        }
-        ///        /// [rest of string was truncated]&quot;;.
+        ///        public CommandLog(int number)        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CommandLog {
             get {
                 return ResourceManager.GetString("CommandLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime.Graphics;
+        ///using System.Collections.Generic;
+        ///using System.Drawing;
+        ///
+        ///namespace CustomNamespace
+        ///{
+        ///    public class FeatureDetectorBiggerThan10px : FeatureDetector
+        ///    {
+        ///        public override string Name { get { return &quot;Fake10&quot;; } }
+        ///        public override bool SupportsMultipleMatches { get { return true; } }
+        ///
+        ///        public override IEnumerable&lt;Point[]&gt; FindImageMultiplePos(Bitmap smallBmp, Bitmap bigBmp)
+        ///        {
+        ///            yield return smallBmp.Width &gt;= 10 ? new[] { new Po [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string FeatureDetectorBiggerThan10px {
+            get {
+                return ResourceManager.GetString("FeatureDetectorBiggerThan10px", resourceCulture);
             }
         }
     }

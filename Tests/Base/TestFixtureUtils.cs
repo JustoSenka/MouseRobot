@@ -6,6 +6,7 @@ using RobotRuntime.Logging;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -42,7 +43,7 @@ namespace Tests
             TestFixtureManager.SaveTestFixture(TestFixtureManager.NewTestFixture(f2), k_TestFixturePath2);
         }
 
-        public static LightTestFixture CreateLightTestFixture(ICommandFactory CommandFactory, string name, int fixIndex)
+        public static LightTestFixture CreateLightTestFixture(ICommandFactory CommandFactory, string name, int fixIndex = 0)
         {
             var f = new LightTestFixture
             {
@@ -66,11 +67,17 @@ namespace Tests
         public static Recording CreateTestRecording(ICommandFactory CommandFactory, int number, string name = "")
         {
             var r = new Recording();
-            var command = CommandFactory.Create("CommandLog");
-            command.SetFieldIfExist("Number", number);
+            var command = CreateCustomLogCommand(CommandFactory, number);
             r.AddCommand(command);
             r.Name = name;
             return r;
+        }
+
+        public static Command CreateCustomLogCommand(ICommandFactory CommandFactory, int number)
+        {
+            var command = CommandFactory.Create("CommandLog");
+            command.SetFieldIfExist("Number", number);
+            return command;
         }
 
         public static void AssertIfCommandLogsAreOutOfOrder(Log[] logs, params int[] logNr)

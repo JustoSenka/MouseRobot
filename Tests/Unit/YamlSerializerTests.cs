@@ -108,7 +108,7 @@ namespace Tests.Unit
             {
                 var s = new Recording(guid);
                 s.Name = "TestName";
-                var imageCommand = new CommandForImage(new Guid(), 1850, false, guid);
+                var imageCommand = new CommandForImage(new Guid(), 1850, false, guid: guid);
                 s.AddCommand(imageCommand);
                 s.AddCommand(new CommandPress(55, 66, true, MouseButton.Left, guid), imageCommand);
                 s.AddCommand(new CommandMove(10, 20, guid));
