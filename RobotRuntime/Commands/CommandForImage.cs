@@ -24,6 +24,7 @@ namespace RobotRuntime.Commands
             Asset = asset;
             Timeout = timeOut;
             ForEach = forEach;
+            this.DetectionMode = DetectionMode;
         }
 
         public override object Clone()

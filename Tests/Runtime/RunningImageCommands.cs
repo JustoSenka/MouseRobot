@@ -22,46 +22,40 @@ namespace Tests.Runtime
         ICommandFactory CommandFactory;
         ITestStatusManager TestStatusManager;
 
-        ILogger Logger;
-
         private const string k_FixturePath = "Assets\\Fixture.mrt";
 
         private const string k_CustomCommandPath = "Assets\\CommandLog.cs";
         private const string k_CustomFeatureDetectorPath = "Assets\\Detector.cs";
-        private const string k_SmalllImage = "Assets\\small.png";
-        private const string k_BigImage = "Assets\\big.png";
+        private const string k_Image = "Assets\\image.png";
 
-        private const string k_DetectorName = "FakeDetector";
+        private const string k_DetectorWhichOnlyFindsBigImages = "FakeDetector";
 
         [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
-            var container = TestUtils.ConstructContainerForTests();
+            var Container = TestUtils.ConstructContainerForTests();
 
-            var ProjectManager = container.Resolve<IProjectManager>();
+            var ProjectManager = Container.Resolve<IProjectManager>();
 
-            TestFixtureManager = container.Resolve<ITestFixtureManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            TestRunner = container.Resolve<ITestRunner>();
-            ScriptManager = container.Resolve<IScriptManager>();
-            CommandFactory = container.Resolve<ICommandFactory>();
-            TestStatusManager = container.Resolve<ITestStatusManager>();
-
-            Logger = container.Resolve<ILogger>();
+            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            TestRunner = Container.Resolve<ITestRunner>();
+            ScriptManager = Container.Resolve<IScriptManager>();
+            CommandFactory = Container.Resolve<ICommandFactory>();
+            TestStatusManager = Container.Resolve<ITestStatusManager>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
 
         [Test]
         public void IfImageIsVisible(
-            [Values(true, false)] bool isImageSmall, 
-            [Values(true, false)] bool expectTrue, 
+            [Values(true, false)] bool isImageSmall,
+            [Values(true, false)] bool runCommandsIfImageWasFound,
             [Values(true, false)] bool useCommandLine)
         {
-            var filter = "Fixture";
             AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
-            AssetManager.CreateAsset(Properties.Resources.FeatureDetectorBiggerThan10px, k_CustomFeatureDetectorPath);
+            AssetManager.CreateAsset(Properties.Resources.BigImageDetectorFake, k_CustomFeatureDetectorPath);
             var image = CreateImage(isImageSmall);
 
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
@@ -70,7 +64,7 @@ namespace Tests.Runtime
             var r = new Recording();
 
             r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 1));
-            var parentCommand = r.AddCommand(new CommandIfImageVisible(image.Guid, 1000, expectTrue, k_DetectorName));
+            var parentCommand = r.AddCommand(new CommandIfImageVisible(image.Guid, 1000, runCommandsIfImageWasFound, k_DetectorWhichOnlyFindsBigImages));
 
             r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 2), parentCommand);
             r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 2), parentCommand);
@@ -78,15 +72,15 @@ namespace Tests.Runtime
 
             TestFixtureManager.SaveTestFixture(f, k_FixturePath);
 
-            var logs = TestFixtureUtils.RunTestsAndGetLogs(TestRunner, filter, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
+            var logs = TestFixtureUtils.RunTestsAndGetLogs(TestRunner, ".", useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
 
-            var expectedLogcount = (isImageSmall == expectTrue) ? 3 : 1;
+            var expectedLogcount = runCommandsIfImageWasFound != isImageSmall ? 3 : 1;
             Assert.AreEqual(expectedLogcount, logs.Length, "Log length missmatch");
         }
 
         private Asset CreateImage(bool isImageSmall)
         {
-            return AssetManager.CreateAsset(isImageSmall ? new Bitmap(5, 5) : new Bitmap(15, 15), isImageSmall ? k_SmalllImage : k_BigImage);
+            return AssetManager.CreateAsset(isImageSmall ? new Bitmap(5, 5) : new Bitmap(15, 15), k_Image);
         }
     }
 }

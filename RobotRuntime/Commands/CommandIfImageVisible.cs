@@ -24,6 +24,7 @@ namespace RobotRuntime.Commands
             Asset = asset;
             Timeout = timeOut;
             this.ExpectTrue = ExpectTrue;
+            this.DetectionMode = DetectionMode;
         }
 
         public override object Clone()

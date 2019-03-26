@@ -25,7 +25,11 @@ namespace RobotRuntime.IO
 
         public static Command Deserialize(TreeNode<YamlObject> tree)
         {
-            var amIDesiarializingCommandType = tree.value.value == "";
+            //var amIDesiarializingCommandType = tree.value.value == "";
+            
+            var amIDesiarializingCommandType = tree.value.value == "" && // Command does not have right side value
+                tree.Count() > 0; // Has children (at least one, guid)
+            
             if (amIDesiarializingCommandType)
             {
                 // TODO: These two lines take a lot of time, and they will be called a lot of times!!!

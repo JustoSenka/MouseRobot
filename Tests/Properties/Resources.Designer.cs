@@ -61,6 +61,28 @@ namespace Tests.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using RobotRuntime.Graphics;
+        ///using System.Collections.Generic;
+        ///using System.Drawing;
+        ///
+        ///namespace CustomNamespace
+        ///{
+        ///    public class BigImageDetectorFake : FeatureDetector
+        ///    {
+        ///        public override string Name { get { return &quot;FakeDetector&quot;; } }
+        ///        public override bool SupportsMultipleMatches { get { return true; } }
+        ///
+        ///        public override IEnumerable&lt;Point[]&gt; FindImageMultiplePos(Bitmap smallBmp, Bitmap bigBmp)
+        ///        {
+        ///            yield return smallBmp.Width &gt;= 10 ? MakeARect(new[] { [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string BigImageDetectorFake {
+            get {
+                return ResourceManager.GetString("BigImageDetectorFake", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using System;
         ///using RobotRuntime;
         ///using RobotRuntime.Tests;
@@ -87,28 +109,6 @@ namespace Tests.Properties {
         internal static string CommandLog {
             get {
                 return ResourceManager.GetString("CommandLog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to using RobotRuntime.Graphics;
-        ///using System.Collections.Generic;
-        ///using System.Drawing;
-        ///
-        ///namespace CustomNamespace
-        ///{
-        ///    public class FeatureDetectorBiggerThan10px : FeatureDetector
-        ///    {
-        ///        public override string Name { get { return &quot;Fake10&quot;; } }
-        ///        public override bool SupportsMultipleMatches { get { return true; } }
-        ///
-        ///        public override IEnumerable&lt;Point[]&gt; FindImageMultiplePos(Bitmap smallBmp, Bitmap bigBmp)
-        ///        {
-        ///            yield return smallBmp.Width &gt;= 10 ? new[] { new Po [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string FeatureDetectorBiggerThan10px {
-            get {
-                return ResourceManager.GetString("FeatureDetectorBiggerThan10px", resourceCulture);
             }
         }
     }

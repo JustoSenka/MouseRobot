@@ -118,6 +118,16 @@ namespace Tests.Unit
         }
 
         [Test]
+        public void TypeCollector_GetsCommand_AfterRecompilation()
+        {
+            var collector = Container.Resolve<ITypeCollector<Command>>();
+            AssetManager.CreateAsset(Properties.Resources.CommandLog, "Assets\\path.cs");
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+        }
+
+
+        [Test]
         public void TypeObjectCollector_AfterRecompilation_GetsNewUserObjects()
         {
             var collector = Container.Resolve<ITypeObjectCollector<Command>>();
