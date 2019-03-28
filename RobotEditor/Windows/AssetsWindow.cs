@@ -188,6 +188,9 @@ namespace RobotEditor
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
                 var node = m_AssetTree.FindNodeFromPath(from);
+                if (node == null && m_AssetTree.FindNodeFromPath(to) != null)
+                    return; // This means that asset was renamed via treeListView UI which directly modifies node name before sending it to backend
+
                 if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetRenamed callback: " + from))
                     return;
 
