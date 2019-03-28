@@ -71,7 +71,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(221, 220);
+            this.contextMenuStrip.Size = new System.Drawing.Size(221, 198);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -155,7 +155,9 @@ namespace RobotEditor
             this.imageList1.Images.SetKeyName(0, "Folder_ICO_128.png");
             this.imageList1.Images.SetKeyName(1, "Recording_ICO_16.png");
             this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
-            this.imageList1.Images.SetKeyName(3, "Script_ICO_256.png");
+            this.imageList1.Images.SetKeyName(3, "CSharpScript_ICO_16.png");
+            this.imageList1.Images.SetKeyName(4, "Test_ICO_256.png");
+            this.imageList1.Images.SetKeyName(5, "Plugn_ICO_16.png");
             // 
             // treeListView
             // 

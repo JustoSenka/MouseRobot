@@ -71,6 +71,16 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CSharpScript_ICO_16 {
+            get {
+                object obj = ResourceManager.GetObject("CSharpScript_ICO_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using RobotRuntime;
         ///using System;
         ///using RobotRuntime.Tests;
@@ -359,6 +369,36 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Plugn_ICO_16 {
+            get {
+                object obj = ResourceManager.GetObject("Plugn_ICO_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Recording_ICO_128 {
+            get {
+                object obj = ResourceManager.GetObject("Recording_ICO_128", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Recording_ICO_16 {
+            get {
+                object obj = ResourceManager.GetObject("Recording_ICO_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this asset? .
         /// </summary>
         internal static string S_ConfirmAssetDeletionMessage {
@@ -373,6 +413,16 @@ namespace RobotEditor.Properties {
         internal static string S_ConfirmFolderDeletionMessage {
             get {
                 return ResourceManager.GetString("S_ConfirmFolderDeletionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Test_ICO_256 {
+            get {
+                object obj = ResourceManager.GetObject("Test_ICO_256", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

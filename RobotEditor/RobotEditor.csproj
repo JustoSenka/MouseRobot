@@ -225,6 +225,11 @@
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />
+    <Content Include="Resources\Icons\CSharpScript_ICO_16.png" />
+    <Content Include="Resources\Icons\Plugn_ICO_16.png" />
+    <Content Include="Resources\Icons\Recording_ICO_128.png" />
+    <Content Include="Resources\Icons\Recording_ICO_16.png" />
+    <Content Include="Resources\Icons\Test_ICO_256.png" />
     <Content Include="Resources\ScriptTemplates\CustomCommand.cs" />
     <Content Include="Resources\ScriptTemplates\CustomCommandDesigner.cs" />
     <Content Include="Resources\ScriptTemplates\CustomCommandRunner.cs" />
@@ -445,9 +450,6 @@
     <None Include="Resources\Icons\ToolButton_RecordStop_32.png" />
     <None Include="Resources\Icons\ToolButton_Play_32.png" />
     <None Include="Resources\Icons\ToolButton_Stop_32.png" />
-    <Content Include="Resources\Icons\Plugin_ICO_256.png" />
-    <Content Include="Resources\Icons\Script_ICO_128.png" />
-    <Content Include="Resources\Icons\Script_ICO_16.png" />
     <Content Include="Resources\Icons\TestStatus_Fail_16.png" />
     <Content Include="Resources\Icons\TestStatus_Fail_32.png" />
     <Content Include="Resources\Icons\TestStatus_info_16.png" />

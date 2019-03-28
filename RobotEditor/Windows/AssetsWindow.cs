@@ -79,8 +79,8 @@ namespace RobotEditor
                 imageListIndex = node.value.Path.EndsWith(FileExtensions.RecordingD) ? 1 : imageListIndex;
                 imageListIndex = node.value.Path.EndsWith(FileExtensions.ImageD) ? 2 : imageListIndex;
                 imageListIndex = node.value.Path.EndsWith(FileExtensions.ScriptD) ? 3 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.TestD) ? 3 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 3 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.TestD) ? 4 : imageListIndex;
+                imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 5 : imageListIndex;
                 return imageListIndex;
             };
 

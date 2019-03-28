@@ -12,8 +12,8 @@ namespace RobotRuntime
     {
         public static IEnumerable<Assembly> GetNativeAssemblies(this AppDomain AppDomain)
         {
-            return AppDomain.GetAssemblies().Where(a => Regex.IsMatch(a.ManifestModule.ScopeName, 
-                @"^Robot\.(dll|exe)$|^RobotEditor\.(dll|exe)$|^RobotRuntime\.(dll|exe)$", RegexOptions.IgnoreCase));
+            return AppDomain.GetAssemblies().Where(a => Regex.IsMatch(a.ManifestModule.ScopeName,
+                @"^Robot\.(dll|exe)$|^RobotEditor\.(dll|exe)$|^RobotRuntime\.(dll|exe)$|^MouseRobot\.(dll|exe)$", RegexOptions.IgnoreCase));
         }
 
         // Really bad hack, needed to get user assemblies without getting all trashed assemblies from previous compilations
