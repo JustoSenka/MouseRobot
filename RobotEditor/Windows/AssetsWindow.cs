@@ -316,6 +316,12 @@ namespace RobotEditor
             var sourcePath = sourceNode.value.Path;
             var targetPath = Path.Combine(targetNode.value.Path, Path.GetFileName(sourcePath));
             AssetManager.RenameAsset(sourcePath, targetPath);
+
+            var droppedAssetNode = m_AssetTree.FindNodeFromPath(targetPath);
+            if (Logger.AssertIf(droppedAssetNode == null, "Cannot select asset which was just dropped. Looks like something went wrong. Please report a bug"))
+                return;
+
+            treeListView.SelectedObject = droppedAssetNode;
         }
 
         public void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName)

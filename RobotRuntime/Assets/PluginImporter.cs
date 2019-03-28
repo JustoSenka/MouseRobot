@@ -12,7 +12,8 @@ namespace RobotRuntime
         protected override object LoadAsset()
         {
             var bytes = File.ReadAllBytes(Path);
-            return Assembly.Load(bytes);
+            Logger.Log(LogType.Log, "Cannot load dynamic library file in such way. ScriptLoader automatically loads and collects all plugin files.");
+            return null; // Assembly.Load(bytes); 
         }
 
         public override void SaveAsset()
