@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Robot.Scripts
 {
@@ -113,6 +114,10 @@ namespace Robot.Scripts
                     foreach (var r in settings.NonEmptyCompilerReferences)
                         yield return r;
             }
+
+            var allPluginAssets = AssetManager.Assets.Where(a => a.Importer.HoldsType() == typeof(Assembly));
+            foreach (var a in allPluginAssets)
+                yield return a.Importer.Path;
         }
     }
 }

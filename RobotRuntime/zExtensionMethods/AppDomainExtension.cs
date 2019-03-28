@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace RobotRuntime
 {
@@ -11,7 +12,8 @@ namespace RobotRuntime
     {
         public static IEnumerable<Assembly> GetNativeAssemblies(this AppDomain AppDomain)
         {
-            return AppDomain.GetAssemblies().Where(a => a.FullName.Contains("Robot"));
+            return AppDomain.GetAssemblies().Where(a => Regex.IsMatch(a.ManifestModule.ScopeName, 
+                @"^Robot\.(dll|exe)$|^RobotEditor\.(dll|exe)$|^RobotRuntime\.(dll|exe)$", RegexOptions.IgnoreCase));
         }
 
         // Really bad hack, needed to get user assemblies without getting all trashed assemblies from previous compilations

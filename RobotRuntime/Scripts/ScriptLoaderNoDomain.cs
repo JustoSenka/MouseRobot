@@ -16,7 +16,7 @@ namespace RobotRuntime.Scripts
         public event Action UserDomainReloaded;
         public event Action UserDomainReloading;
 
-        private Dictionary<string, Assembly> m_Assemblies = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, Assembly> m_Assemblies = new Dictionary<string, Assembly>(StringComparer.InvariantCultureIgnoreCase);
         private readonly object CreateUserDomainLock = new object();
 
         private IRuntimeAssetManager RuntimeAssetManager;
@@ -29,6 +29,27 @@ namespace RobotRuntime.Scripts
             this.ProjectManager = ProjectManager;
 
             ProjectManager.NewProjectOpened += OnNewProjectOpened;
+
+            // This one is needed. Since my plugins are loaded from bytes and they don't seem to load dependencies by path correctly
+            // Since I'm loading them manually, I can return correct dependency from already loaded ones
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
+
+        /// <summary>
+        /// If dependency for dll is not found, will try to look for already loaded plugins and return correct one.
+        /// This might happen due to the way I load plugins. https://weblog.west-wind.com/posts/2016/dec/12/loading-net-assemblies-out-of-seperate-folders
+        /// </summary>
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            // Ignore missing resources
+            if (args.Name.Contains(".resources"))
+                return null;
+
+            var asm = m_Assemblies.Select(k => k.Value).FirstOrDefault(a => a.FullName.Equals(args.Name, StringComparison.InvariantCultureIgnoreCase));
+            if (asm == default)
+                Logger.Log(LogType.Error, "Cannot resolve assembly not found problem. Was looking for: " + args.Name);
+
+            return asm;
         }
 
         private void OnNewProjectOpened(string obj)
@@ -76,8 +97,8 @@ namespace RobotRuntime.Scripts
 
             lock (m_Assemblies)
             {
-                LoadAssemblies(m_Assemblies, userAssemblies);
-                LoadAssemblies(m_Assemblies, userPlugins);
+                LoadAssemblies(m_Assemblies, true, userAssemblies);
+                LoadAssemblies(m_Assemblies, false, userPlugins);
             }
         }
 
@@ -92,7 +113,7 @@ namespace RobotRuntime.Scripts
             }
         }
 
-        private static void LoadAssemblies(Dictionary<string, Assembly> dict, string[] paths)
+        private static void LoadAssemblies(Dictionary<string, Assembly> dict, bool loadPdbFiles, string[] paths)
         {
             foreach (var path in paths)
             {
@@ -106,14 +127,16 @@ namespace RobotRuntime.Scripts
 
                     // This is done in this particular way so we do not keep the file locked
                     var dllBytes = File.ReadAllBytes(path);
-                    if (File.Exists(pdbPath))
+                    if (File.Exists(pdbPath) && loadPdbFiles)
                     {
                         var pdbBytes = File.ReadAllBytes(pdbPath);
                         assembly = Assembly.Load(dllBytes, pdbBytes);
                     }
                     else
                     {
-                        Logger.Log(LogType.Warning, "Cannot find debug symbols .pdb for assembly: " + path);
+                        if (loadPdbFiles)
+                            Logger.Log(LogType.Warning, "Cannot find debug symbols .pdb for assembly: " + path);
+
                         assembly = Assembly.Load(dllBytes);
                     }
                 }

@@ -105,6 +105,9 @@ namespace Robot.Scripts
                 var settings = SettingsManager.GetSettings<CompilerSettings>();
                 if (settings != null)
                 {
+                    if (settings.CompilerReferencesFromProjectFolder.Length > 0)
+                        CompilerParams.ReferencedAssemblies.AddRange(settings.CompilerReferencesFromProjectFolder);
+
                     if (settings.HasValidReferences)
                         CompilerParams.ReferencedAssemblies.AddRange(settings.NonEmptyCompilerReferences);
                 }

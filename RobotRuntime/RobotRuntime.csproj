@@ -185,7 +185,7 @@
     <Compile Include="Abstractions\ILogger.cs" />
     <Compile Include="Abstractions\IRuntimeAssetManager.cs" />
     <Compile Include="Abstractions\IRuntimeProjectManager.cs" />
-    <Compile Include="Assets\ExtensionImporter.cs" />
+    <Compile Include="Assets\PluginImporter.cs" />
     <Compile Include="Assets\RuntimeAssetManager.cs" />
     <Compile Include="Assets\AssetGuidManager.cs" />
     <Compile Include="Assets\AssetImporter.cs" />

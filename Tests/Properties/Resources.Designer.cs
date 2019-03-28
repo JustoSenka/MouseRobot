@@ -74,7 +74,7 @@ namespace Tests.Properties {
         ///
         ///        public override IEnumerable&lt;Point[]&gt; FindImageMultiplePos(Bitmap smallBmp, Bitmap bigBmp)
         ///        {
-        ///            yield return smallBmp.Width &gt;= 10 ? MakeARect(new[] { [rest of string was truncated]&quot;;.
+        ///            yield return smallBmp.Width &gt;= 10 ? MakeARect(new Poi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BigImageDetectorFake {
             get {
@@ -109,6 +109,52 @@ namespace Tests.Properties {
         internal static string CommandLog {
             get {
                 return ResourceManager.GetString("CommandLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Text;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace CustomNamespace
+        ///{
+        ///    // This script purpose is for tests only. code inside the main method references a class in a precompilied user
+        ///    // dll which is copied into a project by test. Look for &quot;PluginTests&quot;
+        ///    public class SomeClassUsingUserPlugin
+        ///    {
+        ///        public static int main()
+        ///        {
+        ///            return TestClassLibrary.Class.Method();
+        ///        }
+        ///    }
+        ///} [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SomeClassUsingUserPlugin {
+            get {
+                return ResourceManager.GetString("SomeClassUsingUserPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TestClassLibrary {
+            get {
+                object obj = ResourceManager.GetObject("TestClassLibrary", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TestClassLibraryWithRefToRobot {
+            get {
+                object obj = ResourceManager.GetObject("TestClassLibraryWithRefToRobot", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

@@ -28,6 +28,9 @@ namespace Robot.Settings
         [JsonIgnore]
         public string[] NonEmptyCompilerReferences => CompilerReferences?.Where(r => r.Trim() != "").ToArray();
 
+        [JsonIgnore]
+        public string[] CompilerReferencesFromProjectFolder { get; set; } = new string[0];
+
         public string[] CompilerReferences { get; set; } = new string[0];
     }
 }

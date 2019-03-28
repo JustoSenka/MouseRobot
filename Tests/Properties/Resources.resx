@@ -124,4 +124,13 @@
   <data name="CommandLog" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\base\resources\commandlog.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="SomeClassUsingUserPlugin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\base\resources\someclassusinguserplugin.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TestClassLibrary" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\base\resources\testclasslibrary.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="TestClassLibraryWithRefToRobot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\base\resources\testclasslibrarywithreftorobot.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

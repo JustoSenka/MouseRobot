@@ -104,8 +104,6 @@ namespace RobotRuntime
 
             return Task.Run(() =>
             {
-                Task.Delay(150).Wait(); // make sure first screenshot is taken before starting running commands
-
                 var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
 

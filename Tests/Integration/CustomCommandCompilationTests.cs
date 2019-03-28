@@ -50,11 +50,11 @@ namespace Tests.Integration
         public void ScriptTemplates_ShouldNotHave_CompilationErrors()
         {
             TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            var compileSucceeded1 = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
+            var compileSucceeded2 = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
 
-            var compileSucceeded = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
-
-            Assert.IsTrue(compileSucceeded, "Script templates have compilation errors");
+            Assert.IsTrue(compileSucceeded1, "Script templates have compilation errors 1");
+            Assert.IsTrue(compileSucceeded2, "Script templates have compilation errors 2");
         }
 
         [Test]

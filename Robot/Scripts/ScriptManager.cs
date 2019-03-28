@@ -1,8 +1,12 @@
 ﻿using Robot.Abstractions;
+using Robot.Settings;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Robot.Scripts
@@ -24,19 +28,22 @@ namespace Robot.Scripts
         private string CustomAssemblyName { get { return ScriptLoader.UserAssemblyName; } }
         private string CustomAssemblyPath { get { return ScriptLoader.UserAssemblyPath; } }
 
-        private IScriptCompiler ScriptCompiler;
-        private IScriptLoader ScriptLoader;
-        private IAssetManager AssetManager;
-        private IModifiedAssetCollector ModifiedAssetCollector;
+        private readonly IScriptCompiler ScriptCompiler;
+        private readonly IScriptLoader ScriptLoader;
+        private readonly IAssetManager AssetManager;
+        private readonly IModifiedAssetCollector ModifiedAssetCollector;
+        private readonly ISettingsManager SettingsManager;
         public ScriptManager(IScriptCompiler ScriptCompiler, IScriptLoader ScriptLoader, IAssetManager AssetManager,
-            IModifiedAssetCollector ModifiedAssetCollector)
+            IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.ScriptCompiler = ScriptCompiler;
             this.ScriptLoader = ScriptLoader;
             this.AssetManager = AssetManager;
             this.ModifiedAssetCollector = ModifiedAssetCollector;
+            this.SettingsManager = SettingsManager;
 
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
+            ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.DllD);
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
         }
 
@@ -51,6 +58,8 @@ namespace Robot.Scripts
             {
                 var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
                 var scriptPaths = ScriptAssets.Select(a => a.Importer.Path); //.Where(s => s != null).Cast<string>();
+
+                AddPluginAssetsAsReferencesToCompilerSettings();
 
                 if (IsCompilingOrReloadingAssemblies)
                 {
@@ -81,6 +90,18 @@ namespace Robot.Scripts
                         return false;
                 });
             }
+        }
+
+        private void AddPluginAssetsAsReferencesToCompilerSettings()
+        {
+            var PluginPaths = AssetManager.Assets.Where(a => a.Importer.HoldsType() == typeof(Assembly))
+                .Select(a => a.Importer.Path).ToArray();
+                //.Select(a => Path.Combine(Environment.CurrentDirectory, a.Importer.Path)).ToArray();
+
+            if (PluginPaths != null)
+                SettingsManager.GetSettings<CompilerSettings>().CompilerReferencesFromProjectFolder = PluginPaths;
+            else
+                Logger.Log(LogType.Error, "PluginPaths were null. That should not be possible. Please report a bug.");
         }
 
         // TODO: Not used anymore. Should it be?

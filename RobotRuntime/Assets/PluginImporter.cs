@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RobotRuntime
 {
@@ -16,7 +17,18 @@ namespace RobotRuntime
 
         public override void SaveAsset()
         {
-            Logger.Log(LogType.Error, "Saving DLL file is not supported.");
+            if (Value is Assembly a)
+            {
+                using (FileStream stream = new FileStream(Path, FileMode.OpenOrCreate))
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, a);
+                }
+            }
+            else if (Value is byte[] bytes)
+            {
+                File.WriteAllBytes(Path, bytes);
+            }
         }
 
         public override Type HoldsType()
