@@ -291,6 +291,16 @@ namespace RobotEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap FailedImport_ICO_16 {
+            get {
+                object obj = ResourceManager.GetObject("FailedImport_ICO_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LogDebug_32 {
             get {
                 object obj = ResourceManager.GetObject("LogDebug_32", resourceCulture);

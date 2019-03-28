@@ -235,6 +235,10 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
+            asset.Importer.Load<object>(); // Force loading before check
+            if (asset.Importer.LoadingFailed)
+                return;
+
             m_ScreenPreviewWindow.Preview(asset);
             if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
             {

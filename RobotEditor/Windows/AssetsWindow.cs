@@ -75,12 +75,18 @@ namespace RobotEditor
             {
                 var imageListIndex = -1;
                 var node = (TreeNode<Asset>)x;
-                imageListIndex = Directory.Exists(node.value.Path) ? 0 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.RecordingD) ? 1 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.ImageD) ? 2 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.ScriptD) ? 3 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.TestD) ? 4 : imageListIndex;
-                imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 5 : imageListIndex;
+                if (!node.value.Importer.LoadingFailed)
+                {
+                    imageListIndex = Paths.IsDirectory(node.value.Path) ? 1 : imageListIndex;
+                    imageListIndex = node.value.Path.EndsWith(FileExtensions.RecordingD) ? 2 : imageListIndex;
+                    imageListIndex = node.value.Path.EndsWith(FileExtensions.ImageD) ? 3 : imageListIndex;
+                    imageListIndex = node.value.Path.EndsWith(FileExtensions.ScriptD) ? 4 : imageListIndex;
+                    imageListIndex = node.value.Path.EndsWith(FileExtensions.TestD) ? 5 : imageListIndex;
+                    imageListIndex = node.value.Path.EndsWith(FileExtensions.DllD) ? 6 : imageListIndex;
+                }
+                else
+                    imageListIndex = 0;
+
                 return imageListIndex;
             };
 
@@ -242,6 +248,13 @@ namespace RobotEditor
             if (Logger.AssertIf(asset == null, $"Asset Node is created for tree view, but its value (Asset) is null: {assetNode}. Please report a bug."))
                 return;
 
+            asset.Importer.Load<object>(); // Force loading before check
+            if (asset.Importer.LoadingFailed)
+            {
+                Logger.Logi(LogType.Error, $"This asset failed to import: {asset.Path}, probably unknown extension or corrupted file.");
+                return;
+            }
+
             if (asset.HoldsTypeOf(typeof(Recording)))
             {
                 if (!RecordingManager.LoadedRecordings.Any(s => s.Name == asset.Name))
@@ -272,6 +285,10 @@ namespace RobotEditor
             var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
             var asset = assetNode?.value;
             if (asset == null)
+                return;
+
+            asset.Importer.Load<object>(); // Force loading before check
+            if (asset.Importer.LoadingFailed)
                 return;
 
             AssetSelected?.Invoke();

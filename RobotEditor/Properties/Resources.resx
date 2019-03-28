@@ -229,6 +229,9 @@
   <data name="CSharpScript_ICO_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\icons\csharpscript_ico_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="FailedImport_ICO_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\icons\failedimport_ico_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Plugn_ICO_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\icons\plugn_ico_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

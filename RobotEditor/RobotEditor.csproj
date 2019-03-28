@@ -226,6 +226,7 @@
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />
     <Content Include="Resources\Icons\CSharpScript_ICO_16.png" />
+    <Content Include="Resources\Icons\FailedImport_ICO_16.png" />
     <Content Include="Resources\Icons\Plugn_ICO_16.png" />
     <Content Include="Resources\Icons\Recording_ICO_128.png" />
     <Content Include="Resources\Icons\Recording_ICO_16.png" />

@@ -152,12 +152,13 @@ namespace RobotEditor
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "Folder_ICO_128.png");
-            this.imageList1.Images.SetKeyName(1, "Recording_ICO_16.png");
-            this.imageList1.Images.SetKeyName(2, "Image_ICO_128.png");
-            this.imageList1.Images.SetKeyName(3, "CSharpScript_ICO_16.png");
-            this.imageList1.Images.SetKeyName(4, "Test_ICO_256.png");
-            this.imageList1.Images.SetKeyName(5, "Plugn_ICO_16.png");
+            this.imageList1.Images.SetKeyName(0, "FailedImport_ICO_16.png");
+            this.imageList1.Images.SetKeyName(1, "Folder_ICO_128.png");
+            this.imageList1.Images.SetKeyName(2, "Recording_ICO_16.png");
+            this.imageList1.Images.SetKeyName(3, "Image_ICO_128.png");
+            this.imageList1.Images.SetKeyName(4, "CSharpScript_ICO_16.png");
+            this.imageList1.Images.SetKeyName(5, "Test_ICO_256.png");
+            this.imageList1.Images.SetKeyName(6, "Plugn_ICO_16.png");
             // 
             // treeListView
             // 
