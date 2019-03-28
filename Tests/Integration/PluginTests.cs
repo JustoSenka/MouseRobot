@@ -31,6 +31,7 @@ namespace Tests.Integration
         private const string k_UserDllName = "TestClassLibrary";
         private const string k_UserDllPath = "Assets\\" + k_UserDllName + ".dll";
         private const string k_SomeScript = "Assets\\SomeScript.cs";
+        private const string k_SomeScript2 = "Assets\\SomeScript2.cs";
 
         [SetUp]
         public void Initialize()
@@ -63,6 +64,24 @@ namespace Tests.Integration
             var c = Activator.CreateInstance(type);
 
             Assert.AreEqual("Class", c.GetType().Name, "Type names did not match");
+
+            var ret = c.GetType().GetMethod("Method").Invoke(null, null);
+            Assert.AreEqual(96, ret, "Return value from method from user plugin did not match");
+        }
+
+        [Test]
+        public void UserPlugins_AreLoaded_AndAccessible_EvenWithCompilationErrors()
+        {
+            AssetManager.CreateAsset(Properties.Resources.TestClassLibrary, k_UserDllPath);
+            AssetManager.CreateAsset(Properties.Resources.SomeClassUsingUserPlugin, k_SomeScript); // adding twice to create 
+            AssetManager.CreateAsset(Properties.Resources.SomeClassUsingUserPlugin, k_SomeScript2); // compilation error
+            var res = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
+            Assert.IsFalse(res, "Compilation should have failed");
+
+            var type = ScriptLoader.IterateUserAssemblies(a => a).SelectMany(s => s.GetTypes())
+                .First(t => t.Name.Equals("Class", StringComparison.InvariantCultureIgnoreCase));
+
+            var c = Activator.CreateInstance(type);
 
             var ret = c.GetType().GetMethod("Method").Invoke(null, null);
             Assert.AreEqual(96, ret, "Return value from method from user plugin did not match");

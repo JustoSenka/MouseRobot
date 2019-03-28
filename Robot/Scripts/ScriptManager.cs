@@ -2,9 +2,7 @@
 using Robot.Settings;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -78,11 +76,14 @@ namespace Robot.Scripts
 
                         var result = await ScriptCompiler.CompileCode(scriptPaths.ToArray());
 
-                        if (result)
-                        {
-                            ScriptLoader.DestroyUserAppDomain();
-                            ScriptLoader.CreateUserAppDomain();
-                        }
+                        //if (result)  
+                        //{ 
+
+                        // I still need to load other precompiled dlls. 
+                        // CustomAssembly is not deleted so it should be fine to reload even if compilation failed
+                        ScriptLoader.DestroyUserAppDomain();
+                        ScriptLoader.CreateUserAppDomain();
+                        //}
 
                         return result;
                     }
@@ -96,7 +97,7 @@ namespace Robot.Scripts
         {
             var PluginPaths = AssetManager.Assets.Where(a => a.Importer.HoldsType() == typeof(Assembly))
                 .Select(a => a.Importer.Path).ToArray();
-                //.Select(a => Path.Combine(Environment.CurrentDirectory, a.Importer.Path)).ToArray();
+            //.Select(a => Path.Combine(Environment.CurrentDirectory, a.Importer.Path)).ToArray();
 
             if (PluginPaths != null)
                 SettingsManager.GetSettings<CompilerSettings>().CompilerReferencesFromProjectFolder = PluginPaths;
