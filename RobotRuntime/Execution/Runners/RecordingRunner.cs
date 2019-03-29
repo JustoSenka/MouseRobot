@@ -38,9 +38,11 @@ namespace RobotRuntime.Execution
                 var runner = TestData.RunnerFactory.GetFor(node.value.GetType());
                 runner.Run(node.value);
 
-                if (TestData.ShouldFailTest)
+                if (TestData.ShouldFailTest || TestData.ShouldPassTest)
                     return;
             }
+
+            TestData.ShouldPassTest = true;
         }
     }
 }

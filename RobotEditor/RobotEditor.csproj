@@ -58,8 +58,7 @@
     <StartupObject>RobotEditor.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>ColourfulGear_ICO_256.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -225,6 +224,7 @@
     <Compile Include="PropertyUtils\PropertyDependencyProvider.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageStringConverter.cs" />
     <Compile Include="PropertyUtils\AssetGUIDImageUITypeEditor.cs" />
+    <Content Include="ColourfulGear_ICO_256.ico" />
     <Content Include="Resources\Icons\CSharpScript_ICO_16.png" />
     <Content Include="Resources\Icons\FailedImport_ICO_16.png" />
     <Content Include="Resources\Icons\Plugn_ICO_16.png" />

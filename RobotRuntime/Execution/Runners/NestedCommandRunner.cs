@@ -47,11 +47,17 @@ namespace RobotRuntime.Execution
                 return;
             }
 
+            if (TestData.ShouldPassTest)
+                return;
+
             if (RunChildCommands(commandNode.Select(n => n.value).ToArray()))
             {
                 TestData.ShouldFailTest = true;
                 return;
             }
+
+            if (TestData.ShouldPassTest)
+                return;
         }
 
 
@@ -63,6 +69,9 @@ namespace RobotRuntime.Execution
         {
             if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
                 return true;
+
+            if (TestData.ShouldPassTest)
+                return false;
 
             for (int i = 0; i < commands.Length; i++)
             {
@@ -90,11 +99,14 @@ namespace RobotRuntime.Execution
 
                 if (RunChildCommand(runner, commands[i]))
                     return true;
+
+                if (TestData.ShouldPassTest)
+                    return false;
             }
 
             return false;
         }
-
+        
         /// <summary>
         /// Overriding this method allows altering parent command, giving completely different command to execute, or faking
         /// Method itself is empty.

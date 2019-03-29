@@ -2,13 +2,10 @@
 using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
-using RobotRuntime;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity;
@@ -27,9 +24,13 @@ namespace Tests.Runtime
         ICommandFactory CommandFactory;
         ITestRunner TestRunner;
         ITestStatusManager TestStatusManager;
+        IScriptLoader ScriptLoader;
         ILogger Logger;
 
-        private const string k_UserDllPath = "Assets\\SomeDll.dll";
+        private const string k_UserDllName = "LibWithCommand";
+        private const string k_UserDllPath = "Assets\\" + k_UserDllName + ".dll";
+        private const string k_RecordingPath = "Assets\\rec.mrb";
+        private const string k_SomeScript = "Assets\\SomeScript.cs";
 
         private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
 
@@ -48,22 +49,45 @@ namespace Tests.Runtime
             CommandFactory = container.Resolve<ICommandFactory>();
             TestRunner = container.Resolve<ITestRunner>();
             TestStatusManager = container.Resolve<ITestStatusManager>();
+            ScriptLoader = container.Resolve<IScriptLoader>();
             Logger = container.Resolve<ILogger>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
 
         [Test]
-        public void RunRecording_WithCommand_FromPlugin([Values(true, false)] bool useCommandLine)
+        [TestCase(true)]
+        [TestCase(false)]
+        public void RunRecording_WithCommand_FromPlugin(bool useCommandLine)
         {
             AssetManager.CreateAsset(Properties.Resources.TestClassLibraryWithRefToRobot, k_UserDllPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
+            var r = HierarchyManager.NewRecording();
+            r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 14));
+            r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 18));
+            HierarchyManager.SaveRecording(r, k_RecordingPath);
 
-            /*
-            var logs = TestFixtureUtils.RunTestsAndGetLogs(TestRunner, ".", useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
+            var logs = TestFixtureUtils.RunRecordingAndGetLogs(TestRunner, k_RecordingPath, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
+            TestFixtureUtils.AssertIfCommandLogsAreOutOfOrder(logs, 14, 18);
+        }
 
-            Assert.AreEqual(2, logs.Length, "Log length missmatch");*/
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Recordings_CanExecuteCode_FromUserPlugins(bool useCommandLine)
+        {
+            AssetManager.CreateAsset(Properties.Resources.TestClassLibrary, k_UserDllPath);
+            AssetManager.CreateAsset(Properties.Resources.CommandUsingUserPlugin, k_SomeScript);
+            var res = ScriptManager.CompileScriptsAndReloadUserDomain().Result;
+
+            var r = HierarchyManager.NewRecording();
+            r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 0));
+            r.AddCommand(TestFixtureUtils.CreateCustomLogCommand(CommandFactory, 8));
+            HierarchyManager.SaveRecording(r, k_RecordingPath);
+
+            var logs = TestFixtureUtils.RunRecordingAndGetLogs(TestRunner, k_RecordingPath, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
+            TestFixtureUtils.AssertIfCommandLogsAreOutOfOrder(logs, 96, 104); // 96 comes from user dll + number we've given the command
         }
     }
 }

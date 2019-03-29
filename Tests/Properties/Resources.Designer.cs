@@ -114,6 +114,36 @@ namespace Tests.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to using System;
+        ///using RobotRuntime;
+        ///using RobotRuntime.Tests;
+        ///
+        ///namespace CustomNamespace
+        ///{
+        ///    [Serializable]
+        ///    public class CommandLog : Command
+        ///    {
+        ///        public override string Name =&gt; &quot;CommandLog&quot;;
+        ///        public override bool CanBeNested =&gt; false;
+        ///
+        ///        public int Number;
+        ///
+        ///        public CommandLog() { }
+        ///
+        ///        public override void Run(TestData TestData)
+        ///        {
+        ///            Logger.Log(LogType.Log, &quot;CommandLog: &quot; + (Number + TestClassLibrary.Class.Method()));
+        ///        }
+        ///
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CommandUsingUserPlugin {
+            get {
+                return ResourceManager.GetString("CommandUsingUserPlugin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
         ///using System.Collections.Generic;
         ///using System.Linq;
         ///using System.Text;
@@ -125,12 +155,11 @@ namespace Tests.Properties {
         ///    // dll which is copied into a project by test. Look for &quot;PluginTests&quot;
         ///    public class SomeClassUsingUserPlugin
         ///    {
-        ///        public static int main()
+        ///        public static int Method()
         ///        {
         ///            return TestClassLibrary.Class.Method();
         ///        }
-        ///    }
-        ///} [rest of string was truncated]&quot;;.
+        ///    }        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SomeClassUsingUserPlugin {
             get {

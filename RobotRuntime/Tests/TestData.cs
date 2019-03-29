@@ -11,17 +11,19 @@ namespace RobotRuntime.Tests
         public event CommandRunningCallback CommandRunningCallback;
         public bool ShouldCancelRun;
         public bool ShouldFailTest;
+        public bool ShouldPassTest;
 
         public TestData() { }
 
         public TestData(IRunnerFactory RunnerFactory, LightRecording TestFixture, CommandRunningCallback Callback,
-            bool ShouldCancelRun, bool ShouldFailTest)
+            bool ShouldCancelRun, bool ShouldFailTest, bool ShouldPassTest)
         {
             this.RunnerFactory = RunnerFactory;
             this.TestFixture = TestFixture;
             this.CommandRunningCallback = Callback;
             this.ShouldCancelRun = ShouldCancelRun;
             this.ShouldFailTest = ShouldFailTest;
+            this.ShouldPassTest = ShouldPassTest;
         }
 
         public void InvokeCallback(Guid guid)

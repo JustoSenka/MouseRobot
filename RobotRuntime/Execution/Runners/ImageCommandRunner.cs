@@ -60,6 +60,9 @@ namespace RobotRuntime.Execution
                     TestData.ShouldFailTest = true;
                     return true;
                 }
+
+                if (TestData.ShouldPassTest)
+                    return false;
             }
 
             return false;
