@@ -1,4 +1,5 @@
-﻿using RobotRuntime;
+﻿using Robot.Recordings;
+using RobotRuntime;
 using RobotRuntime.Recordings;
 using System;
 using System.Collections;
@@ -18,27 +19,49 @@ namespace RobotEditor.Hierarchy
         public List<HierarchyNode> Children { get; private set; }
         public HierarchyNode Parent { get; set; }
 
+        // Properties used for drag and drop
+
+        private HierarchyNodeDropDetails m_DropDetails;
+        public HierarchyNodeDropDetails DropDetails
+        {
+            get { return m_DropDetails; }
+            set
+            {
+                if (value == default)
+                    return;
+
+                m_DropDetails = value;
+                if (Children == null)
+                    return;
+
+                foreach (var c in Children)
+                    c.DropDetails = value;
+            }
+        }
+
         public HierarchyNode(Command command, HierarchyNode parent)
         {
             Value = command;
             Command = command;
             Parent = parent;
             Level = Parent.Level + 1;
+            DropDetails = parent.DropDetails;
 
             Children = new List<HierarchyNode>();
         }
 
-        public HierarchyNode(object value)
+        public HierarchyNode(object value, HierarchyNodeDropDetails dropDetails)
         {
             Value = value;
             Children = new List<HierarchyNode>();
         }
 
-        public HierarchyNode(Recording recording, int overrideLevel = 0)
+        public HierarchyNode(Recording recording, HierarchyNodeDropDetails dropDetails, int overrideLevel = 0)
         {
             Value = recording;
             Recording = recording;
             Level = overrideLevel;
+            DropDetails = dropDetails;
 
             Children = new List<HierarchyNode>();
 
@@ -59,6 +82,7 @@ namespace RobotEditor.Hierarchy
         {
             node.Parent = this;
             node.Level = Level + 1;
+            node.DropDetails = DropDetails;
             Children.Add(node);
         }
 
@@ -155,5 +179,12 @@ namespace RobotEditor.Hierarchy
         {
             return Value.ToString();
         }
+    }
+
+    public class HierarchyNodeDropDetails
+    {
+        public object Owner;
+        public Action<HierarchyNode> DragAndDropAccepted;
+        public BaseHierarchyManager HierarchyManager;
     }
 }

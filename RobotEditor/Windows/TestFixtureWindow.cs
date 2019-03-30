@@ -26,6 +26,7 @@ namespace RobotEditor
         public event Action<BaseHierarchyManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
+        private HierarchyNodeDropDetails DropDetails;
         private HierarchyNode m_HighlightedNode;
 
         private TestFixture m_TestFixture;
@@ -46,8 +47,14 @@ namespace RobotEditor
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-
             treeListView.Font = Fonts.Default;
+
+            DropDetails = new HierarchyNodeDropDetails()
+            {
+                Owner = this,
+                DragAndDropAccepted = DragAndDropAcceptedCallback,
+                HierarchyManager = m_TestFixture as BaseHierarchyManager
+            };
 
             TestRunner.TestRunEnd += OnRecordingsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
@@ -98,6 +105,7 @@ namespace RobotEditor
                 UnsubscribeAllEvents(m_TestFixture);
 
             m_TestFixture = fixture;
+            DropDetails.HierarchyManager = fixture;
             SubscribeAllEvents(m_TestFixture);
 
             //AddNewCommandsToCreateMenu is magic. Uses m_TestFixture and creates lamda callbacks using it, whenever we change m_TestFixture, resubscribe this method
@@ -161,14 +169,13 @@ namespace RobotEditor
             if (m_TestFixture == null)
                 return;
 
-            m_HooksNode = new HierarchyNode("Special Recordings");
+            m_HooksNode = new HierarchyNode("Special Recordings", DropDetails);
             foreach (var s in m_TestFixture.Hooks)
-                m_HooksNode.AddHierarchyNode(new HierarchyNode(s));
+                m_HooksNode.AddHierarchyNode(new HierarchyNode(s, DropDetails));
 
-            m_TestsNode = new HierarchyNode("Tests");
+            m_TestsNode = new HierarchyNode("Tests", DropDetails);
             foreach (var s in m_TestFixture.Tests)
-                m_TestsNode.AddHierarchyNode(new HierarchyNode(s));
-
+                m_TestsNode.AddHierarchyNode(new HierarchyNode(s, DropDetails));
             m_Nodes.Add(m_HooksNode);
             m_Nodes.Add(m_TestsNode);
 
@@ -196,7 +203,8 @@ namespace RobotEditor
 
         private void OnRecordingLoaded(Recording recording)
         {
-            var node = new HierarchyNode(recording);
+            var node = new HierarchyNode(recording, DropDetails);
+
             m_TestsNode.AddHierarchyNode(node);
             RefreshTreeListViewAsync(() =>
             {
@@ -209,7 +217,7 @@ namespace RobotEditor
 
         private void OnRecordingModified(Recording recording)
         {
-            var node = new HierarchyNode(recording);
+            var node = new HierarchyNode(recording, DropDetails);
             m_Nodes.ReplaceNodeWithNewOne(node);
 
             RefreshTreeListViewAsync();
@@ -254,6 +262,8 @@ namespace RobotEditor
         private void OnCommandAddedToRecording(Recording recording, Command parentCommand, Command command)
         {
             var addedNode = HierarchyUtils.OnCommandAddedToRecording(m_Nodes, recording, parentCommand, command);
+            addedNode.DropDetails = DropDetails;
+
             var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => treeListView.Expand(addedNode.Parent) : default(Action);
 
             RefreshTreeListViewAsync(postRefreshAction);
@@ -382,7 +392,8 @@ namespace RobotEditor
                 targetNode.Recording == null && sourceNode.Command == null || // Cannot drag recordings onto commands
                 m_HooksNode.Children.Contains(sourceNode) || // Hooks recordings are special and should not be moved at all
                 m_HooksNode.Children.Contains(targetNode) && sourceNode.Recording != null || // Cannot drag any recording onto or inbetween hooks recordings
-                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item) // Cannot drag recordings onto recordings
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item || // Cannot drag recordings onto recordings
+                sourceNode.Recording != null && sourceNode.DropDetails.Owner != this) // Do not allow recordings from other windows
             {
                 e.Effect = DragDropEffects.None;
                 return;
@@ -408,40 +419,84 @@ namespace RobotEditor
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNode = e.SourceModels[0] as HierarchyNode;
 
-            if (targetNode.Recording != null && sourceNode.Recording != null)
+            // Drag source and target are in same window
+            if (sourceNode.DropDetails.Owner == this)
             {
-                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveRecordingBefore(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
-                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveRecordingAfter(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
-            }
-
-            if (targetNode.Command != null && sourceNode.Command != null)
-            {
-                var targetRecording = m_TestFixture.GetRecordingFromCommand(targetNode.Command);
-                var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
-
-                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
-                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
-
-                if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                if (targetNode.Recording != null && sourceNode.Recording != null)
                 {
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        m_TestFixture.MoveRecordingBefore(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        m_TestFixture.MoveRecordingAfter(m_TestFixture.GetRecordingIndex(sourceNode.Recording), m_TestFixture.GetRecordingIndex(targetNode.Recording));
+                }
+
+                if (targetNode.Command != null && sourceNode.Command != null)
+                {
+                    var targetRecording = m_TestFixture.GetRecordingFromCommand(targetNode.Command);
+                    var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        m_TestFixture.MoveCommandBefore(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        m_TestFixture.MoveCommandAfter(sourceNode.Command, targetNode.Command, m_TestFixture.GetRecordingIndex(sourceRecording), m_TestFixture.GetRecordingIndex(targetRecording));
+
+                    if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                    {
+                        var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+                        sourceRecording.RemoveCommand(sourceNode.Command);
+                        targetRecording.AddCommandNode(node, targetNode.Command);
+                    }
+                }
+
+                if (targetNode.Recording != null && sourceNode.Command != null)
+                {
+                    var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
+
                     var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
                     sourceRecording.RemoveCommand(sourceNode.Command);
-                    targetRecording.AddCommandNode(node, targetNode.Command);
+                    targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
                 }
             }
-
-            if (targetNode.Recording != null && sourceNode.Command != null)
+            else // Drag source come from different window
             {
-                var sourceRecording = m_TestFixture.GetRecordingFromCommand(sourceNode.Command);
+                if (sourceNode.Recording != null) // Do not allow recordings
+                    return;
 
+                var sourceRecording = sourceNode.DropDetails.HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
                 var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
-                sourceRecording.RemoveCommand(sourceNode.Command);
-                targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
+
+                if (targetNode.Command != null)
+                {
+                    sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+
+                    var targetRecording = m_TestFixture.GetRecordingFromCommand(targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        targetRecording.InsertCommandNodeBefore(node, targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        targetRecording.InsertCommandNodeAfter(node, targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                        targetRecording.AddCommandNode(node, targetNode.Command);
+
+                }
+
+                if (targetNode.Recording != null)
+                {
+                    sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+                    targetNode.Recording.AddCommandNode(node);
+                }
             }
+        }
+
+        /// <summary>
+        /// This callback is used when node is dropped in other window which knows nothing about this one
+        /// </summary>
+        private void DragAndDropAcceptedCallback(HierarchyNode node)
+        {
+            var sourceRecording = m_TestFixture.GetRecordingFromCommand(node.Command);
+            sourceRecording.RemoveCommand(node.Command);
         }
 
         #endregion

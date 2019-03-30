@@ -26,9 +26,10 @@ namespace RobotEditor
         public event Action<BaseHierarchyManager, object> OnSelectionChanged;
         private List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
 
+        private HierarchyNodeDropDetails DropDetails;
         private HierarchyNode m_HighlightedNode;
 
-        private IHierarchyManager RecordingManager;
+        private IHierarchyManager HierarchyManager;
         private ITestRunner TestRunner;
         private IAssetManager AssetManager;
         private ICommandFactory CommandFactory;
@@ -36,7 +37,7 @@ namespace RobotEditor
         public HierarchyWindow(IHierarchyManager RecordingManager, ITestRunner TestRunner, IAssetManager AssetManager,
             IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory)
         {
-            this.RecordingManager = RecordingManager;
+            this.HierarchyManager = RecordingManager;
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
@@ -45,6 +46,13 @@ namespace RobotEditor
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
             treeListView.Font = Fonts.Default;
+
+            DropDetails = new HierarchyNodeDropDetails()
+            {
+                Owner = this,
+                DragAndDropAccepted = DragAndDropAcceptedCallback,
+                HierarchyManager = HierarchyManager as BaseHierarchyManager
+            };
 
             RecordingManager.CommandAddedToRecording += OnCommandAddedToRecording;
             RecordingManager.CommandRemovedFromRecording += OnCommandRemovedFromRecording;
@@ -77,16 +85,16 @@ namespace RobotEditor
 
         private void AddNewCommandsToCreateMenu()
         {
-            if (CommandFactory == null || contextMenuStrip == null || treeListView == null || RecordingManager == null)
+            if (CommandFactory == null || contextMenuStrip == null || treeListView == null || HierarchyManager == null)
             {
                 Logger.Log(LogType.Error, "HierarchyWindow.AddNewCommandsToCreateMenu() was called to early. Creating commands will not be possible. Please report a bug.",
                     "CommandFactory " + (CommandFactory == null) + ", contextMenuStrip " + (contextMenuStrip == null) +
-                    ", treeListView " + (treeListView == null) + ", TestFixture " + (RecordingManager == null));
+                    ", treeListView " + (treeListView == null) + ", TestFixture " + (HierarchyManager == null));
                 return;
             }
 
             HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8,
-                treeListView, RecordingManager as BaseHierarchyManager);
+                treeListView, HierarchyManager as BaseHierarchyManager);
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
@@ -97,9 +105,9 @@ namespace RobotEditor
 
             if (node.Recording != null)
             {
-                if (node.Recording == RecordingManager.ActiveRecording && node.Recording.IsDirty)
+                if (node.Recording == HierarchyManager.ActiveRecording && node.Recording.IsDirty)
                     e.SubItem.Font = Fonts.ActiveAndDirtyRecording;//.AddFont(Fonts.ActiveRecording);
-                else if (node.Recording == RecordingManager.ActiveRecording)
+                else if (node.Recording == HierarchyManager.ActiveRecording)
                     e.SubItem.Font = Fonts.ActiveRecording;
                 else if (node.Recording.IsDirty)
                     e.SubItem.Font = Fonts.DirtyRecording;//.AddFont(Fonts.DirtyRecording);
@@ -118,8 +126,8 @@ namespace RobotEditor
         {
             m_Nodes.Clear();
 
-            foreach (var s in RecordingManager.LoadedRecordings)
-                m_Nodes.Add(new HierarchyNode(s));
+            foreach (var s in HierarchyManager.LoadedRecordings)
+                m_Nodes.Add(new HierarchyNode(s, DropDetails));
 
             RefreshTreeListViewAsync(() => treeListView.ExpandAll());
         }
@@ -134,7 +142,7 @@ namespace RobotEditor
                     treeListView.Items[i].ImageIndex = 0;
 
                 treeListView.Refresh();
-                
+
                 callbackAfterRefresh?.Invoke();
             }));
         }
@@ -150,7 +158,7 @@ namespace RobotEditor
                 item.Click += (sender, events) =>
                 {
                     var command = CommandFactory.Create(name);
-                    RecordingManager.ActiveRecording.AddCommand(command);
+                    HierarchyManager.ActiveRecording.AddCommand(command);
                 };
                 createMenuItem.DropDownItems.Add(item);
             }
@@ -160,7 +168,7 @@ namespace RobotEditor
 
         private void OnRecordingLoaded(Recording recording)
         {
-            var node = new HierarchyNode(recording);
+            var node = new HierarchyNode(recording, DropDetails);
             m_Nodes.Add(node);
 
             RefreshTreeListViewAsync(() =>
@@ -174,8 +182,8 @@ namespace RobotEditor
 
         private void OnRecordingModified(Recording recording)
         {
-            var node = new HierarchyNode(recording);
-            var index = recording.GetIndex(RecordingManager);
+            var node = new HierarchyNode(recording, DropDetails);
+            var index = recording.GetIndex(HierarchyManager);
             m_Nodes[index] = node;
             RefreshTreeListViewAsync();
 
@@ -191,7 +199,7 @@ namespace RobotEditor
             RefreshTreeListViewAsync(() =>
             {
                 if (treeListView.SelectedObject != oldSelectedObject)
-                    OnSelectionChanged?.Invoke((BaseHierarchyManager)RecordingManager, null);
+                    OnSelectionChanged?.Invoke((BaseHierarchyManager)HierarchyManager, null);
             });
 
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
@@ -199,10 +207,10 @@ namespace RobotEditor
 
         private void OnRecordingPositioningChanged()
         {
-            foreach (var recording in RecordingManager.LoadedRecordings)
+            foreach (var recording in HierarchyManager.LoadedRecordings)
             {
                 var index = m_Nodes.FindIndex(n => n.Recording == recording);
-                m_Nodes.MoveBefore(index, recording.GetIndex(RecordingManager));
+                m_Nodes.MoveBefore(index, recording.GetIndex(HierarchyManager));
             }
 
             RefreshTreeListViewAsync();
@@ -212,6 +220,8 @@ namespace RobotEditor
         private void OnCommandAddedToRecording(Recording recording, Command parentCommand, Command command)
         {
             var addedNode = HierarchyUtils.OnCommandAddedToRecording(m_Nodes, recording, parentCommand, command);
+            addedNode.DropDetails = DropDetails;
+
             var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => treeListView.Expand(addedNode.Parent) : default(Action);
 
             RefreshTreeListViewAsync(postRefreshAction);
@@ -245,13 +255,13 @@ namespace RobotEditor
             if (selectedNode == null || selectedNode.Recording == null)
                 return;
 
-            RecordingManager.ActiveRecording = selectedNode.Recording;
+            HierarchyManager.ActiveRecording = selectedNode.Recording;
             RefreshTreeListViewAsync();
         }
 
         public void newRecordingToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            RecordingManager.NewRecording();
+            HierarchyManager.NewRecording();
             RefreshTreeListViewAsync();
 
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
@@ -274,8 +284,8 @@ namespace RobotEditor
 
             if (selectedNode.Recording != null)
             {
-                RecordingManager.NewRecording(selectedNode.Recording);
-                RecordingManager.MoveRecordingAfter(RecordingManager.LoadedRecordings.Count - 1, selectedNode.Recording.GetIndex(RecordingManager));
+                HierarchyManager.NewRecording(selectedNode.Recording);
+                HierarchyManager.MoveRecordingAfter(HierarchyManager.LoadedRecordings.Count - 1, selectedNode.Recording.GetIndex(HierarchyManager));
             }
             else if (selectedNode.Command != null)
             {
@@ -301,9 +311,9 @@ namespace RobotEditor
                 return;
 
             if (selectedNode.Recording != null)
-                RecordingManager.RemoveRecording(selectedNode.Recording);
+                HierarchyManager.RemoveRecording(selectedNode.Recording);
             else if (selectedNode.Command != null)
-                RecordingManager.GetRecordingFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+                HierarchyManager.GetRecordingFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
 
             RefreshTreeListViewAsync();
 
@@ -314,13 +324,13 @@ namespace RobotEditor
         #region Menu Items (save recordings from MainForm)
         public void SaveAllRecordings()
         {
-            foreach (var recording in RecordingManager)
+            foreach (var recording in HierarchyManager)
             {
                 if (!recording.IsDirty)
                     continue;
 
                 if (recording.Path != "")
-                    RecordingManager.SaveRecording(recording, recording.Path);
+                    HierarchyManager.SaveRecording(recording, recording.Path);
                 else
                     SaveSelectedRecordingWithDialog(recording, updateUI: false);
             }
@@ -337,7 +347,7 @@ namespace RobotEditor
             saveDialog.FileName = recording.Name + FileExtensions.RecordingD;
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
-                RecordingManager.SaveRecording(recording, saveDialog.FileName);
+                HierarchyManager.SaveRecording(recording, saveDialog.FileName);
                 if (updateUI)
                     RefreshTreeListViewAsync();
             }
@@ -355,7 +365,8 @@ namespace RobotEditor
 
             if (targetNode == null || sourceNode == null ||
                 targetNode.Recording == null && sourceNode.Command == null ||
-                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item)
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item ||
+                sourceNode.Recording != null && sourceNode.DropDetails.Owner != this) // Do not let to drag recordings from other windows
             {
                 e.Effect = DragDropEffects.None;
                 return;
@@ -380,40 +391,83 @@ namespace RobotEditor
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNode = e.SourceModels[0] as HierarchyNode;
 
-            if (targetNode.Recording != null && sourceNode.Recording != null)
+            // Drag source and target are in same window
+            if (sourceNode.DropDetails.Owner == this)
             {
-                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    RecordingManager.MoveRecordingBefore(sourceNode.Recording.GetIndex(RecordingManager), targetNode.Recording.GetIndex(RecordingManager));
-                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    RecordingManager.MoveRecordingAfter(sourceNode.Recording.GetIndex(RecordingManager), targetNode.Recording.GetIndex(RecordingManager));
-            }
-
-            if (targetNode.Command != null && sourceNode.Command != null)
-            {
-                var targetRecording = RecordingManager.GetRecordingFromCommand(targetNode.Command);
-                var sourceRecording = RecordingManager.GetRecordingFromCommand(sourceNode.Command);
-
-                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    RecordingManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceRecording.GetIndex(RecordingManager), targetRecording.GetIndex(RecordingManager));
-                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    RecordingManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceRecording.GetIndex(RecordingManager), targetRecording.GetIndex(RecordingManager));
-
-                if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                if (targetNode.Recording != null && sourceNode.Recording != null)
                 {
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        HierarchyManager.MoveRecordingBefore(sourceNode.Recording.GetIndex(HierarchyManager), targetNode.Recording.GetIndex(HierarchyManager));
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        HierarchyManager.MoveRecordingAfter(sourceNode.Recording.GetIndex(HierarchyManager), targetNode.Recording.GetIndex(HierarchyManager));
+                }
+
+                if (targetNode.Command != null && sourceNode.Command != null)
+                {
+                    var targetRecording = HierarchyManager.GetRecordingFromCommand(targetNode.Command);
+                    var sourceRecording = HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        HierarchyManager.MoveCommandBefore(sourceNode.Command, targetNode.Command, sourceRecording.GetIndex(HierarchyManager), targetRecording.GetIndex(HierarchyManager));
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        HierarchyManager.MoveCommandAfter(sourceNode.Command, targetNode.Command, sourceRecording.GetIndex(HierarchyManager), targetRecording.GetIndex(HierarchyManager));
+
+                    if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                    {
+                        var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+                        sourceRecording.RemoveCommand(sourceNode.Command);
+                        targetRecording.AddCommandNode(node, targetNode.Command);
+                    }
+                }
+
+                if (targetNode.Recording != null && sourceNode.Command != null)
+                {
+                    var sourceRecording = HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
+
                     var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
                     sourceRecording.RemoveCommand(sourceNode.Command);
-                    targetRecording.AddCommandNode(node, targetNode.Command);
+                    targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
                 }
             }
-
-            if (targetNode.Recording != null && sourceNode.Command != null)
+            else // Drag source come from different window
             {
-                var sourceRecording = RecordingManager.GetRecordingFromCommand(sourceNode.Command);
+                if (sourceNode.Recording != null) // Do not allow recordings
+                    return;
 
+                var sourceRecording = sourceNode.DropDetails.HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
                 var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
-                sourceRecording.RemoveCommand(sourceNode.Command);
-                targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
+
+                if (targetNode.Command != null)
+                {
+                    sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+                    var targetRecording = HierarchyManager.GetRecordingFromCommand(targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                        targetRecording.InsertCommandNodeBefore(node, targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                        targetRecording.InsertCommandNodeAfter(node, targetNode.Command);
+
+                    if (e.DropTargetLocation == DropTargetLocation.Item && targetNode.Command.CanBeNested)
+                        targetRecording.AddCommandNode(node, targetNode.Command);
+
+                }
+
+                if (targetNode.Recording != null)
+                {
+                    sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+                    targetNode.Recording.AddCommandNode(node);
+                }
             }
+        }
+
+        /// <summary>
+        /// This callback is used when node is dropped in other window which knows nothing about this one
+        /// </summary>
+        private void DragAndDropAcceptedCallback(HierarchyNode node)
+        {
+            var sourceRecording = HierarchyManager.GetRecordingFromCommand(node.Command);
+            sourceRecording.RemoveCommand(node.Command);
         }
 
         #endregion
@@ -422,7 +476,7 @@ namespace RobotEditor
 
         private void OnCommandRunning(Guid guid)
         {
-            var recording = RecordingManager.GetRecordingFromCommandGuid(guid);
+            var recording = HierarchyManager.GetRecordingFromCommandGuid(guid);
             if (recording == null)
                 return;
 
@@ -472,11 +526,11 @@ namespace RobotEditor
         {
             if (!(treeListView.SelectedObject is HierarchyNode node))
             {
-                OnSelectionChanged?.Invoke((BaseHierarchyManager)RecordingManager, null);
+                OnSelectionChanged?.Invoke((BaseHierarchyManager)HierarchyManager, null);
             }
             else
             {
-                OnSelectionChanged?.Invoke((BaseHierarchyManager)RecordingManager, node.Value);
+                OnSelectionChanged?.Invoke((BaseHierarchyManager)HierarchyManager, node.Value);
             }
         }
 
@@ -496,13 +550,13 @@ namespace RobotEditor
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].Recording == RecordingManager.LoadedRecordings[i],
+                Debug.Assert(m_Nodes[i].Recording == HierarchyManager.LoadedRecordings[i],
                     string.Format("Hierarchy recording missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
 
                 // Will not work in nested scenarios
                 for (int j = 0; j < m_Nodes[i].Recording.Commands.Count(); j++)
                 {
-                    Debug.Assert(m_Nodes[i].Children[j].Command == RecordingManager.LoadedRecordings[i].Commands.GetChild(j).value,
+                    Debug.Assert(m_Nodes[i].Children[j].Command == HierarchyManager.LoadedRecordings[i].Commands.GetChild(j).value,
                         string.Format("Hierarchy command missmatch: {0}:{1}, {2}:{3}",
                         i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].Recording.Commands.GetChild(j).value.ToString()));
                 }
