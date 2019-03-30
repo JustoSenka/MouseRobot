@@ -92,6 +92,8 @@ namespace Robot.Tests
             // Update test fixtures with modified values
             foreach (var asset in fixtureAssets)
             {
+                if (asset.Importer.LoadingFailed)
+
                 // Ignore non-modified assets
                 if (!firstReload && !m_ModifiedFilesSinceLastUpdate.Contains(asset.Path))
                     continue;

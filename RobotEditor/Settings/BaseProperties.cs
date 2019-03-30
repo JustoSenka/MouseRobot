@@ -11,6 +11,12 @@ namespace RobotEditor.Settings
         public virtual string Title { get { return "Properties"; } }
 
         [Browsable(false)]
+        public virtual string HelpTextTitle { get; }
+
+        [Browsable(false)]
+        public virtual string HelpTextContent { get; }
+
+        [Browsable(false)]
         [NonSerialized]
         public BaseHierarchyManager BaseHierarchyManager;
 

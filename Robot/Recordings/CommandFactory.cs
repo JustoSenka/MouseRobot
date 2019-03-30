@@ -40,7 +40,10 @@ namespace Robot.Recordings
 
         private void CollectUserCommands()
         {
-            var dummyCommands = TypeCollector.AllTypes.TryResolveTypes<Command>(null, Logger).ToArray();
+            var dummyCommands = TypeCollector.AllTypes
+                .Where(t => t != typeof(CommandUnknown))
+                .TryResolveTypes<Command>(null, Logger).ToArray();
+
             m_CommandNames = dummyCommands.Select(c => c.Name).ToArray();
 
             m_CommandTypes = new Dictionary<string, Type>();

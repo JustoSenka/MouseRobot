@@ -5,7 +5,9 @@ using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotRuntime;
 using RobotRuntime.Recordings;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -29,11 +31,21 @@ namespace RobotEditor.Utils
                 imageListIndex = node.Command != null ? 1 : imageListIndex;
                 return imageListIndex;
             };
+            
+            nameColumn.RendererDelegate += (EventArgs e, Graphics g, Rectangle r, object rowObject) =>
+            {
+                var h = rowObject as HierarchyNode;
+                g.DrawLine(new Pen(Color.Black, 1), new Point(r.Left, r.Top), new Point(r.Right, r.Top));
+                return false;
+            };
 
+            treeListView.OwnerDraw = false;
             treeListView.UseCellFormatEvents = true;
 
             treeListView.IsSimpleDragSource = true;
             treeListView.IsSimpleDropSink = true;
+
+            treeListView.TreeColumnRenderer.IsShowLines = false;
 
             nameColumn.Width = treeListView.Width;
             treeListView.Columns.Add(nameColumn);

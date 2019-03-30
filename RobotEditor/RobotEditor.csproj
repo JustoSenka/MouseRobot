@@ -208,6 +208,7 @@
     <Compile Include="Editor\DragObject.cs" />
     <Compile Include="Editor\ProjectSelectionDialog.cs" />
     <Compile Include="Hierarchy\TestNode.cs" />
+    <Compile Include="Inspector\UnknownCommandProperties.cs" />
     <Compile Include="Inspector\RecordingProperties.cs" />
     <Compile Include="Inspector\DefaultCommandProperties.cs" />
     <Compile Include="Inspector\NativeCommandProperties.cs" />

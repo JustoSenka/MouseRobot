@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobotRuntime.Commands;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -26,10 +27,10 @@ namespace RobotRuntime.IO
         public static Command Deserialize(TreeNode<YamlObject> tree)
         {
             //var amIDesiarializingCommandType = tree.value.value == "";
-            
+
             var amIDesiarializingCommandType = tree.value.value == "" && // Command does not have right side value
                 tree.Count() > 0; // Has children (at least one, guid)
-            
+
             if (amIDesiarializingCommandType)
             {
                 // TODO: These two lines take a lot of time, and they will be called a lot of times!!!
@@ -37,15 +38,21 @@ namespace RobotRuntime.IO
                 var allCommandTypes = AppDomain.CurrentDomain.GetAllAssemblies().GetAllTypesWhichImplementInterface(typeof(Command));
 #pragma warning restore CS0618
 
+                Command command;
+
                 var commandType = allCommandTypes.FirstOrDefault(type => type.Name.Equals(tree.value.property));
                 if (commandType == null)
                 {
                     Logger.Log(LogType.Error, $"Cannot deserialize command: {tree.value.property}, unknown type, skipping this command.");
-                    return null;
-                }
 
-                var command = (Command)Activator.CreateInstance(commandType);
-                YamlSerializer.DeserializeSimpleProperties(command, tree);
+                    var commandText = string.Join(Environment.NewLine, tree.Select(t => t.value.ToString()).Prepend(tree.value.ToString()));
+                    command = new CommandUnknown(commandText);
+                }
+                else
+                {
+                    command = (Command)Activator.CreateInstance(commandType);
+                    YamlSerializer.DeserializeSimpleProperties(command, tree);
+                }
 
                 return command;
             }

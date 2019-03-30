@@ -8,6 +8,7 @@ using RobotEditor.Hierarchy;
 using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
@@ -150,15 +151,18 @@ namespace RobotEditor
             if (node.Recording != null)
             {
                 if (node.Recording.IsDirty)
-                    e.SubItem.Font = Fonts.DirtyRecording;//.AddFont(Fonts.DirtyRecording);
+                    e.SubItem.Font = Fonts.DirtyRecordingBold;
                 else
-                    e.SubItem.Font = Fonts.Default;
+                    e.SubItem.Font = Fonts.DefaultBold;
             }
 
             if (node.Command != null)
             {
                 if (node == m_HighlightedNode)
                     e.SubItem.BackColor = SystemColors.Highlight;
+
+                if (node.Command.GetType() == typeof(CommandUnknown))
+                    e.SubItem.ForeColor = StandardColors.Red;
             }
         }
 

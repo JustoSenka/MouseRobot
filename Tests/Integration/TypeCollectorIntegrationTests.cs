@@ -4,6 +4,7 @@ using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Settings;
 using System.Linq;
 using Unity;
@@ -42,12 +43,13 @@ namespace Tests.Integration
         {
             var CommandFactory = Container.Resolve<ICommandFactory>();
             var collector = Container.Resolve<ITypeCollector<Command>>();
-            Assert.AreEqual(collector.AllTypes.Count(), CommandFactory.CommandNames.Count(), "Object count should be the same before compilation");
+
+            Assert.AreEqual(collector.AllTypes.Count(t => t != typeof(CommandUnknown)), CommandFactory.CommandNames.Count(), "Object count should be the same before compilation");
 
             TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
-            Assert.AreEqual(collector.AllTypes.Count(), CommandFactory.CommandNames.Count(), "Object count should be the same after compilation");
+            Assert.AreEqual(collector.AllTypes.Count(t => t != typeof(CommandUnknown)), CommandFactory.CommandNames.Count(), "Object count should be the same after compilation");
         }
 
         [Test]

@@ -34,6 +34,7 @@ namespace RobotEditor.Inspector
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue("Move")]
         [DisplayName("Command Type")]
+        [Description("Something")]
         [TypeConverter(typeof(CommandNameStringConverter))]
         public string CommandType
         {

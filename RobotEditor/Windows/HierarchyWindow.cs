@@ -9,6 +9,7 @@ using RobotEditor.Hierarchy;
 using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Utils;
 using System;
@@ -119,6 +120,9 @@ namespace RobotEditor
             {
                 if (node == m_HighlightedNode)
                     e.SubItem.BackColor = SystemColors.Highlight;
+
+                if (node.Command.GetType() == typeof(CommandUnknown))
+                    e.SubItem.ForeColor = StandardColors.Red;
             }
         }
 

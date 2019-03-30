@@ -9,6 +9,8 @@ using RobotRuntime.Execution;
 using RobotRuntime.Recordings;
 using System;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Unity;
 using WeifenLuo.WinFormsUI.Docking;
@@ -116,6 +118,12 @@ namespace RobotEditor.Windows
             propertyGrid.SelectedObject = isDesignerDefault ?
                 dt.FromComponent(command) :
                 dt.FromComponent(m_CurrentObject);
+
+            // Set help text. Mostly used by Unknown Commands
+            if (!m_CurrentObject.HelpTextTitle.IsEmpty())
+                SetHelpText(m_CurrentObject.HelpTextTitle, m_CurrentObject.HelpTextContent);
+            else
+                propertyGrid.HelpVisible = false;
         }
 
         private Type GetDesignerTypeForCommand(Type commandType)
@@ -134,6 +142,46 @@ namespace RobotEditor.Windows
             }
 
             return type;
+        }
+
+        private Control docComment = null;
+        private void SetHelpText(string title, string helpText)
+        {
+            FindAndCacheDocCommentControl();
+
+            ResizeDescriptionArea(propertyGrid, Regex.Matches(helpText, Environment.NewLine).Count);
+            propertyGrid.HelpVisible = true;
+
+            // Might not yet be initialized if ran on startup, just ignore
+            if (docComment == null)
+                return;
+
+            var aFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+            var aInfo = docComment.GetType().GetMethod("SetComment", aFlags);
+            aInfo?.Invoke(docComment, new object[] { title, helpText });
+        }
+
+        private void ResizeDescriptionArea(PropertyGrid grid, int nNumLines)
+        {
+            FindAndCacheDocCommentControl();
+            if (docComment == null)
+                return;
+
+            docComment.SetPropertyIfExist("Lines", nNumLines + 3);
+            docComment.SetFieldIfExist("userSized", true);
+        }
+
+        private void FindAndCacheDocCommentControl()
+        {
+            if (docComment == null)
+            {
+                var controls = propertyGrid.GetPropertyIfExist("Controls") as Control.ControlCollection;
+                foreach (Control control in controls)
+                {
+                    if (control.GetType().Name == "DocComment")
+                        docComment = control;
+                }
+            }
         }
     }
 }

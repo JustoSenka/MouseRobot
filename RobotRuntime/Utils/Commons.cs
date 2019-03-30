@@ -38,6 +38,9 @@ namespace RobotRuntime
     {
         public static Font Default = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Regular);
         public static Font DirtyRecording = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Italic);
+        public static Font DefaultBold = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Bold);
+        public static Font DirtyRecordingBold = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Italic | FontStyle.Bold);
+
         public static Font ActiveRecording = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Bold);
 
         public static Font ActiveAndDirtyRecording = DirtyRecording.AddFont(ActiveRecording);

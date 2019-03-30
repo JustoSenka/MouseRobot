@@ -196,6 +196,7 @@
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Assets\LightRecordingImporter.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandUnknown.cs" />
     <Compile Include="Commands\CommandPass.cs" />
     <Compile Include="Commands\CommandFail.cs" />
     <Compile Include="Commands\CommandDown.cs" />
