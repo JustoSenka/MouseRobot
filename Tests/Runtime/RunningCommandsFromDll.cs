@@ -1,13 +1,8 @@
 ﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
-using RobotEditor.Abstractions;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Tests;
-using RobotRuntime.Utils;
-using System;
-using System.IO;
-using System.Linq;
 using Unity;
 
 namespace Tests.Runtime
@@ -19,20 +14,15 @@ namespace Tests.Runtime
 
         IAssetManager AssetManager;
         IHierarchyManager HierarchyManager;
-        IScriptTemplates ScriptTemplates;
         IScriptManager ScriptManager;
         ICommandFactory CommandFactory;
         ITestRunner TestRunner;
         ITestStatusManager TestStatusManager;
-        IScriptLoader ScriptLoader;
-        ILogger Logger;
 
         private const string k_UserDllName = "LibWithCommand";
         private const string k_UserDllPath = "Assets\\" + k_UserDllName + ".dll";
         private const string k_RecordingPath = "Assets\\rec.mrb";
         private const string k_SomeScript = "Assets\\SomeScript.cs";
-
-        private string ExecutablePath => Path.Combine(Paths.ApplicationInstallPath, "RobotRuntime.exe");
 
         [SetUp]
         public void Initialize()
@@ -45,12 +35,9 @@ namespace Tests.Runtime
             AssetManager = container.Resolve<IAssetManager>();
             HierarchyManager = container.Resolve<IHierarchyManager>();
             ScriptManager = container.Resolve<IScriptManager>();
-            ScriptTemplates = container.Resolve<IScriptTemplates>();
             CommandFactory = container.Resolve<ICommandFactory>();
             TestRunner = container.Resolve<ITestRunner>();
             TestStatusManager = container.Resolve<ITestStatusManager>();
-            ScriptLoader = container.Resolve<IScriptLoader>();
-            Logger = container.Resolve<ILogger>();
 
             ProjectManager.InitProject(TempProjectPath);
         }
