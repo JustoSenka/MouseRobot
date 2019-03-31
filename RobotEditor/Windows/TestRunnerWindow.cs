@@ -125,16 +125,21 @@ namespace RobotEditor
             }));
         }
 
-        private void RefreshTreeListView(bool performExpandAll = false)
+        private void RefreshTreeListView(bool performExpandAll = false, Action actionAfterRefresh = null)
         {
-            treeListView.Roots = m_Nodes;
-
-            if (treeListView.IsCreatedAndFuctional())
+           treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
-                treeListView.Refresh();
-                if (performExpandAll)
-                    treeListView.ExpandAll();
-            }
+                treeListView.Roots = m_Nodes;
+
+                if (treeListView.IsCreatedAndFuctional())
+                {
+                    treeListView.Refresh();
+                    if (performExpandAll)
+                        treeListView.ExpandAll();
+
+                    actionAfterRefresh?.Invoke();
+                }
+            }));
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -175,9 +180,10 @@ namespace RobotEditor
         {
             var fixtureNode = new TestNode(fixture);
             m_Nodes.Insert(position, fixtureNode);
-            RefreshTreeListView();
-            treeListView.Expand(fixtureNode.Parent);
 
+            RefreshTreeListView(actionAfterRefresh: 
+                () => treeListView.Expand(fixtureNode));
+            
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 

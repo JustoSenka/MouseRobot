@@ -25,6 +25,8 @@ namespace Robot.Tests
         public event Action<TestFixture, int> TestFixtureRemoved;
         public event Action<TestFixture, int> TestFixtureModified;
 
+        private bool m_FirstScriptRecompilationHappened = false;
+
         private readonly IUnityContainer Container;
         private readonly ITestStatusManager TestStatusManager;
         private readonly IAssetManager AssetManager;
@@ -56,14 +58,20 @@ namespace Robot.Tests
 
         private void OnNewTypesAppeared()
         {
-            // TODO: Actually calculate if new types appeared, maybe there is no need to reload all fixtures
-            var a = TypeCollector.UserTypes; // Leaving it here so no warning appears
-            OnAssetRefreshFinished(null);
+            if (!m_FirstScriptRecompilationHappened)
+            {
+                m_FirstScriptRecompilationHappened = true;
+
+                ReloadTestFixtures(null, true);
+                TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
+            }
         }
         private void OnAssetRefreshFinished(IList<string> modifiedAssets)
         {
             var firstReload = m_TestFixtures.Count == 0;
-            if (modifiedAssets == null || (modifiedAssets.Count == 0 && !firstReload))
+
+            // Do not load if no assets were modified or if plugins have never been loaded (startup)
+            if (modifiedAssets == null || !m_FirstScriptRecompilationHappened || (modifiedAssets.Count == 0 && !firstReload))
                 return;
 
             ReloadTestFixtures(modifiedAssets, firstReload);

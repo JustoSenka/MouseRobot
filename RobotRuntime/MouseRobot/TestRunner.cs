@@ -102,7 +102,12 @@ namespace RobotRuntime
 
             InitializeNewRun();
 
-            return Task.Run(() =>
+            return StartTestsInternal(testFilter);
+        }
+
+        private async Task StartTestsInternal(string testFilter)
+        {
+            await Task.Run(() =>
             {
                 var fixtureImporters = RuntimeAssetManager.AssetImporters.Where(importer => importer.HoldsType() == typeof(LightTestFixture));
                 var fixtures = fixtureImporters.Select(i => i.Load<LightTestFixture>()).Where(value => value != null); // If test fixuture failed to import, it might be null. Ignore them
@@ -121,7 +126,7 @@ namespace RobotRuntime
                     FixtureIsBeingRun?.Invoke(fixture);
 
                     RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.OneTimeSetup);
-                    if (TestData.ShouldCancelRun) return;
+                    if (FireCallbacksAndCancelRunIfNeeded()) return;
                     CheckIfTestFailedAndFireCallbacks(fixture, fixture.OneTimeSetup);
 
                     foreach (var test in fixture.Tests)
@@ -134,18 +139,18 @@ namespace RobotRuntime
 
                         // Setup
                         RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.Setup);
-                        if (TestData.ShouldCancelRun) return;
+                        if (FireCallbacksAndCancelRunIfNeeded()) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, fixture.Setup);
 
                         // Test 
                         RunnerFactory.PassDependencies(TestData);
                         cachedRecordingRunner.Run(test);
-                        if (TestData.ShouldCancelRun) return;
+                        if (FireCallbacksAndCancelRunIfNeeded()) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, test);
 
                         // Teardown
                         RunRecordingIfNotEmpty(cachedRecordingRunner, fixture.TearDown);
-                        if (TestData.ShouldCancelRun) return;
+                        if (FireCallbacksAndCancelRunIfNeeded()) return;
                         CheckIfTestFailedAndFireCallbacks(fixture, fixture.TearDown);
                     }
 
@@ -155,6 +160,14 @@ namespace RobotRuntime
 
                 TestRunEnd?.Invoke();
             });
+        }
+
+        private bool FireCallbacksAndCancelRunIfNeeded()
+        {
+            if (TestData.ShouldCancelRun)
+                TestRunEnd?.Invoke();
+
+            return TestData.ShouldCancelRun;
         }
 
         private void RunRecordingIfNotEmpty(IRunner recordingRunner, LightRecording recording)
