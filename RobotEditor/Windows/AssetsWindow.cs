@@ -262,16 +262,7 @@ namespace RobotEditor
             }
             else if (asset.HoldsTypeOf(typeof(LightTestFixture)))
             {
-                if (!TestFixtureManager.Contains(asset.Name))
-                {
-                    var lightTestFixture = asset.Importer.Load<LightTestFixture>();
-                    if (lightTestFixture != null)
-                    {
-                        lightTestFixture.Name = asset.Name;
-                        var fixture = TestFixtureManager.NewTestFixture(lightTestFixture);
-                        fixture.Path = asset.Path;
-                    }
-                }
+                LoadTestFixtureFromAsset(asset);
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
             else if (asset.Importer.GetType() == typeof(ScriptImporter))
@@ -420,6 +411,42 @@ namespace RobotEditor
                 return;
 
             RecordingManager.LoadRecording(asset.Path);
+        }
+
+        private void reloadFixtureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
+            var asset = assetNode?.value;
+            LoadTestFixtureFromAsset(asset, true);
+        }
+
+        private void LoadTestFixtureFromAsset(Asset asset, bool forceReloadIfAlreadyLoaded = false)
+        {
+            if (asset == null || !asset.HoldsTypeOf(typeof(LightTestFixture)))
+                return;
+
+            LightTestFixture fix = null;
+            if (!TestFixtureManager.Contains(asset.Name))
+            {
+                fix = asset.Importer.Load<LightTestFixture>();
+                if (fix != null)
+                {
+                    fix.Name = asset.Name;
+                    var fixture = TestFixtureManager.NewTestFixture(fix);
+                    fixture.Path = asset.Path;
+                }
+            }
+
+            else if (forceReloadIfAlreadyLoaded)
+            {
+                fix = asset.Importer.ReloadAsset<LightTestFixture>();
+                if (fix != null)
+                {
+                    fix.Name = asset.Name;
+                    var fixture = TestFixtureManager.Fixtures.First(f => f.Name == asset.Name);
+                    fixture.ApplyLightFixtureValues(fix);
+                }
+            }
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)

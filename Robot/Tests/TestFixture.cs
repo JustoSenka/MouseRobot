@@ -179,7 +179,7 @@ namespace RobotRuntime.Tests
 
         public TestFixture ApplyLightFixtureValues(LightTestFixture t)
         {
-            m_LoadedRecordings.Clear();
+            RemoveAllRecordings();
 
             Name = t.Name;
             Guid = t.Guid == default(Guid) ? Guid : t.Guid;

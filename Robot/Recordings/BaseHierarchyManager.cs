@@ -139,6 +139,16 @@ namespace Robot.Recordings
             RecordingRemoved?.Invoke(position);
         }
 
+        /// <summary>
+        /// This method should be used to unload everything and call proper callbacks.
+        /// LoadedRecordings.Clear should not be used since it will not update UI
+        /// </summary>
+        public virtual void RemoveAllRecordings()
+        {
+            for (int i = m_LoadedRecordings.Count - 1; i >= 0; --i)
+                RemoveRecording(i);
+        }
+
         public virtual Recording AddRecording(Recording recording, bool removeRecordingWithSamePath = false)
         {
             if (recording == null)

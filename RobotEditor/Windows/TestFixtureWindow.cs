@@ -68,6 +68,8 @@ namespace RobotEditor
             contextMenuStrip.HandleCreated += AddNewCommandsToCreateMenu;
             CommandFactory.NewUserCommands += AddNewCommandsToCreateMenu;
 
+            TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
+
             UpdateHierarchy();
         }
 
@@ -209,7 +211,9 @@ namespace RobotEditor
         {
             var node = new HierarchyNode(recording, DropDetails);
 
-            m_TestsNode.AddHierarchyNode(node);
+            var nodeToAddRec = LightTestFixture.IsSpecialRecording(recording) ? m_HooksNode : m_TestsNode;
+            nodeToAddRec.AddHierarchyNode(node);
+
             RefreshTreeListViewAsync(() =>
             {
                 treeListView.SelectedObject = node;
@@ -565,6 +569,12 @@ namespace RobotEditor
             {
                 OnSelectionChanged?.Invoke(m_TestFixture, node.Value);
             }
+        }
+
+        private void OnFixtureRemoved(TestFixture closedfixture)
+        {
+            if (m_TestFixture == closedfixture)
+                this.Close();
         }
 
         private void TestFixtureWindow_FormClosing(object sender, FormClosingEventArgs e)

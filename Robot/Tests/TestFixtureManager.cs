@@ -55,14 +55,22 @@ namespace Robot.Tests
 
         public void Add(TestFixture fixture)
         {
-            Fixtures.Add(fixture);
-            FixtureAdded?.Invoke(fixture);
+            if (!Fixtures.Contains(fixture))
+            {
+                Fixtures.Add(fixture);
+                FixtureAdded?.Invoke(fixture);
+            }
+            else
+                Logger.Logi(LogType.Warning, "Cannot open test fixture because it is already open: " + fixture.Name);
         }
 
         public void Remove(TestFixture fixture)
         {
-            Fixtures.Remove(fixture);
-            FixtureRemoved?.Invoke(fixture);
+            if (Fixtures.Contains(fixture))
+            {
+                Fixtures.Remove(fixture);
+                FixtureRemoved?.Invoke(fixture);
+            }
         }
 
         public void SaveTestFixture(TestFixture fixture, string path)

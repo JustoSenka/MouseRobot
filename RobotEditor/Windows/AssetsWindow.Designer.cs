@@ -51,6 +51,7 @@ namespace RobotEditor
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.reloadFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -60,6 +61,7 @@ namespace RobotEditor
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.reloadRecordingToolStripMenuItem,
+            this.reloadFixtureToolStripMenuItem,
             this.toolStripMenuItem2,
             this.refreshToolStripMenuItem,
             this.deleteToolStripMenuItem,
@@ -71,7 +73,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(221, 198);
+            this.contextMenuStrip.Size = new System.Drawing.Size(221, 242);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -233,6 +235,13 @@ namespace RobotEditor
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
+            // reloadFixtureToolStripMenuItem
+            // 
+            this.reloadFixtureToolStripMenuItem.Name = "reloadFixtureToolStripMenuItem";
+            this.reloadFixtureToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.reloadFixtureToolStripMenuItem.Text = "Reload Fixture";
+            this.reloadFixtureToolStripMenuItem.Click += new System.EventHandler(this.reloadFixtureToolStripMenuItem_Click);
+            // 
             // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -272,5 +281,6 @@ namespace RobotEditor
         private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
         private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadFixtureToolStripMenuItem;
     }
 }
