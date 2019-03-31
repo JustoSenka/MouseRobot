@@ -24,6 +24,12 @@ namespace RobotRuntime.Recordings
 
         protected readonly HashSet<Guid> CommandGuidMap = new HashSet<Guid>();
 
+        public Recording(string name, Guid guid = default(Guid)) : base(guid)
+        {
+            Commands = new TreeNode<Command>();
+            this.Name = name;
+        }
+
         public Recording(Guid guid = default(Guid)) : base(guid)
         {
             Commands = new TreeNode<Command>();
@@ -34,6 +40,8 @@ namespace RobotRuntime.Recordings
             m_IsDirty = true;
             CommandModifiedOnRecording?.Invoke(this, command, command);
         }
+
+        #region Main API to add, remove, move, insert, replace and get commands
 
         /// <summary>
         /// Adds non existant single command to the bottom of the recording. Does not add command children.
@@ -266,11 +274,6 @@ namespace RobotRuntime.Recordings
             return clone;
         }
 
-        public bool HasRegisteredGuid(Guid guid)
-        {
-            return CommandGuidMap.Contains(guid);
-        }
-
         public TreeNode<Command> GetCommandNode(Guid guid)
         {
             return Commands.GetAllNodes(false).FirstOrDefault(c => c.value.Guid == guid);
@@ -282,23 +285,9 @@ namespace RobotRuntime.Recordings
             return node.parent.IndexOf(command);
         }
 
-        public object Clone()
-        {
-            return new Recording((TreeNode<Command>)Commands.Clone())
-            {
-                Name = Name,
-                m_IsDirty = true,
-                Guid = Guid
-            };
-        }
+        #endregion
 
-        public override string ToString()
-        {
-            if (m_IsDirty)
-                return Name + "*";
-            else
-                return Name;
-        }
+        #region Properties (Path, Name, IsDirty)
 
         public string Path
         {
@@ -340,22 +329,32 @@ namespace RobotRuntime.Recordings
             get { return m_IsDirty; }
         }
 
-        public bool Similar(object obj)
+        #endregion
+
+        #region Methods from inheritence
+
+        public override string ToString()
         {
-            var s = obj as Recording;
-            if (s == null)
-                return false;
-
-            if (s.Name != Name)
-                return false;
-
-            var allCommands1 = s.Commands.GetAllNodes().Select(node => node.value);
-            var allCommands2 = Commands.GetAllNodes().Select(node => node.value);
-
-            return allCommands1.SequenceEqual(allCommands2, new SimilarEqualityComparer());
+            if (m_IsDirty)
+                return Name + "*";
+            else
+                return Name;
         }
 
-        // Inheritence
+        public bool HasRegisteredGuid(Guid guid)
+        {
+            return CommandGuidMap.Contains(guid);
+        }
+
+        public object Clone()
+        {
+            return new Recording((TreeNode<Command>)Commands.Clone())
+            {
+                Name = Name,
+                m_IsDirty = true,
+                Guid = Guid
+            };
+        }
 
         public Recording(TreeNode<Command> commands) : base(commands)
         {
@@ -418,6 +417,23 @@ namespace RobotRuntime.Recordings
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(g);
             }
         }
+
+        public bool Similar(object obj)
+        {
+            var s = obj as Recording;
+            if (s == null)
+                return false;
+
+            if (s.Name != Name)
+                return false;
+
+            var allCommands1 = s.Commands.GetAllNodes().Select(node => node.value);
+            var allCommands2 = Commands.GetAllNodes().Select(node => node.value);
+
+            return allCommands1.SequenceEqual(allCommands2, new SimilarEqualityComparer());
+        }
+
+        #endregion
 
         [Conditional("DEBUG")]
         private void DEBUG_CheckCommandGuidConsistency()

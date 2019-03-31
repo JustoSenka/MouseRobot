@@ -26,6 +26,7 @@ namespace Robot.Assets
             AssetManager.AssetCreated += AddPathToList;
             AssetManager.AssetUpdated += AddPathToList;
             AssetManager.AssetDeleted += AddPathToList;
+            AssetManager.AssetRenamed += (from, to) => AddPathToList(to);
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
         }
 

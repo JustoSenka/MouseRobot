@@ -204,6 +204,7 @@
     <Compile Include="Abstractions\ITestFixtureManager.cs" />
     <Compile Include="Abstractions\ITestRunnerManager.cs" />
     <Compile Include="Tests\TestFixture.cs" />
+    <Compile Include="Tests\TestFixtureExtension.cs" />
     <Compile Include="Tests\TestFixtureManager.cs" />
     <Compile Include="Tests\TestRunnerManager.cs" />
     <Compile Include="Utils\CodeEditorVS.cs" />

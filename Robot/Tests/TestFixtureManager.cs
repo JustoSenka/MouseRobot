@@ -24,10 +24,10 @@ namespace Robot.Tests
         public event Action<TestFixture> FixtureRemoved;
         public event Action<TestFixture, string> FixtureSaved;
 
-        private IAssetManager AssetManager;
-        private ICommandFactory CommandFactory;
-        private IProfiler Profiler;
-        private ILogger Logger;
+        private readonly IAssetManager AssetManager;
+        private readonly ICommandFactory CommandFactory;
+        private readonly IProfiler Profiler;
+        private readonly ILogger Logger;
         public TestFixtureManager(IAssetManager AssetManager, ICommandFactory CommandFactory, IProfiler Profiler, ILogger Logger)
         {
             this.AssetManager = AssetManager;

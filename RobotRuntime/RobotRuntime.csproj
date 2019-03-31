@@ -251,6 +251,7 @@
     <Compile Include="Abstractions\ITestRunner.cs" />
     <Compile Include="Abstractions\IScriptDomainManager.cs" />
     <Compile Include="Abstractions\IScriptLoader.cs" />
+    <Compile Include="Recordings\RecordingExtension.cs" />
     <Compile Include="Scripts\TypeObjectCollector.cs" />
     <Compile Include="Scripts\TypeCollector.cs" />
     <Compile Include="Abstractions\ITypeCollector.cs" />

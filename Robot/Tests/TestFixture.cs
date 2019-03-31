@@ -1,12 +1,14 @@
 ﻿using Robot.Abstractions;
 using Robot.Recordings;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
+using RobotRuntime.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RobotRuntime.Tests
+namespace Robot.Tests
 {
     public class TestFixture : BaseHierarchyManager, ISimilar, IHaveGuid
     {

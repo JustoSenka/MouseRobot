@@ -181,6 +181,7 @@
     <Compile Include="Integration\PluginTests.cs" />
     <Compile Include="Integration\CustomCommandCompilationTests.cs" />
     <Compile Include="Base\TestUtils.cs" />
+    <Compile Include="Integration\ProjectStartupTests.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

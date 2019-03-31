@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Robot.Tests;
 using RobotRuntime.Tests;
 
 namespace Robot.Abstractions

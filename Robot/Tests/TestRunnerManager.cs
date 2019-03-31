@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Scripts;
 using RobotRuntime.Tests;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,6 @@ namespace Robot.Tests
     /// </summary>
     public class TestRunnerManager : ITestRunnerManager
     {
-        private IList<string> m_ModifiedFilesSinceLastUpdate = new List<string>();
-
         /// <summary>
         /// Returns a copy list of all existing Fixtures in project.
         /// </summary>
@@ -30,20 +29,22 @@ namespace Robot.Tests
         private readonly ITestStatusManager TestStatusManager;
         private readonly IAssetManager AssetManager;
         private readonly IProfiler Profiler;
-        public TestRunnerManager(IUnityContainer Container, ITestStatusManager TestStatusManager, IAssetManager AssetManager, IProfiler Profiler, ITestRunner TestRunner)
+        private readonly TypeCollector<Command> TypeCollector;
+        public TestRunnerManager(IUnityContainer Container, ITestStatusManager TestStatusManager, IAssetManager AssetManager, IProfiler Profiler, ITestRunner TestRunner,
+            TypeCollector<Command> TypeCollector, IModifiedAssetCollector AssetCollector)
         {
             this.Container = Container;
             this.TestStatusManager = TestStatusManager;
             this.AssetManager = AssetManager;
             this.Profiler = Profiler;
+            this.TypeCollector = TypeCollector;
 
             m_TestFixtures = new List<TestFixture>();
 
-            AssetManager.AssetCreated += AddPathToList;
-            AssetManager.AssetUpdated += AddPathToList;
-            AssetManager.AssetDeleted += AddPathToList;
-            AssetManager.AssetRenamed += AddPathToListForRenaming;
-            AssetManager.RefreshFinished += OnAssetRefreshFinished;
+            AssetCollector.ExtensionFilters.Add(FileExtensions.TestD);
+
+            AssetCollector.AssetsModified += OnAssetRefreshFinished;
+            TypeCollector.NewTypesAppeared += OnNewTypesAppeared;
 
             TestRunner.TestRunEnd += OnTestsFinished;
         }
@@ -53,37 +54,23 @@ namespace Robot.Tests
             TestStatusManager.OutputTestRunStatusToFile();
         }
 
-        #region AssetManager Callbacks
-
-        private void AddPathToList(string assetPath)
+        private void OnNewTypesAppeared()
         {
-            if (assetPath.EndsWith(FileExtensions.TestD))
-                m_ModifiedFilesSinceLastUpdate.Add(assetPath);
-
-            // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
-            // but something has already changed from within app. Call refresh callback manually.
-            if (!AssetManager.IsEditingAssets)
-                OnAssetRefreshFinished();
+            // TODO: Actually calculate if new types appeared, maybe there is no need to reload all fixtures
+            var a = TypeCollector.UserTypes; // Leaving it here so no warning appears
+            OnAssetRefreshFinished(null);
         }
-
-        private void AddPathToListForRenaming(string oldPath, string newPath)
-        {
-            AddPathToList(newPath);
-        }
-
-        private void OnAssetRefreshFinished()
+        private void OnAssetRefreshFinished(IList<string> modifiedAssets)
         {
             var firstReload = m_TestFixtures.Count == 0;
-            if (m_ModifiedFilesSinceLastUpdate.Count == 0 && !firstReload)
+            if (modifiedAssets == null || (modifiedAssets.Count == 0 && !firstReload))
                 return;
 
-            ReloadTestFixtures(firstReload);
+            ReloadTestFixtures(modifiedAssets, firstReload);
             TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
         }
 
-        #endregion // AssetManager Callbacks
-
-        private void ReloadTestFixtures(bool firstReload = false)
+        private void ReloadTestFixtures(IList<string> modifiedAssets, bool firstReload = false)
         {
             Profiler.Start("TestRunnerManager.ReloadTestFixtures");
 
@@ -93,12 +80,13 @@ namespace Robot.Tests
             foreach (var asset in fixtureAssets)
             {
                 if (asset.Importer.LoadingFailed)
-
-                // Ignore non-modified assets
-                if (!firstReload && !m_ModifiedFilesSinceLastUpdate.Contains(asset.Path))
                     continue;
 
-                var lightFixture = asset.Importer.Load<LightTestFixture>();
+                // Ignore non-modified assets
+                if (!firstReload && !modifiedAssets.Contains(asset.Path))
+                    continue;
+
+                var lightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
                 if (lightFixture == null)
                     continue;
 
@@ -142,8 +130,6 @@ namespace Robot.Tests
                     TestFixtureRemoved?.Invoke(fixture, i);
                 }
             }
-
-            m_ModifiedFilesSinceLastUpdate.Clear();
 
             Profiler.Stop("TestRunnerManager.ReloadTestFixtures");
         }

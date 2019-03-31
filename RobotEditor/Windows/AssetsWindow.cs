@@ -428,7 +428,7 @@ namespace RobotEditor
             LightTestFixture fix = null;
             if (!TestFixtureManager.Contains(asset.Name))
             {
-                fix = asset.Importer.Load<LightTestFixture>();
+                fix = asset.Importer.ReloadAsset<LightTestFixture>();
                 if (fix != null)
                 {
                     fix.Name = asset.Name;

@@ -3,6 +3,7 @@
 using BrightIdeasSoftware;
 using Robot.Abstractions;
 using Robot.Recordings;
+using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotEditor.Utils;

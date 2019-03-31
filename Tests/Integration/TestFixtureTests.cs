@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
+using Robot.Tests;
 using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
