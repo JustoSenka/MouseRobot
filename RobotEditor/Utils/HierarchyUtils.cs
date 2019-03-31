@@ -31,23 +31,22 @@ namespace RobotEditor.Utils
                 imageListIndex = node.Command != null ? 1 : imageListIndex;
                 return imageListIndex;
             };
-            
-            nameColumn.RendererDelegate += (EventArgs e, Graphics g, Rectangle r, object rowObject) =>
+
+            nameColumn.RendererDelegate += delegate (EventArgs e, Graphics g, Rectangle r, object rowObject)
             {
                 var h = rowObject as HierarchyNode;
                 g.DrawLine(new Pen(Color.Black, 1), new Point(r.Left, r.Top), new Point(r.Right, r.Top));
-                return false;
+                return true;
             };
 
-            treeListView.OwnerDraw = false;
+            nameColumn.Width = treeListView.Width;
+
+            treeListView.CellRendererGetter = (object rowObject, OLVColumn column) => new TreeRendererWithhHighlight();
             treeListView.UseCellFormatEvents = true;
 
             treeListView.IsSimpleDragSource = true;
             treeListView.IsSimpleDropSink = true;
 
-            treeListView.TreeColumnRenderer.IsShowLines = false;
-
-            nameColumn.Width = treeListView.Width;
             treeListView.Columns.Add(nameColumn);
         }
 
@@ -144,6 +143,24 @@ namespace RobotEditor.Utils
             var parentNode = parentCommand == null ? recordingNode : recordingNode.GetNodeFromValue(parentCommand);
 
             return AddCommandToParentRecursive(recording, command, parentNode, pos);
+        }
+    }
+
+    public class TreeRendererWithhHighlight : TreeListView.TreeRenderer
+    {
+        public TreeRendererWithhHighlight() : base()
+        {
+            IsShowLines = false;
+        }
+
+        public override bool RenderSubItem(DrawListViewSubItemEventArgs e, Graphics g, Rectangle r, object x)
+        {
+            var ret = base.RenderSubItem(e, g, r, x);
+
+            if (x is HierarchyNode node && node.Recording != null)
+                g.DrawLine(new Pen(Color.LightGray, 3), new Point(r.Left, r.Top), new Point(r.Right, r.Top));
+
+            return ret;
         }
     }
 }
