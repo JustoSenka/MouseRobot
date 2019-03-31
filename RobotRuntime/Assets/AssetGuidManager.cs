@@ -98,17 +98,13 @@ namespace RobotRuntime.Assets
         {
             if (!File.Exists(GuidPathMapFilePath))
                 m_GuidPathMap = new Dictionary<Guid, string>();
+            else
+                m_GuidPathMap = m_Serializer.LoadObject<Dictionary<Guid, string>>(GuidPathMapFilePath) ?? m_GuidPathMap;
 
             if (!File.Exists(GuidHashMapFilePath))
-                m_GuidHashMap = new Dictionary<Guid, Int64>();
-
-            var newPathMap = m_Serializer.LoadObject<Dictionary<Guid, string>>(GuidPathMapFilePath);
-            if (newPathMap != null)
-                m_GuidPathMap = newPathMap;
-
-            var newHashMap = m_Serializer.LoadObject<Dictionary<Guid, string>>(GuidPathMapFilePath);
-            if (newHashMap != null)
-                m_GuidPathMap = newHashMap;
+                m_GuidHashMap = new Dictionary<Guid, long>();
+            else
+                m_GuidHashMap = m_Serializer.LoadObject<Dictionary<Guid, long>>(GuidHashMapFilePath) ?? m_GuidHashMap;
 
             m_GuidHashMapDirty = false;
             m_GuidPathMapDirty = false;
