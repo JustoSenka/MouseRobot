@@ -2,6 +2,7 @@
 using Robot;
 using NUnit.Framework;
 using RobotRuntime;
+using System.Runtime.CompilerServices;
 
 namespace Tests.Utils
 {
@@ -25,11 +26,13 @@ namespace Tests.Utils
         public class AnyClass { }
         public class CallMethodFromSameClass
         {
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public static bool Call(Type callerType)
             {
                 return Method(callerType);
             }
 
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public static bool Method(Type callerType)
             {
                 return callerType.IsTheCaller();
@@ -59,6 +62,7 @@ namespace Tests.Utils
 
         public class CallMethodFromOtherClass
         {
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public static bool Call(Type callerType)
             {
                 return CallMethodFromSameClass.Method(callerType);
