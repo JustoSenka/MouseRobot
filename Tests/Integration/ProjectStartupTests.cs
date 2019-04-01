@@ -66,9 +66,27 @@ namespace Tests.Integration
             AssertIfCommandIsCorrectType(waitForPluginLoad, c);
         }
 
-        //[TestCase(true, Ignore = "Not sure if this even needs to be fixed. TestRunnerManager only displays tests. recs are not visible. Runtime loads fixtures on its own")]
+        [Test]
+        public void TestRunnerManager_UpdatesUnknownCommands_AfterScriptsAreLoaded()
+        {
+            CreateOneFixtureWithCustomCommand();
+            InitializeApplicationWithKnownProjectPath();
+
+            // Force loading asset. It will load with unknown commands
+            var fixture = AssetManager.GetAsset(k_FixturePath).Importer.Value;
+
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var fix = TestRunnerManager.TestFixtures.First(f => f.Name == k_FixtureName);
+            var rec = fix.Tests.First(t => t.Name == k_TestName);
+            var c = rec.Commands.First().value;
+
+            AssertIfCommandIsCorrectType(true, c);
+        }
+
+        [TestCase(true)]
         [TestCase(false)]
-        public void TestRunnerManager_UpdatesUnknownCommands_AfterScriptsAreLoaded(bool waitForPluginLoad)
+        public void TestRunnerManager_DoesNotLoadFixtures_BeforeFirstCompilationHappened(bool waitForPluginLoad)
         {
             CreateOneFixtureWithCustomCommand();
             InitializeApplicationWithKnownProjectPath();
@@ -76,17 +94,14 @@ namespace Tests.Integration
             if (waitForPluginLoad)
                 ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
-            var fix = TestRunnerManager.TestFixtures.First(f => f.Name == k_FixtureName);
-            var rec = fix.Tests.First(t => t.Name == k_TestName);
-            var c = rec.Commands.First().value;
-
-            AssertIfCommandIsCorrectType(waitForPluginLoad, c);
+            var fixCount = TestRunnerManager.TestFixtures.Count;
+            Assert.AreEqual(waitForPluginLoad ? 1 : 0, fixCount, "Loaded fixture count was incorrect");
         }
 
 
         [TestCase(true)]
         [TestCase(false)]
-        public void TestFixtureManager_UpdatesUnknownCommands_AfterScriptsAreLoaded(bool waitForPluginLoad)
+        public void TestFixtureManager_DoesNotUpdatesUnknownCommands_AfterScriptsAreLoaded(bool waitForPluginLoad)
         {
             CreateOneFixtureWithCustomCommand();
             InitializeApplicationWithKnownProjectPath();

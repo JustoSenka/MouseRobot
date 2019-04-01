@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Robot;
 using Robot.Abstractions;
+using RobotRuntime.Abstractions;
 using RobotRuntime.IO;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
@@ -34,8 +35,14 @@ namespace Tests.Integration
             AssetManager = container.Resolve<IAssetManager>();
             TestRunnerManager = container.Resolve<ITestRunnerManager>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
+            var ScriptLoader = container.Resolve<IScriptLoader>();
 
             ProjectManager.InitProject(TempProjectPath);
+
+            // Will invoke domain reloaded callback which will tell TestRunnerManager to load fixtures
+            // It is faster than ScriptManager.Recompile... so loading directly even if there is nothing to load
+            // Just for tests
+            ScriptLoader.CreateUserAppDomain(); 
         }
 
         private LightTestFixture LightTestFixture
