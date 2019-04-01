@@ -41,7 +41,7 @@ namespace RobotEditor.Utils
 
             nameColumn.Width = treeListView.Width;
 
-            treeListView.CellRendererGetter = (object rowObject, OLVColumn column) => new TreeRendererWithhHighlight();
+            treeListView.CellRendererGetter = (object rowObject, OLVColumn column) => new TreeRendererWithHighlight();
             treeListView.UseCellFormatEvents = true;
 
             treeListView.IsSimpleDragSource = true;
@@ -143,24 +143,6 @@ namespace RobotEditor.Utils
             var parentNode = parentCommand == null ? recordingNode : recordingNode.GetNodeFromValue(parentCommand);
 
             return AddCommandToParentRecursive(recording, command, parentNode, pos);
-        }
-    }
-
-    public class TreeRendererWithhHighlight : TreeListView.TreeRenderer
-    {
-        public TreeRendererWithhHighlight() : base()
-        {
-            IsShowLines = false;
-        }
-
-        public override bool RenderSubItem(DrawListViewSubItemEventArgs e, Graphics g, Rectangle r, object x)
-        {
-            var ret = base.RenderSubItem(e, g, r, x);
-
-            if (x is HierarchyNode node && node.Recording != null)
-                g.DrawLine(new Pen(Color.LightGray, 3), new Point(r.Left, r.Top), new Point(r.Right, r.Top));
-
-            return ret;
         }
     }
 }
