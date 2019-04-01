@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Robot.Recordings
 {
-    public abstract class BaseHierarchyManager : IEnumerable<Recording>, IHaveGuidMap
+    public abstract class BaseHierarchyManager : IBaseHierarchyManager, IEnumerable<Recording>, IHaveGuidMap
     {
         protected readonly IList<Recording> m_LoadedRecordings;
         public IList<Recording> LoadedRecordings { get { return m_LoadedRecordings; } }

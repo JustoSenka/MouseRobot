@@ -52,7 +52,7 @@ namespace RobotEditor
             {
                 Owner = this,
                 DragAndDropAccepted = DragAndDropAcceptedCallback,
-                HierarchyManager = HierarchyManager as BaseHierarchyManager
+                HierarchyManager = HierarchyManager
             };
 
             RecordingManager.CommandAddedToRecording += OnCommandAddedToRecording;
@@ -95,7 +95,7 @@ namespace RobotEditor
             }
 
             HierarchyUtils.OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, 8,
-                treeListView, HierarchyManager as BaseHierarchyManager);
+                treeListView, HierarchyManager);
         }
 
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
@@ -376,7 +376,9 @@ namespace RobotEditor
                 return;
             }
 
-            e.DropSink.CanDropOnItem = targetNode.Recording != null || targetNode.Command.CanBeNested;
+            e.DropSink.CanDropOnItem = sourceNode.Recording == null && // We don't want recordings to be dropped on any item
+                (targetNode.Recording != null || targetNode.Command.CanBeNested); // Everything can be dropped on recording and commands with nested tag can also be dropped onto
+
 
             if (targetNode.Recording != null && sourceNode.Command != null)
                 e.DropSink.CanDropBetween = false;

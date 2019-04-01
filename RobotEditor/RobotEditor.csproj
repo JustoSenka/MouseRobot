@@ -249,6 +249,9 @@
     <Compile Include="Utils\FormExtensionMethods.cs" />
     <Compile Include="Utils\HierarchyUtils.cs" />
     <Compile Include="Utils\SortedCategoryAttribute.cs" />
+    <Compile Include="CustomControls\TreeRendererWithHighlight.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Windows\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>

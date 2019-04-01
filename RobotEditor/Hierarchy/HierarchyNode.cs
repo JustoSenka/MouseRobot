@@ -1,4 +1,5 @@
-﻿using Robot.Recordings;
+﻿using Robot.Abstractions;
+using Robot.Recordings;
 using RobotRuntime;
 using RobotRuntime.Recordings;
 using System;
@@ -185,6 +186,6 @@ namespace RobotEditor.Hierarchy
     {
         public object Owner;
         public Action<HierarchyNode> DragAndDropAccepted;
-        public BaseHierarchyManager HierarchyManager;
+        public IBaseHierarchyManager HierarchyManager;
     }
 }

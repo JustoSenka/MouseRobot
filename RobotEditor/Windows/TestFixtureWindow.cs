@@ -55,7 +55,7 @@ namespace RobotEditor
             {
                 Owner = this,
                 DragAndDropAccepted = DragAndDropAcceptedCallback,
-                HierarchyManager = m_TestFixture as BaseHierarchyManager
+                HierarchyManager = m_TestFixture
             };
 
             TestRunner.TestRunEnd += OnRecordingsFinishedRunning;

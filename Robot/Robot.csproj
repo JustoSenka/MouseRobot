@@ -175,6 +175,7 @@
     <Compile Include="Abstractions\IScriptCompiler.cs" />
     <Compile Include="Abstractions\IScriptManager.cs" />
     <Compile Include="Abstractions\ISolutionManager.cs" />
+    <Compile Include="Abstractions\IBaseHierarchyManager.cs" />
     <Compile Include="Scripts\ScriptCompiler.cs" />
     <Compile Include="Scripts\ScriptManager.cs" />
     <Compile Include="Scripts\SolutionManager.cs" />

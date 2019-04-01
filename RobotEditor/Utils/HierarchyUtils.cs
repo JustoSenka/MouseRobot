@@ -51,7 +51,7 @@ namespace RobotEditor.Utils
         }
 
         public static void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, int createMenuItemIndex,
-            TreeListView treeListView, BaseHierarchyManager baseRecordingManager)
+            TreeListView treeListView, IBaseHierarchyManager baseRecordingManager)
         {
             contextMenuStrip.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
