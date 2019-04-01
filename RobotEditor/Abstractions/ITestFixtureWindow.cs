@@ -1,4 +1,4 @@
-﻿using Robot.Recordings;
+﻿using Robot.Abstractions;
 using Robot.Tests;
 using System;
 using System.Windows.Forms;
@@ -7,12 +7,12 @@ namespace RobotEditor.Abstractions
 {
     public interface ITestFixtureWindow
     {
-        ToolStrip ToolStrip { get; }
+        /*ToolStrip ToolStrip { get; }
 
-        event Action<BaseHierarchyManager, object> OnSelectionChanged;
+        event Action<IBaseHierarchyManager, object> OnSelectionChanged;
 
         void DisplayTestFixture(TestFixture fixture);
         void SaveFixtureWithDialog(bool updateUI = true);
-        void SaveTestFixture();
+        void SaveTestFixture();*/
     }
 }

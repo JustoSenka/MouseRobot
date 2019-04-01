@@ -1,4 +1,4 @@
-﻿using Robot.Recordings;
+﻿using Robot.Abstractions;
 using RobotEditor.Abstractions;
 using RobotEditor.Inspector;
 using RobotEditor.Settings;
@@ -35,7 +35,7 @@ namespace RobotEditor.Windows
             propertyGrid.SelectedObject = null;
         }
 
-        public void ShowObject(object obj, BaseHierarchyManager BaseHierarchyManager = null)
+        public void ShowObject(object obj, IBaseHierarchyManager BaseHierarchyManager = null)
         {
             if (obj == null)
             {
@@ -65,7 +65,7 @@ namespace RobotEditor.Windows
             m_CurrentObject = recordingProperties;
         }
 
-        private void ShowCommand<T>(T command, BaseHierarchyManager BaseHierarchyManager) where T : Command
+        private void ShowCommand<T>(T command, IBaseHierarchyManager BaseHierarchyManager) where T : Command
         {
             var designerType = GetDesignerTypeForCommand(command.GetType());
 

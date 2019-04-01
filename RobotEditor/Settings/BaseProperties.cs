@@ -1,4 +1,4 @@
-﻿using Robot.Recordings;
+﻿using Robot.Abstractions;
 using RobotEditor.Utils;
 using System;
 using System.ComponentModel;
@@ -18,7 +18,7 @@ namespace RobotEditor.Settings
 
         [Browsable(false)]
         [NonSerialized]
-        public BaseHierarchyManager BaseHierarchyManager;
+        public IBaseHierarchyManager BaseHierarchyManager;
 
         public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {

@@ -1,9 +1,9 @@
-﻿using Robot.Recordings;
+﻿using Robot.Abstractions;
 
 namespace RobotEditor.Abstractions
 {
     public interface IInspectorWindow
     {
-        void ShowObject(object obj, BaseHierarchyManager BaseHierarchyManager = null);
+        void ShowObject(object obj, IBaseHierarchyManager BaseHierarchyManager = null);
     }
 }

@@ -44,6 +44,9 @@ namespace RobotRuntime.Tests
 
         public static bool IsSpecialRecording(Recording Recording)
         {
+            if (Recording == null)
+                return false;
+
             return (Recording.Name == k_OneTimeSetup ||
                 Recording.Name == k_OneTimeTeardown ||
                 Recording.Name == k_Setup ||

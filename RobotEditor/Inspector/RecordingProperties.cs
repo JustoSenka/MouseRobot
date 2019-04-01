@@ -43,7 +43,7 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "ReadonlyName");
         }
 
-        private bool IsSpecialRecording(Recording Recording, BaseHierarchyManager BaseHierarchyManager)
+        private bool IsSpecialRecording(Recording Recording, IBaseHierarchyManager BaseHierarchyManager)
         {
             return LightTestFixture.IsSpecialRecording(Recording) ||
                 BaseHierarchyManager is HierarchyManager;

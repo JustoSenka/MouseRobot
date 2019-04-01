@@ -247,7 +247,9 @@
     <Compile Include="Settings\FeatureDetectionProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
     <Compile Include="Utils\FormExtensionMethods.cs" />
-    <Compile Include="Utils\HierarchyUtils.cs" />
+    <Compile Include="Windows\Base\BaseHierarchyWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Utils\SortedCategoryAttribute.cs" />
     <Compile Include="CustomControls\TreeRendererWithHighlight.cs">
       <SubType>Component</SubType>

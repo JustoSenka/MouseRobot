@@ -31,9 +31,9 @@ namespace RobotEditor
 
         private FormWindowState m_DefaultWindowState;
 
-        private IList<ITestFixtureWindow> TestFixtureWindows = new List<ITestFixtureWindow>();
+        private IList<TestFixtureWindow> TestFixtureWindows = new List<TestFixtureWindow>();
 
-        private IHierarchyWindow m_HierarchyWindow;
+        private HierarchyWindow m_HierarchyWindow;
         private IPropertiesWindow m_PropertiesWindow;
         private IScreenPreviewWindow m_ScreenPreviewWindow;
         private IAssetsWindow m_AssetsWindow;
@@ -60,7 +60,7 @@ namespace RobotEditor
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
+            IHierarchyManager RecordingManager, IAssetManager AssetManager, HierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks)
@@ -161,7 +161,7 @@ namespace RobotEditor
         private void OnFixtureAdded(TestFixture fixture)
         {
             TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
-            var window = Container.Resolve<ITestFixtureWindow>();
+            var window = Container.Resolve<TestFixtureWindow>();
 
             ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(window);
 
@@ -176,7 +176,7 @@ namespace RobotEditor
             TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
         }
 
-        private void ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(ITestFixtureWindow window)
+        private void ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(TestFixtureWindow window)
         {
             var dockContent = (DockContent)window;
             if (TestFixtureWindows.Count > 0)
@@ -246,7 +246,7 @@ namespace RobotEditor
             }
         }
 
-        private void ShowSelectedObjectInInspector(BaseHierarchyManager BaseHierarchyManager, object obj)
+        private void ShowSelectedObjectInInspector(IBaseHierarchyManager BaseHierarchyManager, object obj)
         {
             m_InspectorWindow.ShowObject(obj, BaseHierarchyManager);
         }
@@ -373,7 +373,7 @@ namespace RobotEditor
             TestFixtureWindows.FirstOrDefault(w => ((Form)w).ContainsFocus)?.SaveFixtureWithDialog(true);
         }
 
-        private IEnumerable<ITestFixtureWindow> GetNotDestroyedWindows(IList<ITestFixtureWindow> TestFixtureWindows)
+        private IEnumerable<TestFixtureWindow> GetNotDestroyedWindows(IList<TestFixtureWindow> TestFixtureWindows)
         {
             foreach (var window in TestFixtureWindows)
             {
@@ -390,7 +390,7 @@ namespace RobotEditor
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            m_HierarchyWindow.deleteToolStripMenuItem1_Click(sender, e);
+            m_HierarchyWindow.deleteToolStripMenuItem_Click(sender, e);
         }
 
         private void duplicateToolStripMenuItem_Click(object sender, EventArgs e)
