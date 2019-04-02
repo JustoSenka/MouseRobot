@@ -208,11 +208,12 @@ namespace RobotEditor
 
         public override void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (!(treeListView.SelectedObject is HierarchyNode selectedNode))
-                return;
+            var areThereNullsOrSpecialScriptsSelected = treeListView.SelectedObjects
+                .SafeCast<HierarchyNode>().Any(n => n == null || n.Recording != null
+                && LightTestFixture.IsSpecialRecording(n.Recording));
 
             // Do not allow to duplicate special recordings
-            if (selectedNode.Recording != null && LightTestFixture.IsSpecialRecording(selectedNode.Recording))
+            if (areThereNullsOrSpecialScriptsSelected)
                 return;
 
             base.duplicateToolStripMenuItem1_Click(sender, e);

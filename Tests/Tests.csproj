@@ -209,6 +209,7 @@
     <Compile Include="Unit\RecordingTests.cs" />
     <Compile Include="Unit\StatusManagerTests.cs" />
     <Compile Include="Unit\YamlSerializerTests.cs" />
+    <Compile Include="Utils\MathExtensionTests.cs" />
     <Compile Include="Utils\PathTests.cs" />
     <Compile Include="Utils\ProcessUtilityTests.cs" />
   </ItemGroup>

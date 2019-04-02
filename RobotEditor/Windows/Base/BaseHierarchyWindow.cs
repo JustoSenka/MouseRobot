@@ -19,6 +19,8 @@ namespace RobotEditor.Windows.Base
     {
         protected new string Name;
 
+        protected bool SuppressRefreshAndSelection = false;
+
         protected ToolStrip m_ToolStrip;
         protected TreeListView m_TreeListView;
         protected List<HierarchyNode> m_Nodes = new List<HierarchyNode>();
@@ -149,44 +151,83 @@ namespace RobotEditor.Windows.Base
 
         public virtual void duplicateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (!(m_TreeListView.SelectedObject is HierarchyNode selectedNode))
+            var selectedObjects = m_TreeListView.SelectedObjects.SafeCast<HierarchyNode>();
+            if (IsMultiSelectionNotValid(selectedObjects))
                 return;
 
-            if (selectedNode.Recording != null)
+            if (!IsMultiSelectionInOneBlock(selectedObjects))
+                return;
+
+            SuppressRefreshAndSelection = true;
+
+            // Newly created commands will be placed after last node
+            var lastNode = selectedObjects.Last();
+            var lastNodeRecording = lastNode.Recording;
+            var lastNodeCommand = lastNode.Command;
+
+            // Selection will be moved to newly created nodes
+            var parentNode = lastNode.Parent;
+            var lastNodeIndex = parentNode.Children.IndexOf(lastNode);
+            var objCount = m_TreeListView.SelectedObjects.Count;
+
+            foreach (var selectedNode in selectedObjects)
             {
-                HierarchyManager.NewRecording(selectedNode.Recording);
-                HierarchyManager.MoveRecordingAfter(HierarchyManager.LoadedRecordings.Count - 1, selectedNode.Recording.GetIndex(HierarchyManager));
+                if (selectedNode.Recording != null)
+                {
+                    var newRec = HierarchyManager.NewRecording(selectedNode.Recording);
+                    HierarchyManager.MoveRecordingAfter(HierarchyManager.LoadedRecordings.Count - 1, lastNodeRecording.GetIndex(HierarchyManager));
+                    lastNodeRecording = newRec;
+                }
+                else if (selectedNode.Command != null)
+                {
+                    var recording = selectedNode.TopLevelRecordingNode.Recording;
+
+                    var node = recording.Commands.GetNodeFromValue(selectedNode.Command);
+                    var clone = recording.CloneCommandStub(selectedNode.Command);
+
+                    recording.AddCommandNode(clone, node.parent.value);
+                    recording.MoveCommandAfter(clone.value, lastNodeCommand);
+                    lastNodeCommand = clone.value;
+                }
             }
-            else if (selectedNode.Command != null)
-            {
-                var recording = selectedNode.TopLevelRecordingNode.Recording;
 
-                var node = recording.Commands.GetNodeFromValue(selectedNode.Command);
-                var clone = recording.CloneCommandStub(selectedNode.Command);
+            SuppressRefreshAndSelection = false;
 
-                recording.AddCommandNode(clone, node.parent.value);
-                recording.MoveCommandAfter(clone.value, selectedNode.Command);
-            }
+            var nodesToSelect = parentNode.Children.Skip(lastNodeIndex + 1).Take(objCount);
 
-            RefreshTreeListViewAsync();
+            m_TreeListView.SelectedObjects = null;
+            RefreshTreeListViewAsync(() => m_TreeListView.SelectObjects(nodesToSelect.ToList()));
+
             m_TreeListView.Focus();
-
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
         public virtual void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var selectedNode = m_TreeListView.SelectedObject as HierarchyNode;
-            if (selectedNode == null)
+            var selectedObjects = m_TreeListView.SelectedObjects.SafeCast<HierarchyNode>();
+            if (IsMultiSelectionNotValid(selectedObjects))
                 return;
 
-            if (selectedNode.Recording != null)
-                HierarchyManager.RemoveRecording(selectedNode.Recording);
-            else if (selectedNode.Command != null)
-                HierarchyManager.GetRecordingFromCommand(selectedNode.Command).RemoveCommand(selectedNode.Command);
+            var objCount = m_TreeListView.SelectedObjects.Count;
+            foreach (var selectedNode in selectedObjects)
+            {
+                if (selectedNode.Recording != null)
+                    HierarchyManager.RemoveRecording(selectedNode.Recording);
+
+                else if (selectedNode.Command != null)
+                {
+                    var rec = HierarchyManager.GetRecordingFromCommand(selectedNode.Command);
+
+                    // If command is nested under another command, it can already be deleted. In that case recording will not be found for that command
+                    if (rec != null)
+                        rec.RemoveCommand(selectedNode.Command);
+                }
+            }
+
+            if (objCount > 1) // Of multiple objects were destroyed, deselect all. If only one, select subsequent element
+                m_TreeListView.SelectedObjects = null;
 
             RefreshTreeListViewAsync();
-
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
@@ -209,11 +250,14 @@ namespace RobotEditor.Windows.Base
             var node = new HierarchyNode(recording, DropDetails);
             m_Nodes.Add(node);
 
-            RefreshTreeListViewAsync(() =>
+            if (!SuppressRefreshAndSelection)
             {
-                m_TreeListView.SelectedObject = node;
-                m_TreeListView.Expand(node);
-            });
+                RefreshTreeListViewAsync(() =>
+                {
+                    m_TreeListView.SelectedObject = node;
+                    m_TreeListView.Expand(node);
+                });
+            }
 
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
@@ -223,7 +267,9 @@ namespace RobotEditor.Windows.Base
             var node = new HierarchyNode(recording, DropDetails);
             var index = recording.GetIndex(HierarchyManager);
             m_Nodes[index] = node;
-            RefreshTreeListViewAsync();
+
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync();
 
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
@@ -234,11 +280,14 @@ namespace RobotEditor.Windows.Base
 
             m_Nodes.RemoveAt(index);
 
-            RefreshTreeListViewAsync(() =>
+            if (!SuppressRefreshAndSelection)
             {
-                if (m_TreeListView.SelectedObject != oldSelectedObject)
-                    InvokeOnSelectionChanged(HierarchyManager, null);
-            });
+                RefreshTreeListViewAsync(() =>
+                {
+                    if (m_TreeListView.SelectedObject != oldSelectedObject)
+                        InvokeOnSelectionChanged(HierarchyManager, null);
+                });
+            }
 
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
@@ -251,7 +300,9 @@ namespace RobotEditor.Windows.Base
                 m_Nodes.MoveBefore(index, recording.GetIndex(HierarchyManager));
             }
 
-            RefreshTreeListViewAsync();
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync();
+
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
@@ -262,26 +313,33 @@ namespace RobotEditor.Windows.Base
 
             var postRefreshAction = (addedNode.Parent.Children.Count == 1) ? () => m_TreeListView.Expand(addedNode.Parent) : default(Action);
 
-            RefreshTreeListViewAsync(postRefreshAction);
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync(postRefreshAction);
         }
 
         protected virtual void OnCommandRemovedFromRecording(Recording recording, Command parentCommand, int commandIndex)
         {
             OnCommandRemovedFromRecording(m_Nodes, recording, parentCommand, commandIndex);
-            RefreshTreeListViewAsync();
+
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync();
         }
 
         protected virtual void OnCommandModifiedOnRecording(Recording recording, Command oldCommand, Command newCommand)
         {
             OnCommandModifiedOnRecording(m_Nodes, recording, oldCommand, newCommand);
-            RefreshTreeListViewAsync();
+
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync();
         }
 
         // Will not work with multi dragging
         protected virtual void OnCommandInsertedInRecording(Recording recording, Command parentCommand, Command command, int pos)
         {
             var node = OnCommandInsertedInRecording(m_Nodes, recording, parentCommand, command, pos);
-            RefreshTreeListViewAsync(() => m_TreeListView.SelectedObject = node);
+
+            if (!SuppressRefreshAndSelection)
+                RefreshTreeListViewAsync(() => m_TreeListView.SelectedObject = node);
         }
 
         #endregion
@@ -432,6 +490,41 @@ namespace RobotEditor.Windows.Base
         #endregion
 
         #region Static helpers
+
+        /// <summary>
+        /// Returns true if both commands and recordings are selected
+        /// </summary>
+        public static bool IsMultiSelectionNotValid(IEnumerable<HierarchyNode> selectedObjects)
+        {
+            var nodeList = selectedObjects.Cast<object>().Select(o => o as HierarchyNode);
+            var areAnyNulls = nodeList.Any(n => n == null);
+            if (areAnyNulls)
+                return false;
+
+            var commandCount = nodeList.Count(n => n.Command != null);
+            var recordingCount = nodeList.Count(n => n.Recording != null);
+
+            return commandCount > 0 && recordingCount > 0 || commandCount == 0 && recordingCount == 0;
+        }
+
+        /// <summary>
+        /// Returns true if all nodes are on same level and next to each other
+        /// </summary>
+        public static bool IsMultiSelectionInOneBlock(IEnumerable<HierarchyNode> selectedObjects)
+        {
+            var firstCommandLevel = selectedObjects.First().Level;
+            var areOnSameLevel = selectedObjects.Any(n => n.Level == firstCommandLevel);
+
+            if (!areOnSameLevel)
+                return false;
+
+            var parent = selectedObjects.First().Parent;
+            var indices = selectedObjects.Select(n => parent.Children.IndexOf(n));
+            if (!indices.AreNumbersConsecutive())
+                return false;
+
+            return true;
+        }
 
         public static void CreateColumns(TreeListView treeListView, IHierarchyNodeStringConverter HierarchyNodeStringConverter)
         {

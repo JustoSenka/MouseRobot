@@ -61,6 +61,11 @@ namespace RobotRuntime
             return index;
         }
 
+        public static IEnumerable<T> SafeCast<T>(this IEnumerable list) where T : class
+        {
+            return list.Cast<object>().Select(o => o as T);
+        }
+
         public static IEnumerable<K> CastAndRemoveNullsTree<K>(this TreeNode<Command> tree) where K : class
         {
             foreach (var node in tree.GetAllNodes())
@@ -130,7 +135,7 @@ namespace RobotRuntime
             source = source < max ? source : max;
             return source;
         }
-
+   
         public static TreeNode FindChildRegex(this TreeView treeView, string regex)
         {
             return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => Regex.IsMatch(r.Text, regex));
