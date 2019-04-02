@@ -26,7 +26,7 @@ namespace RobotEditor
         private readonly IAssetManager AssetManager;
         private readonly IHierarchyNodeStringConverter HierarchyNodeStringConverter;
         public HierarchyWindow(IHierarchyManager HierarchyManager, ITestRunner TestRunner, IAssetManager AssetManager,
-            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory) : base(CommandFactory)
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler) : base(CommandFactory, Profiler)
         {
             base.HierarchyManager = HierarchyManager;
             this.HierarchyManager = HierarchyManager;

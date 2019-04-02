@@ -187,5 +187,6 @@ namespace RobotEditor.Hierarchy
         public object Owner;
         public Action<HierarchyNode> DragAndDropAccepted;
         public IBaseHierarchyManager HierarchyManager;
+        public bool SuppressRefreshAndSelection;
     }
 }

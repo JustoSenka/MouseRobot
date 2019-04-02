@@ -250,14 +250,22 @@ namespace Robot.Recordings
             RecordingPositioningChanged?.Invoke();
         }
 
+        /// <summary>
+        /// Iterates all recordings and checks guid map to find specific command.
+        /// </summary>
         public Recording GetRecordingFromCommand(Command command)
         {
-            return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
+            return LoadedRecordings.FirstOrDefault(r => r.HasRegisteredGuid(command.Guid));
+            // return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
         }
 
+        /// <summary>
+        /// Iterates all recordings and checks guid map to find specific command.
+        /// </summary>
         public Recording GetRecordingFromCommandGuid(Guid guid)
         {
-            return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
+            return LoadedRecordings.FirstOrDefault(r => r.HasRegisteredGuid(guid));
+            // return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value.Guid).Contains(guid));
         }
 
         public int GetCommandIndex(Command command)

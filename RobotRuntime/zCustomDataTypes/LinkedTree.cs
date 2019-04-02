@@ -186,6 +186,7 @@ namespace RobotRuntime
 
         /// <summary>
         /// Checks all nodes and child child nodes for correct value and returns that node
+        /// Returns null if node is not found.
         /// </summary>
         public TreeNode<T> GetNodeFromValue(T value)
         {

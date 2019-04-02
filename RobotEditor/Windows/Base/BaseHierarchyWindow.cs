@@ -5,6 +5,7 @@ using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotEditor.Utils;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,14 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows.Base
 {
+    /// <summary>
+    /// Base class for windows which use Command/Recording collections.
+    /// Deals with Callbacks from IBaseHierarchyManager on Command CRUD, Recording CRUD operations
+    /// Supports UI callbacks for Duplicate and Delete buttons
+    /// Supports Drag&Drop for HierarchyNodes between all windows which inherit this class
+    /// Has Callbacks for Expand ToolStrip buttons
+    /// Has Command Create Context menu item Creation method which could be assing to CommandFactory callback
+    /// </summary>
     public class BaseHierarchyWindow : DockContent
     {
         protected new string Name;
@@ -33,10 +42,12 @@ namespace RobotEditor.Windows.Base
             OnSelectionChanged?.Invoke(HierarchyManager, selectedObject);
 
         protected readonly ICommandFactory CommandFactory;
+        protected readonly IProfiler Profiler;
         public BaseHierarchyWindow() { }
-        public BaseHierarchyWindow(ICommandFactory CommandFactory)
+        public BaseHierarchyWindow(ICommandFactory CommandFactory, IProfiler Profiler)
         {
             this.CommandFactory = CommandFactory;
+            this.Profiler = Profiler;
         }
 
         #region Misc Important Methods
@@ -47,7 +58,8 @@ namespace RobotEditor.Windows.Base
             {
                 Owner = this,
                 DragAndDropAccepted = DragAndDropAcceptedCallback,
-                HierarchyManager = hierarchyManager
+                HierarchyManager = hierarchyManager,
+                SuppressRefreshAndSelection = false,
             };
         }
 
@@ -77,11 +89,6 @@ namespace RobotEditor.Windows.Base
             {
                 this.Text = Name;
                 m_TreeListView.Roots = m_Nodes;
-
-                for (int i = 0; i < m_TreeListView.Items.Count; ++i)
-                {
-                    m_TreeListView.Items[i].ImageIndex = 0;
-                }
                 m_TreeListView.Refresh();
 
                 callbackAfterRefresh?.Invoke();
@@ -389,8 +396,15 @@ namespace RobotEditor.Windows.Base
 
         protected virtual void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
         {
+            Profiler.Start("BaseHierarchyWindow_ModelDropped");
+
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNodes = e.SourceModels.SafeCast<HierarchyNode>();
+
+            var lastNode = sourceNodes.Last();
+
+            // All nodes will be in the same recording, so checking against any should work
+            var sourceRecording = lastNode.DropDetails.HierarchyManager.GetRecordingFromCommand(lastNode.Command);
 
             SuppressRefreshAndSelection = true;
             foreach (var sourceNode in sourceNodes)
@@ -411,8 +425,6 @@ namespace RobotEditor.Windows.Base
                     // Moving command on top of recording
                     if (targetNode.Recording != null && sourceNode.Command != null)
                     {
-                        var sourceRecording = HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
-
                         var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
                         sourceRecording.RemoveCommand(sourceNode.Command);
                         targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
@@ -423,10 +435,13 @@ namespace RobotEditor.Windows.Base
                     if (sourceNode.Recording != null) // Do not allow recordings
                         return;
 
-                    var sourceRecording = sourceNode.DropDetails.HierarchyManager.GetRecordingFromCommand(sourceNode.Command);
                     var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
 
-                    // Since we're reusing the same command node instance, first remove from old recodring
+                    // And do not refresh the list on other window here. It will be a massive slowdown with many commands
+                    // Refresh only on last node
+                    sourceNode.DropDetails.SuppressRefreshAndSelection = sourceNode != lastNode;
+
+                    // Since we're reusing the same command node instance, first remove from old recording
                     sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
 
                     // Moving command between or onto other commands
@@ -459,12 +474,15 @@ namespace RobotEditor.Windows.Base
 
             m_TreeListView.SelectedObjects = null;
             m_TreeListView.Focus();
-            RefreshTreeListViewAsync(() => 
+
+            RefreshTreeListViewAsync(() =>
             {
                 m_TreeListView.Expand(parentNode);
                 if (nodesToSelect != null)
                     m_TreeListView.SelectObjects(nodesToSelect.ToList());
             });
+
+            Profiler.Stop("BaseHierarchyWindow_ModelDropped");
         }
 
         /// <summary>
@@ -472,9 +490,15 @@ namespace RobotEditor.Windows.Base
         /// </summary>
         protected virtual void DragAndDropAcceptedCallback(HierarchyNode node)
         {
+            // Do not refresh UI after this callback
+            // This increases performance if many commands have been moved, we only need to refresh once
+            SuppressRefreshAndSelection = node.DropDetails.SuppressRefreshAndSelection;
+
             var sourceRecording = HierarchyManager.GetRecordingFromCommand(node.Command);
             sourceRecording.RemoveCommand(node.Command);
             m_TreeListView.SelectedObjects = null;
+
+            SuppressRefreshAndSelection = false;
         }
 
         #endregion

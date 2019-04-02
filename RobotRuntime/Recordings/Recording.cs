@@ -48,7 +48,8 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command AddCommand(Command command, Command parentCommand = null)
         {
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(command.Guid), "Command should not exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on recording");
 
             m_IsDirty = true;
 
@@ -69,7 +70,8 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command AddCommandNode(TreeNode<Command> commandNode, Command parentCommand = null)
         {
-            Debug.Assert(!Commands.GetAllNodes().Contains(commandNode), "Command Node should not exist on recording. Did you forget to remove it?");
+            Debug.Assert(!CommandGuidMap.Contains(commandNode.value.Guid), "Command Node should not exist on recording. Did you forget to remove it?");
+            //Debug.Assert(!Commands.GetAllNodes().Contains(commandNode), "Command Node should not exist on recording. Did you forget to remove it?");
 
             m_IsDirty = true;
 
@@ -92,8 +94,10 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command ReplaceCommand(Command originalCommand, Command newCommand)
         {
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(originalCommand), "Original Command should exist on recording");
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(newCommand), "New Command should not exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(originalCommand.Guid), "Original Command should exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(newCommand.Guid), "New Command should not exist on recording");
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(originalCommand), "Original Command should exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(newCommand), "New Command should not exist on recording");
 
             m_IsDirty = true;
 
@@ -115,7 +119,8 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command InsertCommand(Command command, int position, Command parentCommand = null)
         {
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(command.Guid), "Command should not exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should not exist on recording");
 
             var treeNodeToInsert = (parentCommand == null) ? Commands : Commands.GetNodeFromValue(parentCommand);
             treeNodeToInsert.Insert(position, command);
@@ -135,8 +140,10 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command InsertCommandAfter(Command sourceCommand, Command commandAfter)
         {
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(sourceCommand), "Source Command should not exist on recording");
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(sourceCommand.Guid), "Source Command should not exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(commandAfter.Guid), "Destination Command should exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(sourceCommand), "Source Command should not exist on recording"); // Those are slow
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
 
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
             var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
@@ -149,20 +156,22 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command InsertCommandNodeAfter(TreeNode<Command> commandNode, Command commandAfter)
         {
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on recording");
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(commandNode.value.Guid), "Source Command should not exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(commandAfter.Guid), "Destination Command should exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on recording"); // Those are slow
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
 
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
-            var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+            var indexAfter = nodeAfter.Index;
 
             foreach (var node in commandNode.GetAllNodes())
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;
             nodeToAddCommand.AddNode(commandNode);
-            Commands.MoveAfter(commandNode.value, commandAfter);
+            Commands.MoveAfter(commandNode, nodeAfter);
 
-            CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
+            CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, commandNode.Index);
 
             m_IsDirty = true;
             DEBUG_CheckCommandGuidConsistency();
@@ -176,20 +185,22 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public Command InsertCommandNodeBefore(TreeNode<Command> commandNode, Command commandAfter)
         {
-            Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on recording");
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
+            Debug.Assert(!CommandGuidMap.Contains(commandNode.value.Guid), "Source Command should not exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(commandAfter.Guid), "Destination Command should exist on recording");
+            //Debug.Assert(!Commands.GetAllNodes().Select(n => n.value).Contains(commandNode.value), "Source Command should not exist on recording"); // Those are slow
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(commandAfter), "Destination Command should exist on recording");
 
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
-            var indexAfter = nodeAfter.parent.IndexOf(commandAfter);
+            var indexAfter = nodeAfter.Index;
 
             foreach (var node in commandNode.GetAllNodes())
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;
             nodeToAddCommand.AddNode(commandNode);
-            Commands.MoveBefore(commandNode.value, commandAfter);
+            Commands.MoveBefore(commandNode, nodeAfter);
 
-            CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, GetIndex(commandNode.value));
+            CommandInsertedInRecording?.Invoke(this, nodeAfter.parent.value, commandNode.value, commandNode.Index);
 
             m_IsDirty = true;
             DEBUG_CheckCommandGuidConsistency();
@@ -203,17 +214,23 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public void MoveCommandAfter(Command source, Command after)
         {
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on recording");
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(after), "Destination Command should exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(source.Guid), "Source Command should exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(after.Guid), "Destination Command should exist on recording");
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on recording"); // Those are slow
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(after), "Destination Command should exist on recording");
 
-            var oldIndex = GetIndex(source);
-            var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
-            var destParentCommand = Commands.GetNodeFromValue(after).parent.value;
+            var sourceNode = Commands.GetNodeFromValue(source);
+            var sourceParentCommand = sourceNode.parent.value;
 
-            Commands.MoveAfter(source, after);
+            var destNode = Commands.GetNodeFromValue(after);
+            var destParentCommand = destNode.parent.value;
+
+            var oldIndex = sourceNode.Index;
+
+            Commands.MoveAfter(sourceNode, destNode);
 
             CommandRemovedFromRecording?.Invoke(this, sourceParentCommand, oldIndex);
-            CommandInsertedInRecording?.Invoke(this, destParentCommand, source, GetIndex(source));
+            CommandInsertedInRecording?.Invoke(this, destParentCommand, source, sourceNode.Index);
             m_IsDirty = true;
 
             DEBUG_CheckCommandGuidConsistency();
@@ -225,17 +242,23 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public void MoveCommandBefore(Command source, Command before)
         {
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on recording");
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(before), "Destination Command should exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(source.Guid), "Source Command should exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(before.Guid), "Destination Command should exist on recording");
+            // Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(source), "Source Command should exist on recording"); // Those are slow
+            // Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(before), "Destination Command should exist on recording");
 
-            var oldIndex = GetIndex(source);
-            var sourceParentCommand = Commands.GetNodeFromValue(source).parent.value;
-            var destParentCommand = Commands.GetNodeFromValue(before).parent.value;
+            var sourceNode = Commands.GetNodeFromValue(source);
+            var sourceParentCommand = sourceNode.parent.value;
 
-            Commands.MoveBefore(source, before);
+            var destNode = Commands.GetNodeFromValue(before);
+            var destParentCommand = destNode.parent.value;
+
+            var oldIndex = sourceNode.Index;
+
+            Commands.MoveBefore(sourceNode, destNode);
 
             CommandRemovedFromRecording?.Invoke(this, sourceParentCommand, oldIndex);
-            CommandInsertedInRecording?.Invoke(this, destParentCommand, source, GetIndex(source));
+            CommandInsertedInRecording?.Invoke(this, destParentCommand, source, sourceNode.Index);
             m_IsDirty = true;
 
             DEBUG_CheckCommandGuidConsistency();
@@ -246,7 +269,8 @@ namespace RobotRuntime.Recordings
         /// </summary>
         public void RemoveCommand(Command command)
         {
-            Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should exist on recording");
+            Debug.Assert(CommandGuidMap.Contains(command.Guid), "Command should exist on recording");
+            //Debug.Assert(Commands.GetAllNodes().Select(n => n.value).Contains(command), "Command should exist on recording");
 
             var oldIndex = GetIndex(command);
             var commandNode = Commands.GetNodeFromValue(command);
@@ -279,6 +303,10 @@ namespace RobotRuntime.Recordings
             return Commands.GetAllNodes(false).FirstOrDefault(c => c.value.Guid == guid);
         }
 
+        /// <summary>
+        /// Gets index from command by iterating all commands on recording
+        /// This one is slow, if TreeNode<Command> is known, better use  <see cref="TreeNode.Index"/> method.
+        /// </summary>
         public int GetIndex(Command command)
         {
             var node = Commands.GetNodeFromValue(command);
