@@ -351,6 +351,7 @@
       <DependentUpon>HierarchyWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\DynamicTypeDescriptor.cs" />
+    <Compile Include="zExtensionMethods\BaseHierarchyManagerExtension.cs" />
     <Compile Include="zExtensionMethods\HierarchyNodeExtension.cs" />
     <EmbeddedResource Include="Windows\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
