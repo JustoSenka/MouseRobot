@@ -12,6 +12,7 @@ using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace RobotEditor
             AutoScaleMode = AutoScaleMode.Dpi;
             treeListView.Font = Fonts.Default;
 
-            AssetManager.RefreshFinished += OnRefreshFinished;
+            AssetManager.RefreshFinished += () => OnRefreshFinished();
             AssetManager.AssetCreated += OnAssetCreated;
             AssetManager.AssetDeleted += OnAssetDeleted;
             AssetManager.AssetRenamed += OnAssetRenamed;
@@ -140,7 +141,7 @@ namespace RobotEditor
             }));
         }
 
-        private void OnRefreshFinished()
+        private void OnRefreshFinished(Action afterRefreshCallback = null)
         {
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
@@ -148,6 +149,8 @@ namespace RobotEditor
                 treeListView.Sort(0);
                 treeListView.Refresh();
                 treeListView.Expand(m_AssetTree.GetChild(0));
+
+                afterRefreshCallback?.Invoke();
 
                 ASSERT_TreeViewIsTheSameAsInRecordingManager();
             }));
@@ -297,52 +300,82 @@ namespace RobotEditor
 
         private void treeListView_ModelCanDrop(object sender, ModelDropEventArgs e)
         {
-            var targetNode = e.TargetModel as TreeNode<Asset>;
-            var sourceNode = e.SourceModels[0] as TreeNode<Asset>;
+            var sourceNodes = e.SourceModels.SafeCast<TreeNode<Asset>>();
+            e.DropSink.CanDropBetween = true;
 
-            if (targetNode == null || sourceNode == null || targetNode.value == null)
+            if (!(e.TargetModel is TreeNode<Asset> targetNode))
             {
                 e.Effect = DragDropEffects.None;
-                e.DropSink.CanDropBetween = true;
                 e.DropSink.CanDropOnItem = false;
                 return;
             }
 
-            var isOriginalTargetFolder = Paths.IsDirectory(targetNode.value.Path);
+            e.DropSink.CanDropOnItem = Paths.IsDirectory(targetNode.value.Path);
 
-            // If dropping in between some nodes, we actually want to put it inside the parent node
+            // If dropping in between some nodes, we actually want to put it inside the parent node if one exist
             var isBetween = e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem;
-            var newTarget = !isBetween ? targetNode : targetNode.parent.value == null ? targetNode : targetNode.parent;
+            var newTarget = !isBetween ? targetNode : targetNode.parent?.value == null ? targetNode : targetNode.parent;
 
-            var sourcePath = sourceNode.value.Path;
-            var newTargetPath = Path.Combine(newTarget.value.Path, Path.GetFileName(sourcePath));
+            // If dragged object contains nulls, cancel
+            if (sourceNodes.Any(n => n == null || n.value == null))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
 
-            var canBeDropped = sourcePath != newTargetPath && !newTargetPath.StartsWith(sourcePath) &&
-                newTargetPath != sourcePath;
+            var nodePaths = sourceNodes.Select(n => (From: n.value.Path.NormalizePath(),
+                To: Path.Combine(newTarget.value.Path, Path.GetFileName(n.value.Path)).NormalizePath()));
 
-            e.DropSink.CanDropBetween = true;
-            e.DropSink.CanDropOnItem = isOriginalTargetFolder;
+            // if paht to starts with path from AND they are not the same, it is being nested under itself
+            var areNodesBeingNestedUnderThemself = nodePaths.Any(p => p.From != p.To && p.To.StartsWith(p.From)); 
+            var areAllNodesBeingMovedToSamePath = nodePaths.All(p => p.From == p.To);
+
+            var canBeDropped = !areAllNodesBeingMovedToSamePath && !areNodesBeingNestedUnderThemself;
+
             e.Effect = canBeDropped ? DragDropEffects.Move : DragDropEffects.None;
         }
 
         private void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
         {
             var targetNode = e.TargetModel as TreeNode<Asset>;
-            var sourceNode = e.SourceModels[0] as TreeNode<Asset>;
+            var sourceNodes = e.SourceModels.SafeCast<TreeNode<Asset>>();
 
             var isBetween = e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem;
             if (isBetween)
                 targetNode = targetNode.parent;
 
-            var sourcePath = sourceNode.value.Path;
-            var targetPath = Path.Combine(targetNode.value.Path, Path.GetFileName(sourcePath));
-            AssetManager.RenameAsset(sourcePath, targetPath);
+            // Do not move nodes if already moving node parent
+            var filteredNodes = RemoveChildNodesIfParentIsAlsoDragged(sourceNodes);
 
-            var droppedAssetNode = m_AssetTree.FindNodeFromPath(targetPath);
-            if (Logger.AssertIf(droppedAssetNode == null, "Cannot select asset which was just dropped. Looks like something went wrong. Please report a bug"))
-                return;
+            var nodePaths = filteredNodes.Select(n => (From: n.value.Path.NormalizePath(),
+                To: Path.Combine(targetNode.value.Path, Path.GetFileName(n.value.Path)).NormalizePath()));
 
-            treeListView.SelectedObject = droppedAssetNode;
+            // Do not move nodes if it's not needed
+            nodePaths = nodePaths.Where(p => p.From != p.To);
+
+            // Renaming actual assets in backend. UI will be updated by callbacks and new nodes with new paths will be created in list view
+            // Beginning editing will not allow refresh to be called in the middle of file moving
+            // This might cause problems if compilation starts while half of the assets are still being moved
+            AssetManager.BeginAssetEditing(); // TODO-BUG not having this seems to cause some racing condition in compiler when dragging multiple scripts. Need to uncomment and investigate
+            foreach(var (From, To) in nodePaths)
+                AssetManager.RenameAsset(From, To);
+            AssetManager.EndAssetEditing();
+
+            treeListView.Focus();
+
+            // Selecting newly dropped nodes
+            var nodesToSelect = nodePaths.Select(p => m_AssetTree.FindNodeFromPath(p.To)).Where(n => n != null);
+            OnRefreshFinished(() => treeListView.SelectedObjects = nodesToSelect.ToList());
+        }
+
+        private IEnumerable<TreeNode<Asset>> RemoveChildNodesIfParentIsAlsoDragged(IEnumerable<TreeNode<Asset>> sourceNodes)
+        {
+            var nodesToExclude = (from s in sourceNodes
+                                  from n in sourceNodes
+                                  where s.Contains(n)
+                                  select n);
+
+            return sourceNodes.Except(nodesToExclude);
         }
 
         public void AddMenuItemsForScriptTemplates(ToolStrip menuStrip, string menuItemName)

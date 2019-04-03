@@ -533,13 +533,12 @@ namespace RobotEditor.Windows.Base
         /// </summary>
         public static bool IsMultiSelectionNotValid(IEnumerable<HierarchyNode> selectedObjects)
         {
-            var nodeList = selectedObjects.Cast<object>().Select(o => o as HierarchyNode);
-            var areAnyNulls = nodeList.Any(n => n == null);
+            var areAnyNulls = selectedObjects.Any(n => n == null);
             if (areAnyNulls)
-                return false;
+                return true;
 
-            var commandCount = nodeList.Count(n => n.Command != null);
-            var recordingCount = nodeList.Count(n => n.Recording != null);
+            var commandCount = selectedObjects.Count(n => n.Command != null);
+            var recordingCount = selectedObjects.Count(n => n.Recording != null);
 
             return commandCount > 0 && recordingCount > 0 || commandCount == 0 && recordingCount == 0;
         }

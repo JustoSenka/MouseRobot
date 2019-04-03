@@ -89,7 +89,16 @@ namespace Robot.Recordings
                     if (command == null || CommandFactory.IsNative(command))
                         continue;
 
-                    recording.ReplaceCommand(node.value, CommandFactory.Create(node.value.Name, node.value));
+                    var newCommand = CommandFactory.Create(node.value.Name, node.value);
+                    if (newCommand == null)
+                    {
+                        Logger.Logi(LogType.Error, "Cannot replace new command type with new recompiled. But it " +
+                            "seems compilation failed. This code then should not be executed then. Please report a bug.");
+
+                        continue;
+                    }
+
+                    recording.ReplaceCommand(node.value, newCommand);
                 }
             }
 

@@ -2,7 +2,6 @@
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
-using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,35 +59,44 @@ namespace Robot.Recordings
             NewUserCommands?.Invoke();
         }
 
+        /// <summary>
+        /// Creates command from Command Name
+        /// If type could not be loaded returns null
+        /// </summary>
         public Command Create(string commandName)
         {
             if (m_CommandTypes.ContainsKey(commandName))
             {
                 var type = m_CommandTypes[commandName];
-                return (Command)Activator.CreateInstance(type);
+                try
+                {
+                    return (Command)Activator.CreateInstance(type);
+                }
+                catch (Exception e)
+                {
+                    Logger.Logi(LogType.Error, "Command with name '" + commandName + "' could not be instantiated: " + e.Message);
+                    return null;
+                }
             }
             else
             {
-                Logger.Logi(LogType.Error, "Command with name '" + commandName + "' not found.", "Returning first command on the list.");
-                return new CommandSleep(0);
+                Logger.Logi(LogType.Error, "Command with name '" + commandName + "' not found.");
+                return null;
             }
         }
 
+        /// <summary>
+        /// Creates command with values of an old command.
+        /// If type could not be loaded returns null
+        /// </summary>
         public Command Create(string commandName, Command oldCommand)
         {
             var command = Create(commandName);
+            if (command == null)
+                return null;
 
             command.CopyAllProperties(oldCommand);
             command.CopyAllFields(oldCommand);
-
-            /*
-            command.CopyPropertyFromIfExist(oldCommand, k_X);
-            command.CopyPropertyFromIfExist(oldCommand, k_Y);
-            command.CopyPropertyFromIfExist(oldCommand, k_DontMove);
-            command.CopyPropertyFromIfExist(oldCommand, k_Smooth);
-            command.CopyPropertyFromIfExist(oldCommand, k_Asset);
-            command.CopyPropertyFromIfExist(oldCommand, k_Time);
-            command.CopyPropertyFromIfExist(oldCommand, k_Timeout);*/
 
             return command;
         }
