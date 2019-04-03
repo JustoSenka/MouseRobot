@@ -3,6 +3,7 @@
 using BrightIdeasSoftware;
 using Robot;
 using Robot.Abstractions;
+using Robot.Assets;
 using RobotEditor.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
@@ -255,7 +256,16 @@ namespace RobotEditor
                 return;
             }
 
-            if (asset.HoldsTypeOf(typeof(Recording)))
+            // Iterating all asset importer types, each importer does something specific when double clicked
+            if (asset.Importer.GetType() == typeof(DirectoryImporter))
+            {
+                var isExpanded = treeListView.IsExpanded(treeListView.SelectedObject);
+                if (isExpanded)
+                    treeListView.Collapse(treeListView.SelectedObject);
+                else
+                    treeListView.Expand(treeListView.SelectedObject);
+            }
+            else if (asset.HoldsTypeOf(typeof(Recording)))
             {
                 if (!RecordingManager.LoadedRecordings.Any(s => s.Name == asset.Name))
                     RecordingManager.LoadRecording(asset.Path);
