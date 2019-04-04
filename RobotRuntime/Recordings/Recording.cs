@@ -160,7 +160,7 @@ namespace RobotRuntime.Recordings
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
             var indexAfter = nodeAfter.Index;
 
-            foreach (var node in commandNode.GetAllNodes())
+            foreach (var node in commandNode.GetAllNodes(true))
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;
@@ -189,7 +189,7 @@ namespace RobotRuntime.Recordings
             var nodeAfter = Commands.GetNodeFromValue(commandAfter);
             var indexAfter = nodeAfter.Index;
 
-            foreach (var node in commandNode.GetAllNodes())
+            foreach (var node in commandNode.GetAllNodes(true))
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(node.value);
 
             var nodeToAddCommand = nodeAfter.parent;

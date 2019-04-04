@@ -131,6 +131,7 @@ namespace RobotRuntime.Scripts
                     {
                         var pdbBytes = File.ReadAllBytes(pdbPath);
                         assembly = Assembly.Load(dllBytes, pdbBytes);
+                        assembly.GetTypes();
                     }
                     else
                     {
@@ -138,11 +139,12 @@ namespace RobotRuntime.Scripts
                             Logger.Log(LogType.Warning, "Cannot find debug symbols .pdb for assembly: " + path);
 
                         assembly = Assembly.Load(dllBytes);
+                        assembly.GetTypes();
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Assembly could not be loaded: " + path);
+                    Logger.Log(LogType.Error, "Assembly could not be loaded: " + path, e.Message);
                 }
 
                 if (assembly != null)

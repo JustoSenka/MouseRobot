@@ -551,11 +551,15 @@ namespace RobotEditor
             if (res == DialogResult.OK)
             {
                 var filteredNodes = RemoveChildNodesIfParentIsAlsoDragged(sourceNodes);
+
+                treeListView.SelectedObjects = null;
+                AssetManager.BeginAssetEditing();
                 foreach (var n in filteredNodes)
                     AssetManager.DeleteAsset(n.value.Path);
-            }
+                AssetManager.EndAssetEditing();
 
-            treeListView.SelectedObjects = null;
+                OnRefreshFinished(() => treeListView.SelectedObjects = null);
+            }
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
