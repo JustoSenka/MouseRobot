@@ -108,13 +108,12 @@ namespace Robot
                 }
             }
 
-            EndAssetEditing();
             Profiler.Stop("AssetManager_Refresh");
 
             StatusManager.Add("AssetManager", 10, new Status(null, "Asset Refresh Finished", StandardColors.Default));
             // Logger.Log(LogType.Log, "Asset refresh finished");
 
-            RefreshFinished?.Invoke();
+            EndAssetEditing();
         }
 
         public void SaveExistngAsset(Asset existingAsset, object newValue)
@@ -322,6 +321,7 @@ namespace Robot
         {
             IsEditingAssets = false;
             AssetGuidManager.Save();
+            RefreshFinished?.Invoke();
         }
 
         public void EditAssets(Action ac)

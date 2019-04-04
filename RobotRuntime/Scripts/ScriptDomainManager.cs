@@ -11,6 +11,7 @@ namespace RobotRuntime.Scripts
     /// </summary>
     public class ScriptDomainManager : MarshalByRefObject, IScriptDomainManager
     {
+        /*
         public Assembly[] Assemblies;
 
         public ScriptDomainManager()
@@ -32,7 +33,7 @@ namespace RobotRuntime.Scripts
             var types = Assemblies.GetAllTypesWhichImplementInterface(type);
             return types.ToArray();
         }
-
+        
         public object Instantiate(string FullTypeName)
         {
             var type = Assemblies.SelectMany(a => a.GetTypes()).First(t => t.FullName == FullTypeName);
@@ -67,5 +68,6 @@ namespace RobotRuntime.Scripts
                     yield return assembly;
             }
         }
+        */
     }
 }

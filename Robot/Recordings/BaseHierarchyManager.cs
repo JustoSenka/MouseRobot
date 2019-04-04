@@ -89,6 +89,10 @@ namespace Robot.Recordings
                     if (command == null || CommandFactory.IsNative(command))
                         continue;
 
+                    // If no such command exist, do nothing. Might be that user removed script containing command
+                    if (!CommandFactory.CommandNames.Contains(node.value.Name))
+                        continue;
+
                     var newCommand = CommandFactory.Create(node.value.Name, node.value);
                     if (newCommand == null)
                     {

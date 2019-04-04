@@ -28,10 +28,13 @@ namespace Tests.Integration
         ISettingsManager SettingsManager;
         IScriptLoader ScriptLoader;
 
+        private const string k_CommandLog = "CommandLog";
         private const string k_UserDllName = "TestClassLibrary";
         private const string k_UserDllPath = "Assets\\" + k_UserDllName + ".dll";
         private const string k_SomeScript = "Assets\\SomeScript.cs";
         private const string k_SomeScript2 = "Assets\\SomeScript2.cs";
+
+        private const string k_UserDllNewPath = "Assets\\NewName" + k_UserDllName + ".dll";
 
         [SetUp]
         public void Initialize()
@@ -217,6 +220,25 @@ namespace Tests.Integration
 
             var ret = c.GetType().GetMethod("Method").Invoke(null, null);
             Assert.AreEqual(96, ret, "Return value from method from user plugin did not match");
+        }
+
+        [Test]
+        public void CommandFactory_WillHaveNewCommands_AfterPluginReload()
+        {
+            AssetManager.CreateAsset(Properties.Resources.TestClassLibraryWithRefToRobot, k_UserDllPath);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var c1 = CommandFactory.Create(k_CommandLog);
+
+            AssetManager.RenameAsset(k_UserDllPath, k_UserDllNewPath);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            var c2 = CommandFactory.Create(k_CommandLog);
+
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.AreNotEqual(c1.GetType(), c2.GetType(), "Types should be different");
+            Assert.AreEqual(c1.Name, c2.Name, "Names should be the same");
         }
     }
 }

@@ -57,7 +57,7 @@ namespace RobotRuntime.Scripts
                 typeof(ScriptDomainManager).Assembly.FullName, "RobotRuntime.Scripts.ScriptDomainManager");
 
             var assemblyNames = AppDomain.CurrentDomain.GetAllAssembliesInBaseDirectory().ToArray();
-            ScriptDomainManager.LoadAssemblies(assemblyNames);
+            // ScriptDomainManager.LoadAssemblies(assemblyNames);
 
             LoadUserAssemblies(); // User assemblies must be loaded before UserDomainReloaded event fires
 
@@ -66,7 +66,7 @@ namespace RobotRuntime.Scripts
 
         public void LoadUserAssemblies()
         {
-            ScriptDomainManager.LoadAssemblies(new[] { UserAssemblyPath }, true);
+            // ScriptDomainManager.LoadAssemblies(new[] { UserAssemblyPath }, true);
         }
 
         public IEnumerable<T> IterateUserAssemblies<T>(Func<Assembly, T> func)

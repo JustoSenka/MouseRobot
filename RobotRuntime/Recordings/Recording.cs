@@ -97,10 +97,8 @@ namespace RobotRuntime.Recordings
 
             m_IsDirty = true;
 
+            newCommand.SetFieldIfExist("Guid", originalCommand.Guid);
             var node = Commands.GetNodeFromValue(originalCommand);
-
-            CommandGuidMap.RemoveGuidFromMap(node.value);
-            CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(newCommand);
 
             node.value = newCommand;
 
