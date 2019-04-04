@@ -327,7 +327,7 @@ namespace RobotEditor
                 To: Path.Combine(newTarget.value.Path, Path.GetFileName(n.value.Path)).NormalizePath()));
 
             // if paht to starts with path from AND they are not the same, it is being nested under itself
-            var areNodesBeingNestedUnderThemself = nodePaths.Any(p => p.From != p.To && p.To.StartsWith(p.From)); 
+            var areNodesBeingNestedUnderThemself = nodePaths.Any(p => p.From != p.To && p.To.StartsWith(p.From));
             var areAllNodesBeingMovedToSamePath = nodePaths.All(p => p.From == p.To);
 
             var canBeDropped = !areAllNodesBeingMovedToSamePath && !areNodesBeingNestedUnderThemself;
@@ -357,7 +357,7 @@ namespace RobotEditor
             // Beginning editing will not allow refresh to be called in the middle of file moving
             // This might cause problems if compilation starts while half of the assets are still being moved
             AssetManager.BeginAssetEditing(); // TODO-BUG not having this seems to cause some racing condition in compiler when dragging multiple scripts. Need to uncomment and investigate
-            foreach(var (From, To) in nodePaths)
+            foreach (var (From, To) in nodePaths)
                 AssetManager.RenameAsset(From, To);
             AssetManager.EndAssetEditing();
 
@@ -524,22 +524,38 @@ namespace RobotEditor
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var assetNode = treeListView.SelectedObject as TreeNode<Asset>;
-            var asset = assetNode?.value;
-            if (asset == null)
+            var sourceNodes = treeListView.SelectedObjects.SafeCast<TreeNode<Asset>>();
+            if (sourceNodes.Any(n => n == null || n.value == null))
+            {
+                Logger.Logi(LogType.Warning, "Some nodes are null or contain null value. Aborting deletions for safety reasons");
                 return;
+            }
 
-            // Put correct message in the message box
-            var isFile = File.Exists(asset.Path);
-            var msg = (isFile ? Properties.Resources.S_ConfirmAssetDeletionMessage
-                : Properties.Resources.S_ConfirmFolderDeletionMessage) +
-                "\n\n\t" + asset.Path;
+            // Prepare correct warning message for user to confirm deletion
+            var msg = "";
+            if (sourceNodes.Count() == 1)
+            {
+                var isFile = File.Exists(sourceNodes.First().value.Path);
+                msg = (isFile ? Properties.Resources.S_ConfirmAssetDeletionMessage
+                    : Properties.Resources.S_ConfirmFolderDeletionMessage) +
+                    "\n\n\t" + sourceNodes.First().value.Path;
+            }
+            else
+            {
+                var messageContent = string.Join(Environment.NewLine, sourceNodes.Select(n => "\t" + n.value.Path));
+                msg = Properties.Resources.S_ConfirmMultipleAssetDeletionMessage + "\n\n" + messageContent;
+            }
 
             // Show dialog to confirm deletion
             var res = FlexibleMessageBox.Show(msg, "Confirm deletion", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
             if (res == DialogResult.OK)
-                AssetManager.DeleteAsset(asset.Path);
+            {
+                var filteredNodes = RemoveChildNodesIfParentIsAlsoDragged(sourceNodes);
+                foreach (var n in filteredNodes)
+                    AssetManager.DeleteAsset(n.value.Path);
+            }
 
+            treeListView.SelectedObjects = null;
         }
 
         private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)

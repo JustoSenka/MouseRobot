@@ -427,6 +427,15 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to all these assets?.
+        /// </summary>
+        internal static string S_ConfirmMultipleAssetDeletionMessage {
+            get {
+                return ResourceManager.GetString("S_ConfirmMultipleAssetDeletionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Test_ICO_256 {
