@@ -8,7 +8,9 @@ using RobotRuntime.Perf;
 using RobotRuntime.Scripts;
 using RobotRuntime.Settings;
 using RobotRuntime.Tests;
+using RobotRuntime.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Unity;
@@ -21,6 +23,11 @@ namespace RobotRuntime
     {
         public static void Main(string[] args)
         {
+            Trace.Listeners.Clear();
+            Debug.Listeners.Clear();
+            Trace.Listeners.Add(new TraceListenerWhichLogs());
+            Debug.Listeners.Add(new TraceListenerWhichLogs());
+
             // FIRST THING (Register all the dependencies)
             var container = new UnityContainer();
             RegisterInterfaces(container);

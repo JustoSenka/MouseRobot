@@ -8,7 +8,9 @@ using RobotEditor.Resources.ScriptTemplates;
 using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Utils;
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Unity;
 using Unity.Lifetime;
@@ -23,6 +25,11 @@ namespace RobotEditor
         [STAThread]
         static void Main(string[] args)
         {
+            Trace.Listeners.Clear();
+            Debug.Listeners.Clear();
+            Trace.Listeners.Add(new TraceListenerWhichLogs());
+            Debug.Listeners.Add(new TraceListenerWhichLogs());
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

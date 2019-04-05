@@ -1,4 +1,6 @@
-﻿namespace RobotRuntime.Recordings
+﻿using RobotRuntime.Tests;
+
+namespace RobotRuntime.Recordings
 {
     /// <summary>
     /// Extension methods for Recordings.
@@ -12,6 +14,14 @@
                 r.AddCommand(c);
 
             return r;
+        }
+
+        public static LightTestFixture With(this LightTestFixture f, params Recording[] recs)
+        {
+            foreach (var r in recs)
+                f.AddRecording(r);
+
+            return f;
         }
     }
 }

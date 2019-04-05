@@ -41,6 +41,7 @@ namespace Tests.Unit
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c3, s.Commands.GetChild(1).value);
             Assert.AreEqual(c1, s.Commands.GetChild(2).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
 
@@ -58,6 +59,7 @@ namespace Tests.Unit
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
             Assert.AreEqual(c3, s.Commands.GetChild(2).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -81,6 +83,7 @@ namespace Tests.Unit
             Assert.AreEqual(c2, s.Commands.GetChild(0).value);
             Assert.AreEqual(c3, s.Commands.GetChild(1).value);
             Assert.AreEqual(c1, s.Commands.GetChild(2).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -101,6 +104,7 @@ namespace Tests.Unit
             Assert.AreEqual(2, n1.Count());
             Assert.AreEqual(c11, n1.GetChild(0).value);
             Assert.AreEqual(c3, n1.GetChild(1).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -121,6 +125,7 @@ namespace Tests.Unit
             Assert.AreEqual(2, n1.Count());
             Assert.AreEqual(c3, n1.GetChild(0).value);
             Assert.AreEqual(c11, n1.GetChild(1).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -140,6 +145,7 @@ namespace Tests.Unit
             Assert.AreEqual(1, n1.Count());
             Assert.AreEqual(c1, s.Commands.GetChild(0).value);
             Assert.AreEqual(c12, s.Commands.GetChild(1).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -159,6 +165,7 @@ namespace Tests.Unit
             Assert.AreEqual(1, n1.Count());
             Assert.AreEqual(c12, s.Commands.GetChild(0).value);
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -179,6 +186,7 @@ namespace Tests.Unit
             Assert.AreEqual(1, n2.Count());
 
             Assert.AreEqual(c22, n2.GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -202,6 +210,7 @@ namespace Tests.Unit
             Assert.AreEqual(c3, s.Commands.GetChild(2).value);
             Assert.AreEqual(c4, s.Commands.GetChild(3).value);
             Assert.AreEqual(c5, s.Commands.GetChild(4).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -223,6 +232,7 @@ namespace Tests.Unit
             Assert.AreEqual(1, s.Commands.GetChild(0).GetChild(0).Count());
             Assert.AreEqual(c2, s.Commands.GetChild(0).GetChild(0).value);
             Assert.AreEqual(c22, s.Commands.GetChild(0).GetChild(0).GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -243,6 +253,7 @@ namespace Tests.Unit
 
             Assert.IsFalse(s.Select(n => n.value).Contains(c2));
             Assert.IsFalse(s.Select(n => n.value).Contains(c22));
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -262,6 +273,7 @@ namespace Tests.Unit
             Assert.AreEqual(c0, s.Commands.GetChild(0).value);
             Assert.AreEqual(c1, s.Commands.GetChild(1).value);
             Assert.AreEqual(c12, s.Commands.GetChild(1).GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -281,6 +293,7 @@ namespace Tests.Unit
             Assert.AreEqual(c0, s.Commands.GetChild(1).value);
             Assert.AreEqual(c1, s.Commands.GetChild(0).value);
             Assert.AreEqual(c12, s.Commands.GetChild(0).GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -305,6 +318,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, child.GetChild(0).value);
             Assert.AreEqual(c2, child.GetChild(1).value);
             Assert.AreEqual(c21, child.GetChild(1).GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
         [Test]
@@ -329,6 +343,7 @@ namespace Tests.Unit
             Assert.AreEqual(c11, child.GetChild(1).value);
             Assert.AreEqual(c2, child.GetChild(0).value);
             Assert.AreEqual(c21, child.GetChild(0).GetChild(0).value);
+            TestUtils.CheckThatGuidMapIsCorrect(s);
         }
 
 
@@ -341,6 +356,7 @@ namespace Tests.Unit
             var lightRecording = recording.ToLightRecording();
 
             Assert.AreEqual(guid, lightRecording.Guid, "Guids should be the same");
+            TestUtils.CheckThatGuidMapIsCorrect(recording);
         }
 
         [Test]
@@ -352,6 +368,7 @@ namespace Tests.Unit
             var newRecording = Recording.FromLightRecording(lightRecording);
 
             Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
+            TestUtils.CheckThatGuidMapIsCorrect(recording);
         }
 
         [Test]
@@ -363,6 +380,7 @@ namespace Tests.Unit
             var newRecording = new Recording(lightRecording);
 
             Assert.AreEqual(lightRecording.Guid, newRecording.Guid, "Guids should be the same");
+            TestUtils.CheckThatGuidMapIsCorrect(recording);
         }
 
         [Test]
@@ -373,6 +391,8 @@ namespace Tests.Unit
 
             TestUtils.CheckThatGuidsAreSame(s1, s2);
             TestUtils.CheckThatPtrsAreNotSame(s1, s2);
+            TestUtils.CheckThatGuidMapIsCorrect(s1);
+            TestUtils.CheckThatGuidMapIsCorrect(s2);
         }
     }
 }

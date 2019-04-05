@@ -142,5 +142,14 @@ namespace Tests
             foreach (var zip in s1Nodes.Zip(s2Nodes, (a, b) => new { a, b }))
                 Assert.AreSame(zip.a.value, zip.b.value, $"Command ptrs in recording should be the same: {zip.a.value.Name}, {zip.b.value.Name}");
         }
+
+        public static void CheckThatGuidMapIsCorrect(Recording r)
+        {
+            var allCommands = r.Commands.GetAllNodes(false).Select(node => node.value);
+            var areGuidsRegistered = allCommands.Select(c => (Command: c, HasRegisteredGuid: r.HasRegisteredGuid(c.Guid)));
+
+            foreach(var (Command, IsRegistered) in areGuidsRegistered)
+                Assert.IsTrue(IsRegistered, $"Command with name {Command.Name} is not registered in guid map {Command.Guid}");
+        }
     }
 }
