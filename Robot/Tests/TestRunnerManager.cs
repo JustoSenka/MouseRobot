@@ -94,15 +94,14 @@ namespace Robot.Tests
                 if (!firstReload && !modifiedAssets.Contains(asset.Path))
                     continue;
 
+                // Reloading asset on purpose, so it gives us up to date asset and
+                //  gives a different refernce so unsaved modifications from other windows will not affect test run
                 var lightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
                 if (lightFixture == null)
                     continue;
 
                 // Use file name instead of serialized one
                 lightFixture.Name = asset.Name;
-
-                // Making a deep clone so modifying fixtures in other windows will not affect the status on TestRunner
-                lightFixture = (LightTestFixture)lightFixture.Clone();
 
                 var fixture = m_TestFixtures.FirstOrDefault(f => f.Name == asset.Name);
 

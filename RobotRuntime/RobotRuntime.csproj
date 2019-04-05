@@ -268,7 +268,7 @@
     <Compile Include="Tests\LightTestFixture.cs" />
     <Compile Include="Tests\TestData.cs" />
     <Compile Include="Tests\TestStatusManager.cs" />
-    <Compile Include="Utils\DebugListener.cs" />
+    <Compile Include="Utils\TraceListenerWhichLogs.cs" />
     <Compile Include="Utils\ProcessUtility.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuid.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuidMap.cs" />

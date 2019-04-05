@@ -21,7 +21,8 @@ namespace RobotRuntime.Utils
 
         public override void WriteLine(string message)
         {
-            Logger.Log(LogType.Debug, message);
+            // This will cause infinite recursion since logger writes to debug
+            // Logger.Log(LogType.Debug, message);
         }
     }
 }

@@ -109,7 +109,6 @@ namespace Tests.Integration
             // Reload plugins
             AssetManager.RenameAsset(k_UserDllPath, k_UserDllNewPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-            AssetManager.Refresh(); // Needed for TestRunnerManager to pick up fixtures
 
             // Verify that recording is actually updated with new command type
             Recording rec = GetFirstRecording(isFixtureIsFromTestRunnerManager);
