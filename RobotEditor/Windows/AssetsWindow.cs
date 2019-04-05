@@ -252,7 +252,6 @@ namespace RobotEditor
             if (Logger.AssertIf(asset == null, $"Asset Node is created for tree view, but its value (Asset) is null: {assetNode}. Please report a bug."))
                 return;
 
-            asset.Importer.Load<object>(); // Force loading before check
             if (asset.Importer.LoadingFailed)
             {
                 Logger.Logi(LogType.Error, $"This asset failed to import: {asset.Path}, probably unknown extension or corrupted file.");
@@ -291,7 +290,6 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
-            asset.Importer.Load<object>(); // Force loading before check
             if (asset.Importer.LoadingFailed)
                 return;
 
@@ -356,7 +354,7 @@ namespace RobotEditor
             // Renaming actual assets in backend. UI will be updated by callbacks and new nodes with new paths will be created in list view
             // Beginning editing will not allow refresh to be called in the middle of file moving
             // This might cause problems if compilation starts while half of the assets are still being moved
-            AssetManager.BeginAssetEditing(); // TODO-BUG not having this seems to cause some racing condition in compiler when dragging multiple scripts. Need to uncomment and investigate
+            AssetManager.BeginAssetEditing(); 
             foreach (var (From, To) in nodePaths)
                 AssetManager.RenameAsset(From, To);
             AssetManager.EndAssetEditing();

@@ -8,6 +8,7 @@ using RobotEditor.Editor;
 using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Assets;
 using RobotRuntime.Logging;
 using RobotRuntime.Settings;
 using RobotRuntime.Utils;
@@ -232,6 +233,9 @@ namespace RobotEditor
         {
             var asset = m_AssetsWindow.GetSelectedAsset();
             if (asset == null)
+                return;
+
+            if (asset.Importer.GetType() != typeof(ImageImporter))
                 return;
 
             asset.Importer.Load<object>(); // Force loading before check
