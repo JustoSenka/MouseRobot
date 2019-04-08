@@ -34,7 +34,7 @@ namespace RobotRuntime
         /// Will look for node:
         ///  - Assets
         ///  -- scripts
-        ///  --- sc
+        ///  --- sc.mrb
         /// </summary>
         public static TreeNode<T> FindNodeFromPath<T>(this TreeNode<T> treeNode, string path)
         {
@@ -48,7 +48,7 @@ namespace RobotRuntime
         /// Will look for node:
         ///  - Assets
         ///  -- scripts
-        ///  --- sc
+        ///  --- sc.mrb
         /// </summary>
         public static TreeNode<T> FindNodeFromPath<T>(this TreeNode<T> treeNode, string[] pathElements)
         {
@@ -57,7 +57,7 @@ namespace RobotRuntime
             try
             {
                 foreach (var dir in pathElements)
-                    currentNode = currentNode.FindChild(Path.GetFileNameWithoutExtension(dir));
+                    currentNode = currentNode.FindChild(Path.GetFileName(dir));
             }
             catch (Exception e)
             {

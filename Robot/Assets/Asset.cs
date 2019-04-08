@@ -76,10 +76,7 @@ namespace Robot
             return Importer.HoldsType() == type;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => System.IO.Path.GetFileName(Path);
 
         public int CompareTo(Asset other)
         {
