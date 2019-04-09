@@ -5,6 +5,7 @@ using RobotRuntime;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
+using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,7 @@ namespace Tests.Integration
 
         private const string k_FolderA = "Assets\\folderA\\";
         private const string k_FolderB = "Assets\\folderB\\";
+        private const string k_FolderC = "Assets\\folderC\\";
         private const string k_FolderANested = "Assets\\folderA\\nestedFolder";
 
         private const string k_RecInFolderA = k_FolderA + "rec.mrb";
@@ -418,6 +420,50 @@ namespace Tests.Integration
             Assert.AreEqual(originalAsset, oldAsset);
             Assert.IsNull(newAsset);
             Assert.AreEqual(1, warningCount);
+        }
+
+        [Test]
+        [TestCase(true, "FolderA", "FolderB")]
+        [TestCase(true, "Fold", "Folder")]
+        [TestCase(true, "Folder", "Fold")]
+        [TestCase(false, "FolderA", "FolderB")]
+        [TestCase(false, "Fold", "Folder")]
+        [TestCase(false, "Folder", "Fold")]
+        public void RenameFolder_WithAssetsInside_RenamesCorrectAssets(bool renameViaFileManager, string folderA, string folderB)
+        {
+            folderA = Path.Combine("Assets", folderA);
+            folderB = Path.Combine("Assets", folderB);
+            var folderC = folderB + "e"; // some additional character which would result in a folder with similar name
+
+            var a2 = AssetManager.CreateAsset(null, folderB);
+            var a1 = AssetManager.CreateAsset(null, folderA);
+            var a3 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderA, "rec.mrb"));
+            var a4 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderB, "rec.mrb"));
+
+            RenameAsset(renameViaFileManager, folderB, folderC);
+
+            Assert.AreEqual(5, AssetManager.Assets.Count(), "Asset count missmatch");
+
+            Assert.IsNotNull(AssetManager.GetAsset(folderA), "FolderA should be available");
+            Assert.IsNotNull(AssetManager.GetAsset(folderC), "FolderC should be available");
+            Assert.AreEqual(a3.Guid, AssetManager.GetAsset(Path.Combine(folderA, "rec.mrb")).Guid, "Asset inside FolderA guid missmatch");
+            Assert.AreEqual(a4.Guid, AssetManager.GetAsset(Path.Combine(folderC, "rec.mrb")).Guid, "Asset inside FolderC guid missmatch");
+        }
+
+        private void RenameAsset(bool renameViaFileManager, string from, string to)
+        {
+            if (renameViaFileManager)
+            {
+                if (Paths.IsDirectory(from))
+                    Directory.Move(from, to);
+
+                else
+                    File.Move(from, to);
+
+                AssetManager.Refresh();
+            }
+            else
+                AssetManager.RenameAsset(from, to);
         }
 
         private static void CreateDummyRecordingWithImporter(string path)

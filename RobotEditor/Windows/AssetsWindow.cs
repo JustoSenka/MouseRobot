@@ -27,6 +27,8 @@ namespace RobotEditor
 
         public ToolStrip ToolStrip { get { return toolStrip; } }
 
+        private bool m_SupressRefreshAndSelection = false;
+
         private TreeNode<Asset> m_AssetTree = new TreeNode<Asset>();
 
         private IAssetManager AssetManager;
@@ -143,6 +145,9 @@ namespace RobotEditor
 
         private void OnRefreshFinished(Action afterRefreshCallback = null)
         {
+            if (m_SupressRefreshAndSelection)
+                return;
+
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
                 treeListView.Roots = m_AssetTree;
@@ -325,7 +330,7 @@ namespace RobotEditor
                 To: Path.Combine(newTarget.value.Path, Path.GetFileName(n.value.Path)).NormalizePath()));
 
             // if paht to starts with path from AND they are not the same, it is being nested under itself
-            var areNodesBeingNestedUnderThemself = nodePaths.Any(p => p.From != p.To && p.To.StartsWith(p.From));
+            var areNodesBeingNestedUnderThemself = nodePaths.Any(p => p.From != p.To && p.To.IsSubDirectoryOf(p.From));
             var areAllNodesBeingMovedToSamePath = nodePaths.All(p => p.From == p.To);
 
             var canBeDropped = !areAllNodesBeingMovedToSamePath && !areNodesBeingNestedUnderThemself;
@@ -337,10 +342,15 @@ namespace RobotEditor
         {
             var targetNode = e.TargetModel as TreeNode<Asset>;
             var sourceNodes = e.SourceModels.SafeCast<TreeNode<Asset>>();
+            var allSelectedNodes = sourceNodes.Select(n => n.value.Path);
 
             var isBetween = e.DropTargetLocation == DropTargetLocation.BelowItem || e.DropTargetLocation == DropTargetLocation.AboveItem;
             if (isBetween)
                 targetNode = targetNode.parent;
+
+            // Caching nodes prior filtering, so we can correctly select after drag is completed
+            var cachedDraggedNodesForSelection = sourceNodes.Select(n => (From: n.value.Path.NormalizePath(),
+                To: Path.Combine(targetNode.value.Path, Path.GetFileName(n.value.Path)).NormalizePath()));
 
             // Do not move nodes if already moving node parent
             var filteredNodes = RemoveChildNodesIfParentIsAlsoDragged(sourceNodes);
@@ -351,18 +361,24 @@ namespace RobotEditor
             // Do not move nodes if it's not needed
             nodePaths = nodePaths.Where(p => p.From != p.To);
 
+            // Deselecting all while drag and drop finishes
+            treeListView.SelectedObjects = null;
+            treeListView.Refresh();
+
             // Renaming actual assets in backend. UI will be updated by callbacks and new nodes with new paths will be created in list view
             // Beginning editing will not allow refresh to be called in the middle of file moving
             // This might cause problems if compilation starts while half of the assets are still being moved
-            AssetManager.BeginAssetEditing(); 
+            m_SupressRefreshAndSelection = true;
+            AssetManager.BeginAssetEditing();
             foreach (var (From, To) in nodePaths)
                 AssetManager.RenameAsset(From, To);
             AssetManager.EndAssetEditing();
+            m_SupressRefreshAndSelection = false;
 
             treeListView.Focus();
 
             // Selecting newly dropped nodes
-            var nodesToSelect = nodePaths.Select(p => m_AssetTree.FindNodeFromPath(p.To)).Where(n => n != null);
+            var nodesToSelect = cachedDraggedNodesForSelection.Select(p => m_AssetTree.FindNodeFromPath(p.To)).Where(n => n != null);
             OnRefreshFinished(() => treeListView.SelectedObjects = nodesToSelect.ToList());
         }
 

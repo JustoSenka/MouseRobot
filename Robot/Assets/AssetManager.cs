@@ -259,10 +259,17 @@ namespace Robot
                 return;
             }
 
+            var destAsset = GetAsset(destPath);
+            if (destAsset != null)
+            {
+                Logger.Log(LogType.Error, "Cannot rename asset destination path already exist.");
+                return;
+            }
+
             var isDirectory = Paths.IsDirectory(sourcePath);
             if (isDirectory)
             {
-                if (destPath.StartsWith(sourcePath))
+                if (destPath.IsSubDirectoryOf(sourcePath))
                 {
                     Logger.Log(LogType.Warning, "Folder cannot be moved inside itself: " + sourcePath);
                     return;
@@ -271,7 +278,7 @@ namespace Robot
                 Directory.Move(sourcePath, destPath);
 
                 // Renames directory and all assets inside
-                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(sourcePath)).Select(a => a.Path).ToArray())
+                foreach (var assetInDir in Assets.Where(a => a.Path.IsSubDirectoryOf(sourcePath)).Select(a => a.Path).ToArray())
                 {
                     if (assetInDir != sourcePath) // Fire callbacks only for folder asset, UI is responsible to deal with it
                         RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath), silent: true);

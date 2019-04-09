@@ -14,8 +14,19 @@ namespace Robot.Abstractions
         */
         bool IsEditingAssets { get; }
 
+        /// <summary>
+        /// Called whenever Asset is created
+        /// </summary>
         event Action<string> AssetCreated;
+
+        /// <summary>
+        /// Called whenever Asset is deleted
+        /// </summary>
         event Action<string> AssetDeleted;
+
+        /// <summary>
+        /// Called whenever parent Asset is renamed. Nothing is called for child assets
+        /// </summary>
         event Action<string, string> AssetRenamed;
         event Action<string> AssetUpdated;
 
