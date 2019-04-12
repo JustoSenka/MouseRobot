@@ -54,8 +54,7 @@ namespace RobotRuntime
         private void InitializeNewRun()
         {
             TestRunStart?.Invoke();
-            TestData.ShouldCancelRun = false;
-            TestData.ShouldFailTest = false;
+            ResetTestData(TestData);
 
             AssetGuidManager.LoadMetaFiles();
             RuntimeAssetManager.CollectAllImporters();
@@ -77,6 +76,7 @@ namespace RobotRuntime
         {
             InitializeNewRun();
 
+            ResetTestData(TestData);
             TestData.TestFixture = lightRecording;
             RunnerFactory.PassDependencies(TestData);
 
@@ -89,6 +89,13 @@ namespace RobotRuntime
 
                 TestRunEnd?.Invoke();
             });
+        }
+
+        private void ResetTestData(TestData testData)
+        {
+            testData.ShouldPassTest = false;
+            testData.ShouldFailTest = false;
+            testData.ShouldCancelRun = false;
         }
 
         /// <summary>
@@ -131,6 +138,8 @@ namespace RobotRuntime
 
                     foreach (var test in fixture.Tests)
                     {
+                        ResetTestData(TestData);
+
                         var testMathesFilter = Regex.IsMatch(fixture.Name + "." + test.Name, testFilter, RegexOptions.IgnoreCase);
                         if (!fixtureMathesFilter && !testMathesFilter)
                             continue;
