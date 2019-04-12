@@ -212,6 +212,10 @@ namespace Robot.RecordingCreation
             {
                 if (asset.HoldsTypeOf(typeof(Bitmap)))
                 {
+                    var bmp = asset.Importer.Load<Bitmap>();
+                    if (bmp == null)
+                        continue;
+
                     if (detector.FindImagePos(crop, asset.Importer.Load<Bitmap>()) != null)
                     {
                         ImageFoundInAssets?.Invoke(asset, cursorPos);
