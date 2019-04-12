@@ -267,6 +267,7 @@
     <Compile Include="Abstractions\ITestStatusManager.cs" />
     <Compile Include="Tests\LightTestFixture.cs" />
     <Compile Include="Tests\TestData.cs" />
+    <Compile Include="Tests\TestStatus.cs" />
     <Compile Include="Tests\TestStatusManager.cs" />
     <Compile Include="Utils\TraceListenerWhichLogs.cs" />
     <Compile Include="Utils\ProcessUtility.cs" />

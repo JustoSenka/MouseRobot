@@ -20,7 +20,7 @@ namespace RobotRuntime.Execution
             if (command == null)
             {
                 Logger.Log(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + runnable.GetType());
-                TestData.ShouldFailTest = true;
+                TestData.TestStatus = TestStatus.Failed;
                 return;
             }
 
@@ -28,52 +28,40 @@ namespace RobotRuntime.Execution
 
             // Before callback can be overriden and completelly change how command look like
             // Make sure to check all nulls before moving forward
-            if (BeforeRunningParentCommand(ref command))
-            {
-                TestData.ShouldFailTest = true;
+            TestData.TestStatus = BeforeRunningParentCommand(ref command);
+            if (TestData.IsTestFinished)
                 return;
-            }
 
             if (command == null)
             {
                 Logger.Log(LogType.Error, "Parent command was null when trying to run it in: " + GetType());
-                TestData.ShouldFailTest = true;
+                TestData.TestStatus = TestStatus.Failed;
                 return;
             }
 
-            if (RunParentCommand(command))
-            {
-                TestData.ShouldFailTest = true;
-                return;
-            }
-
-            if (TestData.ShouldPassTest)
+            TestData.TestStatus = RunParentCommand(command);
+            if (TestData.IsTestFinished)
                 return;
 
-            if (RunChildCommands(commandNode.Select(n => n.value).ToArray()))
-            {
-                TestData.ShouldFailTest = true;
+            TestData.TestStatus = RunChildCommands(commandNode.Select(n => n.value).ToArray());
+            if (TestData.IsTestFinished)
                 return;
-            }
         }
 
 
         /// <summary>
         /// Runs all child commands with appropriate command runners.
-        /// Return true if test should be cancelled and marked as failed.
+        /// Return TestStatus.None for tests to continue execution.
         /// </summary>
-        protected virtual bool RunChildCommands(Command[] commands)
+        protected virtual TestStatus RunChildCommands(Command[] commands)
         {
-            if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
-                return true;
-
-            if (TestData.ShouldPassTest)
-                return false;
+            if (TestData.IsTestFinished)
+                return TestData.TestStatus;
 
             for (int i = 0; i < commands.Length; i++)
             {
-                if (TestData.ShouldCancelRun)
-                    return true;
+                if (TestData.IsTestFinished)
+                    return TestData.TestStatus;
 
                 var runner = TestData.RunnerFactory.GetFor(commands[i].GetType());
 
@@ -81,8 +69,9 @@ namespace RobotRuntime.Execution
 
                 // Before callback can be overriden and completelly change how command/runner look like
                 // Make sure to check all nulls before moving forward
-                if (BeforeRunningChildCommand(ref runner, ref commands[i]))
-                    return true;
+                TestData.TestStatus = BeforeRunningChildCommand(ref runner, ref commands[i]);
+                if (TestData.IsTestFinished)
+                    return TestData.TestStatus;
 
                 if (runner == null || commands[i] == null)
                 {
@@ -91,51 +80,49 @@ namespace RobotRuntime.Execution
                     if (commands[i] == null)
                         Logger.Log(LogType.Error, "Child command was null when trying to run it in: " + GetType());
 
-                    return true;
+                    return TestData.TestStatus;
                 }
 
-                if (RunChildCommand(runner, commands[i]))
-                    return true;
-
-                if (TestData.ShouldPassTest)
-                    return false;
+                TestData.TestStatus = RunChildCommand(runner, commands[i]);
+                if (TestData.IsTestFinished)
+                    return TestData.TestStatus;
             }
 
-            return false;
+            return TestData.TestStatus;
         }
-        
+
         /// <summary>
         /// Overriding this method allows altering parent command, giving completely different command to execute, or faking
         /// Method itself is empty.
-        /// Return true if test should be cancelled and marked as failed.
+        /// Return TestStatus.None for tests to continue execution.
         /// </summary>
-        protected virtual bool BeforeRunningParentCommand(ref Command command) => false;
+        protected virtual TestStatus BeforeRunningParentCommand(ref Command command) => TestStatus.None;
 
         /// <summary>
         /// Calls Run method on the runner with specified command.
-        /// Return true if test should be cancelled and marked as failed.
+        /// Return TestStatus.None for tests to continue execution.
         /// </summary>
-        protected virtual bool RunParentCommand(Command command)
+        protected virtual TestStatus RunParentCommand(Command command)
         {
             command.Run(TestData);
-            return TestData.ShouldFailTest;
+            return TestData.TestStatus;
         }
 
         /// <summary>
         /// Overriding this method allows altering how child commands are run, giving completely different command to execute, or faking
         /// Method itself is empty
-        /// Return true if test should be cancelled and marked as failed.
+        /// Return TestStatus.None for tests to continue execution.
         /// </summary>
-        protected virtual bool BeforeRunningChildCommand(ref IRunner runner, ref Command command) => false;
+        protected virtual TestStatus BeforeRunningChildCommand(ref IRunner runner, ref Command command) => TestStatus.None;
 
         /// <summary>
         /// Calls Run method on the runner with specified command.
-        /// Return true if test should be cancelled and marked as failed.
+        /// Return TestStatus.None for tests to continue execution.
         /// </summary>
-        protected virtual bool RunChildCommand(IRunner runner, Command command)
+        protected virtual TestStatus RunChildCommand(IRunner runner, Command command)
         {
             runner.Run(command);
-            return TestData.ShouldFailTest;
+            return TestData.TestStatus;
         }
     }
 }

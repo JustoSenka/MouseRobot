@@ -24,20 +24,20 @@ namespace RobotRuntime.Execution
         /// <summary>
         /// Gets image from attached assets. Finds that image on screen and saves coordinates
         /// </summary>
-        protected override bool BeforeRunningParentCommand(ref Command baseCommand)
+        protected override TestStatus BeforeRunningParentCommand(ref Command baseCommand)
         {
             if (!(baseCommand is CommandIfImageVisible command))
             {
                 Logger.Logi(LogType.Error, "This runner '" + this + "' is not compatible with this type: '" + baseCommand.GetType());
-                return true;
+                return TestStatus.Failed;
             }
 
             if (Logger.AssertIf(command.Asset.IsDefault(), "Command does not have valid image referenced: " + command.ToString()))
-                return true;
+                return TestStatus.Failed;
 
             var image = RuntimeAssetManager.GetAsset<Bitmap>(command.Asset);
             if (image == null)
-                return true;
+                return TestStatus.Failed;
 
             m_Points = DetectionManager.FindImage(image, command.DetectionMode, command.Timeout).Result;
             WasImageFound = !(m_Points == null || m_Points.Length == 0);
@@ -47,16 +47,16 @@ namespace RobotRuntime.Execution
             // Same with if image was found, but we wanted it to be not found
             ShouldContinueCommandExecution = (command.ExpectTrue && WasImageFound) || (!command.ExpectTrue && !WasImageFound);
 
-            return false;
+            return TestStatus.None;
         }
 
-        protected override bool RunChildCommands(Command[] commands)
+        protected override TestStatus RunChildCommands(Command[] commands)
         {
             if (!ShouldContinueCommandExecution)
-                return false;
+                return TestStatus.None;
 
-            if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
-                return true;
+            if (TestData.IsTestFinished)
+                return TestData.TestStatus;
 
             // TODO: Should this also have foreach version of it?
             if (WasImageFound)
@@ -68,13 +68,7 @@ namespace RobotRuntime.Execution
                 }
             }
 
-            if (base.RunChildCommands(commands))
-            {
-                TestData.ShouldFailTest = true;
-                return true;
-            }
-
-            return false;
+            return base.RunChildCommands(commands);
         }
     }
 }

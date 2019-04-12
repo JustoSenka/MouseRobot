@@ -24,30 +24,30 @@ namespace RobotRuntime.Execution
         /// <summary>
         /// Gets image from attached assets. Finds that image on screen and saves coordinates
         /// </summary>
-        protected override bool BeforeRunningParentCommand(ref Command command)
+        protected override TestStatus BeforeRunningParentCommand(ref Command command)
         {
             GetImageAndTimeout(command, out Guid imageGuid, out int timeout, out string DetectionMode);
 
             if (Logger.AssertIf(imageGuid.IsDefault(), "Command does not have valid image referenced: " + command.ToString()))
-                return true;
+                return TestStatus.Failed;
 
             var image = RuntimeAssetManager.GetAsset<Bitmap>(imageGuid);
             if (image == null)
-                return true;
+                return TestStatus.Failed;
 
             m_Points = DetectionManager.FindImage(image, DetectionMode, timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
-                return true;
+                return TestStatus.Failed;
 
-            return false;
+            return TestData.TestStatus;
         }
 
-        protected override bool RunChildCommands(Command[] commands)
+        protected override TestStatus RunChildCommands(Command[] commands)
         {
             foreach (var p in m_Points)
             {
-                if (TestData.ShouldCancelRun || TestData.ShouldFailTest)
-                    return true;
+                if (TestData.IsTestFinished)
+                    return TestData.TestStatus;
 
                 foreach (var c in commands)
                 {
@@ -55,17 +55,12 @@ namespace RobotRuntime.Execution
                     c.SetPropertyIfExist("Y", p.Y);
                 }
 
-                if (base.RunChildCommands(commands))
-                {
-                    TestData.ShouldFailTest = true;
-                    return true;
-                }
-
-                if (TestData.ShouldPassTest)
-                    return false;
+                base.RunChildCommands(commands);
+                if (TestData.IsTestFinished)
+                    return TestData.TestStatus;
             }
 
-            return false;
+            return TestData.TestStatus;
         }
 
         private static void GetImageAndTimeout(Command command, out Guid image, out int timeout, out string DetectionMode)

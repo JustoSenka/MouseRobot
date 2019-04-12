@@ -18,12 +18,12 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandFail(Guid);
+            return new CommandPass(Guid);
         }
 
         public override void Run(TestData TestData)
         {
-            TestData.ShouldPassTest = true;
+            TestData.TestStatus = TestStatus.Passed;
         }
 
         public override string ToString()

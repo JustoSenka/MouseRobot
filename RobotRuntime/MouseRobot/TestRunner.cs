@@ -93,8 +93,7 @@ namespace RobotRuntime
 
         private void ResetTestData(TestData testData)
         {
-            testData.ShouldPassTest = false;
-            testData.ShouldFailTest = false;
+            testData.TestStatus = TestStatus.None;
             testData.ShouldCancelRun = false;
         }
 
@@ -190,7 +189,7 @@ namespace RobotRuntime
 
         private bool CheckIfTestFailedAndFireCallbacks(LightTestFixture fixture, Recording recording)
         {
-            var shouldFailTest = TestData.ShouldFailTest;
+            var shouldFailTest = TestData.TestStatus == TestStatus.Failed;
 
             if (LightTestFixture.IsSpecialRecording(recording) && shouldFailTest)
                 FixtureSpecialRecordingFailed?.Invoke(fixture, recording);
@@ -204,7 +203,6 @@ namespace RobotRuntime
             else
                 TestPassed?.Invoke(fixture, recording);
 
-            TestData.ShouldFailTest = false;
             return shouldFailTest;
         }
 

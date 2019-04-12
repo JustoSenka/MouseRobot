@@ -23,7 +23,7 @@ namespace RobotRuntime.Commands
 
         public override void Run(TestData TestData)
         {
-            TestData.ShouldFailTest = true;
+            TestData.TestStatus = TestStatus.Failed;
         }
 
         public override string ToString()
