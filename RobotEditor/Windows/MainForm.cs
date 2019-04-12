@@ -102,7 +102,7 @@ namespace RobotEditor
 
             //ShowSplashScreen(2000);
 
-            ((Form)ScreenPaintForm).Owner = this;
+            // ((Form)ScreenPaintForm).Owner = this;
 
             PutLayoutWindowsInArray();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
@@ -204,7 +204,11 @@ namespace RobotEditor
                 }
 
                 if (!isPlaying && actionOnPlay.SelectedIndex == 0)
+                {
                     this.WindowState = m_DefaultWindowState;
+                    this.Activate();
+                    this.Focus();
+                }
 
                 UpdateToolstripButtonStates();
             }));
@@ -219,7 +223,11 @@ namespace RobotEditor
             }
 
             if (!isRecording && actionOnRec.SelectedIndex == 0)
+            {
                 this.WindowState = m_DefaultWindowState;
+                this.Activate();
+                this.Focus();
+            }
 
             UpdateToolstripButtonStates();
         }
@@ -595,6 +603,8 @@ namespace RobotEditor
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            ((Form)ScreenPaintForm).Close();
+
             DockLayout.Save(m_DockPanel);
 
             MouseRobot.IsRecording = false;
