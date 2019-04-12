@@ -128,7 +128,9 @@ namespace RobotEditor.Windows.Base
             if (recording == null)
                 return;
 
-            var recordingNode = m_Nodes.FirstOrDefault(node => node.Recording == recording);
+            // For Hierarchy, recordings are in root, for Test Fixtures, recordings are one level deeper. Supports both
+            var recNodesToSearch = m_Nodes.First()?.Recording == null ? m_Nodes.SelectMany(n => n.Children) : m_Nodes;
+            var recordingNode = recNodesToSearch.FirstOrDefault(node => node.Recording == recording);
             if (recordingNode == null)
                 return;
 
