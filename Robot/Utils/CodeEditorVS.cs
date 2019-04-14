@@ -51,6 +51,9 @@ namespace Robot.Utils
                         StartEditorInternal(SolutionManager.CSharpSolutionPath);
 
                     dte = GetDteFromProgID(m_VsProgID);
+
+                    // Get new process id for activating window
+                    processId = GetProcessIdFromProgID(m_VsProgID);
                 }
 
                 // TODO: dte can still be null here, if VS process fails to close itself, or refuses to communicate, should I open another VS?
@@ -58,6 +61,7 @@ namespace Robot.Utils
                 try
                 {
                     dte.ItemOperations.OpenFile(Path.Combine(Environment.CurrentDirectory, filePath));
+                    BringProcessToFront(Process.GetProcessById(processId));
                 }
                 catch (Exception e)
                 {
@@ -314,6 +318,29 @@ namespace Robot.Utils
                 return 0;
             }
         }
+
+        public static void BringProcessToFront(Process process)
+        {
+            if (process == null)
+                return;
+
+            IntPtr handle = process.MainWindowHandle;
+            if (IsIconic(handle))
+            {
+                ShowWindow(handle, SW_RESTORE);
+            }
+
+            SetForegroundWindow(handle);
+        }
+
+        const int SW_RESTORE = 9;
+
+        [DllImport("User32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr handle);
+        [DllImport("User32.dll")]
+        private static extern bool ShowWindow(IntPtr handle, int nCmdShow);
+        [DllImport("User32.dll")]
+        private static extern bool IsIconic(IntPtr handle);
 
         [DllImport("ole32.dll")]
         private static extern int CreateBindCtx(uint reserved, out IBindCtx ppbc);
