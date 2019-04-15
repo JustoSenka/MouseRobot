@@ -107,6 +107,22 @@ namespace RobotRuntime.Utils
             return string.IsNullOrWhiteSpace(Path.GetExtension(path));
         }
 
+        /// <summary>
+        /// Copies directory with all its contents to new path
+        /// </summary>
+        public static void CopyDirectories(string SourcePath, string DestinationPath)
+        {
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(SourcePath, "*",
+                SearchOption.AllDirectories))
+                Directory.CreateDirectory(dirPath.Replace(SourcePath, DestinationPath));
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(SourcePath, "*.*",
+                SearchOption.AllDirectories))
+                File.Copy(newPath, newPath.Replace(SourcePath, DestinationPath), true);
+        }
+
         public static string GetPathParent(string path)
         {
             path = path.NormalizePath();

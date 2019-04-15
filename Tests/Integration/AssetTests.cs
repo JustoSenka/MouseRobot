@@ -47,6 +47,11 @@ namespace Tests.Integration
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
+            InitializeNewProject(TempProjectPath);
+        }
+
+        private void InitializeNewProject(string projectPath)
+        {
             var container = TestUtils.ConstructContainerForTests(false);
 
             var ProjectManager = container.Resolve<IProjectManager>();
@@ -54,8 +59,9 @@ namespace Tests.Integration
             RecordingManager = container.Resolve<IHierarchyManager>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(projectPath);
         }
+
         [Test]
         public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
         {
@@ -441,6 +447,38 @@ namespace Tests.Integration
             var a4 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderB, "rec.mrb"));
 
             RenameAsset(renameViaFileManager, folderB, folderC);
+
+            Assert.AreEqual(5, AssetManager.Assets.Count(), "Asset count missmatch");
+
+            Assert.IsNotNull(AssetManager.GetAsset(folderA), "FolderA should be available");
+            Assert.IsNotNull(AssetManager.GetAsset(folderC), "FolderC should be available");
+            Assert.AreEqual(a3.Guid, AssetManager.GetAsset(Path.Combine(folderA, "rec.mrb")).Guid, "Asset inside FolderA guid missmatch");
+            Assert.AreEqual(a4.Guid, AssetManager.GetAsset(Path.Combine(folderC, "rec.mrb")).Guid, "Asset inside FolderC guid missmatch");
+        }
+
+        [Test]
+        [TestCase("FolderA", "FolderB")]
+        [TestCase("Fold", "Folder")]
+        [TestCase("Folder", "Fold")]
+        public void StartingApp_WithRenamedFolder_WithAssetsInside_WillDetectRenameCorrectly(string folderA, string folderB)
+        {
+            folderA = Path.Combine("Assets", folderA);
+            folderB = Path.Combine("Assets", folderB);
+            var folderC = folderB + "e"; // some additional character which would result in a folder with similar name
+
+            var a2 = AssetManager.CreateAsset(null, folderB);
+            var a1 = AssetManager.CreateAsset(null, folderA);
+            var a3 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderA, "rec.mrb"));
+            var a4 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderB, "rec.mrb"));
+
+            // Copying to new place, since old asset manager still lives and will continue to monitor old path.
+            // If I rename now, old asset manager will detect it
+            var newProjectPath = Path.Combine(TempProjectPath, "newProject");
+            Paths.CopyDirectories(TempProjectPath, newProjectPath);
+
+            RenameAsset(true, Path.Combine(newProjectPath, folderB), Path.Combine(newProjectPath, folderC));
+
+            InitializeNewProject(newProjectPath);
 
             Assert.AreEqual(5, AssetManager.Assets.Count(), "Asset count missmatch");
 

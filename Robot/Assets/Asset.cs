@@ -61,12 +61,12 @@ namespace Robot
             Importer = Importer == null || readDisk ? EditorAssetImporter.FromPath(path) : Importer;
             Importer.Path = path;
             Name = Paths.GetName(path);
-            Hash = GetHash(path);
+            Hash = GetHash(path, true/*readDisk*/);
         }
 
-        static public Int64 GetHash(string filePath)
+        static public Int64 GetHash(string filePath, bool readDisk)
         {
-            var bytes = File.Exists(filePath) ? File.ReadAllBytes(filePath) : Encoding.Unicode.GetBytes(filePath);
+            var bytes = File.Exists(filePath) && readDisk ? File.ReadAllBytes(filePath) : Encoding.Unicode.GetBytes(filePath);
             byte[] hashBytes = MD5.Create().ComputeHash(bytes);
             return BitConverter.ToInt64(hashBytes, 0);
         }

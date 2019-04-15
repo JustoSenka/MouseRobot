@@ -44,7 +44,7 @@ namespace Robot
             BeginAssetEditing();
 
             var paths = Paths.GetAllAssetPaths(true);
-            var assetsOnDisk = paths.Select(path => new Asset(path));
+            var assetsOnDisk = paths.Select(path => new Asset(path)).ToArray();
 
             // Detect renamed assets if application was closed, and assets were renamed via file system
             foreach (var pair in AssetGuidManager.Paths.ToList())
