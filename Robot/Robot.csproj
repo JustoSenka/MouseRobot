@@ -243,7 +243,12 @@
 SET SignToolPath2="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe"
 SET CertPath=C:\MouseRobot.pfx
 
-IF EXIST %25CertPath%25 IF EXIST %25SignToolPath%25 %25SignToolPath%25 sign /fd SHA512 /a /f %25CertPath%25 /p test "$(ProjectDir)bin/$(ConfigurationName)/$(TargetFileName)"
-IF EXIST %25CertPath%25 IF EXIST %25SignToolPath2%25 %25SignToolPath2%25 sign /fd SHA512 /a /f %25CertPath%25 /p test "$(ProjectDir)bin/$(ConfigurationName)/$(TargetFileName)"</PostBuildEvent>
+IF EXIST %25CertPath%25 (
+	IF EXIST %25SignToolPath%25 (
+		%25SignToolPath%25 sign /fd SHA512 /a /f %25CertPath%25 /p %25CertPassword%25 "$(ProjectDir)bin/$(ConfigurationName)/$(TargetFileName)"
+	) ELSE IF EXIST %25SignToolPath2%25 (
+		%25SignToolPath2%25 sign /fd SHA512 /a /f %25CertPath%25 /p %25CertPassword%25 "$(ProjectDir)bin/$(ConfigurationName)/$(TargetFileName)"
+	)
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
