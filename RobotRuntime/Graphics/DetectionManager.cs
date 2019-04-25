@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Graphics
 {
+    [RegisterTypeToContainer(typeof(IDetectionManager), typeof(ContainerControlledLifetimeManager))]
     public class DetectionManager : IDetectionManager
     {
         private const float k_RectangleTolerance = 0.4f;

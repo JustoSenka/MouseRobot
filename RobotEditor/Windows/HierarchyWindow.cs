@@ -16,9 +16,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Unity.Lifetime;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(IHierarchyWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class HierarchyWindow : BaseHierarchyWindow, IHierarchyWindow
     {
         private readonly new IHierarchyManager HierarchyManager;

@@ -3,13 +3,16 @@ using Robot.Settings;
 using RobotEditor.Abstractions;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
+using RobotRuntime;
 using RobotRuntime.Settings;
 using System;
 using System.Windows.Forms;
+using Unity.Lifetime;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(IPropertiesWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class PropertiesWindow : DockContent, IPropertiesWindow
     {
         private BaseProperties m_CurrentObject;

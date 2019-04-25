@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Scripts
 {
+    [RegisterTypeToContainer(typeof(IScriptLoader), typeof(ContainerControlledLifetimeManager))]
     public class ScriptLoaderNoDomain : IScriptLoader
     {
         public string UserAssemblyName { get { return "CustomAssembly.dll"; } }

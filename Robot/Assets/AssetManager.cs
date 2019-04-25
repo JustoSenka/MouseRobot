@@ -8,9 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace Robot
 {
+    [RegisterTypeToContainer(typeof(IAssetManager), typeof(ContainerControlledLifetimeManager))]
+    [RegisterTypeToContainer(typeof(IRuntimeAssetManager), typeof(ContainerControlledLifetimeManager))]
     public class AssetManager : RuntimeAssetManager, IAssetManager, IRuntimeAssetManager
     {
         private Dictionary<Guid, Asset> GuidAssetTable { get; set; } = new Dictionary<Guid, Asset>();

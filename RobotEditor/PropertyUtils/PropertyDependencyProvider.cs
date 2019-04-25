@@ -3,6 +3,7 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using System.Reflection;
 using Unity;
+using Unity.Lifetime;
 
 namespace RobotEditor.PropertyUtils
 {
@@ -10,6 +11,7 @@ namespace RobotEditor.PropertyUtils
     /// This class is used to pass dependencies to UITypeEditor and StringConverter of .net classes. Since I cannot control the instantiation of these classes,
     /// no other way to pass dependencies. Now it is done in a hacky way. Passed through reflection to private static field.
     /// </summary>
+    [RegisterTypeToContainer(typeof(PropertyDependencyProvider), typeof(ContainerControlledLifetimeManager))]
     public class PropertyDependencyProvider
     {
         public static BindingFlags StaticNonPublic = BindingFlags.Static | BindingFlags.NonPublic;

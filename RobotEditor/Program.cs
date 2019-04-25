@@ -1,19 +1,15 @@
 ﻿using Robot;
 using Robot.Abstractions;
 using RobotEditor.Abstractions;
-using RobotEditor.Editor;
-using RobotEditor.Hierarchy;
 using RobotEditor.PropertyUtils;
-using RobotEditor.Resources.ScriptTemplates;
-using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using Unity;
-using Unity.Lifetime;
 
 namespace RobotEditor
 {
@@ -74,25 +70,8 @@ namespace RobotEditor
         public static void RegisterInterfaces(IUnityContainer Container)
         {
             //Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
-            Container.RegisterType<IMainForm, MainForm>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IAssetsWindow, AssetsWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IHierarchyWindow, HierarchyWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IInspectorWindow, InspectorWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IProfilerWindow, ProfilerWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IPropertiesWindow, PropertiesWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScreenPreviewWindow, ScreenPreviewWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IConsoleWindow, ConsoleWindow>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ITestRunnerWindow, TestRunnerWindow>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<IHierarchyNodeStringConverter, HierarchyNodeStringConverter>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScreenPaintForm, ScreenPaintForm>(new ContainerControlledLifetimeManager());
-
-            Container.RegisterType<PropertyDependencyProvider, PropertyDependencyProvider>(new ContainerControlledLifetimeManager());
-
-            Container.RegisterType<IProjectSelectionDialog, ProjectSelectionDialog>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScriptTemplates, ScriptTemplates>(new ContainerControlledLifetimeManager());
-
-            Container.RegisterType<ITestFixtureWindow, TestFixtureWindow>();
+            ContainerUtils.Register(Container, Assembly.GetExecutingAssembly());
         }
     }
 }

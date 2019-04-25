@@ -2,9 +2,11 @@
 using RobotRuntime.IO;
 using RobotRuntime.Utils;
 using System.IO;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Settings
 {
+    [RegisterTypeToContainer(typeof(IRuntimeSettings), typeof(ContainerControlledLifetimeManager))]
     public class RuntimeSettings : IRuntimeSettings
     {
         private readonly IDetectionManager DetectionManager;

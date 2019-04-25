@@ -5,9 +5,11 @@ using RobotRuntime.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace Robot.Recordings
 {
+    [RegisterTypeToContainer(typeof(ICommandFactory), typeof(ContainerControlledLifetimeManager))]
     public class CommandFactory : ICommandFactory
     {
         public const string k_X = "X";

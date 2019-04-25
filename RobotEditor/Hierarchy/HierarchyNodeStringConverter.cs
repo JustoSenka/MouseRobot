@@ -5,9 +5,11 @@ using System.Text.RegularExpressions;
 using RobotEditor.Abstractions;
 using RobotRuntime.Utils;
 using RobotRuntime;
+using Unity.Lifetime;
 
 namespace RobotEditor.Hierarchy
 {
+    [RegisterTypeToContainer(typeof(IHierarchyNodeStringConverter), typeof(ContainerControlledLifetimeManager))]
     public class HierarchyNodeStringConverter : IHierarchyNodeStringConverter
     {
         private const string RegexCoordinateRecognizeRules = @"\(\d+[, ]+\d+\)";

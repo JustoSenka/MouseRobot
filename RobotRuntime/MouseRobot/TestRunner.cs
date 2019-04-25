@@ -7,9 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Unity.Lifetime;
 
 namespace RobotRuntime
 {
+    [RegisterTypeToContainer(typeof(ITestRunner), typeof(ContainerControlledLifetimeManager))]
     public class TestRunner : ITestRunner
     {
         public TestData TestData { get; private set; } = new TestData()

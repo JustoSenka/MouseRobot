@@ -1,9 +1,11 @@
 ﻿using RobotRuntime.Abstractions;
 using System;
 using System.IO;
+using Unity.Lifetime;
 
 namespace RobotRuntime
 {
+    [RegisterTypeToContainer(typeof(IRuntimeProjectManager), typeof(ContainerControlledLifetimeManager))]
     public class RuntimeProjectManager : IRuntimeProjectManager
     {
         public string ProjectName => Path.GetFileName(Environment.CurrentDirectory);

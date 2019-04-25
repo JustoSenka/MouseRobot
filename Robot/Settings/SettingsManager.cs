@@ -10,9 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Unity;
+using Unity.Lifetime;
 
 namespace Robot.Settings
 {
+    [RegisterTypeToContainer(typeof(ISettingsManager), typeof(ContainerControlledLifetimeManager))]
     public class SettingsManager : ISettingsManager
     {
         public IEnumerable<BaseSettings> Settings { get { return TypeCollector.AllObjects; } }

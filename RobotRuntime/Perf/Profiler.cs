@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Perf
 {
+    [RegisterTypeToContainer(typeof(IProfiler), typeof(ContainerControlledLifetimeManager))]
     public class Profiler : IProfiler
     {
         public Profiler()

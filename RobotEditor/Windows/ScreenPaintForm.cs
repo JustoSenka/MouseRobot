@@ -1,13 +1,16 @@
 ﻿using RobotEditor.Abstractions;
 using RobotEditor.Windows.Base;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Unity.Lifetime;
 
 namespace RobotEditor.Windows
 {
+    [RegisterTypeToContainer(typeof(IScreenPaintForm), typeof(ContainerControlledLifetimeManager))]
     public class ScreenPaintForm : InvisibleForm, IScreenPaintForm
     {
         private IList<IPaintOnScreen> m_RegisteredPainters = new List<IPaintOnScreen>();

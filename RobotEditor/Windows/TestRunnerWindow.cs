@@ -15,10 +15,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Unity.Lifetime;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(ITestRunnerWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class TestRunnerWindow : DockContent, ITestRunnerWindow
     {
         private List<TestNode> m_Nodes = new List<TestNode>();

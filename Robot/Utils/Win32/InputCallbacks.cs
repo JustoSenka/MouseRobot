@@ -7,9 +7,12 @@ using RobotRuntime.Utils.Win32;
 using System.Threading;
 using System.ComponentModel;
 using Robot.Abstractions;
+using RobotRuntime;
+using Unity.Lifetime;
 
 namespace Robot.Utils.Win32
 {
+    [RegisterTypeToContainer(typeof(IInputCallbacks), typeof(ContainerControlledLifetimeManager))]
     public class InputCallbacks : IInputCallbacks
     {
         public AsyncOperation AsyncOperationOnUI { private get; set; }

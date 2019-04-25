@@ -7,9 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace Robot
 {
+    [RegisterTypeToContainer(typeof(IProjectManager), typeof(ContainerControlledLifetimeManager))]
+    [RegisterTypeToContainer(typeof(IRuntimeProjectManager), typeof(ContainerControlledLifetimeManager))]
     public class ProjectManager : RuntimeProjectManager, IProjectManager, IRuntimeProjectManager
     {
         public IList<string> LastKnownProjectPaths { get; private set; }

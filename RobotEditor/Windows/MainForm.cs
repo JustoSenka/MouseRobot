@@ -20,10 +20,12 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Unity;
+using Unity.Lifetime;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(IMainForm), typeof(ContainerControlledLifetimeManager))]
     public partial class MainForm : Form, IMainForm
     {
         private DockContent[] m_Windows;

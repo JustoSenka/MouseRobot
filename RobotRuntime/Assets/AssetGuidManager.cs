@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Assets
 {
+    [RegisterTypeToContainer(typeof(IAssetGuidManager), typeof(ContainerControlledLifetimeManager))]
     public class AssetGuidManager : IAssetGuidManager
     {
         public const string GuidPathMapFileName = "AssetGuidsTable.meta";

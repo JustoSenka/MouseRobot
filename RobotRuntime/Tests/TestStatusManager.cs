@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Tests
 {
@@ -13,6 +14,7 @@ namespace RobotRuntime.Tests
     /// Holds dictionary of TestStatus
     /// TestRunnerWindow and TestRunnerManager relies on this class callbacks
     /// </summary>
+    [RegisterTypeToContainer(typeof(ITestStatusManager), typeof(ContainerControlledLifetimeManager))]
     public class TestStatusManager : ITestStatusManager
     {
         public Dictionary<(string fix, string rec), TestStatus> CurrentStatus { get; } = new Dictionary<(string fix, string rec), TestStatus>();

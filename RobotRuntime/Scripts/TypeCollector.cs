@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace RobotRuntime.Scripts
 {
+    [RegisterTypeToContainer(typeof(ITypeCollector<>))]
     public class TypeCollector<T> : ITypeCollector<T>
     {
         public IEnumerable<Type> AllTypes { get { return m_AllTypes; } }

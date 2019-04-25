@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Perf;
 using RobotRuntime.Utils;
@@ -9,11 +10,13 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Unity.Lifetime;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
 namespace Robot.Graphics
 {
+    [RegisterTypeToContainer(typeof(IScreenStateThread), typeof(ContainerControlledLifetimeManager))]
     public class ScreenStateThread : StableRepeatingThread, IScreenStateThread
     {
         public object ScreenBmpLock { get { return m_ScreenBmpLock; } }

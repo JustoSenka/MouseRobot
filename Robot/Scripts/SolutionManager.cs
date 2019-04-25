@@ -2,15 +2,16 @@
 using Robot.Properties;
 using Robot.Settings;
 using RobotRuntime;
-using RobotRuntime.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Unity.Lifetime;
 
 namespace Robot.Scripts
 {
+    [RegisterTypeToContainer(typeof(ISolutionManager), typeof(ContainerControlledLifetimeManager))]
     public class SolutionManager : ISolutionManager
     {
         public string CSharpSolutionPath => CSharpSolutionName + ".sln";
@@ -30,7 +31,7 @@ namespace Robot.Scripts
         private readonly IProjectManager ProjectManager;
         private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
-        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager, 
+        public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager,
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.AssetManager = AssetManager;

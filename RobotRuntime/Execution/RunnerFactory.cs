@@ -3,9 +3,11 @@ using RobotRuntime.Tests;
 using System;
 using System.Linq;
 using Unity;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Execution
 {
+    [RegisterTypeToContainer(typeof(IRunnerFactory), typeof(ContainerControlledLifetimeManager))]
     public class RunnerFactory : IRunnerFactory
     {
         private TestData m_TestData;

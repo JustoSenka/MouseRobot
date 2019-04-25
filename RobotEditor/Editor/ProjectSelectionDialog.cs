@@ -2,9 +2,12 @@
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using RobotEditor.Abstractions;
+using Unity.Lifetime;
+using RobotRuntime;
 
 namespace RobotEditor.Editor
 {
+    [RegisterTypeToContainer(typeof(IProjectSelectionDialog), typeof(ContainerControlledLifetimeManager))]
     public class ProjectSelectionDialog : IProjectSelectionDialog
     {
         private const string k_Title = "Select Project Directory";

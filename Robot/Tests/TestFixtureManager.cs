@@ -6,6 +6,7 @@ using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace Robot.Tests
 {
@@ -16,6 +17,7 @@ namespace Robot.Tests
     /// Double clicking fixture in assets window will add fixture here
     /// TestFixtureWindow will rely on this manager callbacks
     /// </summary>
+    [RegisterTypeToContainer(typeof(ITestFixtureManager), typeof(ContainerControlledLifetimeManager))]
     public class TestFixtureManager : ITestFixtureManager
     {
         public IList<TestFixture> Fixtures { get; private set; }

@@ -1,20 +1,9 @@
 ﻿using CommandLine;
 using RobotRuntime.Abstractions;
-using RobotRuntime.Assets;
-using RobotRuntime.Execution;
-using RobotRuntime.Graphics;
-using RobotRuntime.Logging;
-using RobotRuntime.Perf;
-using RobotRuntime.Scripts;
-using RobotRuntime.Settings;
-using RobotRuntime.Tests;
 using RobotRuntime.Utils;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System.Reflection;
 using Unity;
-using Unity.Injection;
 using Unity.Lifetime;
 
 namespace RobotRuntime
@@ -81,40 +70,9 @@ namespace RobotRuntime
         public static void RegisterInterfaces(UnityContainer Container)
         {
             Container.RegisterInstance(typeof(IUnityContainer), Container, new ContainerControlledLifetimeManager());
-            Container.RegisterType<IAssetGuidManager, AssetGuidManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IRuntimeAssetManager, RuntimeAssetManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IRuntimeSettings, RuntimeSettings>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ITestRunner, TestRunner>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IRunnerFactory, RunnerFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IProfiler, Profiler>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IFeatureDetectorFactory, FeatureDetectorFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IScriptLoader, ScriptLoaderNoDomain>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IRuntimeProjectManager, RuntimeProjectManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IStatusManager, StatusManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ITestStatusManager, TestStatusManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IDetectionManager, DetectionManager>(new ContainerControlledLifetimeManager());
 
-            Container.RegisterType<ILogger, Logger>(new ContainerControlledLifetimeManager());
-
-            Container.RegisterType(typeof(ITypeCollector<>), typeof(TypeCollector<>));
-            Container.RegisterType(typeof(ITypeObjectCollector<>), typeof(TypeObjectCollector<>));
-
-            // Registering also primitive types, just in case user code tries to inject primitives via constructor, which is not a good idea
-            RegisterPrimitiveTypes(Container);
-        }
-
-        /// <summary>
-        /// It is here so resolving will not fail because of integers, guids or booleans in constructors. Not really used currently.
-        /// In perfect scenarion, Unity should not try to resolve class which has primitives in constructors.
-        /// </summary>
-        private static void RegisterPrimitiveTypes(UnityContainer Container)
-        {
-            var allPrimitiveTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.IsPrimitive);
-            foreach (var t in allPrimitiveTypes)
-                Container.RegisterType(t, new InjectionFactory((c) => default));
-
-            Container.RegisterType<Guid>(new InjectionConstructor(Guid.Empty.ToString()));
-            Container.RegisterType<DateTime>(new InjectionConstructor((long)0));
+            ContainerUtils.Register(Container, Assembly.GetExecutingAssembly());
+            ContainerUtils.RegisterPrimitiveTypes(Container);
         }
     }
 }

@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Graphics
 {
+    [RegisterTypeToContainer(typeof(IFeatureDetectorFactory), typeof(ContainerControlledLifetimeManager))]
     public class FeatureDetectorFactory : IFeatureDetectorFactory
     {
         public IEnumerable<FeatureDetector> Detectors => TypeCollector.AllObjects;

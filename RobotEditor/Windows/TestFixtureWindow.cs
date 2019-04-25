@@ -20,6 +20,7 @@ using System.Windows.Forms;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(ITestFixtureWindow))]
     public partial class TestFixtureWindow : BaseHierarchyWindow, ITestFixtureWindow
     {
         private TestFixture m_TestFixture;

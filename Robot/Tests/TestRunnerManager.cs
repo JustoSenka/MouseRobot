@@ -7,12 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity;
+using Unity.Lifetime;
 
 namespace Robot.Tests
 {
     /// <summary>
     /// Contains list of all tests and test fixtures in project.
     /// </summary>
+    [RegisterTypeToContainer(typeof(ITestRunnerManager), typeof(ContainerControlledLifetimeManager))]
     public class TestRunnerManager : ITestRunnerManager
     {
         /// <summary>

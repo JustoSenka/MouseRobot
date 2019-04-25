@@ -6,6 +6,7 @@ using Unity;
 
 namespace RobotRuntime.Scripts
 {
+    [RegisterTypeToContainer(typeof(ITypeObjectCollector<>))]
     public class TypeObjectCollector<T> : TypeCollector<T>, ITypeObjectCollector<T>, ITypeCollector<T>
     {
         public IEnumerable<T> AllObjects { get { return m_AllObjects; } }

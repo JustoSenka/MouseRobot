@@ -2,9 +2,11 @@
 using RobotRuntime;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotEditor.Resources.ScriptTemplates
 {
+    [RegisterTypeToContainer(typeof(IScriptTemplates), typeof(ContainerControlledLifetimeManager))]
     public class ScriptTemplates : IScriptTemplates
     {
         private readonly Dictionary<string, string> TemplateMap = new Dictionary<string, string>()

@@ -7,9 +7,12 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using RobotRuntime.Abstractions;
+using Unity.Lifetime;
+using RobotRuntime;
 
 namespace RobotEditor.Windows
 {
+    [RegisterTypeToContainer(typeof(IProfilerWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class ProfilerWindow : DockContent, IProfilerWindow
     {
         private Dictionary<string, ProfilerNode[]> m_NodeDict;

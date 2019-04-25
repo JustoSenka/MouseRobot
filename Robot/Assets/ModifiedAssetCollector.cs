@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace Robot.Assets
     /// Subscribes to all AssetManager callbacks and collects all modified assets in a list, fires callback after refresh.
     /// This class can be Injected as Dependency for other managers.
     /// </summary>
+    [RegisterTypeToContainer(typeof(IModifiedAssetCollector))]
     public class ModifiedAssetCollector : IModifiedAssetCollector
     {
         public IList<string> ExtensionFilters { get; } = new List<string>();

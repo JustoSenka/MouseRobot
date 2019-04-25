@@ -10,9 +10,11 @@ using System.Collections;
 using RobotEditor.Properties;
 using RobotEditor.CustomControls;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotEditor.Windows
 {
+    [RegisterTypeToContainer(typeof(IConsoleWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class ConsoleWindow : DockContent, IConsoleWindow
     {
         private bool m_ControlCreated;

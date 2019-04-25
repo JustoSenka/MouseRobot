@@ -1,11 +1,14 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Unity.Lifetime;
 
 namespace Robot.Utils.Win32
 {
+    [RegisterTypeToContainer(typeof(IHotkeyCallbacks), typeof(ContainerControlledLifetimeManager))]
     public class HotkeyCallbacks : IHotkeyCallbacks
     {
         public Dictionary<Keys, Action> Hotkeys { get; } = new Dictionary<Keys, Action>();

@@ -17,10 +17,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Unity.Lifetime;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor
 {
+    [RegisterTypeToContainer(typeof(IAssetsWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class AssetsWindow : DockContent, IAssetsWindow
     {
         public event Action AssetSelected;

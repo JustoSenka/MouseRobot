@@ -1,13 +1,16 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Unity.Lifetime;
 
 namespace Robot.Graphics
 {
+    [RegisterTypeToContainer(typeof(IFeatureDetectionThread), typeof(ContainerControlledLifetimeManager))]
     public class FeatureDetectionThread : StableRepeatingThread, IFeatureDetectionThread
     {
         public Point[][] LastKnownPositions { get; private set; }

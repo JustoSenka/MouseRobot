@@ -3,6 +3,7 @@ using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Assets
 {
@@ -11,6 +12,7 @@ namespace RobotRuntime.Assets
     /// Assets are either preloaded or loaded from importers when in need.
     /// Do not load assets on initialize of editor, since it will take awhile.
     /// </summary>
+    [RegisterTypeToContainer(typeof(IRuntimeAssetManager), typeof(ContainerControlledLifetimeManager))]
     public class RuntimeAssetManager : IRuntimeAssetManager
     {
         private readonly Dictionary<Guid, object> m_GuidAssetMap = new Dictionary<Guid, object>();

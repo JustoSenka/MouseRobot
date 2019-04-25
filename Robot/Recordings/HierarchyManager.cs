@@ -6,9 +6,11 @@ using RobotRuntime.Recordings;
 using RobotRuntime.Utils;
 using System;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace Robot
 {
+    [RegisterTypeToContainer(typeof(IHierarchyManager), typeof(ContainerControlledLifetimeManager))]
     public class HierarchyManager : BaseHierarchyManager, IHierarchyManager
     {
         public static string k_DefaultRecordingName = "New Recording";

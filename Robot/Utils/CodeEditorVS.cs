@@ -9,10 +9,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text.RegularExpressions;
+using Unity.Lifetime;
 using Process = System.Diagnostics.Process;
 
 namespace Robot.Utils
 {
+    [RegisterTypeToContainer(typeof(ICodeEditor), typeof(ContainerControlledLifetimeManager))]
     public class CodeEditorVS : ICodeEditor
     {
         private const string VS_DTE_ID_REGEX = @"(?i)(!VisualStudio\.DTE\.\d+\.\d+:)";

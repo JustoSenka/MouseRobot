@@ -1,10 +1,13 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Utils;
 using System;
 using System.Drawing;
+using Unity.Lifetime;
 
 namespace Robot.RecordingCreation
 {
+    [RegisterTypeToContainer(typeof(ICroppingManager), typeof(ContainerControlledLifetimeManager))]
     public class CroppingManager : ICroppingManager
     {
         public bool IsCropping { get; private set; }

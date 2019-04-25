@@ -6,9 +6,11 @@ using RobotRuntime;
 using RobotRuntime.Settings;
 using RobotRuntime.Logging;
 using RobotRuntime.Utils;
+using Unity.Lifetime;
 
 namespace Robot
 {
+    [RegisterTypeToContainer(typeof(IMouseRobot), typeof(ContainerControlledLifetimeManager))]
     public class MouseRobot : IMouseRobot
     {
         public event Action<bool> RecordingStateChanged;

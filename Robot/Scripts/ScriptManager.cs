@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Unity.Lifetime;
 
 namespace Robot.Scripts
 {
@@ -14,6 +15,7 @@ namespace Robot.Scripts
     /// and to issue script loading.
     /// Directly communicates with ScriptCompiler and ScriptLoader from runtime.
     /// </summary>
+    [RegisterTypeToContainer(typeof(IScriptManager), typeof(ContainerControlledLifetimeManager))]
     public class ScriptManager : IScriptManager
     {
         public bool AllowCompilation { get; set; } = true;

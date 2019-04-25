@@ -12,9 +12,11 @@ using RobotRuntime.Utils.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using Unity.Lifetime;
 
 namespace Robot.RecordingCreation
 {
+    [RegisterTypeToContainer(typeof(IRecordingManager), typeof(ContainerControlledLifetimeManager))]
     public class RecordingManager : IRecordingManager
     {
         public bool IsRecording { get; set; }

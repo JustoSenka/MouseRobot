@@ -13,10 +13,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Unity;
+using Unity.Lifetime;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows
 {
+    [RegisterTypeToContainer(typeof(IInspectorWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class InspectorWindow : DockContent, IInspectorWindow
     {
         private BaseProperties m_CurrentObject;

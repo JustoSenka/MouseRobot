@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Unity.Lifetime;
 
 namespace RobotRuntime
 {
+    [RegisterTypeToContainer(typeof(ILogger), typeof(ContainerControlledLifetimeManager))]
     public partial class Logger : MarshalByRefObject, ILogger
     {
         public event Action<Log> OnLogReceived;

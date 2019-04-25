@@ -2,9 +2,11 @@
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
+using Unity.Lifetime;
 
 namespace RobotRuntime.Logging
 {
+    [RegisterTypeToContainer(typeof(IStatusManager), typeof(ContainerControlledLifetimeManager))]
     public class StatusManager : IStatusManager
     {
         private static readonly Status k_DefaultStatus = new Status("Ready", "", StandardColors.Blue);

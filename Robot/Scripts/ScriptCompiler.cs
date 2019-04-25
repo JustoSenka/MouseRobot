@@ -10,6 +10,7 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Unity.Lifetime;
 
 namespace Robot.Scripts
 {
@@ -17,6 +18,7 @@ namespace Robot.Scripts
     /// ScriptCompiler lives in base robot domain. Its purpose is to compile files in project folder into user dlls.
     /// Used by PLuginManager
     /// </summary>
+    [RegisterTypeToContainer(typeof(IScriptCompiler), typeof(ContainerControlledLifetimeManager))]
     public class ScriptCompiler : IScriptCompiler
     {
         public CSharpCodeProvider CodeProvider { get; private set; } = new CSharpCodeProvider();
