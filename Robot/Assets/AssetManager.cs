@@ -30,6 +30,8 @@ namespace Robot
 
         public IEnumerable<Asset> Assets => GuidAssetTable.Select(pair => pair.Value);
 
+        private DateTime m_LastRefresh = DateTime.MinValue;
+
         private IAssetGuidManager AssetGuidManager;
         private IProfiler Profiler;
         private IStatusManager StatusManager;
@@ -39,6 +41,100 @@ namespace Robot
             this.AssetGuidManager = AssetGuidManager;
             this.Profiler = Profiler;
             this.StatusManager = StatusManager;
+        }
+
+        public void Refresh2()
+        {
+            Profiler.Start("AssetManager_Refresh");
+            BeginAssetEditing();
+
+            // Get all modified asset paths
+            var paths = Paths.GetAllAssetPaths(true).Where(p =>
+            {
+                // Return all directories
+                if (Paths.IsDirectory(p))
+                    return true;
+
+                var fileInfo = new FileInfo(p);
+                if (p == null)
+                    return true;
+                
+                // Return only those files which were written to recently
+                return fileInfo.LastWriteTime > m_LastRefresh || fileInfo.LastWriteTime > m_LastRefresh;
+            });
+
+            var assetsOnDisk = paths.Select(path => new Asset(path)).ToArray();
+
+            // Detect renamed assets if application was closed, and assets were renamed via file system
+            foreach (var pair in AssetGuidManager.Paths.ToList())
+            {
+                var path = pair.Value;
+                if (!File.Exists(path) && !Directory.Exists(path))
+                {
+                    var guid = pair.Key;
+                    var hash = AssetGuidManager.GetHash(guid);
+
+                    var assetOnDiskWithSameHashButNotKnownPath = assetsOnDisk.FirstOrDefault(
+                        a => a.Hash == hash && !AssetGuidManager.ContainsValue(a.Path));
+
+                    // If this asset on disk is found, update old guid to new path, since best prediction is that it was renamed
+                    if (assetOnDiskWithSameHashButNotKnownPath != null)
+                    {
+                        AssetGuidManager.AddNewGuid(guid, assetOnDiskWithSameHashButNotKnownPath.Path, hash);
+                        Logger.Log(LogType.Log, "Asset '" + assetOnDiskWithSameHashButNotKnownPath.Name + "' was recognized as renamed asset");
+                    }
+                }
+            }
+
+            // Detect Rename for assets in memory (while keeping existing asset references)
+            foreach (var assetInMemory in Assets.ToList())
+            {
+                if (!File.Exists(assetInMemory.Path) && !Directory.Exists(assetInMemory.Path))
+                {
+                    // if known path does not exist on disk anymore but some other asset with same hash exists on disk, it must have been renamed
+                    var assetWithSameHashAndNotInDbYet = assetsOnDisk.FirstOrDefault(asset =>
+                    asset.Hash == assetInMemory.Hash && !GuidPathTable.ContainsValue(asset.Path));
+
+                    if (assetWithSameHashAndNotInDbYet != null)
+                    {
+                        RenameAssetInternal(assetInMemory.Path, assetWithSameHashAndNotInDbYet.Path);
+                        Logger.Log(LogType.Log, "Asset '" + assetInMemory.Name + "' was renamed to '" + assetWithSameHashAndNotInDbYet.Name + "'");
+                    }
+                    else
+                    {
+                        DeleteAssetInternal(assetInMemory);
+                        Logger.Log(LogType.Log, "Asset was deleted: '" + assetInMemory.Name + "'");
+                    }
+                }
+            }
+
+            // Add new assets and detect modifications
+            foreach (var assetOnDisk in assetsOnDisk)
+            {
+                var isHashKnown = GuidHashTable.ContainsValue(assetOnDisk.Hash);
+                var isPathKnown = GuidPathTable.ContainsValue(assetOnDisk.Path);
+
+                // We know the path, but hash has changed, must have been modified
+                if (!isHashKnown && isPathKnown)
+                {
+                    UpdateAssetInternal(GetAsset(assetOnDisk.Path));
+                    Logger.Log(LogType.Log, "Asset was modified: '" + assetOnDisk.Name + "'");
+                }
+                // New file added
+                else if (!isPathKnown)
+                {
+                    AddAssetInternal(assetOnDisk);
+                }
+            }
+
+            Profiler.Stop("AssetManager_Refresh");
+
+            StatusManager.Add("AssetManager", 10, new Status(null, "Asset Refresh Finished", StandardColors.Default));
+            // Logger.Log(LogType.Log, "Asset refresh finished");
+
+            m_LastRefresh = DateTime.Now;
+
+            EndAssetEditing();
         }
 
         public void Refresh()

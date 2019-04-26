@@ -488,6 +488,24 @@ namespace Tests.Integration
             Assert.AreEqual(a4.Guid, AssetManager.GetAsset(Path.Combine(folderC, "rec.mrb")).Guid, "Asset inside FolderC guid missmatch");
         }
 
+        [Test]
+        [TestCase("FolderA", "rec.mrb")]
+        public void SecondRefresh_WithDeletedAssets_RemovesThemFromManager(string folderA, string assetName)
+        {
+            folderA = Path.Combine("Assets", folderA);
+            AssetManager.Refresh();
+
+            var a1 = AssetManager.CreateAsset(null, folderA);
+            var a2 = AssetManager.CreateAsset(new Recording(guid), Path.Combine(folderA, assetName));
+
+            Directory.Delete(folderA, true);
+            AssetManager.Refresh();
+
+            Assert.IsNull(AssetManager.GetAsset(a1.Path), "Folder asset should not exist");
+            Assert.IsNull(AssetManager.GetAsset(a2.Path), "Recording asset should not exist");
+            Assert.AreEqual(1, AssetManager.Assets.Count()); // only Assets folder is registered
+        }
+
         private void RenameAsset(bool renameViaFileManager, string from, string to)
         {
             if (renameViaFileManager)
