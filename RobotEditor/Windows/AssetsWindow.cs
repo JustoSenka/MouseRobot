@@ -13,6 +13,7 @@ using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -183,7 +184,10 @@ namespace RobotEditor
                         m_AssetTree.AddChildAtPath(elementPath, intermediateAsset);
                     }
                 }
-                OnRefreshFinished();
+
+                // Do not refresh while many assets are being edited, it will fail safety DEBUG checks and slow everything down
+                if (!AssetManager.IsEditingAssets)
+                    OnRefreshFinished();
             }));
         }
 
@@ -192,11 +196,14 @@ namespace RobotEditor
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
                 var node = m_AssetTree.FindNodeFromPath(path);
-                if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetDeleted callback: " + path))
+                if (node == null) // Might be that asset was deleted together with folder (upon refresh). Both callbacks will be called
                     return;
 
                 node.parent.RemoveAt(node.Index);
-                OnRefreshFinished();
+
+                // Do not refresh while many assets are being edited, it will fail safety DEBUG checks and slow everything down
+                if (!AssetManager.IsEditingAssets)
+                    OnRefreshFinished();
             }));
         }
 
@@ -213,13 +220,15 @@ namespace RobotEditor
 
                 var dirPath = Path.GetDirectoryName(to);
                 var parentNode = m_AssetTree.FindNodeFromPath(dirPath);
-                if (Logger.AssertIf(node == null, "parentNode could not be found in UI in OnAssetRenamed callback: " + dirPath + " :: " + to))
+                if (Logger.AssertIf(parentNode == null, "parentNode could not be found in UI in OnAssetRenamed callback: " + dirPath + " :: " + to))
                     return;
 
                 node.parent.RemoveAt(node.Index);
                 parentNode.AddNode(node);
 
-                OnRefreshFinished();
+                // Do not refresh while many assets are being edited, it will fail safety DEBUG checks and slow everything down
+                if (!AssetManager.IsEditingAssets)
+                    OnRefreshFinished();
             }));
         }
 
@@ -624,6 +633,7 @@ namespace RobotEditor
 
         #endregion
 
+        [Conditional("DEBUG")]
         private void ASSERT_TreeViewIsTheSameAsInRecordingManager()
         {
 #if ENABLE_UI_TESTING

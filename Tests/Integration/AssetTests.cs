@@ -13,7 +13,8 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestFixture]
+    [TestFixture(true)]
+    [TestFixture(false)]
     public class AssetTests : TestWithCleanup
     {
         private string TempProjectPath;
@@ -43,11 +44,21 @@ namespace Tests.Integration
         IHierarchyManager RecordingManager;
         ITestFixtureManager TestFixtureManager;
 
+        private bool refreshBeforeTest;
+
+        public AssetTests(bool refreshBeforeTest)
+        {
+            this.refreshBeforeTest = refreshBeforeTest;
+        }
+
         [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
             InitializeNewProject(TempProjectPath);
+
+            if (refreshBeforeTest)
+                AssetManager.Refresh();
         }
 
         private void InitializeNewProject(string projectPath)
@@ -445,15 +456,22 @@ namespace Tests.Integration
             var a1 = AssetManager.CreateAsset(null, folderA);
             var a3 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderA, "rec.mrb"));
             var a4 = AssetManager.CreateAsset(new Recording(), Path.Combine(folderB, "rec.mrb"));
+            var a5 = AssetManager.CreateAsset(null, Path.Combine(folderA, "new fold"));
+            var a6 = AssetManager.CreateAsset(null, Path.Combine(folderB, "new fold"));
 
             RenameAsset(renameViaFileManager, folderB, folderC);
 
-            Assert.AreEqual(5, AssetManager.Assets.Count(), "Asset count missmatch");
+            Assert.AreEqual(7, AssetManager.Assets.Count(), "Asset count missmatch");
 
             Assert.IsNotNull(AssetManager.GetAsset(folderA), "FolderA should be available");
             Assert.IsNotNull(AssetManager.GetAsset(folderC), "FolderC should be available");
             Assert.AreEqual(a3.Guid, AssetManager.GetAsset(Path.Combine(folderA, "rec.mrb")).Guid, "Asset inside FolderA guid missmatch");
             Assert.AreEqual(a4.Guid, AssetManager.GetAsset(Path.Combine(folderC, "rec.mrb")).Guid, "Asset inside FolderC guid missmatch");
+            Assert.IsNotNull( AssetManager.GetAsset(Path.Combine(folderA, "new fold")), "Folder inside FolderA should be available");
+            Assert.IsNotNull( AssetManager.GetAsset(Path.Combine(folderC, "new fold")), "Folder inside FolderB should be available");
+
+            Assert.IsNull(AssetManager.GetAsset(folderB), "folderB should not exists");
+            Assert.IsNull(AssetManager.GetAsset(Path.Combine(folderB, "new fold")), "folderB should not have assets inside");
         }
 
         [Test]

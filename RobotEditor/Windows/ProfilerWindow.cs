@@ -1,14 +1,14 @@
-using RobotEditor.Abstractions;
 using BrightIdeasSoftware;
+using RobotEditor.Abstractions;
 using RobotEditor.CustomControls;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Perf;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
-using RobotRuntime.Abstractions;
 using Unity.Lifetime;
-using RobotRuntime;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows
 {
@@ -109,13 +109,16 @@ namespace RobotEditor.Windows
             FillListWithAllNodesForFrame(m_Nodes, index);
             //FillListWithParentOnlyNodesForFrame(m_Nodes, index);
 
-            var selected = treeListView.SelectedItem;
-            treeListView.Roots = m_Nodes;
-            treeListView.Sort();
-            try { treeListView.SelectedItem = selected; }
-            catch (ArgumentOutOfRangeException) { treeListView.SelectedItem = null; }
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
+            {
+                var selected = treeListView.SelectedItem;
+                treeListView.Roots = m_Nodes;
+                treeListView.Sort();
+                try { treeListView.SelectedItem = selected; }
+                catch (ArgumentOutOfRangeException) { treeListView.SelectedItem = null; }
 
-            treeListView.Refresh();
+                treeListView.Refresh();
+            }));
         }
 
         private void FillListWithAllNodesForFrame(List<ProfilerNode> list, int index)

@@ -15,6 +15,9 @@ namespace Robot
         public Int64 Hash { get; private set; }
         public Guid Guid { get; private set; }
 
+        /// <summary>
+        /// Gets or Sets path from/for importer
+        /// </summary>
         public string Path
         {
             get { return Importer.Path; }
@@ -26,10 +29,27 @@ namespace Robot
         }
 
         public AssetImporter Importer { get; private set; }
+
+        /// <summary>
+        /// Will create asset on path.
+        /// Will not read file to calculate hash.
+        /// </summary>
+        /// <param name="path"></param>
         public Asset(string path)
         {
             Guid = Guid.NewGuid();
             UpdatePath(path);
+        }
+
+        /// <summary>
+        /// If calculateHash is true, will read file contents.
+        /// Should not be used if no hash is needed because it is slow for many assets.
+        /// If calculateHash is false, will do the same as ctor with path only.
+        /// </summary>
+        public Asset(string path, bool calculateHash)
+        {
+            Guid = Guid.NewGuid();
+            UpdateInternal(path, calculateHash);
         }
 
         /// <summary>
@@ -54,17 +74,17 @@ namespace Robot
         /// <summary>
         /// Will update Hash (not from disk, only if asset value was modified by recording). Will keep old references
         /// </summary>
-        internal void Update() { UpdateInternal(Path, false); }
+        internal void Update() { UpdateInternal(Path, true); }
 
         private void UpdateInternal(string path, bool readDisk)
         {
             Importer = Importer == null || readDisk ? EditorAssetImporter.FromPath(path) : Importer;
             Importer.Path = path;
             Name = Paths.GetName(path);
-            Hash = GetHash(path, true/*readDisk*/);
+            Hash = GetHash(path, readDisk);
         }
 
-        static public Int64 GetHash(string filePath, bool readDisk)
+        public static Int64 GetHash(string filePath, bool readDisk)
         {
             var bytes = File.Exists(filePath) && readDisk ? File.ReadAllBytes(filePath) : Encoding.Unicode.GetBytes(filePath);
             byte[] hashBytes = MD5.Create().ComputeHash(bytes);

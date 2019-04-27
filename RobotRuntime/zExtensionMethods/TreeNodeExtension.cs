@@ -61,7 +61,8 @@ namespace RobotRuntime
             }
             catch (Exception e)
             {
-                Logger.Log(LogType.Error, "Cannot find path in treeView: " + string.Join("\\", pathElements), e.Message);
+                // Logger.Log(LogType.Error, "Cannot find path in treeView: " + string.Join("\\", pathElements), e.Message);
+                // The caller should handle and log the error message, since not finding a node might be a desired behaviour
                 return null;
             }
 
