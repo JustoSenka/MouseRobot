@@ -12,7 +12,7 @@ namespace RobotRuntime.Execution
         protected readonly IRuntimeAssetManager RuntimeAssetManager;
         protected readonly IDetectionManager DetectionManager;
         protected readonly ILogger Logger;
-        public ImageCommandRunner(IDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
+        public ImageCommandRunner(IFeatureDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Logger = Logger;
@@ -35,7 +35,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return TestStatus.Failed;
 
-            m_Points = DetectionManager.FindImage(image, DetectionMode, timeout).Result;
+            m_Points = DetectionManager.FindImage(Detectable.FromBitmap(image), DetectionMode, timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
                 return TestStatus.Failed;
 

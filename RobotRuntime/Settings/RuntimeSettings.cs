@@ -10,7 +10,7 @@ namespace RobotRuntime.Settings
     public class RuntimeSettings : IRuntimeSettings
     {
         private readonly IDetectionManager DetectionManager;
-        public RuntimeSettings(IDetectionManager DetectionManager)
+        public RuntimeSettings(IFeatureDetectionManager DetectionManager)
         {
             this.DetectionManager = DetectionManager;
         }

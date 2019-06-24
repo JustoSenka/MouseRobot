@@ -24,6 +24,13 @@ namespace RobotRuntime.Execution
                 return;
             }
 
+            if (commandNode == null)
+            {
+                Logger.Log(LogType.Error, "Command Node '" + this + "' was not found on text: '" + command.Name);
+                TestData.TestStatus = TestStatus.Failed;
+                return;
+            }
+
             TestData.InvokeCallback(commandNode.value.Guid);
 
             // Before callback can be overriden and completelly change how command look like

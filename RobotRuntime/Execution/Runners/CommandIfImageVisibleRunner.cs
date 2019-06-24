@@ -10,7 +10,7 @@ namespace RobotRuntime.Execution
         protected readonly IRuntimeAssetManager RuntimeAssetManager;
         protected readonly IDetectionManager DetectionManager;
         protected readonly ILogger Logger;
-        public CommandIfImageVisibleRunner(IDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
+        public CommandIfImageVisibleRunner(IFeatureDetectionManager DetectionManager, IRuntimeAssetManager RuntimeAssetManager, ILogger Logger)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Logger = Logger;
@@ -39,7 +39,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return TestStatus.Failed;
 
-            m_Points = DetectionManager.FindImage(image, command.DetectionMode, command.Timeout).Result;
+            m_Points = DetectionManager.FindImage(Detectable.FromBitmap(image), command.DetectionMode, command.Timeout).Result;
             WasImageFound = !(m_Points == null || m_Points.Length == 0);
 
             // If image was not found, but we expect it to be found. Return false and not fail the test on purpose, 

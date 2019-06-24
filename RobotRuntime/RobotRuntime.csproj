@@ -182,6 +182,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\IFeatureDetectionManager.cs" />
+    <Compile Include="Abstractions\ITextDetectorFactory.cs" />
     <Compile Include="Abstractions\ILogger.cs" />
     <Compile Include="Abstractions\IRuntimeAssetManager.cs" />
     <Compile Include="Abstractions\IRuntimeProjectManager.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Assets\LightRecordingImporter.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandForText.cs" />
     <Compile Include="Commands\CommandUnknown.cs" />
     <Compile Include="Commands\CommandPass.cs" />
     <Compile Include="Commands\CommandFail.cs" />
@@ -220,7 +223,10 @@
     <Compile Include="Execution\Runners\RecordingRunner.cs" />
     <Compile Include="Execution\Runners\SimpleCommandRunner.cs" />
     <Compile Include="Execution\RunnerTypeAttribute.cs" />
-    <Compile Include="Graphics\DetectionManager.cs" />
+    <Compile Include="Graphics\BaseDetectionManager.cs" />
+    <Compile Include="Graphics\Detectable.cs" />
+    <Compile Include="Graphics\FeatureDetectionManager.cs" />
+    <Compile Include="Graphics\TextDetectorFactory.cs" />
     <Compile Include="Graphics\FeatureDetectorFactory.cs" />
     <Compile Include="Graphics\FeatureDetectorPP.cs" />
     <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
@@ -231,6 +237,8 @@
     <Compile Include="Abstractions\IDetectionManager.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
     <Compile Include="Abstractions\IProfiler.cs" />
+    <Compile Include="Graphics\TextDetector.cs" />
+    <Compile Include="Graphics\TextDetectorCV.cs" />
     <Compile Include="IO\JsonObjectIO.cs" />
     <Compile Include="IO\YamlCommandIO.cs" />
     <Compile Include="IO\YamlObject.cs" />

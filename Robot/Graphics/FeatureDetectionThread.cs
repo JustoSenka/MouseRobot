@@ -31,7 +31,7 @@ namespace Robot.Graphics
         private readonly IProfiler Profiler;
         private readonly IFeatureDetectorFactory FeatureDetectorFactory;
         private readonly IDetectionManager DetectionManager;
-        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory, IDetectionManager DetectionManager)
+        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory, IFeatureDetectionManager DetectionManager)
         {
             this.ScreenStateThread = ScreenStateThread;
             this.Profiler = Profiler;
@@ -64,7 +64,7 @@ namespace Robot.Graphics
             if (m_SampleImage == null || m_ObservedImage == null)
                 return;
 
-            var points = DetectionManager.FindImageRects(m_SampleImage, m_ObservedImage, m_DetectorName).Result;
+            var points = DetectionManager.FindImageRects(Detectable.FromBitmap(m_SampleImage), m_ObservedImage, m_DetectorName).Result;
 
             if (points != null)
             {
