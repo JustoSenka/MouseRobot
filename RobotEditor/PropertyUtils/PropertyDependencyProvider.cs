@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Graphics;
 using System.Reflection;
 using Unity;
 using Unity.Lifetime;
@@ -16,7 +17,7 @@ namespace RobotEditor.PropertyUtils
     {
         public static BindingFlags StaticNonPublic = BindingFlags.Static | BindingFlags.NonPublic;
 
-        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, IFeatureDetectorFactory FeatureDetectorFactory, ICommandFactory CommandFactory,
+        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, IFactoryWithCache<FeatureDetector> FeatureDetectorFactory, ICommandFactory CommandFactory,
             IScriptLoader ScriptLoader)
         {
             typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", StaticNonPublic).SetValue(null, AssetManager);

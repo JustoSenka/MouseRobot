@@ -16,8 +16,8 @@ namespace RobotRuntime.Graphics
         private FeatureDetector m_FeatureDetector;
 
         private readonly IProfiler Profiler;
-        private readonly IFeatureDetectorFactory FeatureDetectorFactory;
-        public FeatureDetectionManager(IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory)
+        private readonly IFactoryWithCache<FeatureDetector> FeatureDetectorFactory;
+        public FeatureDetectionManager(IProfiler Profiler, IFactoryWithCache<FeatureDetector> FeatureDetectorFactory)
         {
             this.Profiler = Profiler;
             this.FeatureDetectorFactory = FeatureDetectorFactory;

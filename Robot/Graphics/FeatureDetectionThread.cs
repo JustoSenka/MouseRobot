@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
+using RobotRuntime.Graphics;
 using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
@@ -29,9 +30,9 @@ namespace Robot.Graphics
 
         private readonly IScreenStateThread ScreenStateThread;
         private readonly IProfiler Profiler;
-        private readonly IFeatureDetectorFactory FeatureDetectorFactory;
+        private readonly IFactoryWithCache<FeatureDetector> FeatureDetectorFactory;
         private readonly IDetectionManager DetectionManager;
-        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler, IFeatureDetectorFactory FeatureDetectorFactory, IFeatureDetectionManager DetectionManager)
+        public FeatureDetectionThread(IScreenStateThread ScreenStateThread, IProfiler Profiler, IFactoryWithCache<FeatureDetector> FeatureDetectorFactory, IFeatureDetectionManager DetectionManager)
         {
             this.ScreenStateThread = ScreenStateThread;
             this.Profiler = Profiler;

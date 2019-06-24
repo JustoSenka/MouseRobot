@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Graphics;
 using System.ComponentModel;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace RobotEditor.PropertyUtils
 {
     public class DetectorNameStringConverter : StringConverter
     {
-        private static IFeatureDetectorFactory FeatureDetectorFactory { get; set; }
+        private static IFactoryWithCache<FeatureDetector> FeatureDetectorFactory { get; set; }
 
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }
@@ -18,7 +19,7 @@ namespace RobotEditor.PropertyUtils
 
     public class DetectorNameStringConverterWithDefault : StringConverter
     {
-        private static IFeatureDetectorFactory FeatureDetectorFactory { get; set; }
+        private static IFactoryWithCache<FeatureDetector> FeatureDetectorFactory { get; set; }
 
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return true; }

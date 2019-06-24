@@ -43,5 +43,7 @@ namespace RobotRuntime.Graphics
 
             return scaleB;
         }
+
+        public override string ToString() => Name;
     }
 }

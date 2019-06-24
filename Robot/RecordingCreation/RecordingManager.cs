@@ -39,10 +39,10 @@ namespace Robot.RecordingCreation
         private ICroppingManager CroppingManager;
         private IAssetManager AssetManager;
         private IProfiler Profiler;
-        private IFeatureDetectorFactory FeatureDetectorFactory;
+        private IFactoryWithCache<FeatureDetector> FeatureDetectorFactory;
         private IInputCallbacks InputCallbacks;
         public RecordingManager(IHierarchyManager HierarchyManager, ISettingsManager SettingsManager, ICroppingManager CroppingManager, IAssetManager AssetManager, IProfiler Profiler,
-            IFeatureDetectorFactory FeatureDetectorFactory, IInputCallbacks InputCallbacks)
+            IFactoryWithCache<FeatureDetector> FeatureDetectorFactory, IInputCallbacks InputCallbacks)
         {
             this.HierarchyManager = HierarchyManager;
             this.SettingsManager = SettingsManager;
