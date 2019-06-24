@@ -12,7 +12,7 @@ namespace RobotEditor.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -25,7 +25,7 @@ namespace RobotEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Play")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Play (F1)")]
         public string S_Play {
             get {
                 return ((string)(this["S_Play"]));
@@ -37,7 +37,7 @@ namespace RobotEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Stop")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Stop (F1)")]
         public string S_Stop {
             get {
                 return ((string)(this["S_Stop"]));
@@ -49,7 +49,7 @@ namespace RobotEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Start Recording")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Start Recording (F2)")]
         public string S_StartRecording {
             get {
                 return ((string)(this["S_StartRecording"]));
@@ -61,7 +61,7 @@ namespace RobotEditor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Stop Recording")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Stop Recording (F2)")]
         public string S_StopRecording {
             get {
                 return ((string)(this["S_StopRecording"]));

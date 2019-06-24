@@ -153,7 +153,7 @@
             this.playButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(23, 22);
-            this.playButton.Text = "Play";
+            this.playButton.Text = "Play (F1)";
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
             // recordButton
@@ -163,7 +163,7 @@
             this.recordButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.recordButton.Name = "recordButton";
             this.recordButton.Size = new System.Drawing.Size(23, 22);
-            this.recordButton.Text = "Record";
+            this.recordButton.Text = "Start Recording (F2)";
             this.recordButton.Click += new System.EventHandler(this.recordButton_Click);
             // 
             // actionOnPlay
