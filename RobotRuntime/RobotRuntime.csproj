@@ -182,6 +182,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\ITextDetectionManager.cs" />
     <Compile Include="Abstractions\IFeatureDetectionManager.cs" />
     <Compile Include="Abstractions\ILogger.cs" />
     <Compile Include="Abstractions\IRuntimeAssetManager.cs" />
@@ -224,19 +225,20 @@
     <Compile Include="Execution\RunnerTypeAttribute.cs" />
     <Compile Include="Graphics\BaseDetectionManager.cs" />
     <Compile Include="Graphics\Detectable.cs" />
-    <Compile Include="Graphics\FeatureDetectionManager.cs" />
+    <Compile Include="Graphics\Text\TextDetectionManager.cs" />
+    <Compile Include="Graphics\Images\FeatureDetectionManager.cs" />
     <Compile Include="Utils\FactoryWithCache.cs" />
     <Compile Include="Abstractions\IFactoryWithCache.cs" />
-    <Compile Include="Graphics\FeatureDetectorPP.cs" />
-    <Compile Include="Graphics\FeatureDetectorTemplate.cs" />
-    <Compile Include="Graphics\FeatureDetectorSURF.cs" />
-    <Compile Include="Graphics\FeatureDetectorFAST.cs" />
-    <Compile Include="Graphics\FeatureDetector.cs" />
+    <Compile Include="Graphics\Images\FeatureDetectorPP.cs" />
+    <Compile Include="Graphics\Images\FeatureDetectorTemplate.cs" />
+    <Compile Include="Graphics\Images\FeatureDetectorSURF.cs" />
+    <Compile Include="Graphics\Images\FeatureDetectorFAST.cs" />
+    <Compile Include="Graphics\Images\FeatureDetector.cs" />
     <Compile Include="Abstractions\IDetectionManager.cs" />
     <Compile Include="Graphics\PointExtension.cs" />
     <Compile Include="Abstractions\IProfiler.cs" />
-    <Compile Include="Graphics\TextDetector.cs" />
-    <Compile Include="Graphics\TextDetectorCV.cs" />
+    <Compile Include="Graphics\Text\TextDetector.cs" />
+    <Compile Include="Graphics\Text\TextDetectorTesseract.cs" />
     <Compile Include="IO\JsonObjectIO.cs" />
     <Compile Include="IO\YamlCommandIO.cs" />
     <Compile Include="IO\YamlObject.cs" />
