@@ -35,6 +35,7 @@ namespace RobotEditor.Hierarchy
             {
                 if (node.Parent != null && node.Parent.Command != null && node.Parent.Command.CanBeNested)
                 {
+                    // Replace coords with image asset name
                     var assetGuidObj = node.Parent.Command.GetPropertyIfExist(CommandFactory.k_Asset);
                     if (assetGuidObj != null)
                     {
@@ -44,6 +45,11 @@ namespace RobotEditor.Hierarchy
 
                         s = Regex.Replace(s, RegexCoordinateRecognizeRules, "<" + assetName + ">");
                     }
+
+                    // Replace coords with text on where to click
+                    var text = node.Parent.Command.GetPropertyIfExist(CommandFactory.k_Text);
+                    if (text != null)
+                        s = Regex.Replace(s, RegexCoordinateRecognizeRules, "<" + text + ">");
                 }
             }
 

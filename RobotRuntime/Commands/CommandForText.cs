@@ -5,7 +5,7 @@ using System;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    // [RunnerType(typeof(TextCommandRunner))]
+    [RunnerType(typeof(ForTextCommandRunner))]
     [PropertyDesignerType("NativeCommandProperties")]
     public class CommandForText : Command
     {
@@ -35,7 +35,7 @@ namespace RobotRuntime.Commands
         public override string ToString()
         {
             var f = ForEach ? "Each " : "";
-            return $"For " + ForEach + "Text: " + Text;
+            return $"For " + f + "Text Block: <" + Text + ">";
         }
     }
 }

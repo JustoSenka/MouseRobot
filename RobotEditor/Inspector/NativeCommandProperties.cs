@@ -62,6 +62,12 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Text");
             }
+            else if (Command is CommandForText)
+            {
+                AddProperty(dt, "Text");
+                AddProperty(dt, "Timeout");
+                AddProperty(dt, "ForEach");
+            }
             if (Command is CommandIfImageVisible)
             {
                 AddProperty(dt, "Asset");
@@ -118,7 +124,7 @@ namespace RobotEditor.Inspector
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
         [DefaultValue(false)]
-        [DisplayName("Run for multiple found images?")]
+        [DisplayName("Run for every match?")]
         public bool ForEach
         {
             get { return DynamicCast(Command).ForEach; }

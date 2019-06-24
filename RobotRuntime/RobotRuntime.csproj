@@ -212,6 +212,7 @@
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
     <Compile Include="Execution\Runners\CommandIfImageVisibleRunner.cs" />
+    <Compile Include="Execution\Runners\ForTextCommandRunner.cs" />
     <Compile Include="Execution\Runners\ImageCommandRunner.cs" />
     <Compile Include="Execution\Runners\NestedCommandRunner.cs" />
     <Compile Include="Execution\Runners\RunRecordingCommandRunner.cs" />
