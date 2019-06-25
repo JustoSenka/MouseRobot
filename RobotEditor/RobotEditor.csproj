@@ -267,6 +267,7 @@
       <DependentUpon>AssetsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Drawing\IPaintOnScreen.cs" />
+    <Compile Include="Abstractions\IBaseHierarchyWindow.cs" />
     <Compile Include="Windows\Base\InvisibleForm.cs">
       <SubType>Form</SubType>
     </Compile>

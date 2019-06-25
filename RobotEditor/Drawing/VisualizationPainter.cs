@@ -30,7 +30,7 @@ namespace RobotEditor.Drawing
             this.MouseRobot = MouseRobot;
             this.TextDetectionManager = TextDetectionManager;
 
-            HierarchyWindow.OnNodeSelected += OnNodeSelected;
+            HierarchyWindow.OnSelectionChanged += OnNodeSelected;
 
             FeatureDetectionThread.PositionFound += OnPositionFound;
             ScreenStateThread.Update += OnUpdate;
@@ -100,10 +100,17 @@ namespace RobotEditor.Drawing
 
         private void DrawOutlineForEachTextInstance(Graphics g)
         {
+            if (m_TextBlocks == null && !string.IsNullOrEmpty(m_TextToSearch))
+            {
+                g.DrawString("*Searching for text blocks*", Fonts.Default, Brushes.Red, new PointF(10, 950));
+            }
+
             if (m_TextBlocks != null && !string.IsNullOrEmpty(m_TextToSearch))
             {
                 lock (m_TextBlocksLock)
                 {
+                    g.DrawString($"*Found {m_TextBlocks.Length} text blocks*", Fonts.Default, Brushes.Red, new PointF(10, 950));
+
                     foreach (var p in m_TextBlocks)
                     {
                         if (p != null && p.Length > 1)
@@ -122,16 +129,16 @@ namespace RobotEditor.Drawing
             Invalidate?.Invoke();
         }
 
-        private void OnNodeSelected(HierarchyNode node)
+        private void OnNodeSelected(IBaseHierarchyManager HierarchyManager, object commandOrRecording)
         {
             m_TextToSearch = "";
             m_TextBlocks = null;
             Invalidate?.Invoke(); // Clear screen so next screenshot could be taken normally
 
-            if (node == null || node.Command == null)
+            if (!(commandOrRecording is Command))
                 return;
 
-            var text = node.Command.GetPropertyIfExist("Text") as string;
+            var text = commandOrRecording.GetPropertyIfExist("Text") as string;
             if (string.IsNullOrEmpty(text))
                 return;
 

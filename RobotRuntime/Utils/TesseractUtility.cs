@@ -98,7 +98,7 @@ namespace RobotRuntime.Utils
                 Rectangle brect = CvInvoke.BoundingRectangle(contours[i]);
 
                 double ar = brect.Width / brect.Height;
-                if (ar > 1.4 && brect.Width > 60 && brect.Height > 8 && brect.Height < 100)
+                if (ar > 1.4 && brect.Width > 20 && brect.Height > 6 && brect.Height < 100)
                 {
                     var rect = ExtendRectangle(brect, img.Width, img.Height, 4);
                     var croppedImg = BitmapUtility.CropImageFromPoint(img.Bitmap, rect.Location, new Point(rect.X + rect.Width, rect.Y + rect.Height));

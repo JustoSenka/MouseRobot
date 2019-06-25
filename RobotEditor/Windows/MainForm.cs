@@ -36,7 +36,7 @@ namespace RobotEditor
 
         private IList<TestFixtureWindow> TestFixtureWindows = new List<TestFixtureWindow>();
 
-        private HierarchyWindow m_HierarchyWindow;
+        private IHierarchyWindow m_HierarchyWindow;
         private IPropertiesWindow m_PropertiesWindow;
         private IScreenPreviewWindow m_ScreenPreviewWindow;
         private IAssetsWindow m_AssetsWindow;
@@ -63,7 +63,7 @@ namespace RobotEditor
         private IProjectSelectionDialog ProjectSelectionDialog;
         private new IUnityContainer Container;
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IHierarchyManager RecordingManager, IAssetManager AssetManager, HierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
+            IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks)

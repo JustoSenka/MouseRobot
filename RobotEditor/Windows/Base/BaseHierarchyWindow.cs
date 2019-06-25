@@ -24,7 +24,7 @@ namespace RobotEditor.Windows.Base
     /// Has Callbacks for Expand ToolStrip buttons
     /// Has Command Create Context menu item Creation method which could be assing to CommandFactory callback
     /// </summary>
-    public class BaseHierarchyWindow : DockContent
+    public class BaseHierarchyWindow : DockContent, IBaseHierarchyWindow
     {
         protected new string Name;
 

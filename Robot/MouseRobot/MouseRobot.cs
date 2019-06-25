@@ -58,7 +58,7 @@ namespace Robot
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
 
-            HierarchyManager.NewRecording();
+            // HierarchyManager.NewRecording();
             TestRunner.TestRunEnd += OnRecordingFinished;
         }
 

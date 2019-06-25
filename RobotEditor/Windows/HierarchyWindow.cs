@@ -60,12 +60,6 @@ namespace RobotEditor
             BaseHierarchyWindow.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
             treeListView.HandleCreated += UpdateHierarchy;
-            // treeListView.SelectionChanged += OnTreeSelectionChanged;
-        }
-
-        private void OnTreeSelectionChanged(object sender, EventArgs e)
-        {
-            OnNodeSelected?.Invoke(m_TreeListView.SelectedObject as HierarchyNode);
         }
 
         private void AddNewCommandsToCreateMenu(object sender, EventArgs e) =>
