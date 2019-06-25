@@ -200,7 +200,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
-    <Compile Include="Drawing\ImageOutlinePainter.cs" />
+    <Compile Include="Drawing\TextRecognitionPainter.cs" />
     <Compile Include="Drawing\CroppingManagerPainter.cs" />
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
     <Compile Include="Drawing\VisualizationPainter.cs" />

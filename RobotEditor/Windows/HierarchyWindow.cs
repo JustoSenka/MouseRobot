@@ -23,6 +23,8 @@ namespace RobotEditor
     [RegisterTypeToContainer(typeof(IHierarchyWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class HierarchyWindow : BaseHierarchyWindow, IHierarchyWindow
     {
+        public event Action<HierarchyNode> OnNodeSelected;
+
         private readonly new IHierarchyManager HierarchyManager;
         private readonly ITestRunner TestRunner;
         private readonly IAssetManager AssetManager;
@@ -58,6 +60,12 @@ namespace RobotEditor
             BaseHierarchyWindow.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
             treeListView.HandleCreated += UpdateHierarchy;
+            // treeListView.SelectionChanged += OnTreeSelectionChanged;
+        }
+
+        private void OnTreeSelectionChanged(object sender, EventArgs e)
+        {
+            OnNodeSelected?.Invoke(m_TreeListView.SelectedObject as HierarchyNode);
         }
 
         private void AddNewCommandsToCreateMenu(object sender, EventArgs e) =>

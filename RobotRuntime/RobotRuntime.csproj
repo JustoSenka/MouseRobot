@@ -150,6 +150,9 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tesseract, Version=3.0.2.0, Culture=neutral, PublicKeyToken=ebeb3d86bef60cbe, processorArchitecture=MSIL">
+      <HintPath>..\packages\Tesseract.3.0.2.0\lib\net451\Tesseract.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Abstractions, Version=3.3.1.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.8.13\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
@@ -279,8 +282,10 @@
     <Compile Include="Tests\TestStatus.cs" />
     <Compile Include="Tests\TestStatusManager.cs" />
     <Compile Include="UnityContainer\ContainerUtils.cs" />
+    <Compile Include="Utils\TesseractUtility.cs" />
     <Compile Include="Utils\TraceListenerWhichLogs.cs" />
     <Compile Include="Utils\ProcessUtility.cs" />
+    <Compile Include="zCustomDataTypes\TesseractStringEqualityComparer.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuid.cs" />
     <Compile Include="zCustomDataTypes\IHaveGuidMap.cs" />
     <Compile Include="zCustomDataTypes\ISimilar.cs" />
@@ -314,8 +319,23 @@
     <Compile Include="zExtensionMethods\TreeNodeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="x64\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\liblept172.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x86\libtesseract304.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

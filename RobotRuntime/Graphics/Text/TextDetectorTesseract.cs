@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Graphics;
+using RobotRuntime.Utils;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -10,12 +11,12 @@ namespace RobotRuntime
 
         public override IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage)
         {
-            yield return new[] { new Point(100, 100), new Point(100, 105), new Point(105, 100), new Point(105, 105) };
+            yield return TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer()).ToPoint();
         }
 
         public override Point[] FindTextPosition(string text, Bitmap observedImage)
         {
-            return new[] { new Point(100, 100), new Point(100, 105), new Point(105, 100), new Point(105, 105) };
+            return TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer()).ToPoint();
         }
     }
 }

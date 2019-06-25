@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotEditor.Hierarchy;
 using RobotRuntime.Recordings;
 using System;
 using System.Windows.Forms;
@@ -7,6 +8,8 @@ namespace RobotEditor.Abstractions
 {
     public interface IHierarchyWindow
     {
+        event Action<HierarchyNode> OnNodeSelected;
+
         /*event Action<IBaseHierarchyManager, object> OnSelectionChanged;
 
         void deleteToolStripMenuItem_Click(object sender, EventArgs e);
