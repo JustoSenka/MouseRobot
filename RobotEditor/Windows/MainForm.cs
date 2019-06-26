@@ -47,6 +47,7 @@ namespace RobotEditor
         private IMouseRobot MouseRobot;
         private IScreenPaintForm ScreenPaintForm;
         private IFeatureDetectionThread FeatureDetectionThread;
+        private ITextDetectionThread TextDetectionThread;
         private ISettingsManager SettingsManager;
         private IHierarchyManager RecordingManager;
         private IAssetManager AssetManager;
@@ -65,13 +66,15 @@ namespace RobotEditor
             IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
-            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks)
+            ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks,
+            ITextDetectionThread TextDetectionThread)
         {
             this.Container = Container;
 
             this.MouseRobot = MouseRobot;
             this.ScreenPaintForm = ScreenPaintForm;
             this.FeatureDetectionThread = FeatureDetectionThread;
+            this.TextDetectionThread = TextDetectionThread;
             this.SettingsManager = SettingsManager;
             this.RecordingManager = RecordingManager;
             this.AssetManager = AssetManager;
@@ -608,6 +611,7 @@ namespace RobotEditor
         {
             ScreenStateThread.Stop();
             FeatureDetectionThread.Stop();
+            TextDetectionThread.Stop();
             Application.Exit();
         }
 

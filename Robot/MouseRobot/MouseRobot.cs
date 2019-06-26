@@ -43,12 +43,13 @@ namespace Robot
         private readonly IRuntimeSettings RuntimeSettings;
         private readonly IScreenStateThread ScreenStateThread;
         private readonly IFeatureDetectionThread FeatureDetectionThread;
+        private readonly ITextDetectionThread TextDetectionThread;
         private readonly ISettingsManager SettingsManager;
         private readonly IInputCallbacks InputCallbacks;
         private readonly IStatusManager StatusManager;
         public MouseRobot(IHierarchyManager HierarchyManager, ITestRunner TestRunner, IRecordingManager RecordingManager, IRuntimeSettings RuntimeSettings,
             IScreenStateThread ScreenStateThread, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
-            IInputCallbacks InputCallbacks, IStatusManager StatusManager)
+            IInputCallbacks InputCallbacks, IStatusManager StatusManager, ITextDetectionThread TextDetectionThread)
         {
             this.HierarchyManager = HierarchyManager;
             this.TestRunner = TestRunner;
@@ -56,6 +57,7 @@ namespace Robot
             this.RuntimeSettings = RuntimeSettings;
             this.ScreenStateThread = ScreenStateThread;
             this.FeatureDetectionThread = FeatureDetectionThread;
+            this.TextDetectionThread = TextDetectionThread;
             this.SettingsManager = SettingsManager;
             this.InputCallbacks = InputCallbacks;
             this.StatusManager = StatusManager;
@@ -163,7 +165,20 @@ namespace Robot
                 {
                     m_IsTextDetectionOn = value;
                     TextDetectionStateChanged?.Invoke(m_IsTextDetectionOn);
-                    // TODO: TextDetectionThread for constant realtime recognition?
+                    
+                    if (m_IsTextDetectionOn)
+                    {
+                        if (!TextDetectionThread.IsAlive)
+                        {
+                            TextDetectionThread.Start();
+                            TextDetectionThread.StartTextSearch();
+                        }
+                    }
+                    else
+                    {
+                        TextDetectionThread.Stop();
+                        TextDetectionThread.StopTextSearch();
+                    }
                 }
             }
         }

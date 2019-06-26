@@ -502,7 +502,7 @@
             this.textDetectionButton.Name = "textDetectionButton";
             this.textDetectionButton.Size = new System.Drawing.Size(23, 22);
             this.textDetectionButton.Text = "Enable/Disable realtime Text Detection visualization";
-            this.textDetectionButton.ToolTipText = "Enable/Disable Realtime Image Detection Visualization";
+            this.textDetectionButton.ToolTipText = "Enable/Disable Realtime Text Detection Visualization";
             this.textDetectionButton.Click += new System.EventHandler(this.textDetectionButton_Click);
             // 
             // MainForm

@@ -84,6 +84,7 @@
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.8.13\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="Emgu.CV.World, Version=3.3.0.2824, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\ICodeEditor.cs" />
+    <Compile Include="Abstractions\ITextDetectionThread.cs" />
     <Compile Include="Abstractions\IFeatureDetectionThread.cs" />
     <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
     <Compile Include="Abstractions\IScreenStateThread.cs" />
@@ -168,6 +170,7 @@
     <Compile Include="Assets\RecordingImporter.cs" />
     <Compile Include="Abstractions\IMouseRobot.cs" />
     <Compile Include="Abstractions\IProjectManager.cs" />
+    <Compile Include="Graphics\TextDetectionThread.cs" />
     <Compile Include="Graphics\FeatureDetectionThread.cs" />
     <Compile Include="Graphics\ScreenStateThread.cs" />
     <Compile Include="Graphics\StableRepeatingThread.cs" />

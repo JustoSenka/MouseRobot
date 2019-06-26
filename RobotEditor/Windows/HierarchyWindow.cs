@@ -23,8 +23,6 @@ namespace RobotEditor
     [RegisterTypeToContainer(typeof(IHierarchyWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class HierarchyWindow : BaseHierarchyWindow, IHierarchyWindow
     {
-        public event Action<HierarchyNode> OnNodeSelected;
-
         private readonly new IHierarchyManager HierarchyManager;
         private readonly ITestRunner TestRunner;
         private readonly IAssetManager AssetManager;
