@@ -29,7 +29,7 @@ namespace RobotRuntime.Execution
             if (Logger.AssertIf(textCommand == null, "Command is not ForTextCommand, test runner is not supported: " + command.ToString()))
                 return TestStatus.Failed;
 
-            m_Points = DetectionManager.FindImage(Detectable.FromText(textCommand.Text), "Tesseract", textCommand.Timeout).Result;
+            m_Points = DetectionManager.Find(Detectable.FromText(textCommand.Text), "Tesseract", textCommand.Timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
                 return TestStatus.Failed;
 

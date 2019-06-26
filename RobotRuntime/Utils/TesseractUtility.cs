@@ -18,7 +18,7 @@ namespace RobotRuntime.Utils
         public static Rectangle GetPositionOfTextFromImage(Bitmap image, string text, IEqualityComparer<string> equalityComparer)
         {
             var tuple = CollectAllBlocksAndGetTextFromInside(image).FirstOrDefault(b => equalityComparer.Equals(b.text, text));
-            return tuple == default ? tuple.rect : default;
+            return tuple != default ? tuple.rect : default;
         }
 
         public static IEnumerable<(string text, Rectangle rect)> CollectAllBlocksAndGetTextFromInside(Bitmap bitmap)

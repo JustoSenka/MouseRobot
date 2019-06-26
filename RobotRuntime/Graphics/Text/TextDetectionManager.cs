@@ -20,7 +20,7 @@ namespace RobotRuntime.Graphics
         /// Returns array of positions for given image and detector.
         /// Always returns array even if Feature Detector supports only single images
         /// </summary>
-        protected override bool FindImageRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points)
+        protected override bool FindRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points)
         {
             var m_FeatureDetector = Factory.Create(detectorName);
             if (m_FeatureDetector == null)

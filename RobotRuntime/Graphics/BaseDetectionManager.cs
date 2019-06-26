@@ -23,56 +23,56 @@ namespace RobotRuntime.Graphics
         }
 
         /// <summary>
-        /// Returns center points of all found images.
+        /// Returns center points of all found detectables.
         /// Thread safe, does not use any class fields
         /// </summary>
-        public async Task<Point[]> FindImage(Detectable detectable, string detectorName, int timeout)
+        public async Task<Point[]> Find(Detectable detectable, string detectorName, int timeout)
         {
-            var rects = await FindImageRects(detectable, detectorName, timeout);
+            var rects = await FindRects(detectable, detectorName, timeout);
             return rects?.Select(p => p.FindCenter()).ToArray();
         }
 
         /// <summary>
-        /// Returns center points of all found images.
+        /// Returns center points of all found detectables.
         /// Thread safe, does not use any class fields
         /// </summary>
-        public async Task<Point[]> FindImage(Detectable detectable, Bitmap observedImage, string detectorName)
+        public async Task<Point[]> Find(Detectable detectable, Bitmap observedImage, string detectorName)
         {
-            var rects = await FindImageRects(detectable, observedImage, detectorName);
+            var rects = await FindRects(detectable, observedImage, detectorName);
             return rects?.Select(p => p.FindCenter()).ToArray();
         }
 
         /// <summary>
-        /// Returns rects of all found images. Constantly takes screenshots until timeout finishes or image is found.
+        /// Returns rects of all found detectables. Constantly takes screenshots until timeout finishes or detectable is found.
         /// If timeout is 0, will try only once with first taken screenshot
-        /// If timeout is bigger but still smaller than 100ms there is a big chance image will not be found because it takes longer to take screenshot
+        /// If timeout is bigger but still smaller than 100ms there is a big chance detectable will not be found because it takes longer to take screenshot
         /// </summary>
-        public async Task<Point[][]> FindImageRects(Detectable detectable, string detectorName, int timeout)
+        public async Task<Point[][]> FindRects(Detectable detectable, string detectorName, int timeout)
         {
-            return await FindImageRectsInternal(detectable, detectorName, timeout);
+            return await FindRectsInternal(detectable, detectorName, timeout);
         }
 
         /// <summary>
-        /// Returns rects of all found images. Tries only once with compare with given screenshot.
+        /// Returns rects of all found detectables. Tries only once with compare with given screenshot.
         /// Faster than other overload.
         /// </summary>
-        public async Task<Point[][]> FindImageRects(Detectable detectable, Bitmap observedImage, string detectorName)
+        public async Task<Point[][]> FindRects(Detectable detectable, Bitmap observedImage, string detectorName)
         {
-            return await FindImageRectsInternal(detectable, detectorName, 0, observedImage);
+            return await FindRectsInternal(detectable, detectorName, 0, observedImage);
         }
 
         /// <summary>
-        /// Used to do preparations such as detectable caching for images
+        /// Used to do preparations such as detectable caching for detectables
         /// </summary>
-        protected virtual bool BeforeStartingImageSearch(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null) => true;
+        protected virtual bool BeforeStartingSearch(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null) => true;
 
-        protected abstract bool FindImageRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points);
+        protected abstract bool FindRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points);
 
         /// <summary>
-        /// Runs while loop in a task to find image, while constantly taking screenshots
+        /// Runs while loop in a task to find detectable, while constantly taking screenshots
         /// Or does the operation once if timeout was 0 or user provided his own observed image
         /// </summary>
-        private async Task<Point[][]> FindImageRectsInternal(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null)
+        private async Task<Point[][]> FindRectsInternal(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null)
         {
             if (detectable.Value == null)
                 return null;
@@ -81,7 +81,7 @@ namespace RobotRuntime.Graphics
             var screenshotToUse = shouldTakeAScreenshot ? observedImage : BitmapUtility.TakeScreenshot();
 
             // Used to do preparations such as detectable caching for images
-            var shouldContinue = BeforeStartingImageSearch(detectable, detectorName, timeout, screenshotToUse);
+            var shouldContinue = BeforeStartingSearch(detectable, detectorName, timeout, screenshotToUse);
             if (!shouldContinue)
                 return null;
 
@@ -95,7 +95,7 @@ namespace RobotRuntime.Graphics
         }
 
         /// <summary>
-        /// Runs while loop in a task to find image, while constantly taking screenshots
+        /// Runs while loop in a task to find detectable, while constantly taking screenshots
         /// Or does the operation once if timeout was 0 or user provided his own observed image
         /// </summary>
         private async Task<Point[][]> RunLoopForRectSearch(Detectable detectable, string detectorName, int timeout, Bitmap screenshotToUse)
@@ -103,7 +103,7 @@ namespace RobotRuntime.Graphics
             // If timeout was 0 or user provided his own observed image, do the search only once without a task
             if (timeout == 0 || screenshotToUse != null)
             {
-                var success = FindImageRectsSync(detectable, detectorName, screenshotToUse, out Point[][] points);
+                var success = FindRectsSync(detectable, detectorName, screenshotToUse, out Point[][] points);
                 return success ? points : null;
             }
             else
@@ -116,7 +116,7 @@ namespace RobotRuntime.Graphics
                     while (true)
                     {
                         screenshotToUse = BitmapUtility.TakeScreenshot();
-                        var success = FindImageRectsSync(detectable, detectorName, screenshotToUse, out Point[][] points);
+                        var success = FindRectsSync(detectable, detectorName, screenshotToUse, out Point[][] points);
 
                         if (success)
                             return points;

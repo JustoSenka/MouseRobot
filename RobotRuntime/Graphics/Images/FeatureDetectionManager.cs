@@ -35,7 +35,7 @@ namespace RobotRuntime.Graphics
         /// <summary>
         /// Used to do preparations such as detectable caching for images
         /// </summary>
-        protected override bool BeforeStartingImageSearch(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null)
+        protected override bool BeforeStartingSearch(Detectable detectable, string detectorName, int timeout, Bitmap observedImage = null)
         {
             if (!(detectable.Value is Bitmap sampleImage))
                 return false;
@@ -65,7 +65,7 @@ namespace RobotRuntime.Graphics
         /// Returns array of positions for given image and detector.
         /// Always returns array even if Feature Detector supports only single images
         /// </summary>
-        protected override bool FindImageRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points)
+        protected override bool FindRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points)
         {
             // Return array of points no matter which mode it supports so other systems can rely on only one entry point of API
             if (m_FeatureDetector.SupportsMultipleMatches)

@@ -65,7 +65,7 @@ namespace Robot.Graphics
             if (m_SampleImage == null || m_ObservedImage == null)
                 return;
 
-            var points = DetectionManager.FindImageRects(Detectable.FromBitmap(m_SampleImage), m_ObservedImage, m_DetectorName).Result;
+            var points = DetectionManager.FindRects(Detectable.FromBitmap(m_SampleImage), m_ObservedImage, m_DetectorName).Result;
 
             if (points != null)
             {

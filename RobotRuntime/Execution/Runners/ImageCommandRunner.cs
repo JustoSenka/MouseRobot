@@ -35,7 +35,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return TestStatus.Failed;
 
-            m_Points = DetectionManager.FindImage(Detectable.FromBitmap(image), DetectionMode, timeout).Result;
+            m_Points = DetectionManager.Find(Detectable.FromBitmap(image), DetectionMode, timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
                 return TestStatus.Failed;
 

@@ -39,7 +39,7 @@ namespace RobotRuntime.Execution
             if (image == null)
                 return TestStatus.Failed;
 
-            m_Points = DetectionManager.FindImage(Detectable.FromBitmap(image), command.DetectionMode, command.Timeout).Result;
+            m_Points = DetectionManager.Find(Detectable.FromBitmap(image), command.DetectionMode, command.Timeout).Result;
             WasImageFound = !(m_Points == null || m_Points.Length == 0);
 
             // If image was not found, but we expect it to be found. Return false and not fail the test on purpose, 
