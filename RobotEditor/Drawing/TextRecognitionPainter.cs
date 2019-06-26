@@ -1,61 +1,166 @@
 ﻿using Robot.Abstractions;
+using RobotEditor.Abstractions;
 using RobotEditor.Windows.Base;
+using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Graphics;
 using RobotRuntime.Utils;
-using RobotRuntime.Utils.Win32;
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RobotEditor.Drawing
 {
     public class TextRecognitionPainter : IPaintOnScreen
-    { 
-        private ICroppingManager CroppingManager;
-        public TextRecognitionPainter(ICroppingManager CroppingManager)
+    {
+        private IMouseRobot MouseRobot;
+        private ITextDetectionManager TextDetectionManager;
+        public TextRecognitionPainter(IMouseRobot MouseRobot, IHierarchyWindow HierarchyWindow, ITextDetectionManager TextDetectionManager)
         {
-            this.CroppingManager = CroppingManager;
+            this.MouseRobot = MouseRobot;
+            this.TextDetectionManager = TextDetectionManager;
 
-            CroppingManager.ImageCropStarted += OnImageCropStarted;
-            CroppingManager.ImageCropEnded += OnImageCropEnded;
+            HierarchyWindow.OnSelectionChanged += OnNodeSelected;
+            MouseRobot.TextDetectionStateChanged += TextDetectionStateChanged;
 
             Invalidate?.Invoke();
         }
 
         public event Action Invalidate;
-        public event Action<IPaintOnScreen> StartInvalidateOnTimer;
-        public event Action<IPaintOnScreen> StopInvalidateOnTimer;
+        public event Action<IPaintOnScreen> StartInvalidateOnTimer = delegate { };
+        public event Action<IPaintOnScreen> StopInvalidateOnTimer = delegate { };
 
         public void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
-            if (CroppingManager.IsCropping)
+            if (MouseRobot.IsTextDetectionOn)
             {
-                DrawCroppingRectangle(g);
+                DrawOutlineForEachTextInstance(g);
             }
         }
 
-        private void OnImageCropStarted(Point p)
+        private Pen redThinPen = new Pen(Color.Red, 1.75f);
+        private Pen greenPen = new Pen(Color.Green, 3f);
+
+        private bool m_IsLookingForTextBlocks = false;
+        private bool m_IsLookingForSpecificText = false;
+
+        private string m_TextToSearch = "";
+        private Rectangle[] m_TextBlocks = null;
+        private Rectangle[] m_RecognizedTextBlocks = null;
+        private readonly object m_TextBlocksLock = new object();
+
+        private void DrawOutlineForEachTextInstance(Graphics g)
         {
-            StartInvalidateOnTimer?.Invoke(this);
-            Invalidate?.Invoke();
+            var font = Fonts.Default;
+            var brush = Brushes.Red;
+            var textLocation = new PointF(10, 950);
+            var recognizedTextLocation = new PointF(10, 920);
+
+            if (m_IsLookingForTextBlocks)
+                g.DrawString("*Searching for text blocks*", font, brush, textLocation);
+
+            if (m_TextBlocks == null && !m_IsLookingForTextBlocks)
+                g.DrawString("*Did not found any text blocks on screen*", font, brush, textLocation);
+
+            if (m_IsLookingForSpecificText)
+                g.DrawString("*Searching for specific text*", font, brush, recognizedTextLocation);
+
+            if (m_RecognizedTextBlocks == null && !m_IsLookingForSpecificText)
+                g.DrawString("*Did not found specified text on screen*", font, brush, recognizedTextLocation);
+
+            lock (m_TextBlocksLock)
+            {
+                if (m_TextBlocks != null && !m_IsLookingForTextBlocks)
+                {
+                    g.DrawString($"*Found {m_TextBlocks.Length} text blocks*", font, brush, textLocation);
+
+                    foreach (var r in m_TextBlocks)
+                        g.DrawPolygon(redThinPen, r.ToPoint());
+                }
+
+                if (m_RecognizedTextBlocks != null && !m_IsLookingForSpecificText) 
+                {
+                    g.DrawString($"*Text was found: {m_TextToSearch}*", font, brush, recognizedTextLocation);
+
+                    foreach (var r in m_RecognizedTextBlocks)
+                        g.DrawPolygon(greenPen, r.ToPoint());
+                }
+            }
         }
 
-        private void OnImageCropEnded(Point p)
+        private void TextDetectionStateChanged(bool enabled)
         {
-            StopInvalidateOnTimer?.Invoke(this);
-            Invalidate?.Invoke();
+            if (enabled)
+            {
+                m_IsLookingForTextBlocks = true;
+                m_TextBlocks = null;
+                Invalidate?.Invoke(); // Clear screen so next screenshot could be taken normally
+
+                Task.Run(() =>
+                {
+                    var rects = TesseractUtility.CollectBlocksWhichContainAnyText(BitmapUtility.TakeScreenshot());
+                    var rectArray = rects.ToArray();
+                    lock (m_TextBlocksLock)
+                    {
+                        m_TextBlocks = rectArray;
+                    }
+
+                    m_IsLookingForTextBlocks = false;
+                    Invalidate?.Invoke();
+                });
+            }
+            else
+            {
+                m_IsLookingForTextBlocks = true;
+                Invalidate?.Invoke();
+            }
         }
 
-        private void DrawCroppingRectangle(Graphics g)
+        private void OnNodeSelected(IBaseHierarchyManager HierarchyManager, object commandOrRecording)
         {
-            var rect = BitmapUtility.GetRect(CroppingManager.StartPoint, WinAPI.GetCursorPosition());
+            if (m_TextBlocks == null || m_TextBlocks.Length == 0)
+                return;
 
-            rect.Location = rect.Location.Sub(new Point(1, 1));
-            rect.Width++;
-            rect.Height++;
+            m_RecognizedTextBlocks = null;
+            m_IsLookingForSpecificText = true;
+            Invalidate?.Invoke(); // Clear screen so next screenshot could be taken normally
 
-            g.DrawRectangle(Pens.Black, rect);
+            var text = commandOrRecording?.GetPropertyIfExist("Text") as string;
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            m_TextToSearch = text;
+
+            Task.Run(() =>
+            {
+                var blocks = TesseractUtility.GetAllTextFromRects(BitmapUtility.TakeScreenshot(), m_TextBlocks).ToArray();
+                var concat = string.Join(Environment.NewLine, blocks.Select(b => b.text));
+
+                Logger.Log(LogType.Log, $"Recognized text from {blocks.Length} blocks: ", concat);
+
+                var comparer = new TesseractStringEqualityComparer();
+                lock (m_TextBlocksLock)
+                {
+                    m_RecognizedTextBlocks = blocks.Where(b => comparer.Equals(b.text, m_TextToSearch)).Select(b => b.rect).ToArray();
+                }
+
+                m_IsLookingForSpecificText = false;
+                Invalidate?.Invoke();
+            });
+
+            /*
+            TextDetectionManager.FindImageRects(Detectable.FromText(m_TextToSearch), BitmapUtility.TakeScreenshot(), "Tesseract").ContinueWith(async task =>
+            {
+                var points = await task;
+                lock (m_TextBlocksLock)
+                {
+                    m_TextBlocks = points;
+                }
+            });*/
+
         }
     }
 }

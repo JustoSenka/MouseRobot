@@ -16,10 +16,12 @@ namespace Robot
         public event Action<bool> RecordingStateChanged;
         public event Action<bool> PlayingStateChanged;
         public event Action<bool> VisualizationStateChanged;
+        public event Action<bool> TextDetectionStateChanged;
 
         private bool m_IsRecording;
         private bool m_IsPlaying;
         private bool m_IsVisualizationOn;
+        private bool m_IsTextDetectionOn;
 
         /// <summary>
         /// Post messages to async operation in order to run them on UI thread
@@ -147,6 +149,21 @@ namespace Robot
                         ScreenStateThread.Stop();
                         FeatureDetectionThread.Stop();
                     }
+                }
+            }
+        }
+
+
+        public bool IsTextDetectionOn
+        {
+            get { return m_IsTextDetectionOn; }
+            set
+            {
+                if (value != m_IsTextDetectionOn)
+                {
+                    m_IsTextDetectionOn = value;
+                    TextDetectionStateChanged?.Invoke(m_IsTextDetectionOn);
+                    // TODO: TextDetectionThread for constant realtime recognition?
                 }
             }
         }

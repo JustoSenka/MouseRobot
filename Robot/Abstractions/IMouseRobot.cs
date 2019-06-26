@@ -10,9 +10,11 @@ namespace Robot.Abstractions
         bool IsPlaying { get; set; }
         bool IsRecording { get; set; }
         bool IsVisualizationOn { get; set; }
+        bool IsTextDetectionOn { get; set; }
 
         event Action<bool> PlayingStateChanged;
         event Action<bool> RecordingStateChanged;
         event Action<bool> VisualizationStateChanged;
+        event Action<bool> TextDetectionStateChanged;
     }
 }

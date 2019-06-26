@@ -81,6 +81,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.textDetectionButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -139,7 +140,8 @@
             this.recordButton,
             this.actionOnPlay,
             this.actionOnRec,
-            this.visualizationButton});
+            this.visualizationButton,
+            this.textDetectionButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(763, 25);
@@ -492,6 +494,17 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // textDetectionButton
+            // 
+            this.textDetectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.textDetectionButton.Image = global::RobotEditor.Properties.Resources.Eye_d_ICO_256;
+            this.textDetectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.textDetectionButton.Name = "textDetectionButton";
+            this.textDetectionButton.Size = new System.Drawing.Size(23, 22);
+            this.textDetectionButton.Text = "Enable/Disable realtime Text Detection visualization";
+            this.textDetectionButton.ToolTipText = "Enable/Disable Realtime Image Detection Visualization";
+            this.textDetectionButton.Click += new System.EventHandler(this.textDetectionButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -571,5 +584,6 @@
         private System.Windows.Forms.ToolStripMenuItem newRecordingToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem compilerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addScriptToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton textDetectionButton;
     }
 }

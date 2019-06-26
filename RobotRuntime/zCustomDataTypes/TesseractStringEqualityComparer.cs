@@ -17,6 +17,9 @@ namespace RobotRuntime
         public string Convert(string str)
         {
             return str.Replace('I', 'l').Replace('|', 'l').ToLowerInvariant();
+
+            // "cl" looks like "d"
+            // Remove all spaces (some words happen to have spaces in the middle)
         }
     }
 }

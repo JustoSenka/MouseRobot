@@ -1,6 +1,5 @@
 ﻿using Robot;
 using Robot.Abstractions;
-using Robot.Recordings;
 using Robot.Settings;
 using Robot.Tests;
 using RobotEditor.Abstractions;
@@ -125,6 +124,7 @@ namespace RobotEditor
             MouseRobot.RecordingStateChanged += OnRecordingStateChanged;
             MouseRobot.PlayingStateChanged += OnPlayingStateChanged;
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
+            MouseRobot.TextDetectionStateChanged += OnVisualizationStateChanged;
 
             StatusManager.StatusUpdated += OnStatusUpdated;
 
@@ -570,6 +570,11 @@ namespace RobotEditor
             else
                 ScreenDrawForm.Instace.Hide();*/
         }
+
+        private void textDetectionButton_Click(object sender, EventArgs e)
+        {
+            MouseRobot.IsTextDetectionOn ^= true;
+        }
         #endregion
 
         private void UpdateToolstripButtonStates()
@@ -582,6 +587,9 @@ namespace RobotEditor
                 Properties.Resources.ToolButton_RecordStop_32 : Properties.Resources.ToolButton_Record_32;
 
             visualizationButton.Image = (MouseRobot.IsVisualizationOn) ?
+                Properties.Resources.Eye_e_ICO_256 : Properties.Resources.Eye_d_ICO_256;
+
+            textDetectionButton.Image = (MouseRobot.IsTextDetectionOn) ?
                 Properties.Resources.Eye_e_ICO_256 : Properties.Resources.Eye_d_ICO_256;
 
             // Disable/Enable buttons

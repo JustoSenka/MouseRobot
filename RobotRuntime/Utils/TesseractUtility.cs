@@ -13,21 +13,35 @@ namespace RobotRuntime.Utils
 {
     public class TesseractUtility
     {
+        private static TesseractEngine engine = new TesseractEngine(Path.Combine(Paths.ApplicationInstallPath, @"tessdata"), "eng", EngineMode.Default);
+
         public static Rectangle GetPositionOfTextFromImage(Bitmap image, string text, IEqualityComparer<string> equalityComparer)
         {
-            var tuple = GetAllTextBlocks(image).FirstOrDefault(b => equalityComparer.Equals(b.text, text));
+            var tuple = CollectAllBlocksAndGetTextFromInside(image).FirstOrDefault(b => equalityComparer.Equals(b.text, text));
             return tuple == default ? tuple.rect : default;
         }
 
-        public static IEnumerable<(string text, Rectangle rect)> GetAllTextBlocks(Bitmap image)
+        public static IEnumerable<(string text, Rectangle rect)> CollectAllBlocksAndGetTextFromInside(Bitmap bitmap)
         {
-            var img = new Image<Bgr, Byte>(image);
-            var smallImagesWithText = GetListOfImagesWithText(img);
-            var sentences = smallImagesWithText.Select(i => GetTextFromImage(i.Item1));
-            return sentences.Zip(smallImagesWithText, (s, i) => (text: s, rect: i.Item2));
+            var img = new Image<Bgr, Byte>(bitmap);
+            var textBlocks = CollectBlocksWhichContainAnyText(img);
+            return GetAllTextFromRects(img, textBlocks);
         }
 
-        static TesseractEngine engine = new TesseractEngine(Path.Combine(Paths.ApplicationInstallPath, @"tessdata"), "eng", EngineMode.Default);
+        public static IEnumerable<(string text, Rectangle rect)> GetAllTextFromRects(Bitmap bitmap, IEnumerable<Rectangle> rects)
+        {
+            return GetAllTextFromRects(new Image<Bgr, Byte>(bitmap), rects);
+        }
+
+        public static IEnumerable<(string text, Rectangle rect)> GetAllTextFromRects(Image<Bgr, Byte> image, IEnumerable<Rectangle> rects)
+        {
+            var smallImagesOfTextBlocks = rects.Select(rect => (rect, img: CropImageToRectangle(rect, image)));
+
+            var sentences = smallImagesOfTextBlocks.Select(i => GetTextFromImage(i.img));
+            var zip = sentences.Zip(smallImagesOfTextBlocks, (s, i) => (text: s, i.rect));
+                
+            return zip.Where(z => !string.IsNullOrWhiteSpace(z.text));
+        }
 
         public static string GetTextFromImage(Bitmap image)
         {
@@ -53,37 +67,12 @@ namespace RobotRuntime.Utils
             }
         }
 
-        private static IEnumerable<string> IterateSentence(ResultIterator iter)
+        public static IEnumerable<Rectangle> CollectBlocksWhichContainAnyText(Bitmap img)
         {
-            iter.Begin();
-            do
-            {
-                var word = iter.GetText(PageIteratorLevel.Word);
-                word = CleanWord(word);
-
-                // skip short words
-                if (word == null || word.Length < 2)
-                    continue;
-
-                yield return word;
-            } while (iter.Next(PageIteratorLevel.Word));
+            return CollectBlocksWhichContainAnyText(new Image<Bgr, Byte>(img));
         }
 
-        private static bool WordIsClean(string word)
-        {
-            if (Regex.IsMatch(word, @"^[a-zA-Z]+$"))
-                return true;
-            return false;
-        }
-        private static string CleanWord(string word)
-        {
-            if (string.IsNullOrEmpty(word))
-                return "";
-
-            return Regex.Replace(word, @"[^a-zA-Z]", "");
-        }
-
-        private static IEnumerable<(Bitmap img, Rectangle rect)> GetListOfImagesWithText(Image<Bgr, Byte> img)
+        private static IEnumerable<Rectangle> CollectBlocksWhichContainAnyText(Image<Bgr, Byte> img)
         {
             var sobel = img.Convert<Gray, byte>().Sobel(1, 0, 3).AbsDiff(new Gray(0.0)).Convert<Gray, byte>().ThresholdBinary(new Gray(100), new Gray(255));
             var SE = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(10, 1), new Point(-1, -1));
@@ -99,12 +88,31 @@ namespace RobotRuntime.Utils
 
                 double ar = brect.Width / brect.Height;
                 if (ar > 1.4 && brect.Width > 20 && brect.Height > 6 && brect.Height < 100)
-                {
-                    var rect = ExtendRectangle(brect, img.Width, img.Height, 4);
-                    var croppedImg = BitmapUtility.CropImageFromPoint(img.Bitmap, rect.Location, new Point(rect.X + rect.Width, rect.Y + rect.Height));
-                    yield return (img: croppedImg, rect);
-                }
+                    yield return ExtendRectangle(brect, img.Width, img.Height, 4);
             }
+        }
+
+        private static IEnumerable<string> IterateSentence(ResultIterator iter)
+        {
+            iter.Begin();
+            do
+            {
+                var word = iter.GetText(PageIteratorLevel.Word);
+                word = CleanWord(word);
+
+                // skip short words
+                if (string.IsNullOrWhiteSpace(word) || word.Length <= 2)
+                    continue;
+
+                yield return word;
+            } while (iter.Next(PageIteratorLevel.Word));
+        }
+
+        private static Bitmap CropImageToRectangle(Rectangle rect, Image<Bgr, Byte> img)
+        {
+            var croppedImg = BitmapUtility.CropImageFromPoint(img.Bitmap, rect.Location, new Point(rect.X + rect.Width, rect.Y + rect.Height));
+            croppedImg = ResizeAndImprove(croppedImg);
+            return croppedImg;
         }
 
         private static Rectangle ExtendRectangle(Rectangle r, int maxWidth, int maxHeight, int amountOfPixels)
@@ -118,37 +126,24 @@ namespace RobotRuntime.Utils
             return r;
         }
 
-        private static IEnumerable<Rectangle> FindTextBlocksFromImage(Image<Bgr, Byte> img)
+        private static Bitmap ResizeAndImprove(Bitmap inImg)
         {
-            /*
-             1. Edge detection (sobel)
-             2. Dilation (10,1)
-             3. FindContours
-             4. Geometrical Constrints
-             */
+            var outImg = new Image<Bgr, byte>(inImg).Resize(2, Emgu.CV.CvEnum.Inter.Cubic);
+            return outImg.Convert<Gray, byte>().ThresholdBinary(new Gray(130), new Gray(255)).Bitmap;
+        }
 
-            //sobel
-            Image<Gray, byte> sobel = img.Convert<Gray, byte>().Sobel(1, 0, 3).AbsDiff(new Gray(0.0)).Convert<Gray, byte>().ThresholdBinary(new Gray(50), new Gray(255));
-            Mat SE = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(10, 2), new Point(-1, -1));
-            sobel = sobel.MorphologyEx(Emgu.CV.CvEnum.MorphOp.Dilate, SE, new Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Reflect, new MCvScalar(255));
-            Emgu.CV.Util.VectorOfVectorOfPoint contours = new Emgu.CV.Util.VectorOfVectorOfPoint();
-            Mat m = new Mat();
+        private static bool WordIsClean(string word)
+        {
+            if (Regex.IsMatch(word, @"^[a-zA-Z]+$"))
+                return true;
+            return false;
+        }
+        private static string CleanWord(string word)
+        {
+            if (string.IsNullOrEmpty(word))
+                return "";
 
-            CvInvoke.FindContours(sobel, contours, m, Emgu.CV.CvEnum.RetrType.External, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
-
-            List<Rectangle> list = new List<Rectangle>();
-
-            for (int i = 0; i < contours.Size; i++)
-            {
-                Rectangle brect = CvInvoke.BoundingRectangle(contours[i]);
-
-                double ar = brect.Width / brect.Height;
-                if (ar > 2 && brect.Width > 25 && brect.Height > 8 && brect.Height < 100)
-                {
-                    list.Add(brect);
-                }
-            }
-            return list;
+            return Regex.Replace(word, @"[^a-zA-Z]", "");
         }
     }
 }

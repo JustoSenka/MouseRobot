@@ -110,6 +110,7 @@
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.8.13\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="Emgu.CV.World, Version=3.3.0.2824, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
@@ -200,9 +201,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarToolStripItem.cs" />
-    <Compile Include="Drawing\TextRecognitionPainter.cs" />
     <Compile Include="Drawing\CroppingManagerPainter.cs" />
     <Compile Include="Drawing\RecordingManagerPainter.cs" />
+    <Compile Include="Drawing\TextRecognitionPainter.cs" />
     <Compile Include="Drawing\VisualizationPainter.cs" />
     <Compile Include="Abstractions\IProjectSelectionDialog.cs" />
     <Compile Include="Editor\DragObject.cs" />
