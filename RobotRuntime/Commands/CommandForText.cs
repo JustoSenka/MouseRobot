@@ -12,7 +12,7 @@ namespace RobotRuntime.Commands
         public override string Name { get { return "For Text"; } }
         public override bool CanBeNested { get { return true; } }
 
-        public int Timeout { get; set; } = 1000;
+        public int Timeout { get; set; } = 5000;
         public bool ForEach { get; set; }
         public string Text { get; set; } = "";
 

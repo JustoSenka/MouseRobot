@@ -98,10 +98,10 @@ namespace RobotRuntime.Utils
             do
             {
                 var word = iter.GetText(PageIteratorLevel.Word);
-                word = CleanWord(word);
+                // word = CleanWord(word);
 
                 // skip short words
-                if (string.IsNullOrWhiteSpace(word) || word.Length <= 2)
+                if (string.IsNullOrWhiteSpace(word) || word.Length <= 1)
                     continue;
 
                 yield return word;
@@ -132,18 +132,12 @@ namespace RobotRuntime.Utils
             return outImg.Convert<Gray, byte>().ThresholdBinary(new Gray(130), new Gray(255)).Bitmap;
         }
 
-        private static bool WordIsClean(string word)
-        {
-            if (Regex.IsMatch(word, @"^[a-zA-Z]+$"))
-                return true;
-            return false;
-        }
         private static string CleanWord(string word)
         {
             if (string.IsNullOrEmpty(word))
                 return "";
 
-            return Regex.Replace(word, @"[^a-zA-Z]", "");
+            return Regex.Replace(word, @"[^a-zA-Z0-9]", "");
         }
     }
 }

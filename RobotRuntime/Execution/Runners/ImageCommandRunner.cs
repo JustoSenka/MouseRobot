@@ -37,7 +37,10 @@ namespace RobotRuntime.Execution
 
             m_Points = DetectionManager.Find(Detectable.FromBitmap(image), DetectionMode, timeout).Result;
             if (m_Points == null || m_Points.Length == 0)
+            {
+                Logger.Logi(LogType.Warning, "Image was not found on screen: " + command.Name);
                 return TestStatus.Failed;
+            }
 
             return TestData.TestStatus;
         }
