@@ -30,7 +30,7 @@ namespace RobotRuntime.Execution
                 return TestStatus.Failed;
 
             m_Points = DetectionManager.Find(Detectable.FromText(textCommand.Text), "Tesseract", textCommand.Timeout).Result;
-            if (m_Points == null || m_Points.Length == 0)
+            if (m_Points == null || m_Points.Length == 0 || m_Points[0] == default)
             {
                 Logger.Logi(LogType.Warning, "Text was not found on screen: " + textCommand.Text);
                 return TestStatus.Failed;

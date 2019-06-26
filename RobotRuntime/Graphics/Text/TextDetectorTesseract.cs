@@ -12,12 +12,14 @@ namespace RobotRuntime
 
         public override IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage)
         {
-            yield return TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold)).ToPoint();
+            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold));
+            yield return rect == default ? null : rect.ToPoint(); 
         }
 
         public override Point[] FindTextPosition(string text, Bitmap observedImage)
         {
-            return TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold)).ToPoint();
+            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold));
+            return rect == default ? null : rect.ToPoint();
         }
     }
 }
