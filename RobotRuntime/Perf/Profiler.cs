@@ -48,7 +48,10 @@ namespace RobotRuntime.Perf
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (m_TakenWatches.ContainsKey(name))
+            {
                 Logger.Log(LogType.Error, "No Stop was called for name: " + name);
+                InternalStop(name);
+            }
 #endif
 
             LimitedStack<ProfilerNode> stack;
@@ -87,7 +90,10 @@ namespace RobotRuntime.Perf
         {
 #if ENABLE_PROFILER_DEBUGGING
             if (!m_TakenWatches.ContainsKey(name))
+            {
                 Logger.Log(LogType.Error, "No start was called for this name: " + name);
+                return;
+            }
 #endif
 
             Stopwatch watch;

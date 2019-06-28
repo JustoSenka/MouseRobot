@@ -461,28 +461,34 @@ namespace RobotEditor.Windows.Base
             // Those nodes should appear below/above target node
             // If target node is script/nested command and dropped on Item, selection should go to last nodes
             var parentNode = e.DropTargetLocation == DropTargetLocation.Item ? targetNode : targetNode.Parent;
-            var targetNodeIndex = parentNode.Children.IndexOf(targetNode);
-            var objCount = e.SourceModels.Count;
 
-            IEnumerable<HierarchyNode> nodesToSelect = null;
-            if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                nodesToSelect = parentNode.Children.Skip(targetNodeIndex - objCount).Take(objCount);
-
-            else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                nodesToSelect = parentNode.Children.Skip(targetNodeIndex + 1).Take(objCount);
-
-            else if (e.DropTargetLocation == DropTargetLocation.Item)
-                nodesToSelect = parentNode.Children.Skip(parentNode.Children.Count - objCount).Take(objCount);
-
-            m_TreeListView.SelectedObjects = null;
-            m_TreeListView.Focus();
-
-            RefreshTreeListViewAsync(() =>
+            // This scenario is very unlikely, but it is possible to drop command above recording in tree
+            // It should not do anything or select anything, it's a UI bug, so lets just not crash here
+            if (parentNode != null)
             {
-                m_TreeListView.Expand(parentNode);
-                if (nodesToSelect != null)
-                    m_TreeListView.SelectObjects(nodesToSelect.ToList());
-            });
+                var targetNodeIndex = parentNode.Children.IndexOf(targetNode);
+                var objCount = e.SourceModels.Count;
+
+                IEnumerable<HierarchyNode> nodesToSelect = null;
+                if (e.DropTargetLocation == DropTargetLocation.AboveItem)
+                    nodesToSelect = parentNode.Children.Skip(targetNodeIndex - objCount).Take(objCount);
+
+                else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                    nodesToSelect = parentNode.Children.Skip(targetNodeIndex + 1).Take(objCount);
+
+                else if (e.DropTargetLocation == DropTargetLocation.Item)
+                    nodesToSelect = parentNode.Children.Skip(parentNode.Children.Count - objCount).Take(objCount);
+
+                m_TreeListView.SelectedObjects = null;
+                m_TreeListView.Focus();
+
+                RefreshTreeListViewAsync(() =>
+                {
+                    m_TreeListView.Expand(parentNode);
+                    if (nodesToSelect != null)
+                        m_TreeListView.SelectObjects(nodesToSelect.ToList());
+                });
+            }
 
             Profiler.Stop("BaseHierarchyWindow_ModelDropped");
         }
