@@ -250,6 +250,8 @@ namespace RobotEditor
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 TestFixtureManager.SaveTestFixture(m_TestFixture, saveDialog.FileName);
+                base.Name = m_TestFixture.Name;
+
                 if (updateUI)
                     RefreshTreeListViewAsync();
             }
