@@ -13,7 +13,7 @@ namespace RobotRuntime.IO
                 var text = File.ReadAllText(path);
                 var deserializer = new DeserializerBuilder()
                     .WithTagMapping("!String[]", typeof(string[]))
-                    .WithTagMapping("!FeatureDetectionSettings", typeof(Settings.FeatureDetectionSettings))
+                    .WithTagMapping("!FeatureDetectionSettings", typeof(Settings.DetectionSettings))
                     //.WithTagMapping("!CompilerSettings", typeof(Robot.Settings.CompilerSettings))
                     //.WithTagMapping("!RecordingSettings", typeof(Robot.Settings.RecordingSettings))
 
@@ -34,7 +34,7 @@ namespace RobotRuntime.IO
             {
                 var serializer = new SerializerBuilder()
                     .WithTagMapping("!String[]", typeof(string[]))
-                    .WithTagMapping("!FeatureDetectionSettings", typeof(Settings.FeatureDetectionSettings))
+                    .WithTagMapping("!FeatureDetectionSettings", typeof(Settings.DetectionSettings))
                     .EnsureRoundtrip()
                     .EmitDefaults()
                     .Build();

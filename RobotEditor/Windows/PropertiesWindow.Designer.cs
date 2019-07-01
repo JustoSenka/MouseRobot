@@ -71,7 +71,7 @@
             // 
             this.imageDetectionSettingsToolStripMenuItem.Name = "imageDetectionSettingsToolStripMenuItem";
             this.imageDetectionSettingsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
-            this.imageDetectionSettingsToolStripMenuItem.Text = "Image Detection Settings";
+            this.imageDetectionSettingsToolStripMenuItem.Text = "Detection Settings";
             this.imageDetectionSettingsToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionSettingsToolStripMenuItem_Click);
             // 
             // compilerSettingsToolStripMenuItem

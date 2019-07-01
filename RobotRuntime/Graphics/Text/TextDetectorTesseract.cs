@@ -8,17 +8,16 @@ namespace RobotRuntime
     public class TextDetectorTesseract : TextDetector
     {
         public override string Name => "Tesseract";
-        public float Threshold => 0.80f;
 
-        public override IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage)
+        public override IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage, float threshold = 0.80f)
         {
-            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold));
+            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(threshold));
             yield return rect == default ? null : rect.ToPoint(); 
         }
 
-        public override Point[] FindTextPosition(string text, Bitmap observedImage)
+        public override Point[] FindTextPosition(string text, Bitmap observedImage, float threshold = 0.80f)
         {
-            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(Threshold));
+            var rect = TesseractUtility.GetPositionOfTextFromImage(observedImage, text, new TesseractStringEqualityComparer(threshold));
             return rect == default ? null : rect.ToPoint();
         }
     }

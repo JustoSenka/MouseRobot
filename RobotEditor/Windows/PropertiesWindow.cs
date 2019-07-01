@@ -70,10 +70,10 @@ namespace RobotEditor
                 return new RecordingProperties(settings);
             }
 
-            if (settings is FeatureDetectionSettings)
+            if (settings is DetectionSettings)
             {
-                type = typeof(FeatureDetectionProperties);
-                return new FeatureDetectionProperties(settings);
+                type = typeof(DetectionProperties);
+                return new DetectionProperties(settings);
             }
 
             if (settings is CompilerSettings)
@@ -109,7 +109,7 @@ namespace RobotEditor
 
         private void imageDetectionSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
+            ShowSettings(SettingsManager.GetSettings<DetectionSettings>());
         }
 
         private void compilerSettingsToolStripMenuItem_Click(object sender, EventArgs e)

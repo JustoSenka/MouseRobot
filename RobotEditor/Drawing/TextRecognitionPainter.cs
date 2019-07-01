@@ -133,7 +133,7 @@ namespace RobotEditor.Drawing
 
                 Logger.Log(LogType.Log, $"Recognized text from {blocks.Length} blocks: ", concat);
 
-                var comparer = new TesseractStringEqualityComparer();
+                var comparer = new TesseractStringEqualityComparer(0.80f);
                 lock (TextDetectionThread.TextBlocksLock)
                 {
                     m_RecognizedTextBlocks = blocks.Where(b => comparer.Equals(b.text, m_TextToSearch)).Select(b => b.rect).ToArray();

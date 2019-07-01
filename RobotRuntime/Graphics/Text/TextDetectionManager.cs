@@ -35,9 +35,9 @@ namespace RobotRuntime.Graphics
 
             // Return array of points no matter which mode it supports so other systems can rely on only one entry point of API
             if (m_FeatureDetector.SupportsMultipleMatches)
-                points = m_FeatureDetector.FindMultipleTextPositions(detectable.Value as string, observedImage).ToArray();
+                points = m_FeatureDetector.FindMultipleTextPositions(detectable.Value as string, observedImage, detectable.Threshold).ToArray();
             else
-                points = new[] { m_FeatureDetector.FindTextPosition(detectable.Value as string, observedImage) };
+                points = new[] { m_FeatureDetector.FindTextPosition(detectable.Value as string, observedImage, detectable.Threshold) };
 
             return points != null && points.Length > 0 && points[0] != null;
         }

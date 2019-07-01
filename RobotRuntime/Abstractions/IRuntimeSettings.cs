@@ -5,6 +5,6 @@ namespace RobotRuntime.Abstractions
     public interface IRuntimeSettings
     {
         void LoadSettingsHardcoded();
-        void ApplySettings(FeatureDetectionSettings settings);
+        void ApplySettings(DetectionSettings settings);
     }
 }

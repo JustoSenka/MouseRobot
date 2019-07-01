@@ -17,9 +17,9 @@ namespace RobotRuntime.Graphics
         /// <summary>
         /// Apply detection settings, default detector will be chosen according these settings
         /// </summary>
-        public void ApplySettings(FeatureDetectionSettings settings)
+        public void ApplySettings(DetectionSettings settings)
         {
-            DefaultDetector = settings.DetectionMode;
+            DefaultDetector = settings.TextDetectionMode;
         }
 
         /// <summary>

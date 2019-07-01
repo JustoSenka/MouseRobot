@@ -112,7 +112,7 @@ namespace Robot
 
                     m_IsPlaying = value;
                     PlayingStateChanged?.Invoke(m_IsPlaying);
-                    RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
+                    RuntimeSettings.ApplySettings(SettingsManager.GetSettings<DetectionSettings>());
 
                     if (m_IsPlaying)
                     {
@@ -139,7 +139,7 @@ namespace Robot
 
                     if (m_IsVisualizationOn)
                     {
-                        RuntimeSettings.ApplySettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
+                        RuntimeSettings.ApplySettings(SettingsManager.GetSettings<DetectionSettings>());
                         if (!ScreenStateThread.IsAlive)
                             ScreenStateThread.Start();
 

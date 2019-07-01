@@ -17,8 +17,8 @@ namespace RobotEditor.PropertyUtils
     {
         public static BindingFlags StaticNonPublic = BindingFlags.Static | BindingFlags.NonPublic;
 
-        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, IFactoryWithCache<FeatureDetector> FeatureDetectorFactory, ICommandFactory CommandFactory,
-            IScriptLoader ScriptLoader)
+        public PropertyDependencyProvider(IUnityContainer UnityContainer, IAssetManager AssetManager, ICommandFactory CommandFactory,
+            IScriptLoader ScriptLoader, IFactoryWithCache<FeatureDetector> FeatureDetectorFactory, IFactoryWithCache<TextDetector> TextDetectorFactory)
         {
             typeof(AssetGUIDImageStringConverter).GetProperty("AssetManager", StaticNonPublic).SetValue(null, AssetManager);
             typeof(AssetGUIDImageUITypeEditor).GetProperty("AssetManager", StaticNonPublic).SetValue(null, AssetManager);
@@ -26,6 +26,9 @@ namespace RobotEditor.PropertyUtils
 
             typeof(DetectorNameStringConverter).GetProperty("FeatureDetectorFactory", StaticNonPublic).SetValue(null, FeatureDetectorFactory);
             typeof(DetectorNameStringConverterWithDefault).GetProperty("FeatureDetectorFactory", StaticNonPublic).SetValue(null, FeatureDetectorFactory);
+
+            typeof(TextDetectorNameStringConverter).GetProperty("TextDetectorFactory", StaticNonPublic).SetValue(null, TextDetectorFactory);
+            typeof(TextDetectorNameStringConverterWithDefault).GetProperty("TextDetectorFactory", StaticNonPublic).SetValue(null, TextDetectorFactory);
 
             typeof(CommandNameStringConverter).GetProperty("CommandFactory", StaticNonPublic).SetValue(null, CommandFactory);
 

@@ -7,8 +7,8 @@ namespace RobotRuntime.Graphics
     {
         public abstract string Name { get; }
 
-        public abstract Point[] FindTextPosition(string text, Bitmap observedImage);
-        public abstract IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage);
+        public abstract Point[] FindTextPosition(string text, Bitmap observedImage, float threshold = 0.80f);
+        public abstract IEnumerable<Point[]> FindMultipleTextPositions(string text, Bitmap observedImage, float threshold = 0.80f);
 
         public virtual bool SupportsMultipleMatches { get { return false; } }
 

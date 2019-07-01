@@ -6,17 +6,17 @@ using System.ComponentModel;
 
 namespace RobotEditor.Settings
 {
-    public class FeatureDetectionProperties : BaseProperties
+    public class DetectionProperties : BaseProperties
     {
         [NonSerialized]
-        private FeatureDetectionSettings m_Settings;
+        private DetectionSettings m_Settings;
 
         [Browsable(false)]
-        public override string Title { get { return "Image Detection Settings"; } }
+        public override string Title { get { return "Detection Settings"; } }
 
-        public FeatureDetectionProperties(BaseSettings settings)
+        public DetectionProperties(BaseSettings settings)
         {
-            this.m_Settings = (FeatureDetectionSettings)settings;
+            this.m_Settings = (DetectionSettings)settings;
         }
 
         public override void HideProperties(ref DynamicTypeDescriptor dt)
@@ -26,24 +26,35 @@ namespace RobotEditor.Settings
 
         public override void OnPropertiesModified()
         {
-            //RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
+            // RuntimeSettings.ApplySettings(SettingsManager.FeatureDetectionSettings);
         }
 
-        private const int NumOfCategories = 2;
+        private const int NumOfCategories = 3;
         private const int DetectionModeCategoryPosition = 1;
-        private const int ThreadFramerateCategoryPosition = 2;
+        private const int TextDetectionModeCategoryPosition = 2;
+        private const int ThreadFramerateCategoryPosition = 3;
 
-        [SortedCategory("Detection Mode", DetectionModeCategoryPosition, NumOfCategories)]
-        [DefaultValue("SURF")]
-        [DisplayName("DetectionMode")]
+        [SortedCategory("Image Detection Mode", DetectionModeCategoryPosition, NumOfCategories)]
+        [DefaultValue(DetectorNamesHardcoded.SURF)]
+        [DisplayName("ImageDetectionMode")]
         [TypeConverter(typeof(DetectorNameStringConverter))]
-        public string DetectionMode
+        public string ImageDetectionMode
         {
-            get { return m_Settings.DetectionMode; }
-            set { m_Settings.DetectionMode = value; }
+            get { return m_Settings.ImageDetectionMode; }
+            set { m_Settings.ImageDetectionMode  = value; }
         }
 
-        [SortedCategory("Thread Framerate", ThreadFramerateCategoryPosition, NumOfCategories)]
+        [SortedCategory("Text Detection Mode", TextDetectionModeCategoryPosition, NumOfCategories)]
+        [DefaultValue(DetectorNamesHardcoded.Tesseract)]
+        [DisplayName("TextDetectionMode")]
+        [TypeConverter(typeof(TextDetectorNameStringConverter))]
+        public string TextDetectionMode
+        {
+            get { return m_Settings.TextDetectionMode; }
+            set { m_Settings.TextDetectionMode = value; }
+        }
+
+        [SortedCategory("Visualization Thread Framerate", ThreadFramerateCategoryPosition, NumOfCategories)]
         [DefaultValue(10)]
         [DisplayName("Screen Image Update Framerate")]
         public int ScreenImageUpdateFPS
@@ -52,7 +63,7 @@ namespace RobotEditor.Settings
             set { m_Settings.ScreenImageUpdateFPS = value; }
         }
 
-        [SortedCategory("Thread Framerate", ThreadFramerateCategoryPosition, NumOfCategories)]
+        [SortedCategory("Visualization Thread Framerate", ThreadFramerateCategoryPosition, NumOfCategories)]
         [DefaultValue(10)]
         [DisplayName("Image Detection Framerate")]
         public int ImageDetectionFPS

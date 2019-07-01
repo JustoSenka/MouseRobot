@@ -258,8 +258,8 @@ namespace RobotEditor
             m_ScreenPreviewWindow.Preview(asset);
             if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
             {
-                var settings = SettingsManager.GetSettings<FeatureDetectionSettings>();
-                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.DetectionMode);
+                var settings = SettingsManager.GetSettings<DetectionSettings>();
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.TextDetectionMode);
             }
         }
 
@@ -527,7 +527,7 @@ namespace RobotEditor
         private void imageDetectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ((PropertiesWindow)m_PropertiesWindow).Show(m_DockPanel);
-            m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<FeatureDetectionSettings>());
+            m_PropertiesWindow.ShowSettings(SettingsManager.GetSettings<DetectionSettings>());
         }
 
         private void compilerToolStripMenuItem_Click(object sender, EventArgs e)

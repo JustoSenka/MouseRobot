@@ -7,7 +7,7 @@ namespace RobotRuntime.Abstractions
 {
     public interface IDetectionManager
     {
-        void ApplySettings(FeatureDetectionSettings settings);
+        void ApplySettings(DetectionSettings settings);
 
         /// <summary>
         /// Returns center points of all found detectables.

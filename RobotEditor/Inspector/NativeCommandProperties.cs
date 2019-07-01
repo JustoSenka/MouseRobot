@@ -47,8 +47,8 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                AddProperty(dt, "ForEach");
                 AddProperty(dt, "DetectionMode");
+                AddProperty(dt, "ForEach");
             }
             else if (Command is CommandSleep)
             {
@@ -66,6 +66,8 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Text");
                 AddProperty(dt, "Timeout");
+                AddProperty(dt, "TextDetectionMode");
+                AddProperty(dt, "TextComparisonThreshold");
                 AddProperty(dt, "ForEach");
             }
             if (Command is CommandIfImageVisible)
@@ -214,6 +216,25 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).DetectionMode; }
             set { DynamicCast(Command).DetectionMode = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("Default")]
+        [DisplayName("Text Detection Mode")]
+        [TypeConverter(typeof(TextDetectorNameStringConverterWithDefault))]
+        public string TextDetectionMode
+        {
+            get { return DynamicCast(Command).TextDetectionMode; }
+            set { DynamicCast(Command).TextDetectionMode = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue(0.80f)]
+        [DisplayName("Text Comparison Threshold")]
+        public float TextComparisonThreshold
+        {
+            get { return DynamicCast(Command).TextComparisonThreshold; }
+            set { DynamicCast(Command).TextComparisonThreshold = value; }
         }
     }
 }

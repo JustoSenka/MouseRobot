@@ -21,12 +21,12 @@ namespace RobotRuntime.Settings
         public void LoadSettingsHardcoded()
         {
             var path = Path.Combine(Paths.RoamingAppdataPath, "FeatureDetectionSettings.config");
-            var settings = new JsonObjectIO().LoadObject<FeatureDetectionSettings>(path);
+            var settings = new JsonObjectIO().LoadObject<DetectionSettings>(path);
             ApplySettings(settings);
         }
 
         // TODO: Probably add read here, since runtime also needs to read settings from file somehow imo
-        public void ApplySettings(FeatureDetectionSettings settings)
+        public void ApplySettings(DetectionSettings settings)
         {
             DetectionManager.ApplySettings(settings);
         }

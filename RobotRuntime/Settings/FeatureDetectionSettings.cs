@@ -3,9 +3,11 @@
 namespace RobotRuntime.Settings
 {
     [Serializable]
-    public class FeatureDetectionSettings : BaseSettings
+    public class DetectionSettings : BaseSettings
     {
-        public string DetectionMode { get; set; } = DetectorNamesHardcoded.SURF;
+        public string ImageDetectionMode { get; set; } = DetectorNamesHardcoded.SURF;
+
+        public string TextDetectionMode { get; set; } = DetectorNamesHardcoded.Tesseract;
 
         public int ScreenImageUpdateFPS { get; set; } = 10;
         public int ImageDetectionFPS { get; set; } = 10;
@@ -13,9 +15,10 @@ namespace RobotRuntime.Settings
 
     public static class DetectorNamesHardcoded
     {
-        public static string Default { get { return "Default"; } }
-        public static string PixelPerfect { get { return "PixelPerfect"; } }
-        public static string SURF { get { return "SURF"; } }
-        public static string Template { get { return "Template"; } }
+        public const string Default = "Default";
+        public const string PixelPerfect = "PixelPerfect";
+        public const string SURF = "SURF";
+        public const string Template = "Template";
+        public const string Tesseract = "Tesseract";
     }
 }
