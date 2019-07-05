@@ -13,18 +13,18 @@ namespace RobotRuntime
         public IEnumerable<T> Detectors => TypeCollector.AllObjects;
         public IEnumerable<string> DetectorNames { get { return TypeCollector.AllObjects.Select(d => d.ToString()); } }
 
-        private T m_DefaultDetector;
-        public T DefaultDetector
+        private string m_DefaultInstanceName;
+        public string DefaultInstanceName
         {
-            get => m_DefaultDetector;
+            get => m_DefaultInstanceName;
             set
             {
-                m_DefaultDetector = value;
-                m_DefaultDetectorName = m_DefaultDetector.ToString();
+                m_DefaultInstanceName = value;
+                m_DefaultInstance = Detectors.FirstOrDefault(d => d.ToString() == value);
             }
         }
 
-        private string m_DefaultDetectorName;
+        private T m_DefaultInstance;
 
         private ILogger Logger;
         private IUnityContainer Container;
@@ -41,7 +41,7 @@ namespace RobotRuntime
         /// </summary>
         public T GetFromCache(string Name)
         {
-            return FindDetectorOfName(Name);
+            return FindInstanceOfName(Name);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace RobotRuntime
         /// </summary>
         public T Create(string Name)
         {
-            var detector = FindDetectorOfName(Name);
+            var detector = FindInstanceOfName(Name);
             try
             {
                 return (T)Container.Resolve(detector.GetType());
@@ -61,10 +61,10 @@ namespace RobotRuntime
             return default(T);
         }
 
-        private T FindDetectorOfName(string Name)
+        private T FindInstanceOfName(string Name)
         {
-            if (Name.Equals(m_DefaultDetectorName, System.StringComparison.InvariantCultureIgnoreCase))
-                return DefaultDetector;
+            if (Name.Equals(m_DefaultInstanceName, System.StringComparison.InvariantCultureIgnoreCase))
+                return m_DefaultInstance;
 
             var detector = TypeCollector.AllObjects.FirstOrDefault(d => d.ToString().Equals(Name));
 

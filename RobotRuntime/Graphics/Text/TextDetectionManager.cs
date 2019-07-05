@@ -1,4 +1,5 @@
 ﻿using RobotRuntime.Abstractions;
+using RobotRuntime.Settings;
 using System.Drawing;
 using System.Linq;
 using Unity.Lifetime;
@@ -8,12 +9,16 @@ namespace RobotRuntime.Graphics
     [RegisterTypeToContainer(typeof(ITextDetectionManager), typeof(ContainerControlledLifetimeManager))]
     public class TextDetectionManager : BaseDetectionManager, ITextDetectionManager
     {
-        protected override string DefaultDetector { get; set; } = "Tesseract";
-
         private readonly IFactoryWithCache<TextDetector> Factory;
         public TextDetectionManager(IFactoryWithCache<TextDetector> Factory)
         {
             this.Factory = Factory;
+        }
+
+        public override void ApplySettings(DetectionSettings settings)
+        {
+            DefaultDetector = settings.TextDetectionMode;
+            Factory.DefaultInstanceName = settings.TextDetectionMode;
         }
 
         /// <summary>

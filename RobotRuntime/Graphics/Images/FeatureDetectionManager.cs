@@ -10,8 +10,6 @@ namespace RobotRuntime.Graphics
     [RegisterTypeToContainer(typeof(IFeatureDetectionManager), typeof(ContainerControlledLifetimeManager))]
     public class FeatureDetectionManager : BaseDetectionManager, IFeatureDetectionManager
     {
-        protected override string DefaultDetector { get; set; } = DetectorNamesHardcoded.Default;
-
         private Bitmap m_CachedClonedSampleImage;
         private FeatureDetector m_FeatureDetector;
 
@@ -23,13 +21,10 @@ namespace RobotRuntime.Graphics
             this.FeatureDetectorFactory = FeatureDetectorFactory;
         }
 
-        /// <summary>
-        /// If user specifies detector which is not "default", give user detector
-        /// Else, give detector which was set in global settings file
-        /// </summary>
-        private string GetPreferredDetector(string userSpecifiedDetector)
+        public override void ApplySettings(DetectionSettings settings)
         {
-            return userSpecifiedDetector == DetectorNamesHardcoded.Default ? DefaultDetector : userSpecifiedDetector;
+            DefaultDetector = settings.ImageDetectionMode;
+            FeatureDetectorFactory.DefaultInstanceName = settings.ImageDetectionMode;
         }
 
         /// <summary>

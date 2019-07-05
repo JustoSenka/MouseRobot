@@ -18,8 +18,8 @@ namespace RobotRuntime
             this.Threshold = Threshold;
         }
 
-        public static Detectable FromBitmap(Bitmap bitmap, float Threshold = 0.8f) => new Detectable(bitmap, DetectableType.Image);
-        public static Detectable FromText(string text, float Threshold = 0.8f) => new Detectable(text, DetectableType.SpecificText);
+        public static Detectable FromBitmap(Bitmap bitmap, float Threshold = 0.8f) => new Detectable(bitmap, DetectableType.Image, Threshold);
+        public static Detectable FromText(string text, float Threshold = 0.8f) => new Detectable(text, DetectableType.SpecificText, Threshold);
         public static Detectable AllTextOnScreen => new Detectable("Detect All Text", DetectableType.TextBlocks);
     }
 

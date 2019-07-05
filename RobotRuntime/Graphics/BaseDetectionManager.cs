@@ -12,14 +12,20 @@ namespace RobotRuntime.Graphics
     {
         protected const float k_RectangleTolerance = 0.4f;
 
-        protected abstract string DefaultDetector { get; set; }
+        protected virtual string DefaultDetector { get; set; } = DetectorNamesHardcoded.Default;
 
         /// <summary>
         /// Apply detection settings, default detector will be chosen according these settings
         /// </summary>
-        public void ApplySettings(DetectionSettings settings)
+        public virtual void ApplySettings(DetectionSettings settings) { }
+
+        /// <summary>
+        /// If user specifies detector which is not "default", give user detector
+        /// Else, give detector which was set in global settings file
+        /// </summary>
+        protected virtual string GetPreferredDetector(string userSpecifiedDetector)
         {
-            DefaultDetector = settings.TextDetectionMode;
+            return userSpecifiedDetector == DetectorNamesHardcoded.Default ? DefaultDetector : userSpecifiedDetector;
         }
 
         /// <summary>

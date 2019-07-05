@@ -4,7 +4,7 @@ namespace RobotRuntime.Abstractions
 {
     public interface IFactoryWithCache<T>
     {
-        T DefaultDetector { get; set; }
+        string DefaultInstanceName { get; set; }
         IEnumerable<string> DetectorNames { get; }
         IEnumerable<T> Detectors { get; }
 
