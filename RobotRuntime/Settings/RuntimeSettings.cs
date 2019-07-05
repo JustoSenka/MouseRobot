@@ -22,6 +22,11 @@ namespace RobotRuntime.Settings
         {
             var path = Path.Combine(Paths.RoamingAppdataPath, "FeatureDetectionSettings.config");
             var settings = new JsonObjectIO().LoadObject<DetectionSettings>(path);
+
+            // Settings might be null if no project was opened on this machine ever, just give default settings then
+            if (settings == null)
+                settings = new DetectionSettings();
+
             ApplySettings(settings);
         }
 
