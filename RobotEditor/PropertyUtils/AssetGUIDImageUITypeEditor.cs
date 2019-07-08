@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Utils;
 using System.ComponentModel;
 using System.Drawing;
@@ -11,6 +12,7 @@ namespace RobotEditor.PropertyUtils
     /// </summary>
     public class AssetGUIDImageUITypeEditor : UITypeEditor
     {
+        [RequestStaticDependency(typeof(IAssetManager))]
         private static IAssetManager AssetManager { get; set; }
 
         public override bool GetPaintValueSupported(ITypeDescriptorContext context)

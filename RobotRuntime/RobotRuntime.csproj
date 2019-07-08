@@ -231,6 +231,7 @@
     <Compile Include="Graphics\Detectable.cs" />
     <Compile Include="Graphics\Text\TextDetectionManager.cs" />
     <Compile Include="Graphics\Images\FeatureDetectionManager.cs" />
+    <Compile Include="UnityContainer\RegisterTypeToContainerAttribute.cs" />
     <Compile Include="Utils\FactoryWithCache.cs" />
     <Compile Include="Abstractions\IFactoryWithCache.cs" />
     <Compile Include="Graphics\Images\FeatureDetectorPP.cs" />
@@ -290,7 +291,7 @@
     <Compile Include="zCustomDataTypes\IHaveGuidMap.cs" />
     <Compile Include="zCustomDataTypes\ISimilar.cs" />
     <Compile Include="zCustomDataTypes\GuidEqualityComparer.cs" />
-    <Compile Include="UnityContainer\RegisterTypeToContainerAttribute.cs" />
+    <Compile Include="UnityContainer\RequestStaticDependencyAttribute.cs" />
     <Compile Include="zCustomDataTypes\SimilarEqualityComparer.cs" />
     <Compile Include="zExtensionMethods\AppDomainExtension.cs" />
     <Compile Include="Utils\BitmapUtility.cs" />

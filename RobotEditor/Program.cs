@@ -36,7 +36,10 @@ namespace RobotEditor
 
             Logger.Instance = container.Resolve<ILogger>();
 
-            container.Resolve<PropertyDependencyProvider>(); // Needed for UITypeEditor and StringConverter to work correctly, since .NET initialized them
+            ContainerUtils.PassStaticDependencies(container, typeof(RobotRuntime.Program).Assembly);
+            ContainerUtils.PassStaticDependencies(container, typeof(Robot.Program).Assembly);
+            ContainerUtils.PassStaticDependencies(container, typeof(Program).Assembly);
+
             container.Resolve<ISolutionManager>(); // not referenced by anything
 
             var projectIsCreated = SetupProjectPath(container, args);

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Drawing;
 using Robot.Abstractions;
+using RobotRuntime;
 
 namespace RobotEditor.PropertyUtils
 {
@@ -10,6 +11,7 @@ namespace RobotEditor.PropertyUtils
     /// </summary>
     public class AssetGUIDImageStringConverter : StringConverter
     {
+        [RequestStaticDependency(typeof(IAssetManager))]
         private static IAssetManager AssetManager { get; set; }
 
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }

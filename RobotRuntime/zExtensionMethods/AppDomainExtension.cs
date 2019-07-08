@@ -17,8 +17,8 @@ namespace RobotRuntime
         }
 
         // Really bad hack, needed to get user assemblies without getting all trashed assemblies from previous compilations
-        // This field is set by PropertyDependencyProvider using reflection on name
-        // DO NOT RENAME
+        // This field is set Before initialization using reflection to get all attributes
+        [RequestStaticDependency(typeof(IScriptLoader))]
         private static IScriptLoader ScriptLoader { get; set; }
 
         [Obsolete("This method will lead to more mistakes than goods. Be aware that AppDomain will contain out of date" +

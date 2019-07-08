@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using Robot.Abstractions;
+using RobotRuntime;
 using RobotRuntime.Recordings;
 
 namespace RobotEditor.PropertyUtils
@@ -10,6 +11,7 @@ namespace RobotEditor.PropertyUtils
     /// </summary>
     public class RecordingGUIDStringConverter : StringConverter
     {
+        [RequestStaticDependency(typeof(IAssetManager))]
         private static IAssetManager AssetManager { get; set; }
 
         public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }

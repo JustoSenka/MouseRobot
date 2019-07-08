@@ -32,7 +32,10 @@ namespace Tests
             container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
 
             Logger.Instance = container.Resolve<ILogger>();
-            container.Resolve<PropertyDependencyProvider>(); // This one is needed, since it provides dependencies to static fields (command Yaml Serialized etc)
+
+            ContainerUtils.PassStaticDependencies(container, typeof(RobotRuntime.Program).Assembly);
+            ContainerUtils.PassStaticDependencies(container, typeof(Robot.Program).Assembly);
+            ContainerUtils.PassStaticDependencies(container, typeof(Program).Assembly);
 
             return container;
         }

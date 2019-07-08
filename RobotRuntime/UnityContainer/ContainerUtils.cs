@@ -9,6 +9,8 @@ namespace RobotRuntime
 {
     public class ContainerUtils
     {
+        public static BindingFlags StaticNonPublic = BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public;
+
         /// <summary>
         /// Will fetch all types which have RegisterTypeToContainerAttribute attribute attached to them
         /// and registered those types to container based on attribute values
@@ -30,6 +32,41 @@ namespace RobotRuntime
                     Container.RegisterType(InterfaceType, Type);
                 else
                     Container.RegisterType(InterfaceType, Type, lifetimeManager);
+            }
+        }
+
+        /// <summary>
+        /// Will fetch all types which have RegisterTypeToContainerAttribute attribute attached to them
+        /// and registered those types to container based on attribute values
+        /// It is used to pass dependencies to UITypeEditor and StringConverter of .net classes. Since I cannot control the instantiation of these classes,
+        /// no other way to pass dependencies. Now it is done in a hacky way. Passed through reflection to private static field.
+        /// </summary>
+        public static void PassStaticDependencies(IUnityContainer Container, Assembly assembly)
+        {
+            var allTypes = assembly.GetTypes();
+            var allPropsWithAttribute = allTypes.SelectMany(t => t.GetProperties(StaticNonPublic))
+                .Where(p => p.CustomAttributes.Any(a => a.AttributeType == typeof(RequestStaticDependencyAttribute))); 
+            var allFieldsWithAttribute = allTypes.SelectMany(t => t.GetFields(StaticNonPublic))
+                .Where(f => f.CustomAttributes.Any(a => a.AttributeType == typeof(RequestStaticDependencyAttribute)));
+
+            var propAttributeMap = allPropsWithAttribute
+                .SelectMany(p => p.GetCustomAttributes(typeof(RequestStaticDependencyAttribute))
+                .Select(a => (Prop: p, Attribute: (RequestStaticDependencyAttribute)a)));
+
+            var fieldAttributeMap = allFieldsWithAttribute
+                .SelectMany(f => f.GetCustomAttributes(typeof(RequestStaticDependencyAttribute))
+                .Select(a => (Field: f, Attribute: (RequestStaticDependencyAttribute)a)));
+
+            foreach (var (Prop, Attribute) in propAttributeMap)
+            {
+                var dependency = Container.TryResolve<object>(Attribute.DependencyType);
+                Prop.SetValue(Prop, dependency);
+            }
+
+            foreach (var (Field, Attribute) in fieldAttributeMap)
+            {
+                var dependency = Container.TryResolve<object>(Attribute.DependencyType);
+                Field.SetValue(Field, dependency);
             }
         }
 
