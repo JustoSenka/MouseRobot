@@ -21,6 +21,7 @@ namespace Robot.RecordingCreation
     {
         public bool IsRecording { get; set; }
 
+        public bool m_IsMeasuringTime = false;
         private Stopwatch m_SleepTimer = new Stopwatch();
         private Point m_LastClickPos = new Point(0, 0);
 
@@ -96,8 +97,11 @@ namespace Robot.RecordingCreation
                 if (e.keyCode == props.DefaultSleepKey)
                     AddCommand(new CommandSleep(props.DefaultSleepTime));
 
-                if (e.keyCode == props.SleepKey)
+                if (e.keyCode == props.SleepKey && !m_IsMeasuringTime)
+                {
+                    m_IsMeasuringTime = true;
                     m_SleepTimer.Restart();
+                }
 
                 if (e.keyCode == props.SmoothMouseMoveKey)
                 {
@@ -121,8 +125,9 @@ namespace Robot.RecordingCreation
             }
             else if (e.IsKeyUp())
             {
-                if (e.keyCode == props.SleepKey)
+                if (e.keyCode == props.SleepKey && m_IsMeasuringTime)
                 {
+                    m_IsMeasuringTime = false;
                     m_SleepTimer.Stop();
                     AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
                 }
