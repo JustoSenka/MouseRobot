@@ -259,7 +259,7 @@ namespace RobotEditor
             if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
             {
                 var settings = SettingsManager.GetSettings<DetectionSettings>();
-                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.TextDetectionMode);
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.ImageDetectionMode);
             }
         }
 

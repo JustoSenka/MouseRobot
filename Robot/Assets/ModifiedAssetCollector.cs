@@ -15,8 +15,11 @@ namespace Robot.Assets
     {
         public IList<string> ExtensionFilters { get; } = new List<string>();
 
-        public IList<string> Paths { get; } = new List<string>();
-        public event Action<IList<string>> AssetsModified;
+        public IList<string> ModifiedAssetPaths { get; } = new List<string>();
+        public event Action<IEnumerable<string>> AssetsModified;
+
+        public IList<(string From, string To)> RenamedAssetPaths { get; } = new List<(string, string)>();
+        public event Action<IEnumerable<(string From, string To)>> AssetsRenamed;
 
         private bool m_FirstRefresh = true;
 
@@ -35,7 +38,7 @@ namespace Robot.Assets
         private void AddPathToList(string assetPath)
         {
             if (ExtensionFilters.Count == 0 || ExtensionFilters.Any(filter => assetPath.EndsWith(filter)))
-                Paths.Add(assetPath);
+                ModifiedAssetPaths.Add(assetPath);
 
             // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
             // but something has already changed from within app. Call refresh callback manually.
@@ -45,12 +48,12 @@ namespace Robot.Assets
 
         private void OnAssetRefreshFinished()
         {
-            if (Paths.Count == 0 && !m_FirstRefresh)
+            if (ModifiedAssetPaths.Count == 0 && !m_FirstRefresh)
                 return;
 
             m_FirstRefresh = false;
-            AssetsModified?.Invoke(Paths);
-            Paths.Clear();
+            AssetsModified?.Invoke(ModifiedAssetPaths.ToArray());
+            ModifiedAssetPaths.Clear();
         }
     }
 }

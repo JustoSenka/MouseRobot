@@ -18,12 +18,20 @@ namespace Robot.Abstractions
         /// <summary>
         /// Paths of the assets modified after last refresh or asset addition/deletion has been made
         /// </summary>
-        IList<string> Paths { get; }
+        IList<string> ModifiedAssetPaths { get; }
 
         /// <summary>
         /// Fires callback after asset refresh or modification. Gives all paths of modified assets.
         /// Clears the list after callback was fired
         /// </summary>
-        event Action<IList<string>> AssetsModified;
+        event Action<IEnumerable<string>> AssetsModified;
+
+        /// <summary>
+        /// Paths of the assets which were renamed after last refresh or asset rename via AssetManager has been made
+        /// </summary>
+        IList<(string From, string To)> RenamedAssetPaths { get; }
+
+
+        event Action<IEnumerable<(string From, string To)>> AssetsRenamed;
     }
 }
