@@ -31,7 +31,10 @@ namespace Robot.Abstractions
         /// </summary>
         IList<(string From, string To)> RenamedAssetPaths { get; }
 
-
+        /// <summary>
+        /// Fires callback after asset refresh or modification. Gives all paths of modified assets.
+        /// Clears the list after callback was fired
+        /// </summary>
         event Action<IEnumerable<(string From, string To)>> AssetsRenamed;
     }
 }

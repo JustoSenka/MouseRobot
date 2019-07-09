@@ -47,7 +47,7 @@ namespace Robot.Scripts
             ModifiedAssetCollector.AssetsModified += OnAssetsModified;
         }
 
-        private void OnAssetsModified(IList<string> modifiedAssets)
+        private void OnAssetsModified(IEnumerable<string> modifiedAssets)
         {
             CompileScriptsAndReloadUserDomain();
         }

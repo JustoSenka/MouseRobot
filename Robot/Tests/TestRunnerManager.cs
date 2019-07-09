@@ -68,19 +68,19 @@ namespace Robot.Tests
                 TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
             }
         }
-        private void OnAssetRefreshFinished(IList<string> modifiedAssets)
+        private void OnAssetRefreshFinished(IEnumerable<string> modifiedAssets)
         {
             var firstReload = m_TestFixtures.Count == 0;
 
             // Do not load if no assets were modified or if plugins have never been loaded (startup)
-            if (modifiedAssets == null || !m_FirstScriptRecompilationHappened || (modifiedAssets.Count == 0 && !firstReload))
+            if (modifiedAssets == null || !m_FirstScriptRecompilationHappened || (modifiedAssets.Count() == 0 && !firstReload))
                 return;
 
             ReloadTestFixtures(modifiedAssets, firstReload);
             TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
         }
 
-        private void ReloadTestFixtures(IList<string> modifiedAssets, bool firstReload = false)
+        private void ReloadTestFixtures(IEnumerable<string> modifiedAssets, bool firstReload = false)
         {
             Profiler.Start("TestRunnerManager.ReloadTestFixtures");
 

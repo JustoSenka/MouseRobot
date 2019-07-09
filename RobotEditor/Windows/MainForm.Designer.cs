@@ -44,6 +44,7 @@
             this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
             this.actionOnRec = new System.Windows.Forms.ToolStripComboBox();
             this.visualizationButton = new System.Windows.Forms.ToolStripButton();
+            this.textDetectionButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,7 +82,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.textDetectionButton = new System.Windows.Forms.ToolStripButton();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -200,6 +200,17 @@
             this.visualizationButton.Text = "Enable/Disable realtime Image Detection visualization";
             this.visualizationButton.ToolTipText = "Enable/Disable Realtime Image Detection Visualization";
             this.visualizationButton.Click += new System.EventHandler(this.enableVizualization_Click);
+            // 
+            // textDetectionButton
+            // 
+            this.textDetectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.textDetectionButton.Image = global::RobotEditor.Properties.Resources.Eye_d_ICO_256;
+            this.textDetectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.textDetectionButton.Name = "textDetectionButton";
+            this.textDetectionButton.Size = new System.Drawing.Size(23, 22);
+            this.textDetectionButton.Text = "Enable/Disable realtime Text Detection visualization";
+            this.textDetectionButton.ToolTipText = "Enable/Disable Realtime Text Detection Visualization";
+            this.textDetectionButton.Click += new System.EventHandler(this.textDetectionButton_Click);
             // 
             // menuStrip
             // 
@@ -406,76 +417,76 @@
             this.imageDetectionToolStripMenuItem,
             this.compilerToolStripMenuItem});
             this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
-            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.commandsToolStripMenuItem.Text = "Settings";
             // 
             // recordingToolStripMenuItem
             // 
             this.recordingToolStripMenuItem.Name = "recordingToolStripMenuItem";
-            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.recordingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.recordingToolStripMenuItem.Text = "Recording";
             this.recordingToolStripMenuItem.Click += new System.EventHandler(this.recordingToolStripMenuItem_Click);
             // 
             // imageDetectionToolStripMenuItem
             // 
             this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
-            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.imageDetectionToolStripMenuItem.Text = "Image Detection";
+            this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageDetectionToolStripMenuItem.Text = "Detection";
             this.imageDetectionToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionToolStripMenuItem_Click);
             // 
             // compilerToolStripMenuItem
             // 
             this.compilerToolStripMenuItem.Name = "compilerToolStripMenuItem";
-            this.compilerToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.compilerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.compilerToolStripMenuItem.Text = "Compiler";
             this.compilerToolStripMenuItem.Click += new System.EventHandler(this.compilerToolStripMenuItem_Click);
             // 
             // testRunnerToolStripMenuItem
             // 
             this.testRunnerToolStripMenuItem.Name = "testRunnerToolStripMenuItem";
-            this.testRunnerToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.testRunnerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testRunnerToolStripMenuItem.Text = "Test Runner";
             this.testRunnerToolStripMenuItem.Click += new System.EventHandler(this.testRunnerToolStripMenuItem_Click);
             // 
             // hierarchyToolStripMenuItem
             // 
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
-            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
             this.hierarchyToolStripMenuItem.Click += new System.EventHandler(this.hierarchyToolStripMenuItem_Click);
             // 
             // imagePreviewToolStripMenuItem
             // 
             this.imagePreviewToolStripMenuItem.Name = "imagePreviewToolStripMenuItem";
-            this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.imagePreviewToolStripMenuItem.Text = "Image Preview";
             this.imagePreviewToolStripMenuItem.Click += new System.EventHandler(this.imagePreviewToolStripMenuItem_Click);
             // 
             // assetsToolStripMenuItem
             // 
             this.assetsToolStripMenuItem.Name = "assetsToolStripMenuItem";
-            this.assetsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.assetsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.assetsToolStripMenuItem.Text = "Assets";
             this.assetsToolStripMenuItem.Click += new System.EventHandler(this.assetsToolStripMenuItem_Click);
             // 
             // profilerToolStripMenuItem
             // 
             this.profilerToolStripMenuItem.Name = "profilerToolStripMenuItem";
-            this.profilerToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.profilerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.profilerToolStripMenuItem.Text = "Profiler";
             this.profilerToolStripMenuItem.Click += new System.EventHandler(this.profilerToolStripMenuItem_Click);
             // 
             // inspectorToolStripMenuItem
             // 
             this.inspectorToolStripMenuItem.Name = "inspectorToolStripMenuItem";
-            this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.inspectorToolStripMenuItem.Text = "Inspector";
             this.inspectorToolStripMenuItem.Click += new System.EventHandler(this.inspectorToolStripMenuItem_Click);
             // 
             // consoleToolStripMenuItem
             // 
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
-            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.consoleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.consoleToolStripMenuItem.Text = "Console";
             this.consoleToolStripMenuItem.Click += new System.EventHandler(this.consoleToolStripMenuItem_Click);
             // 
@@ -493,17 +504,6 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // textDetectionButton
-            // 
-            this.textDetectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.textDetectionButton.Image = global::RobotEditor.Properties.Resources.Eye_d_ICO_256;
-            this.textDetectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.textDetectionButton.Name = "textDetectionButton";
-            this.textDetectionButton.Size = new System.Drawing.Size(23, 22);
-            this.textDetectionButton.Text = "Enable/Disable realtime Text Detection visualization";
-            this.textDetectionButton.ToolTipText = "Enable/Disable Realtime Text Detection Visualization";
-            this.textDetectionButton.Click += new System.EventHandler(this.textDetectionButton_Click);
             // 
             // MainForm
             // 
