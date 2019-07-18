@@ -7,6 +7,7 @@ using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity;
@@ -352,7 +353,7 @@ namespace Tests.Integration
         }
 
         [Test]
-        public void RenameFolder_WithAssetsInside_WillFireOnlyOneCallback()
+        public void RenameFolder_WithAssetsInside_WillFireCallbackForAllAssets()
         {
             AssetManager.CreateAsset(null, k_FolderA);
 
@@ -360,20 +361,25 @@ namespace Tests.Integration
             var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
 
             var callbackitCount = 0;
+            var list = new List<(string From, string To)>();
             AssetManager.AssetRenamed += (from, to) =>
             {
                 callbackitCount++;
-                Assert.AreEqual(k_FolderA.NormalizePath(), from);
-                Assert.AreEqual(k_FolderB.NormalizePath(), to);
+                list.Add((from, to));
             };
 
             AssetManager.RenameAsset(k_FolderA, k_FolderB);
 
-            Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
+            Assert.AreEqual(3, callbackitCount, "Callback was fired 0 or to many times");
+            CollectionAssert.AreEquivalent(new[] {
+                (k_FolderA.NormalizePath(), k_FolderB.NormalizePath()),
+                (k_RecInFolderA, k_RecInFolderB),
+                (k_FixInFolderA, k_FixInFolderB),
+            }, list);
         }
 
         [Test]
-        public void DeleteFolder_WithAssetsInside_WillFireOnlyOneCallback()
+        public void DeleteFolder_WithAssetsInside_WillFireCallbackForAllAssets()
         {
             AssetManager.CreateAsset(null, k_FolderA);
 
@@ -381,15 +387,17 @@ namespace Tests.Integration
             var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
 
             var callbackitCount = 0;
+            var list = new List<string>();
             AssetManager.AssetDeleted += (path) =>
             {
                 callbackitCount++;
-                Assert.AreEqual(k_FolderA.NormalizePath(), path);
+                list.Add(path);
             };
 
             AssetManager.DeleteAsset(k_FolderA);
 
-            Assert.AreEqual(1, callbackitCount, "Callback was fired 0 or to many times");
+            Assert.AreEqual(3, callbackitCount, "Callback was fired 0 or to many times");
+            CollectionAssert.AreEquivalent(new[] { k_FolderA.NormalizePath(), k_RecInFolderA, k_FixInFolderA }, list);
         }
 
         [Test]
@@ -467,8 +475,8 @@ namespace Tests.Integration
             Assert.IsNotNull(AssetManager.GetAsset(folderC), "FolderC should be available");
             Assert.AreEqual(a3.Guid, AssetManager.GetAsset(Path.Combine(folderA, "rec.mrb")).Guid, "Asset inside FolderA guid missmatch");
             Assert.AreEqual(a4.Guid, AssetManager.GetAsset(Path.Combine(folderC, "rec.mrb")).Guid, "Asset inside FolderC guid missmatch");
-            Assert.IsNotNull( AssetManager.GetAsset(Path.Combine(folderA, "new fold")), "Folder inside FolderA should be available");
-            Assert.IsNotNull( AssetManager.GetAsset(Path.Combine(folderC, "new fold")), "Folder inside FolderB should be available");
+            Assert.IsNotNull(AssetManager.GetAsset(Path.Combine(folderA, "new fold")), "Folder inside FolderA should be available");
+            Assert.IsNotNull(AssetManager.GetAsset(Path.Combine(folderC, "new fold")), "Folder inside FolderB should be available");
 
             Assert.IsNull(AssetManager.GetAsset(folderB), "folderB should not exists");
             Assert.IsNull(AssetManager.GetAsset(Path.Combine(folderB, "new fold")), "folderB should not have assets inside");

@@ -265,9 +265,8 @@ namespace Robot
                 var pathsInsideTheDir = path + Path.DirectorySeparatorChar;
                 foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(pathsInsideTheDir)).ToArray())
                 {
-                    //Do not fire callbacks for inner assets in the dir. If base folder is deleted, 
-                    // it's obvious that everythign inside is also deleted. UI will deal with it
-                    DeleteAssetInternal(assetInDir, silent: true);
+                    // delete all assets except the original directory asset
+                    DeleteAssetInternal(assetInDir);
                 }
             }
 
@@ -329,8 +328,8 @@ namespace Robot
                 // Renames directory and all assets inside
                 foreach (var assetInDir in Assets.Where(a => a.Path.IsSubDirectoryOf(sourcePath)).Select(a => a.Path).ToArray())
                 {
-                    if (assetInDir != sourcePath) // Fire callbacks only for folder asset, UI is responsible to deal with it
-                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath), silent: true);
+                    if (assetInDir != sourcePath) // Rename all assets except the folder
+                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
                 }
             }
             else
