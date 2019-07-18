@@ -10,6 +10,11 @@ namespace Robot.Abstractions
     public interface IModifiedAssetCollector
     {
         /// <summary>
+        /// Should asset lists be automatically cleared after callbacks were fired.
+        /// </summary>
+        bool AutoClear { get; set; }
+
+        /// <summary>
         /// Assets will filtered by extension. Only matching assets will be added to Paths. 
         /// No callbacks will be fired if no matching assets exists.
         /// </summary>
@@ -36,5 +41,10 @@ namespace Robot.Abstractions
         /// Clears the list after callback was fired
         /// </summary>
         event Action<IEnumerable<(string From, string To)>> AssetsRenamed;
+
+        /// <summary>
+        /// Clears all the lists but keeps the filter
+        /// </summary>
+        void Clear();
     }
 }

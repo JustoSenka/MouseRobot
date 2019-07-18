@@ -31,7 +31,6 @@ namespace Robot.Scripts
         private readonly IScriptCompiler ScriptCompiler;
         private readonly IScriptLoader ScriptLoader;
         private readonly IAssetManager AssetManager;
-        private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
         public ScriptManager(IScriptCompiler ScriptCompiler, IScriptLoader ScriptLoader, IAssetManager AssetManager,
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
@@ -39,15 +38,15 @@ namespace Robot.Scripts
             this.ScriptCompiler = ScriptCompiler;
             this.ScriptLoader = ScriptLoader;
             this.AssetManager = AssetManager;
-            this.ModifiedAssetCollector = ModifiedAssetCollector;
             this.SettingsManager = SettingsManager;
 
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.DllD);
-            ModifiedAssetCollector.AssetsModified += OnAssetsModified;
+            ModifiedAssetCollector.AssetsModified += _ => OnAssetsModified();
+            ModifiedAssetCollector.AssetsRenamed += _ => OnAssetsModified();
         }
 
-        private void OnAssetsModified(IEnumerable<string> modifiedAssets)
+        private void OnAssetsModified()
         {
             CompileScriptsAndReloadUserDomain();
         }

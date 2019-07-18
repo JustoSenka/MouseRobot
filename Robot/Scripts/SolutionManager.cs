@@ -29,25 +29,24 @@ namespace Robot.Scripts
 
         private readonly IAssetManager AssetManager;
         private readonly IProjectManager ProjectManager;
-        private readonly IModifiedAssetCollector ModifiedAssetCollector;
         private readonly ISettingsManager SettingsManager;
         public SolutionManager(IAssetManager AssetManager, IProjectManager ProjectManager,
             IModifiedAssetCollector ModifiedAssetCollector, ISettingsManager SettingsManager)
         {
             this.AssetManager = AssetManager;
             this.ProjectManager = ProjectManager;
-            this.ModifiedAssetCollector = ModifiedAssetCollector;
             this.SettingsManager = SettingsManager;
 
             m_SolutionGuid = Guid.NewGuid().ToString();
             m_ProjectGuid = Guid.NewGuid().ToString();
 
-            //TODO: Fix me. Generate project only when Recordings and Scripts are ADDED/REMOVED // If project is identical, it will not be overwritten
+            //TODO: Fix me. Generate project only when Plugins and Scripts are ADDED/REMOVED // If project is identical, it will not be overwritten
             //TODO: Add menu in assets window to regenerate everything
             //TODO: Changing compiler settings should regenerate project
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.ScriptD);
             ModifiedAssetCollector.ExtensionFilters.Add(FileExtensions.DllD);
-            ModifiedAssetCollector.AssetsModified += (assets) => RegenerateEverything();
+            ModifiedAssetCollector.AssetsModified += _ => RegenerateEverything();
+            ModifiedAssetCollector.AssetsRenamed += _ => RegenerateEverything();
 
             ProjectManager.NewProjectOpened += (path) => RegenerateEverything();
             SettingsManager.SettingsRestored += RegenerateEverything;

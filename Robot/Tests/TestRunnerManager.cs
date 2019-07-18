@@ -47,7 +47,9 @@ namespace Robot.Tests
 
             AssetCollector.ExtensionFilters.Add(FileExtensions.TestD);
 
-            AssetCollector.AssetsModified += OnAssetRefreshFinished;
+            AssetCollector.AssetsModified += OnAssetsModified;
+            AssetCollector.AssetsRenamed += OnAssetsRenamed;
+
             TypeCollector.NewTypesAppeared += OnNewTypesAppeared;
 
             TestRunner.TestRunEnd += OnTestsFinished;
@@ -68,7 +70,7 @@ namespace Robot.Tests
                 TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
             }
         }
-        private void OnAssetRefreshFinished(IEnumerable<string> modifiedAssets)
+        private void OnAssetsModified(IEnumerable<string> modifiedAssets)
         {
             var firstReload = m_TestFixtures.Count == 0;
 
@@ -141,6 +143,36 @@ namespace Robot.Tests
             }
 
             Profiler.Stop("TestRunnerManager.ReloadTestFixtures");
+        }
+
+        private void OnAssetsRenamed(IEnumerable<(string From, string To)> renamedAssets)
+        {
+            if (renamedAssets == null || renamedAssets.Count() == 0)
+                return;
+            /*
+            var fixtureAssets = AssetManager.Assets.Where(asset => asset.Importer.HoldsType() == typeof(LightTestFixture));
+            
+            foreach (var asset in fixtureAssets)
+            {
+                if (asset.Importer.LoadingFailed)
+                    continue;
+
+                // Find out if this asset was actually renamed
+                var renamedFixturePaths = renamedAssets.FirstOrDefault(t => t.From == asset.Path);
+                if (renamedFixturePaths == default)
+                    return;
+
+
+            // This will fail because asset will already have a new name
+            // I need to use t.From to find fixture from TestRunner, but for that I would need to compare name to path which is complicated
+                // Find fixture in test runner manager which corresponds to the asset being renamed
+                var fixture = m_TestFixtures.FirstOrDefault(f => f.Name == asset.Name);
+                if (fixture == default)
+                    return;
+
+                // Change the name of fixture in test runner manager based of new asset name
+                fixture.Name = asset.Name;
+            }*/
         }
     }
 }

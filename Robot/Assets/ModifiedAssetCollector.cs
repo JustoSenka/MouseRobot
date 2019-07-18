@@ -13,6 +13,8 @@ namespace Robot.Assets
     [RegisterTypeToContainer(typeof(IModifiedAssetCollector))]
     public class ModifiedAssetCollector : IModifiedAssetCollector
     {
+        public bool AutoClear { get; set; } = true;
+
         public IList<string> ExtensionFilters { get; } = new List<string>();
 
         public IList<string> ModifiedAssetPaths { get; } = new List<string>();
@@ -28,16 +30,27 @@ namespace Robot.Assets
         {
             this.AssetManager = AssetManager;
 
-            AssetManager.AssetCreated += AddPathToList;
-            AssetManager.AssetUpdated += AddPathToList;
-            AssetManager.AssetDeleted += AddPathToList;
-            AssetManager.AssetRenamed += (from, to) => AddPathToList(to);
+            AssetManager.AssetCreated += OnAssetsModified;
+            AssetManager.AssetUpdated += OnAssetsModified;
+            AssetManager.AssetDeleted += OnAssetsModified;
+            AssetManager.AssetRenamed += OnAssetsRenamed;
             AssetManager.RefreshFinished += OnAssetRefreshFinished;
         }
 
-        private void AddPathToList(string assetPath)
+        private void OnAssetsRenamed(string from, string to)
         {
-            if (ExtensionFilters.Count == 0 || ExtensionFilters.Any(filter => assetPath.EndsWith(filter)))
+            if (FilterMatchesAssetPath(from) || FilterMatchesAssetPath(to))
+                RenamedAssetPaths.Add((from, to));
+
+            // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
+            // but something has already changed from within app. Call refresh callback manually.
+            if (!AssetManager.IsEditingAssets)
+                OnAssetRefreshFinished();
+        }
+
+        private void OnAssetsModified(string assetPath)
+        {
+            if (FilterMatchesAssetPath(assetPath))
                 ModifiedAssetPaths.Add(assetPath);
 
             // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
@@ -46,14 +59,38 @@ namespace Robot.Assets
                 OnAssetRefreshFinished();
         }
 
+        private bool FilterMatchesAssetPath(string assetPath)
+        {
+            return ExtensionFilters.Count == 0 || ExtensionFilters.Any(filter => assetPath.EndsWith(filter));
+        }
+
         private void OnAssetRefreshFinished()
         {
-            if (ModifiedAssetPaths.Count == 0 && !m_FirstRefresh)
-                return;
+            var shouldCallModifiedAssetCallback = ModifiedAssetPaths.Count != 0 || m_FirstRefresh;
+            var shouldCallRenamedAssetCallback = RenamedAssetPaths.Count != 0 || m_FirstRefresh;
 
-            m_FirstRefresh = false;
-            AssetsModified?.Invoke(ModifiedAssetPaths.ToArray());
+            if (shouldCallModifiedAssetCallback)
+            {
+                m_FirstRefresh = false;
+                AssetsModified?.Invoke(ModifiedAssetPaths.ToArray());
+
+                if (AutoClear)
+                    ModifiedAssetPaths.Clear();
+            }
+            if (shouldCallRenamedAssetCallback)
+            {
+                m_FirstRefresh = false;
+                AssetsRenamed?.Invoke(RenamedAssetPaths.ToArray());
+
+                if (AutoClear)
+                    RenamedAssetPaths.Clear();
+            }
+        }
+
+        public void Clear()
+        {
             ModifiedAssetPaths.Clear();
+            RenamedAssetPaths.Clear();
         }
     }
 }

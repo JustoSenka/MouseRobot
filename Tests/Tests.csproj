@@ -170,6 +170,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Unit\ModifiedAssetCollectorTests.cs" />
     <Compile Include="Utils\TesseractStringComparerTests.cs" />
     <EmbeddedResource Include="Base\Resources\CommandLog.cs" />
     <EmbeddedResource Include="Base\Resources\BigImageDetectorFake.cs" />

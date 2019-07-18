@@ -288,6 +288,7 @@ namespace Robot
         /// Renames asset from memory and renames its corresponding file. Asset will keep the same guid and GuidMap will be updated.
         /// If directory is renamed, all assets inside will update their path
         /// Whole file path can be renamed, which will result into moving it to different directory
+        /// If folder is renamed, only one callback is called for that specific folder
         /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
