@@ -137,6 +137,7 @@ namespace RobotEditor
             this.Activated += OnFormActivated;
 
             menuStrip.HandleCreated += (s, e) => m_AssetsWindow.AddMenuItemsForScriptTemplates(menuStrip, "addScriptToolStripMenuItem");
+            statusStrip.HandleCreated += OnStatusStripHandleCreated;
 
             ((Form)ScreenPaintForm).Show();
         }
@@ -268,13 +269,17 @@ namespace RobotEditor
             m_InspectorWindow.ShowObject(obj, BaseHierarchyManager);
         }
 
+        private Status m_LastStatus;
+        private void OnStatusStripHandleCreated(object sender, EventArgs e) => OnStatusUpdated(m_LastStatus);
+
         private void OnStatusUpdated(Status status)
         {
-            if (!this.Created || !statusStrip.Created || this.Disposing || this.IsDisposed ||
-                !statusStrip.Created || statusStrip.IsDisposed || statusStrip.Disposing)
+            m_LastStatus = status;
+            if (!statusStrip.Created || this.Disposing || this.IsDisposed ||
+                statusStrip.IsDisposed || statusStrip.Disposing)
                 return;
 
-            this.Invoke(new MethodInvoker(() =>
+            this.BeginInvoke(new MethodInvoker(() =>
             {
                 statusStrip.Items[0].Text = status.EditorStatus;
                 statusStrip.Items[1].Text = status.CurrentOperation;
