@@ -215,12 +215,12 @@ namespace RobotEditor
                 if (node == null && m_AssetTree.FindNodeFromPath(to) != null)
                     return; // This means that asset was renamed via treeListView UI which directly modifies node name before sending it to backend
 
-                if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetRenamed callback: " + from))
-                    return;
-
                 var dirPath = Path.GetDirectoryName(to);
                 var parentNode = m_AssetTree.FindNodeFromPath(dirPath);
-                if (Logger.AssertIf(parentNode == null, "parentNode could not be found in UI in OnAssetRenamed callback: " + dirPath + " :: " + to))
+                if (parentNode == null)
+                    return; // parentNode could not be found in UI in OnAssetRenamed callback. This happens when renaming folder together with assets inside
+
+                if (Logger.AssertIf(node == null, "Could not find node in UI in OnAssetRenamed callback: " + from))
                     return;
 
                 node.parent.RemoveAt(node.Index);
