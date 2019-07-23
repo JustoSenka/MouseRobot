@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RobotRuntime.Tests
 {
-    public class LightTestFixture : ICloneable
+    public class LightTestFixture : ICloneable, IHaveGuid
     {
         public Recording Setup { get; set; }
         public Recording TearDown { get; set; }
@@ -75,6 +75,15 @@ namespace RobotRuntime.Tests
             fixture.Guid = Guid;
 
             return fixture;
+        }
+
+        /// <summary>
+        /// Implemented explicitly so it has less visibility, since most systems should not regenerate guids by themself.
+        /// As of this time, only recordings need to regenerate guids for commands (2018.08.15)
+        /// </summary>
+        void IHaveGuid.RegenerateGuid()
+        {
+            Guid = Guid.NewGuid();
         }
     }
 }

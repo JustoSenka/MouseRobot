@@ -20,8 +20,9 @@ namespace Robot.Tests
         /// <summary>
         /// Returns a copy list of all existing Fixtures in project.
         /// </summary>
-        public IList<TestFixture> TestFixtures { get { return m_TestFixtures.ToList(); } }
-        private IList<TestFixture> m_TestFixtures;
+        public IList<TestFixture> TestFixtures { get { return m_TestFixtures.Values.ToList(); } }
+        //private Dictionary<Guid, TestFixture> m_TestFixtures;
+        private Dictionary<Guid, Asset> m_TestFixtureAssets;
 
         public event Action<TestFixture, int> TestFixtureAdded;
         public event Action<TestFixture, int> TestFixtureRemoved;
@@ -43,7 +44,7 @@ namespace Robot.Tests
             this.Profiler = Profiler;
             this.TypeCollector = TypeCollector;
 
-            m_TestFixtures = new List<TestFixture>();
+            m_TestFixtures = new Dictionary<Guid, TestFixture>();
 
             AssetCollector.ExtensionFilters.Add(FileExtensions.TestD);
 
@@ -67,7 +68,7 @@ namespace Robot.Tests
                 m_FirstScriptRecompilationHappened = true;
 
                 ReloadTestFixtures(null, true);
-                TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
+                TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.Value.ToLightTestFixture()));
             }
         }
         private void OnAssetsModified(IEnumerable<string> modifiedAssets)
@@ -79,7 +80,7 @@ namespace Robot.Tests
                 return;
 
             ReloadTestFixtures(modifiedAssets, firstReload);
-            TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.ToLightTestFixture()));
+            TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.Value.ToLightTestFixture()));
         }
 
         private void ReloadTestFixtures(IEnumerable<string> modifiedAssets, bool firstReload = false)
@@ -107,16 +108,16 @@ namespace Robot.Tests
                 // Use file name instead of serialized one
                 lightFixture.Name = asset.Name;
 
-                var fixture = m_TestFixtures.FirstOrDefault(f => f.Name == asset.Name);
+                var fixtureExists = m_TestFixtures.TryGetValue(lightFixture.Guid, out TestFixture fixture);
 
                 // Create new fixture if one does not exist
-                if (fixture == null)
+                if (!fixtureExists)
                 {
                     fixture = Container.Resolve<TestFixture>();
                     fixture.ApplyLightFixtureValues(lightFixture);
                     fixture.Path = asset.Path;
 
-                    m_TestFixtures.Add(fixture);
+                    m_TestFixtures[lightFixture.Guid] = fixture;
                     TestFixtureAdded?.Invoke(fixture, m_TestFixtures.Count - 1);
                 }
                 // Modify an existing one with new data from disk
@@ -125,20 +126,23 @@ namespace Robot.Tests
                     TestStatusManager.ResetTestStatusForModifiedTests(fixture.ToLightTestFixture(), lightFixture);
                     fixture.ApplyLightFixtureValues(lightFixture);
                     fixture.Path = asset.Path;
-                    TestFixtureModified?.Invoke(fixture, m_TestFixtures.IndexOf(fixture));
+                    TestFixtureModified?.Invoke(fixture, m_TestFixtures.Values.IndexOf(fixture));
                 }
             }
 
-            var assetNames = fixtureAssets.Select(asset => asset.Name);
+            var fixtureInAssetsGuids = fixtureAssets.Select(asset => asset.Importer.Load<LightTestFixture>().Guid);
 
             // Remove deleted test fixtures
-            for (int i = m_TestFixtures.Count - 1; i >= 0; --i)
+            foreach (var testRunnerFixtureGuid in m_TestFixtures.Keys.ToArray())
             {
-                if (!assetNames.Contains(m_TestFixtures[i].Name))
+                // if fixture is not in assets folder anymore, remove it from TestRunnerManager
+                if (!fixtureInAssetsGuids.Contains(testRunnerFixtureGuid))
                 {
-                    var fixture = m_TestFixtures[i];
-                    m_TestFixtures.RemoveAt(i);
-                    TestFixtureRemoved?.Invoke(fixture, i);
+                    var fixture = m_TestFixtures[testRunnerFixtureGuid];
+                    var index = m_TestFixtures.Values.IndexOf(fixture);
+                    
+                    m_TestFixtures.Remove(testRunnerFixtureGuid);
+                    TestFixtureRemoved?.Invoke(fixture, index);
                 }
             }
 
@@ -149,30 +153,26 @@ namespace Robot.Tests
         {
             if (renamedAssets == null || renamedAssets.Count() == 0)
                 return;
-            /*
-            var fixtureAssets = AssetManager.Assets.Where(asset => asset.Importer.HoldsType() == typeof(LightTestFixture));
             
-            foreach (var asset in fixtureAssets)
+            foreach ((var From, var To) in renamedAssets)
             {
+                var asset = AssetManager.GetAsset(To);
                 if (asset.Importer.LoadingFailed)
                     continue;
 
-                // Find out if this asset was actually renamed
-                var renamedFixturePaths = renamedAssets.FirstOrDefault(t => t.From == asset.Path);
-                if (renamedFixturePaths == default)
+                var lightFixture = asset.Importer.Load<LightTestFixture>();
+                var fixtureExists = m_TestFixtures.TryGetValue(lightFixture.Guid, out TestFixture fixture);
+
+                if (!fixtureExists)
+                {
+                    Logger.Log(LogType.Error, "Fixture which was renamed does not exist in the TestRunnerManager: " + asset.Path);
                     return;
+                }
 
-
-            // This will fail because asset will already have a new name
-            // I need to use t.From to find fixture from TestRunner, but for that I would need to compare name to path which is complicated
-                // Find fixture in test runner manager which corresponds to the asset being renamed
-                var fixture = m_TestFixtures.FirstOrDefault(f => f.Name == asset.Name);
-                if (fixture == default)
-                    return;
-
-                // Change the name of fixture in test runner manager based of new asset name
+                fixture.Path = asset.Path;
                 fixture.Name = asset.Name;
-            }*/
+                TestFixtureModified?.Invoke(fixture, m_TestFixtures.Values.IndexOf(fixture));
+            }
         }
     }
 }

@@ -24,6 +24,9 @@ namespace Tests.Integration
         private const string k_TestFolderPath = "Assets\\TestFolder";
         private const string k_FixtureInFolder= "Assets\\TestFolder\\fix.mrt";
 
+        private const string k_NewTestFolderPath = "Assets\\TestFolder-new";
+        private const string k_FixtureInNewFolder = "Assets\\TestFolder-new\\fix.mrt";
+
         IAssetManager AssetManager;
         ITestRunnerManager TestRunnerManager;
         ITestFixtureManager TestFixtureManager;
@@ -170,6 +173,20 @@ namespace Tests.Integration
 
             Assert.AreEqual(1, TestRunnerManager.TestFixtures.Count, "Only one fixture should be present after deletion");
             Assert.AreEqual(k_TestAPath, TestRunnerManager.TestFixtures[0].Path, "Test fixture0 paths missmatched");
+        }
+
+        [Test]
+        public void RenamingFolder_ShouldUpdateFixturePath_InTestRunnerManager()
+        {
+            var lightFixture = LightTestFixture;
+            lightFixture.AddRecording(new Recording() { Name = "Test" });
+
+            AssetManager.CreateAsset(null, k_TestFolderPath);
+            AssetManager.CreateAsset(lightFixture, k_FixtureInFolder);
+
+            AssetManager.RenameAsset(k_TestFolderPath, k_NewTestFolderPath);
+
+            Assert.AreEqual(k_FixtureInNewFolder, TestRunnerManager.TestFixtures[0].Path, "Test fixture0 paths missmatched");
         }
     }
 }
