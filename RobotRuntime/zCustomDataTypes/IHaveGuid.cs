@@ -6,5 +6,6 @@ namespace RobotRuntime
     {
         Guid Guid { get; }
         void RegenerateGuid();
+        void OverrideGuid(Guid newGuid);
     }
 }

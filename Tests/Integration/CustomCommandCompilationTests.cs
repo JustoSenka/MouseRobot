@@ -128,7 +128,7 @@ namespace Tests.Integration
             var recPath = Path.Combine(Paths.AssetsPath, "rec.mrb");
             HierarchyManager.SaveRecording(oldRec, recPath);
 
-            var newRec = new Asset(recPath).Importer.Load<Recording>();
+            var newRec = new Asset(recPath).Load<Recording>();
             var newCommand = newRec.Commands.GetChild(0).value;
 
             Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");
@@ -168,7 +168,7 @@ namespace Tests.Integration
             var testPath = Path.Combine(Paths.AssetsPath, "test.mrt");
             TestFixtureManager.SaveTestFixture(testFixture, testPath);
 
-            var newTestFixture = new Asset(testPath).Importer.Load<LightTestFixture>();
+            var newTestFixture = new Asset(testPath).Load<LightTestFixture>();
             var newCommand = newTestFixture.Setup.Commands.GetChild(0).value;
 
             Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");
@@ -231,7 +231,7 @@ namespace Tests.Integration
             var testPath = Path.Combine(Paths.AssetsPath, "test.mrt");
             TestFixtureManager.SaveTestFixture(testFixture, testPath);
 
-            var newTestFixture = new Asset(testPath).Importer.Load<LightTestFixture>();
+            var newTestFixture = new Asset(testPath).Load<LightTestFixture>();
             var newCommand = newTestFixture.Setup.Commands.GetChild(0).value;
 
             Assert.AreEqual(oldCommand.GetType(), newCommand.GetType(), "Command type after serialization and deserialization should not become different");

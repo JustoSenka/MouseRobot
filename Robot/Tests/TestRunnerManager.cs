@@ -21,8 +21,7 @@ namespace Robot.Tests
         /// Returns a copy list of all existing Fixtures in project.
         /// </summary>
         public IList<TestFixture> TestFixtures { get { return m_TestFixtures.Values.ToList(); } }
-        //private Dictionary<Guid, TestFixture> m_TestFixtures;
-        private Dictionary<Guid, Asset> m_TestFixtureAssets;
+        private Dictionary<Guid, TestFixture> m_TestFixtures;
 
         public event Action<TestFixture, int> TestFixtureAdded;
         public event Action<TestFixture, int> TestFixtureRemoved;
@@ -87,12 +86,12 @@ namespace Robot.Tests
         {
             Profiler.Start("TestRunnerManager.ReloadTestFixtures");
 
-            var fixtureAssets = AssetManager.Assets.Where(asset => asset.Importer.HoldsType() == typeof(LightTestFixture));
+            var fixtureAssets = AssetManager.Assets.Where(asset => asset.HoldsType() == typeof(LightTestFixture));
 
             // Update test fixtures with modified values
             foreach (var asset in fixtureAssets)
             {
-                if (asset.Importer.LoadingFailed)
+                if (asset.LoadingFailed)
                     continue;
 
                 // Ignore non-modified assets
@@ -101,7 +100,7 @@ namespace Robot.Tests
 
                 // Reloading asset on purpose, so it gives us up to date asset and
                 //  gives a different refernce so unsaved modifications from other windows will not affect test run
-                var lightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
+                var lightFixture = asset.ReloadAsset<LightTestFixture>();
                 if (lightFixture == null)
                     continue;
 
@@ -130,7 +129,7 @@ namespace Robot.Tests
                 }
             }
 
-            var fixtureInAssetsGuids = fixtureAssets.Select(asset => asset.Importer.Load<LightTestFixture>().Guid);
+            var fixtureInAssetsGuids = fixtureAssets.Select(asset => asset.Load<LightTestFixture>().Guid);
 
             // Remove deleted test fixtures
             foreach (var testRunnerFixtureGuid in m_TestFixtures.Keys.ToArray())
@@ -157,10 +156,10 @@ namespace Robot.Tests
             foreach ((var From, var To) in renamedAssets)
             {
                 var asset = AssetManager.GetAsset(To);
-                if (asset.Importer.LoadingFailed)
+                if (asset.LoadingFailed)
                     continue;
 
-                var lightFixture = asset.Importer.Load<LightTestFixture>();
+                var lightFixture = asset.Load<LightTestFixture>();
                 var fixtureExists = m_TestFixtures.TryGetValue(lightFixture.Guid, out TestFixture fixture);
 
                 if (!fixtureExists)

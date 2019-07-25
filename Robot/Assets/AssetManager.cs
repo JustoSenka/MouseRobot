@@ -166,8 +166,8 @@ namespace Robot
 
         public void SaveExistngAsset(Asset existingAsset, object newValue)
         {
-            existingAsset.Importer.Value = newValue;
-            existingAsset.Importer.SaveAsset();
+            existingAsset.Value = newValue;
+            existingAsset.SaveAsset();
             existingAsset.Update();
             AssetUpdated?.Invoke(existingAsset.Path);
 
@@ -193,8 +193,8 @@ namespace Robot
             var asset = GetAsset(path);
             if (asset != null)
             {
-                asset.Importer.Value = assetValue;
-                asset.Importer.SaveAsset();
+                asset.Value = assetValue;
+                asset.SaveAsset();
                 asset.Update();
                 AssetUpdated?.Invoke(path);
             }
@@ -208,8 +208,8 @@ namespace Robot
                 }
 
                 asset = new Asset(path, true);
-                asset.Importer.Value = assetValue;
-                asset.Importer.SaveAsset();
+                asset.Value = assetValue;
+                asset.SaveAsset();
                 asset.Update();
                 AddAssetInternal(asset);
             }

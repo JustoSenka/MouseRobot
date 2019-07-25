@@ -75,15 +75,25 @@ namespace Tests.Integration
         }
 
         [Test]
-        public void TwoIdenticalAssets_HaveTheSameHash_ButDifferentGuids()
+        public void TwoIdenticalAssets_HaveDifferentGuids_AndDifferentHashesDueToGuid()
         {
             var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
 
             Directory.CreateDirectory(new FileInfo(k_RecordingANestedPath).Directory.FullName);
             var asset2 = AssetManager.CreateAsset(new Recording(guid), k_RecordingANestedPath);
 
-            Assert.AreEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
+            Assert.AreNotEqual(asset.Hash, asset2.Hash, "Identical assets should have same hash");
             Assert.AreNotEqual(asset.Guid, asset2.Guid, "Identical assets should have different GUIDs");
+        }
+
+        [Test]
+        public void AfterSavingAsset_ObjectGuidIsReplacedWith_AssetGuid()
+        {
+            var asset = AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
+            var rec = asset.Load<Recording>();
+
+            Assert.AreEqual(asset.Guid, rec.Guid, "Asset and Recording guids should be the same");
+            Assert.AreNotEqual(asset.Guid, guid, "Recording should now have a different guid after it was saved");
         }
 
         [Test]
@@ -93,7 +103,7 @@ namespace Tests.Integration
             AssetManager.CreateAsset(recording, k_RecordingAPath);
 
             Assert.IsTrue(File.Exists(k_RecordingAPath), "File was not created");
-            Assert.AreEqual(AssetManager.GetAsset(k_RecordingAPath).Importer.Load<Recording>(), recording, "Asset value did not match the recording");
+            Assert.AreEqual(AssetManager.GetAsset(k_RecordingAPath).Load<Recording>(), recording, "Asset value did not match the recording");
         }
 
         [Test]
@@ -119,7 +129,7 @@ namespace Tests.Integration
             AssetManager.RenameAsset(k_RecordingAPath, k_RecordingBPath);
 
             var newAsset = AssetManager.GetAsset(k_RecordingBPath);
-            var newRecording = newAsset.Importer.Load<Recording>();
+            var newRecording = newAsset.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
             Assert.AreEqual(recording, newRecording, "Recording reference should be the same after renaming asset");
@@ -137,7 +147,7 @@ namespace Tests.Integration
             AssetManager.Refresh();
 
             var newAsset = AssetManager.GetAsset(k_RecordingBPath);
-            var newRecording = newAsset.Importer.Load<Recording>();
+            var newRecording = newAsset.Load<Recording>();
 
             Assert.AreEqual(asset, newAsset, "Asset reference should be the same after renaming asset");
             Assert.AreEqual(recording, newRecording, "Recording reference should be the same after renaming asset");
@@ -259,7 +269,7 @@ namespace Tests.Integration
             AssetManager.CreateAsset(null, path);
 
             Assert.AreEqual(2, AssetManager.Assets.Count(), "Two dir assets should be known");
-            Assert.AreEqual(path.NormalizePath(), AssetManager.GetAsset(path).Importer.Load<string>().NormalizePath());
+            Assert.AreEqual(path.NormalizePath(), AssetManager.GetAsset(path).Load<string>().NormalizePath());
         }
 
         [Test]
@@ -309,8 +319,8 @@ namespace Tests.Integration
             AssetManager.CreateAsset(new Recording(guid), k_RecordingAPath);
             AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixtureAPath);
 
-            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecordingAPath).Importer.HoldsType());
-            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixtureAPath).Importer.HoldsType());
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecordingAPath).HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixtureAPath).HoldsType());
         }
 
         [Test]
@@ -326,8 +336,8 @@ namespace Tests.Integration
 
             Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).Importer.HoldsType());
-            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).Importer.HoldsType());
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).HoldsType());
 
             Assert.AreEqual(rec.Guid, AssetManager.GetAsset(k_RecInFolderB).Guid);
             Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);
@@ -345,8 +355,8 @@ namespace Tests.Integration
 
             Assert.AreEqual(4, AssetManager.Assets.Count(), "Asset count missmatch");
 
-            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).Importer.HoldsType());
-            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).Importer.HoldsType());
+            Assert.AreEqual(typeof(Recording), AssetManager.GetAsset(k_RecInFolderB).HoldsType());
+            Assert.AreEqual(typeof(LightTestFixture), AssetManager.GetAsset(k_FixInFolderB).HoldsType());
 
             Assert.AreEqual(rec.Guid, AssetManager.GetAsset(k_RecInFolderB).Guid);
             Assert.AreEqual(fix.Guid, AssetManager.GetAsset(k_FixInFolderB).Guid);

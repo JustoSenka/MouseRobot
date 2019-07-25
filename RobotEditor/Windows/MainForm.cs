@@ -249,18 +249,18 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
-            if (asset.Importer.GetType() != typeof(ImageImporter))
+            if (asset.GetType() != typeof(ImageImporter))
                 return;
 
-            asset.Importer.Load<object>(); // Force loading before check
-            if (asset.Importer.LoadingFailed)
+            asset.Load<object>(); // Force loading before check
+            if (asset.LoadingFailed)
                 return;
 
             m_ScreenPreviewWindow.Preview(asset);
             if (MouseRobot.IsVisualizationOn && asset.HoldsTypeOf(typeof(Bitmap)))
             {
                 var settings = SettingsManager.GetSettings<DetectionSettings>();
-                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Importer.Load<Bitmap>(), settings.ImageDetectionMode);
+                FeatureDetectionThread.StartNewImageSearch(m_AssetsWindow.GetSelectedAsset().Load<Bitmap>(), settings.ImageDetectionMode);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Robot
             }
         }
 
-        public AssetImporter Importer { get; private set; }
+        private AssetImporter Importer { get; set; }
 
         /// <summary>
         /// Will create asset on path.
@@ -101,6 +101,66 @@ namespace Robot
         public int CompareTo(Asset other)
         {
             return System.IO.Path.GetFileName(Path).CompareTo(System.IO.Path.GetFileName(other.Path));
+        }
+
+        // Forwarding calls to AssetImporter
+
+        public object Value
+        {
+            get
+            {
+                return Importer.Value;
+            }
+            set
+            {
+                Importer.Value = value;
+            }
+        }
+
+        public Type HoldsType() => Importer.HoldsType();
+        public bool LoadingFailed => Importer.LoadingFailed;
+
+        // Load, Reload and Save asset methods all have fix guid functionality.
+        // Idea is asset guid and object guid (if has one) should all be the same.
+        // AssetManager makes sure assets have all unique guids,
+        // so Recordings Or TestFixtures don't need to worry about it
+
+        public T Load<T>()
+        {
+            var value = Importer.Load<T>();
+            if (FixObjectGuidIfNeeded(value))
+                SaveAsset();
+
+            return value;
+        }
+        public T ReloadAsset<T>()
+        {
+            var value = Importer.ReloadAsset<T>();
+            if (FixObjectGuidIfNeeded(value))
+                SaveAsset();
+
+            return value;
+        }
+
+        public void SaveAsset()
+        {
+            FixObjectGuidIfNeeded(Value);
+            Importer.SaveAsset();
+        }
+
+        /// <summary>
+        /// If object has IHaveGuid and the guid is not the same as asset guid, 
+        /// overrides it with asset guid so they are the same and unique
+        /// </summary>
+        /// <returns>True if Guid was overriden</returns>
+        private bool FixObjectGuidIfNeeded(object importedObject)
+        {
+            if (importedObject is IHaveGuid obj && obj.Guid != Guid)
+            {
+                obj.OverrideGuid(Guid);
+                return true;
+            }
+            return false;
         }
     }
 }

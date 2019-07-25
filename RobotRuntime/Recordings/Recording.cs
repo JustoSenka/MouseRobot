@@ -431,6 +431,7 @@ namespace RobotRuntime.Recordings
         {
             Guid = Guid.NewGuid();
 
+            //Also regenerates guids for all commands
             CommandGuidMap.Clear();
             var allCommandGuids = Commands.CastAndRemoveNullsTree<IHaveGuid>();
             foreach (var g in allCommandGuids)
@@ -438,6 +439,11 @@ namespace RobotRuntime.Recordings
                 g.RegenerateGuid();
                 CommandGuidMap.AddGuidToMapAndGenerateUniqueIfNeeded(g);
             }
+        }
+
+        void IHaveGuid.OverrideGuid(Guid newGuid)
+        {
+            Guid = newGuid;
         }
 
         public bool Similar(object obj)

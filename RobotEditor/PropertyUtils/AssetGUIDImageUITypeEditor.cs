@@ -30,7 +30,7 @@ namespace RobotEditor.PropertyUtils
             if (asset == null)
                 return;
             
-            var bmp = asset.Importer.Load<Bitmap>();
+            var bmp = asset.Load<Bitmap>();
             if (bmp == null)
                 return;
 

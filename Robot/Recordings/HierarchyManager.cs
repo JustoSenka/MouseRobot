@@ -55,7 +55,7 @@ namespace Robot
             if (m_LoadedRecordings.Count == 1 && m_LoadedRecordings[0].Name == Recording.DefaultRecordingName && m_LoadedRecordings[0].Commands.Count() == 0)
                 RemoveRecording(0);
 
-            Recording newRecording = asset.Importer.ReloadAsset<Recording>();
+            Recording newRecording = asset.ReloadAsset<Recording>();
             if (newRecording != null)
             {
                 newRecording.Path = asset.Path;

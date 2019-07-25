@@ -115,9 +115,9 @@ namespace Robot.Scripts
                         yield return r;
             }
 
-            var allPluginAssets = AssetManager.Assets.Where(a => a.Importer.HoldsType() == typeof(Assembly));
+            var allPluginAssets = AssetManager.Assets.Where(a => a.HoldsType() == typeof(Assembly));
             foreach (var a in allPluginAssets)
-                yield return a.Importer.Path;
+                yield return a.Path;
         }
     }
 }

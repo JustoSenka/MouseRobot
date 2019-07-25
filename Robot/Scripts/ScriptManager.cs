@@ -56,7 +56,7 @@ namespace Robot.Scripts
             lock (CompilationLock)
             {
                 var ScriptAssets = AssetManager.Assets.Where(a => a.Path.EndsWith(FileExtensions.ScriptD));
-                var scriptPaths = ScriptAssets.Select(a => a.Importer.Path); //.Where(s => s != null).Cast<string>();
+                var scriptPaths = ScriptAssets.Select(a => a.Path); //.Where(s => s != null).Cast<string>();
 
                 AddPluginAssetsAsReferencesToCompilerSettings();
 
@@ -96,8 +96,8 @@ namespace Robot.Scripts
 
         private void AddPluginAssetsAsReferencesToCompilerSettings()
         {
-            var PluginPaths = AssetManager.Assets.Where(a => a.Importer.HoldsType() == typeof(Assembly))
-                .Select(a => a.Importer.Path).ToArray();
+            var PluginPaths = AssetManager.Assets.Where(a => a.HoldsType() == typeof(Assembly))
+                .Select(a => a.Path).ToArray();
             //.Select(a => Path.Combine(Environment.CurrentDirectory, a.Importer.Path)).ToArray();
 
             if (PluginPaths != null)

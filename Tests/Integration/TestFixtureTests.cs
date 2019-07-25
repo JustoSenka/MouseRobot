@@ -88,7 +88,7 @@ namespace Tests.Integration
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var asset = AssetManager.CreateAsset(TestFixture.ToLightTestFixture(), k_FixturePath);
 
-            var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
+            var newLightFixture = asset.ReloadAsset<LightTestFixture>();
             CheckIfLightTestFixturesAreEqual(LightTestFixture, newLightFixture);
         }
 
@@ -98,7 +98,7 @@ namespace Tests.Integration
             TestFixture.ApplyLightFixtureValues(LightTestFixture);
             var asset = AssetManager.CreateAsset(TestFixture.ToLightTestFixture(), k_FixturePath);
 
-            var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
+            var newLightFixture = asset.ReloadAsset<LightTestFixture>();
             var newTestFixture = Container.Resolve<TestFixture>();
             newTestFixture.ApplyLightFixtureValues(newLightFixture);
 
@@ -114,7 +114,7 @@ namespace Tests.Integration
             TestFixtureManager.SaveTestFixture(fixture, k_FixturePath);
 
             var asset = AssetManager.GetAsset(k_FixturePath);
-            var newLightFixture = asset.Importer.ReloadAsset<LightTestFixture>();
+            var newLightFixture = asset.ReloadAsset<LightTestFixture>();
             newLightFixture.Name = lightFixture.Name; // Names are overrided by path they are saved
 
             CheckIfLightTestFixturesAreEqual(lightFixture, newLightFixture);

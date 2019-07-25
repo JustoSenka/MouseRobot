@@ -59,7 +59,7 @@ namespace Tests.Integration
             if (waitForPluginLoad)
                 ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
-            var fix = AssetManager.GetAsset(k_FixturePath).Importer.ReloadAsset<LightTestFixture>();
+            var fix = AssetManager.GetAsset(k_FixturePath).ReloadAsset<LightTestFixture>();
             var rec = fix.Tests.First(t => t.Name == k_TestName);
             var c = rec.Commands.First().value;
 
@@ -73,7 +73,7 @@ namespace Tests.Integration
             InitializeApplicationWithKnownProjectPath();
 
             // Force loading asset. It will load with unknown commands
-            var fixture = AssetManager.GetAsset(k_FixturePath).Importer.Value;
+            var fixture = AssetManager.GetAsset(k_FixturePath).Value;
 
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 
@@ -106,7 +106,7 @@ namespace Tests.Integration
             CreateOneFixtureWithCustomCommand();
             InitializeApplicationWithKnownProjectPath();
 
-            var fix = AssetManager.GetAsset(k_FixturePath).Importer.ReloadAsset<LightTestFixture>();
+            var fix = AssetManager.GetAsset(k_FixturePath).ReloadAsset<LightTestFixture>();
             var fixture = TestFixtureManager.NewTestFixture(fix);
 
             if (waitForPluginLoad)

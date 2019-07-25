@@ -151,10 +151,8 @@ namespace Tests.Integration
             AssetManager.Refresh();
 
             Assert.AreEqual(2, TestRunnerManager.TestFixtures.Count, "Two test fixture should be present");
-            Assert.AreEqual(k_TestBPath, TestRunnerManager.TestFixtures[0].Path, "Test fixture0 paths missmatched");
-            Assert.AreEqual(k_TestDPath, TestRunnerManager.TestFixtures[1].Path, "Test fixture1 paths missmatched");
-            Assert.AreEqual("B", TestRunnerManager.TestFixtures[0].Name, "Test fixture0 names missmatched");
-            Assert.AreEqual("D", TestRunnerManager.TestFixtures[1].Name, "Test fixture1 names missmatched");
+            CollectionAssert.AreEquivalent(new[] { k_TestBPath, k_TestDPath }, TestRunnerManager.TestFixtures.Select(f => f.Path), "Fixture Paths in TestRunnerManager are incorrect");
+            CollectionAssert.AreEquivalent(new[] { "B", "D" }, TestRunnerManager.TestFixtures.Select(f => f.Name), "Fixture Names in TestRunnerManager are incorrect");
         }
 
         [Test]

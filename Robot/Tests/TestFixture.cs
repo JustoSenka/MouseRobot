@@ -147,6 +147,11 @@ namespace Robot.Tests
             Guid = Guid.NewGuid();
         }
 
+        void IHaveGuid.OverrideGuid(Guid newGuid)
+        {
+            Guid = newGuid;
+        }
+
         public override int GetHashCode()
         {
             int hash = Name.GetHashCode();

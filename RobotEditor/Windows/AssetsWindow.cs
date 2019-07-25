@@ -82,7 +82,7 @@ namespace RobotEditor
             {
                 var imageListIndex = -1;
                 var node = (TreeNode<Asset>)x;
-                if (!node.value.Importer.LoadingFailed)
+                if (!node.value.LoadingFailed)
                 {
                     imageListIndex = Paths.IsDirectory(node.value.Path) ? 1 : imageListIndex;
                     imageListIndex = node.value.Path.EndsWith(FileExtensions.RecordingD) ? 2 : imageListIndex;
@@ -125,7 +125,7 @@ namespace RobotEditor
 
                 foreach (var asset in AssetManager.Assets)
                 {
-                    var assetPath = asset.Importer.Path;
+                    var assetPath = asset.Path;
                     var allDirElements = Paths.GetPathDirectoryElementsWtihFileName(assetPath);
                     var allElementPaths = Paths.JoinDirectoryElementsIntoPaths(allDirElements);
                     foreach (var path in allElementPaths.Skip(1)) // Skipping Assets folder for performance reasons
@@ -169,7 +169,7 @@ namespace RobotEditor
             treeListView.InvokeIfCreated(new MethodInvoker(() =>
             {
                 var asset = AssetManager.GetAsset(path);
-                var assetPath = asset.Importer.Path;
+                var assetPath = asset.Path;
                 var allDirElements = Paths.GetPathDirectoryElementsWtihFileName(assetPath);
                 var allElementPaths = Paths.JoinDirectoryElementsIntoPaths(allDirElements);
                 foreach (var elementPath in allElementPaths)
@@ -268,14 +268,14 @@ namespace RobotEditor
             if (Logger.AssertIf(asset == null, $"Asset Node is created for tree view, but its value (Asset) is null: {assetNode}. Please report a bug."))
                 return;
 
-            if (asset.Importer.LoadingFailed)
+            if (asset.LoadingFailed)
             {
                 Logger.Logi(LogType.Error, $"This asset failed to import: {asset.Path}, probably unknown extension or corrupted file.");
                 return;
             }
 
             // Iterating all asset importer types, each importer does something specific when double clicked
-            if (asset.Importer.GetType() == typeof(DirectoryImporter))
+            if (asset.GetType() == typeof(DirectoryImporter))
             {
                 var isExpanded = treeListView.IsExpanded(treeListView.SelectedObject);
                 if (isExpanded)
@@ -293,9 +293,9 @@ namespace RobotEditor
                 LoadTestFixtureFromAsset(asset);
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
-            else if (asset.Importer.GetType() == typeof(ScriptImporter))
+            else if (asset.GetType() == typeof(ScriptImporter))
             {
-                Task.Run(() => CodeEditor.FocusFile(asset.Importer.Path));
+                Task.Run(() => CodeEditor.FocusFile(asset.Path));
             }
         }
 
@@ -306,7 +306,7 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
-            if (asset.Importer.LoadingFailed)
+            if (asset.LoadingFailed)
                 return;
 
             AssetSelected?.Invoke();
@@ -496,7 +496,7 @@ namespace RobotEditor
             LightTestFixture fix = null;
             if (!TestFixtureManager.Contains(asset.Name))
             {
-                fix = asset.Importer.ReloadAsset<LightTestFixture>();
+                fix = asset.ReloadAsset<LightTestFixture>();
                 if (fix != null)
                 {
                     fix.Name = asset.Name;
@@ -507,7 +507,7 @@ namespace RobotEditor
 
             else if (forceReloadIfAlreadyLoaded)
             {
-                fix = asset.Importer.ReloadAsset<LightTestFixture>();
+                fix = asset.ReloadAsset<LightTestFixture>();
                 if (fix != null)
                 {
                     fix.Name = asset.Name;

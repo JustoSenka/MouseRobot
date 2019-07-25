@@ -22,7 +22,7 @@ namespace RobotEditor
             if (!asset.HoldsTypeOf(typeof(Bitmap)))
                 return;
 
-            pictureDrawBox.Image = asset.Importer.Load<Bitmap>();
+            pictureDrawBox.Image = asset.Load<Bitmap>();
             if (m_Asset != asset)
                 pictureDrawBox.CenterPosition();
 

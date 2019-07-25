@@ -110,18 +110,18 @@ namespace Tests
         public static void ModifyScriptAsset(IAssetManager AssetManager, string path)
         {
             var asset = AssetManager.GetAsset(path);
-            var value = asset.Importer.Load<string>();
-            //asset.Importer.Value = value.Replace("public int SomeInt { get; set; } = 5;", "public int SomeInt { get; set; } = 5; \n public int SomeInt2 { get; set; } = 10;");
-            asset.Importer.Value += "// Comment";
-            asset.Importer.SaveAsset();
+            var value = asset.Load<string>();
+            //asset.Value = value.Replace("public int SomeInt { get; set; } = 5;", "public int SomeInt { get; set; } = 5; \n public int SomeInt2 { get; set; } = 10;");
+            asset.Value += "// Comment";
+            asset.SaveAsset();
         }
 
         internal static void ReplaceTextInAsset(IAssetManager AssetManager, string assetPath, string regexFilter, string replacement)
         {
             var asset = AssetManager.GetAsset(assetPath);
-            var value = asset.Importer.Load<string>();
-            asset.Importer.Value = Regex.Replace(value, regexFilter, replacement);
-            asset.Importer.SaveAsset();
+            var value = asset.Load<string>();
+            asset.Value = Regex.Replace(value, regexFilter, replacement);
+            asset.SaveAsset();
         }
 
         public static void CheckThatPtrsAreNotSame(Recording s1, Recording s2)

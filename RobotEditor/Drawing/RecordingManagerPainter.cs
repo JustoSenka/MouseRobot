@@ -75,7 +75,7 @@ namespace RobotEditor.Drawing
 
         private Rectangle DrawFoundImageUnderCursor(Graphics g)
         {
-            var bmp = (m_AssetUnderCursor != null) ? m_AssetUnderCursor.Importer.Load<Bitmap>() : Properties.Resources.X_ICO_256;
+            var bmp = (m_AssetUnderCursor != null) ? m_AssetUnderCursor.Load<Bitmap>() : Properties.Resources.X_ICO_256;
             var ratio = k_MaxImagePreviewSize * 1.0f / (bmp.Width > bmp.Height ? bmp.Width : bmp.Height);
             ratio *= (m_AssetUnderCursor != null) ? 1 : 0.4f;
 

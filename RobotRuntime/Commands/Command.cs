@@ -63,5 +63,10 @@ namespace RobotRuntime
         {
             Guid = Guid.NewGuid();
         }
+
+        void IHaveGuid.OverrideGuid(Guid newGuid)
+        {
+            Guid = newGuid;
+        }
     }
 }
