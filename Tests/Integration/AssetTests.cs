@@ -389,6 +389,21 @@ namespace Tests.Integration
         }
 
         [Test]
+        public void RenameFolder_WithAssetsInside_WillRenameAllAssetsAsWell()
+        {
+            AssetManager.CreateAsset(null, k_FolderA);
+
+            var rec = AssetManager.CreateAsset(new Recording(), k_RecInFolderA);
+            var fix = AssetManager.CreateAsset(TestFixtureManager.NewTestFixture().ToLightTestFixture(), k_FixInFolderA);
+
+            AssetManager.RenameAsset(k_FolderA, k_FolderB);
+
+            CollectionAssert.AreEquivalent(
+                new[] { "Assets", k_FolderB.NormalizePath(), k_RecInFolderB, k_FixInFolderB },
+                AssetManager.Assets.Select(a => a.Path));
+        }
+
+        [Test]
         public void DeleteFolder_WithAssetsInside_WillFireCallbackForAllAssets()
         {
             AssetManager.CreateAsset(null, k_FolderA);

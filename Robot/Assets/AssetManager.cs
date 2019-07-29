@@ -77,7 +77,7 @@ namespace Robot
             // And it is unknown what GUID to give that asset at that point
             foreach (var assetOnDisk in modifiedAssetsOnDisk)
             {
-                if (Paths.IsDirectory(assetOnDisk.Path) && !GuidPathTable.ContainsValue(assetOnDisk.Path)) 
+                if (Paths.IsDirectory(assetOnDisk.Path) && !GuidPathTable.ContainsValue(assetOnDisk.Path))
                     AddAssetInternal(assetOnDisk);
             }
 
@@ -243,10 +243,12 @@ namespace Robot
 
             var isDirectory = Directory.Exists(path);
 
+            var wasEditingAssets = IsEditingAssets;
             try
             {
                 if (isDirectory)
                 {
+                    IsEditingAssets = true;
                     Directory.Delete(path, true);
                 }
                 else
@@ -268,6 +270,8 @@ namespace Robot
                     // delete all assets except the original directory asset
                     DeleteAssetInternal(assetInDir);
                 }
+
+                IsEditingAssets = wasEditingAssets;
             }
 
             DeleteAssetInternal(asset);
@@ -317,6 +321,9 @@ namespace Robot
             var isDirectory = Paths.IsDirectory(sourcePath);
             if (isDirectory)
             {
+                var wasEditingAssets = IsEditingAssets;
+                IsEditingAssets = true;
+
                 if (destPath.IsSubDirectoryOf(sourcePath))
                 {
                     Logger.Log(LogType.Warning, "Folder cannot be moved inside itself: " + sourcePath);
@@ -331,6 +338,8 @@ namespace Robot
                     if (assetInDir != sourcePath) // Rename all assets except the folder
                         RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
                 }
+
+                IsEditingAssets = wasEditingAssets;
             }
             else
             {

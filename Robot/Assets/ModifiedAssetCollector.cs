@@ -44,6 +44,7 @@ namespace Robot.Assets
 
             // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
             // but something has already changed from within app. Call refresh callback manually.
+            // Only firing callbacks if not set to batch editing
             if (!AssetManager.IsEditingAssets)
                 OnAssetRefreshFinished();
         }
@@ -55,6 +56,7 @@ namespace Robot.Assets
 
             // If asset manager is not set to batch asset editing mode, that means no refresh will be called,
             // but something has already changed from within app. Call refresh callback manually.
+            // Only firing callbacks if not set to batch editing
             if (!AssetManager.IsEditingAssets)
                 OnAssetRefreshFinished();
         }

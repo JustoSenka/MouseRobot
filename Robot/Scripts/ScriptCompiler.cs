@@ -139,7 +139,7 @@ namespace Robot.Scripts
                 return CompileCodeSync(m_TempSources);
             }
 
-            if (!results.Errors.HasErrors)
+            if (results != null && !results.Errors.HasErrors)
                 ReplaceOldAssembly(tempPath, m_OutputPath);
 
             return PrintErrors(results);
@@ -147,7 +147,13 @@ namespace Robot.Scripts
 
         private bool PrintErrors(CompilerResults results)
         {
-            if (results.Errors.HasErrors)
+            if (results == null)
+            {
+                Logger.Logi(LogType.Error, "Compilation failed due to Roslyn Compiler exception.");
+                StatusManager.Add("ScriptCompiler", 8, new Status("", "Compilation Failed", StandardColors.Red));
+                return false;
+            }
+            else if (results.Errors.HasErrors)
             {
                 foreach (CompilerError error in results.Errors)
                     Logger.Logi(LogType.Error,
