@@ -129,19 +129,19 @@ namespace RobotEditor
 
         private void RefreshTreeListView(bool performExpandAll = false, Action actionAfterRefresh = null)
         {
-           treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
-            {
-                treeListView.Roots = m_Nodes;
+            treeListView.BeginInvokeIfCreated(new MethodInvoker(() =>
+             {
+                 treeListView.Roots = m_Nodes;
 
-                if (treeListView.IsCreatedAndFuctional())
-                {
-                    treeListView.Refresh();
-                    if (performExpandAll)
-                        treeListView.ExpandAll();
+                 if (treeListView.IsCreatedAndFuctional())
+                 {
+                     treeListView.Refresh();
+                     if (performExpandAll)
+                         treeListView.ExpandAll();
 
-                    actionAfterRefresh?.Invoke();
-                }
-            }));
+                     actionAfterRefresh?.Invoke();
+                 }
+             }));
         }
 
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -183,9 +183,9 @@ namespace RobotEditor
             var fixtureNode = new TestNode(fixture);
             m_Nodes.Insert(position, fixtureNode);
 
-            RefreshTreeListView(actionAfterRefresh: 
+            RefreshTreeListView(actionAfterRefresh:
                 () => treeListView.Expand(fixtureNode));
-            
+
             ASSERT_TreeViewIsTheSameAsInRecordingManager();
         }
 
@@ -351,14 +351,21 @@ namespace RobotEditor
 #if ENABLE_UI_TESTING
             for (int i = 0; i < m_Nodes.Count; i++)
             {
-                Debug.Assert(m_Nodes[i].TestFixture == TestRunnerManager.TestFixtures[i],
-                    string.Format("Fixture missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
-
-                for (int j = 0; j < m_Nodes[i].TestFixture.Tests.Count; j++)
+                try
                 {
-                    Debug.Assert(m_Nodes[i].TestFixture.Tests[j] == TestRunnerManager.TestFixtures[i].Tests[j],
-                        string.Format("Fixture test missmatch: {0}:{1}, {2}:{3}",
-                        i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].TestFixture.Tests[j].ToString()));
+                    Debug.Assert(m_Nodes[i].TestFixture == TestRunnerManager.TestFixtures[i],
+                        string.Format("Fixture missmatch: {0}:{1}", i, m_Nodes[i].Value.ToString()));
+
+                    for (int j = 0; j < m_Nodes[i].TestFixture.Tests.Count; j++)
+                    {
+                        Debug.Assert(m_Nodes[i].TestFixture.Tests[j] == TestRunnerManager.TestFixtures[i].Tests[j],
+                            string.Format("Fixture test missmatch: {0}:{1}, {2}:{3}",
+                            i, m_Nodes[i].Value.ToString(), j, m_Nodes[i].TestFixture.Tests[j].ToString()));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(LogType.Error, "Exception in 'ASSERT_TreeViewIsTheSameAsInRecordingManager': " + e.Message);
                 }
             }
 #endif

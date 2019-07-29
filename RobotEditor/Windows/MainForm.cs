@@ -632,12 +632,16 @@ namespace RobotEditor
 
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ProjectSelectionDialog.InitProjectWithDialog();
+            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
+            if (didOpen)
+                Close();
         }
 
         private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ProjectSelectionDialog.InitProjectWithDialog();
+            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
+            if (didOpen)
+                Close();
         }
 
         private void newTestFixtureToolStripMenuItem1_Click(object sender, EventArgs e)

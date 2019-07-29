@@ -3,5 +3,6 @@
     public interface IProjectSelectionDialog
     {
         bool InitProjectWithDialog();
+        bool OpenNewProgramInstanceOfProjectWithDialog();
     }
 }

@@ -1,9 +1,10 @@
-﻿using Robot;
-using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Robot;
 using RobotEditor.Abstractions;
-using Unity.Lifetime;
 using RobotRuntime;
+using RobotRuntime.Utils;
+using System.Windows.Forms;
+using Unity.Lifetime;
 
 namespace RobotEditor.Editor
 {
@@ -20,6 +21,24 @@ namespace RobotEditor.Editor
 
         public bool InitProjectWithDialog()
         {
+            var selected = ShowDialogToSelectFolder(out string selectedPath);
+            if (selected)
+                ProjectManager.InitProject(selectedPath);
+
+            return selected;
+        }
+
+        public bool OpenNewProgramInstanceOfProjectWithDialog()
+        {
+            var selected = ShowDialogToSelectFolder(out string selectedPath);
+            if (selected)
+                ProcessUtility.StartFromCommandLine(Paths.ApplicationExecutablePath,  selectedPath.Quated(), false);
+
+            return selected;
+        }
+
+        private bool ShowDialogToSelectFolder(out string selectedPath)
+        {
             if (CommonFileDialog.IsPlatformSupported)
             {
                 var dialog = new CommonOpenFileDialog();
@@ -28,7 +47,7 @@ namespace RobotEditor.Editor
                 dialog.AddToMostRecentlyUsedList = true;
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    ProjectManager.InitProject(dialog.FileName);
+                    selectedPath = dialog.FileName;
                     return true;
                 }
             }
@@ -38,11 +57,12 @@ namespace RobotEditor.Editor
                 dialog.Description = k_Title;
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    ProjectManager.InitProject(dialog.SelectedPath);
+                    selectedPath = dialog.SelectedPath;
                     return true;
                 }
             }
 
+            selectedPath = "";
             return false;
         }
     }

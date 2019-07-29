@@ -94,6 +94,9 @@ namespace RobotEditor.Windows
 
         private void TakeSnapshot(object sender, EventArgs e)
         {
+            if (!this.IsCreatedAndFuctional())
+                return;
+
             m_NodeDict = Profiler.CopyNodes();
             //ParentNodesWithUnderscores();
             OnFrameValueChange(this, null);

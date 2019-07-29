@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace RobotRuntime.Utils
@@ -18,7 +19,7 @@ namespace RobotRuntime.Utils
         public static string RoamingAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Applicat‌​ionData), AppName); } }
         public static string LocalAppdataPath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName); } }
 
-        // public static string ApplicationInstallPath { get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); } } // Does not work from tests
+        public static string ApplicationExecutablePath { get { return Path.Combine(ApplicationInstallPath, AppName + FileExtensions.ExeD); } }
         public static string ApplicationInstallPath { get { return AppDomain.CurrentDomain.BaseDirectory; } }
 
         public static string[] ProjectPathArray

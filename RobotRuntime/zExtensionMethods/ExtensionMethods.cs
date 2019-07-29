@@ -206,6 +206,11 @@ namespace RobotRuntime
             return Paths.NormalizePath(str);
         }
 
+        public static string Quated(this string str)
+        {
+            return "\"" + str + "\"";
+        }
+
         public static bool IsSubDirectoryOf(this string candidate, string other)
         {
             var isChild = false;
