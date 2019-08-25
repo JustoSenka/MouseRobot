@@ -49,6 +49,17 @@ namespace RobotEditor
             TestRunner.TestRunEnd += OnRecordingsFinishedRunning;
             TestRunner.TestData.CommandRunningCallback += OnCommandRunning;
 
+            // Events for methods which are in base class, since it is not possible to do so from UI
+            treeListView.ModelCanDrop += treeListView_ModelCanDrop;
+            treeListView.ModelDropped += treeListView_ModelDropped;
+            treeListView.SelectionChanged += treeListView_SelectionChanged;
+            deleteToolStripMenuItem1.Click += deleteToolStripMenuItem_Click;
+            duplicateToolStripMenuItem1.Click += duplicateToolStripMenuItem1_Click;
+            newRecordingToolStripMenuItem1.Click += newRecordingToolStripMenuItem1_Click;
+            ToolstripExpandAll.Click += ToolstripExpandAll_Click;
+            ToolstripExpandOne.Click += ToolstripExpandOne_Click;
+            ToolstripCollapseAll.Click += ToolstripCollapseAll_Click;
+
             // subscribing for both treeListView and contextMenuStrip creation, since it's not clear which will be created first
             treeListView.HandleCreated += AddNewCommandsToCreateMenu;
             contextMenuStrip.HandleCreated += AddNewCommandsToCreateMenu;
