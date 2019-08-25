@@ -436,6 +436,42 @@ namespace RobotEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable Realtime Image Detection visualization.
+        /// </summary>
+        internal static string S_DisableImageDetection {
+            get {
+                return ResourceManager.GetString("S_DisableImageDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable Realtime Text Detection visualization.
+        /// </summary>
+        internal static string S_DisableTextDetection {
+            get {
+                return ResourceManager.GetString("S_DisableTextDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Realtime Image Detection visualization.
+        /// </summary>
+        internal static string S_EnableImageDetection {
+            get {
+                return ResourceManager.GetString("S_EnableImageDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Realtime Text Detection visualization.
+        /// </summary>
+        internal static string S_EnableTextDetection {
+            get {
+                return ResourceManager.GetString("S_EnableTextDetection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Test_ICO_256 {
@@ -521,6 +557,26 @@ namespace RobotEditor.Properties {
         internal static System.Drawing.Bitmap TestStatus_Q_32 {
             get {
                 object obj = ResourceManager.GetObject("TestStatus_Q_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Text_d_ICO_32 {
+            get {
+                object obj = ResourceManager.GetObject("Text_d_ICO_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Text_e_ICO_32 {
+            get {
+                object obj = ResourceManager.GetObject("Text_e_ICO_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

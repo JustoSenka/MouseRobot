@@ -597,8 +597,14 @@ namespace RobotEditor
             visualizationButton.Image = (MouseRobot.IsVisualizationOn) ?
                 Properties.Resources.Eye_e_ICO_256 : Properties.Resources.Eye_d_ICO_256;
 
+            visualizationButton.ToolTipText = (MouseRobot.IsVisualizationOn) ?
+                Properties.Resources.S_DisableImageDetection : Properties.Resources.S_EnableImageDetection;
+
             textDetectionButton.Image = (MouseRobot.IsTextDetectionOn) ?
-                Properties.Resources.Eye_e_ICO_256 : Properties.Resources.Eye_d_ICO_256;
+                Properties.Resources.Text_e_ICO_32 : Properties.Resources.Text_d_ICO_32;
+
+            textDetectionButton.ToolTipText = (MouseRobot.IsTextDetectionOn) ?
+                Properties.Resources.S_DisableTextDetection : Properties.Resources.S_EnableTextDetection;
 
             // Disable/Enable buttons
             playButton.Enabled = !MouseRobot.IsRecording;
