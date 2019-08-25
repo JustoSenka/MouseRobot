@@ -55,7 +55,7 @@ namespace Tests.Performance
             Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
             var timeTaken = Profiler.CopyNodes()[name][0].Time;
-            System.Diagnostics.Debug.WriteLine("Asset Refresh on 100 entries took: " + timeTaken + " ms.");
+            Logger.Log(LogType.Log, "Asset Refresh on 100 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 150, "This test took 50% longer than usual");
         }
@@ -76,7 +76,7 @@ namespace Tests.Performance
             Assert.AreEqual(count, AssetManager.Assets.Count(), "Asset count missmatch");
 
             var timeTaken = Profiler.CopyNodes()[name][0].Time;
-            System.Diagnostics.Debug.WriteLine("Asset Refresh on 1000 entries took: " + timeTaken + " ms.");
+            Logger.Log(LogType.Log, "Asset Refresh on 1000 entries took: " + timeTaken + " ms.");
 
             Assert.IsTrue(timeTaken < 900, "This test took 40% longer than usual");
         }

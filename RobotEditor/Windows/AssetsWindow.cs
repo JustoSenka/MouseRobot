@@ -293,7 +293,7 @@ namespace RobotEditor
                 LoadTestFixtureFromAsset(asset);
                 // TODO: Send some message to main form to give focus to window is TestFixture is already open
             }
-            else if (asset.GetType() == typeof(ScriptImporter))
+            else if (asset.ImporterType == typeof(ScriptImporter))
             {
                 Task.Run(() => CodeEditor.FocusFile(asset.Path));
             }

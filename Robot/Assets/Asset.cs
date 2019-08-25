@@ -30,6 +30,8 @@ namespace Robot
 
         private AssetImporter Importer { get; set; }
 
+        public Type ImporterType => Importer.GetType();
+
         /// <summary>
         /// Will create asset on path.
         /// Will not read file to calculate hash.

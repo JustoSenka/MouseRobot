@@ -17,6 +17,10 @@ namespace RobotRuntime
         public event Action LogCleared;
 
         private IList<Log> m_LogList = new List<Log>();
+
+        /// <summary>
+        /// Creating new list so original is not modified. Also makes it thread safe.
+        /// </summary>
         public IList<Log> LogList
         {
             get
