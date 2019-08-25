@@ -56,7 +56,7 @@ namespace RobotEditor
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(272, 32);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Copyright 2017, JustinG Apps";
+            this.label2.Text = "Copyright 2017-2019, Rotesting.com";
             // 
             // labelAppVersion
             // 

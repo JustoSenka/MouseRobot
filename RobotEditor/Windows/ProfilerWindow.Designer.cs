@@ -39,10 +39,11 @@
             // 
             this.treeListView.CellEditUseWholeCell = false;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeListView.HideSelection = false;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
-            this.treeListView.Size = new System.Drawing.Size(469, 433);
+            this.treeListView.Size = new System.Drawing.Size(184, 336);
             this.treeListView.TabIndex = 0;
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
@@ -54,7 +55,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(469, 25);
+            this.toolStrip.Size = new System.Drawing.Size(184, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -62,7 +63,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 458);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);
             this.HideOnClose = true;

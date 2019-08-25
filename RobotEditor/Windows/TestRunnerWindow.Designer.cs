@@ -61,24 +61,24 @@
             this.toolStripMenuItem1,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(181, 76);
+            this.contextMenuStrip.Size = new System.Drawing.Size(169, 54);
             // 
             // runSelectedTestsToolStripMenuItem
             // 
             this.runSelectedTestsToolStripMenuItem.Name = "runSelectedTestsToolStripMenuItem";
-            this.runSelectedTestsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.runSelectedTestsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.runSelectedTestsToolStripMenuItem.Text = "Run selected tests";
             this.runSelectedTestsToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(165, 6);
             // 
             // showInExplorerToolStripMenuItem
             // 
             this.showInExplorerToolStripMenuItem.Name = "showInExplorerToolStripMenuItem";
-            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showInExplorerToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.showInExplorerToolStripMenuItem.Text = "Show in explorer";
             this.showInExplorerToolStripMenuItem.Click += new System.EventHandler(this.showInExplorerToolStripMenuItem_Click);
             // 
@@ -96,12 +96,13 @@
             this.treeListView.ContextMenuStrip = this.contextMenuStrip;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.treeListView.HideSelection = false;
             this.treeListView.LargeImageList = this.imageList;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(469, 407);
+            this.treeListView.Size = new System.Drawing.Size(184, 336);
             this.treeListView.SmallImageList = this.imageList;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
@@ -123,7 +124,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(469, 25);
+            this.toolStrip.Size = new System.Drawing.Size(184, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -227,7 +228,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 432);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);

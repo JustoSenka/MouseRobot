@@ -54,13 +54,14 @@
             this.treeListView.CellEditUseWholeCell = false;
             this.treeListView.ContextMenuStrip = this.contextMenuStrip1;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeListView.HideSelection = false;
             this.treeListView.LargeImageList = this.imageList;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.RowHeight = 28;
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(469, 407);
+            this.treeListView.Size = new System.Drawing.Size(384, 136);
             this.treeListView.SmallImageList = this.imageList;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
@@ -89,7 +90,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(469, 25);
+            this.toolStrip.Size = new System.Drawing.Size(384, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -97,7 +98,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 432);
+            this.ClientSize = new System.Drawing.Size(384, 161);
             this.ContextMenuStrip = this.contextMenuStrip1;
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);

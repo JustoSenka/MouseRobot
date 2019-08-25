@@ -35,6 +35,7 @@ namespace RobotEditor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindow));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +52,6 @@ namespace RobotEditor
             this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
             this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
             this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
-            this.reloadFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -73,7 +73,7 @@ namespace RobotEditor
             this.toolStripMenuItem3,
             this.showInExplorerToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip1";
-            this.contextMenuStrip.Size = new System.Drawing.Size(221, 242);
+            this.contextMenuStrip.Size = new System.Drawing.Size(221, 220);
             // 
             // reloadRecordingToolStripMenuItem
             // 
@@ -81,6 +81,13 @@ namespace RobotEditor
             this.reloadRecordingToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
             this.reloadRecordingToolStripMenuItem.Text = "Reload Recording";
             this.reloadRecordingToolStripMenuItem.Click += new System.EventHandler(this.reloadRecordingToolStripMenuItem_Click);
+            // 
+            // reloadFixtureToolStripMenuItem
+            // 
+            this.reloadFixtureToolStripMenuItem.Name = "reloadFixtureToolStripMenuItem";
+            this.reloadFixtureToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
+            this.reloadFixtureToolStripMenuItem.Text = "Reload Fixture";
+            this.reloadFixtureToolStripMenuItem.Click += new System.EventHandler(this.reloadFixtureToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -169,12 +176,13 @@ namespace RobotEditor
             this.treeListView.ContextMenuStrip = this.contextMenuStrip;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.treeListView.HideSelection = false;
             this.treeListView.LargeImageList = this.imageList1;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(402, 347);
+            this.treeListView.Size = new System.Drawing.Size(184, 336);
             this.treeListView.SmallImageList = this.imageList1;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
@@ -195,7 +203,7 @@ namespace RobotEditor
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(402, 25);
+            this.toolStrip.Size = new System.Drawing.Size(184, 25);
             this.toolStrip.TabIndex = 3;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -235,18 +243,11 @@ namespace RobotEditor
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
-            // reloadFixtureToolStripMenuItem
-            // 
-            this.reloadFixtureToolStripMenuItem.Name = "reloadFixtureToolStripMenuItem";
-            this.reloadFixtureToolStripMenuItem.Size = new System.Drawing.Size(220, 22);
-            this.reloadFixtureToolStripMenuItem.Text = "Reload Fixture";
-            this.reloadFixtureToolStripMenuItem.Click += new System.EventHandler(this.reloadFixtureToolStripMenuItem_Click);
-            // 
             // AssetsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(402, 372);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);

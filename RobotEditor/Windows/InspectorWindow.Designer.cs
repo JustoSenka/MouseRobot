@@ -39,7 +39,7 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGrid.SelectedObject = this;
-            this.propertyGrid.Size = new System.Drawing.Size(450, 402);
+            this.propertyGrid.Size = new System.Drawing.Size(184, 361);
             this.propertyGrid.TabIndex = 1;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.UseCompatibleTextRendering = true;
@@ -49,7 +49,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 402);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.Controls.Add(this.propertyGrid);
             this.HideOnClose = true;
             this.Name = "InspectorWindow";

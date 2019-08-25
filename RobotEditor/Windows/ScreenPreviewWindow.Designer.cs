@@ -40,7 +40,7 @@
             this.pictureDrawBox.ImagePosition = ((System.Drawing.PointF)(resources.GetObject("pictureDrawBox.ImagePosition")));
             this.pictureDrawBox.Location = new System.Drawing.Point(0, 0);
             this.pictureDrawBox.Name = "pictureDrawBox";
-            this.pictureDrawBox.Size = new System.Drawing.Size(430, 406);
+            this.pictureDrawBox.Size = new System.Drawing.Size(184, 361);
             this.pictureDrawBox.TabIndex = 0;
             this.pictureDrawBox.TabStop = false;
             // 
@@ -48,7 +48,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(430, 406);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.Controls.Add(this.pictureDrawBox);
             this.HideOnClose = true;
             this.Name = "ScreenPreviewWindow";

@@ -81,7 +81,6 @@
             this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(198, 22);
             this.newRecordingToolStripMenuItem1.Text = "New Recording";
-            this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem1_Click);
             // 
             // toolStripSeparator1
             // 
@@ -106,7 +105,6 @@
             this.duplicateToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.duplicateToolStripMenuItem1.Size = new System.Drawing.Size(198, 22);
             this.duplicateToolStripMenuItem1.Text = "Duplicate";
-            this.duplicateToolStripMenuItem1.Click += new System.EventHandler(this.duplicateToolStripMenuItem1_Click);
             // 
             // deleteToolStripMenuItem1
             // 
@@ -114,7 +112,6 @@
             this.deleteToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(198, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
-            this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -141,20 +138,18 @@
             this.treeListView.ContextMenuStrip = this.contextMenuStrip;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.treeListView.HideSelection = false;
             this.treeListView.LargeImageList = this.imageList;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
             this.treeListView.ShowGroups = false;
             this.treeListView.ShowImagesOnSubItems = true;
-            this.treeListView.Size = new System.Drawing.Size(469, 407);
+            this.treeListView.Size = new System.Drawing.Size(184, 336);
             this.treeListView.SmallImageList = this.imageList;
             this.treeListView.TabIndex = 1;
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
-            this.treeListView.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelCanDrop);
-            this.treeListView.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelDropped);
-            this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             // 
             // toolStrip
             // 
@@ -166,7 +161,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(469, 25);
+            this.toolStrip.Size = new System.Drawing.Size(184, 25);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -180,7 +175,6 @@
             this.ToolstripExpandAll.Size = new System.Drawing.Size(40, 22);
             this.ToolstripExpandAll.Text = "toolStripButton1";
             this.ToolstripExpandAll.ToolTipText = "Expand All Items";
-            this.ToolstripExpandAll.Click += new System.EventHandler(this.ToolstripExpandAll_Click);
             // 
             // ToolstripExpandOne
             // 
@@ -192,7 +186,6 @@
             this.ToolstripExpandOne.Size = new System.Drawing.Size(40, 22);
             this.ToolstripExpandOne.Text = "toolStripButton2";
             this.ToolstripExpandOne.ToolTipText = "Expand First Level";
-            this.ToolstripExpandOne.Click += new System.EventHandler(this.ToolstripExpandOne_Click);
             // 
             // ToolstripCollapseAll
             // 
@@ -204,13 +197,12 @@
             this.ToolstripCollapseAll.Size = new System.Drawing.Size(40, 22);
             this.ToolstripCollapseAll.Text = "toolStripButton3";
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
-            this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);
             // 
             // HierarchyWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(469, 432);
+            this.ClientSize = new System.Drawing.Size(184, 361);
             this.ContextMenuStrip = this.contextMenuStrip;
             this.Controls.Add(this.treeListView);
             this.Controls.Add(this.toolStrip);
