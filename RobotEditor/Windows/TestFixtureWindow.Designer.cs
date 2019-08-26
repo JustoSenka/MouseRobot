@@ -116,6 +116,7 @@
             this.treeListView.ContextMenuStrip = this.contextMenuStrip;
             this.treeListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.treeListView.HideSelection = false;
             this.treeListView.LargeImageList = this.imageList;
             this.treeListView.Location = new System.Drawing.Point(0, 25);
             this.treeListView.Name = "treeListView";
@@ -127,6 +128,7 @@
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
+            this.treeListView.Resize += new System.EventHandler(this.treeListView_Resize);
             // 
             // toolStrip
             // 

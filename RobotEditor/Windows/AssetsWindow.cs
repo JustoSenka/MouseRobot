@@ -114,6 +114,11 @@ namespace RobotEditor
             treeListView.Columns.Add(nameColumn);
         }
 
+        private void treeListView_Resize(object sender, EventArgs e)
+        {
+            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.98f);
+        }
+
         #region AssetManager Callbacks
 
         private void ForceRefresh(object sender, EventArgs e)

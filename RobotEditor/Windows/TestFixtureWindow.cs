@@ -142,6 +142,11 @@ namespace RobotEditor
             RefreshTreeListViewAsync(() => treeListView.ExpandAll());
         }
 
+        private void treeListView_Resize(object sender, EventArgs e)
+        {
+            treeListView.Columns[0].Width = (int)(m_TreeListView.Width * 0.98f);
+        }
+
         #region Callbacks from IBaseHierarchyManager
 
         protected override void OnRecordingLoaded(Recording recording)

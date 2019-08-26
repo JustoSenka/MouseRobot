@@ -115,6 +115,11 @@ namespace RobotEditor
             RefreshTreeListViewAsync(() => treeListView.ExpandAll());
         }
 
+        private void treeListView_Resize(object sender, EventArgs e)
+        {
+            treeListView.Columns[0].Width = (int)(m_TreeListView.Width * 0.98f);
+        }
+
         #region Context Menu Items
 
         private void setActiveToolStripMenuItem_Click(object sender, EventArgs e)

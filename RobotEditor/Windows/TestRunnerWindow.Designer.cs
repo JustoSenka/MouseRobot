@@ -109,6 +109,7 @@
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
             this.treeListView.DoubleClick += new System.EventHandler(this.treeListView_DoubleClick);
+            this.treeListView.Resize += new System.EventHandler(this.treeListView_Resize);
             // 
             // toolStrip
             // 
@@ -154,21 +155,21 @@
             // runSelectedToolStripMenuItem
             // 
             this.runSelectedToolStripMenuItem.Name = "runSelectedToolStripMenuItem";
-            this.runSelectedToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runSelectedToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.runSelectedToolStripMenuItem.Text = "Run Selected Tests";
             this.runSelectedToolStripMenuItem.Click += new System.EventHandler(this.runSelectedToolStripMenuItem_Click);
             // 
             // runFailedToolStripMenuItem
             // 
             this.runFailedToolStripMenuItem.Name = "runFailedToolStripMenuItem";
-            this.runFailedToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runFailedToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.runFailedToolStripMenuItem.Text = "Run Failed Tests";
             this.runFailedToolStripMenuItem.Click += new System.EventHandler(this.runFailedToolStripMenuItem_Click);
             // 
             // runNotRunToolStripMenuItem
             // 
             this.runNotRunToolStripMenuItem.Name = "runNotRunToolStripMenuItem";
-            this.runNotRunToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.runNotRunToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.runNotRunToolStripMenuItem.Text = "Run Not Run tests";
             this.runNotRunToolStripMenuItem.Click += new System.EventHandler(this.runNotRunToolStripMenuItem_Click);
             // 
@@ -195,7 +196,7 @@
             this.ToolstripExpandAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripExpandAll.Name = "ToolstripExpandAll";
             this.ToolstripExpandAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.ToolstripExpandAll.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripExpandAll.Size = new System.Drawing.Size(40, 20);
             this.ToolstripExpandAll.Text = "toolStripButton1";
             this.ToolstripExpandAll.ToolTipText = "Expand All Items";
             this.ToolstripExpandAll.Click += new System.EventHandler(this.ToolstripExpandAll_Click);
@@ -207,7 +208,7 @@
             this.ToolstripExpandOne.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripExpandOne.Name = "ToolstripExpandOne";
             this.ToolstripExpandOne.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.ToolstripExpandOne.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripExpandOne.Size = new System.Drawing.Size(40, 20);
             this.ToolstripExpandOne.Text = "toolStripButton2";
             this.ToolstripExpandOne.ToolTipText = "Expand First Level";
             this.ToolstripExpandOne.Click += new System.EventHandler(this.ToolstripExpandOne_Click);
@@ -219,7 +220,7 @@
             this.ToolstripCollapseAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ToolstripCollapseAll.Name = "ToolstripCollapseAll";
             this.ToolstripCollapseAll.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.ToolstripCollapseAll.Size = new System.Drawing.Size(40, 22);
+            this.ToolstripCollapseAll.Size = new System.Drawing.Size(40, 20);
             this.ToolstripCollapseAll.Text = "toolStripButton3";
             this.ToolstripCollapseAll.ToolTipText = "Collapse All Items";
             this.ToolstripCollapseAll.Click += new System.EventHandler(this.ToolstripCollapseAll_Click);

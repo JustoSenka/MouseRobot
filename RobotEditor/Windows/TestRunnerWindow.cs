@@ -104,6 +104,11 @@ namespace RobotEditor
             treeListView.Columns.Add(nameColumn);
         }
 
+        private void treeListView_Resize(object sender, EventArgs e)
+        {
+            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.98f);
+        }
+
         private void UpdateFontsTreeListView(object sender, FormatCellEventArgs e)
         {
             var node = e.Model as TestNode;

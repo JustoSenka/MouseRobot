@@ -192,6 +192,7 @@ namespace RobotEditor
             this.treeListView.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.treeListView_ModelDropped);
             this.treeListView.SelectionChanged += new System.EventHandler(this.treeListView_SelectionChanged);
             this.treeListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeListView_MouseDoubleClick);
+            this.treeListView.Resize += new System.EventHandler(this.treeListView_Resize);
             // 
             // toolStrip
             // 
