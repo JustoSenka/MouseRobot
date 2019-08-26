@@ -140,9 +140,29 @@ namespace RobotRuntime.Perf
 
         public void Begin(string name, Action action)
         {
-            Start(name);
-            action.Invoke();
-            Stop(name);
+            using (var sample = new ProfilerSample(this, name))
+            {
+                action.Invoke();
+            }
+        }
+
+        private class ProfilerSample : IDisposable
+        {
+            private IProfiler Profiler;
+            private string m_Name;
+
+            public ProfilerSample(IProfiler Profiler, string name)
+            {
+                this.Profiler = Profiler;
+                this.m_Name = name;
+
+                Profiler.Start(m_Name);
+            }
+
+            public void Dispose()
+            {
+                Profiler.Stop(m_Name);
+            }
         }
     }
 }

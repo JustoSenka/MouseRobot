@@ -1,16 +1,15 @@
-﻿using System;
-using System.Windows.Forms;
-using WeifenLuo.WinFormsUI.Docking;
+﻿using BrightIdeasSoftware;
+using RobotEditor.Abstractions;
+using RobotEditor.CustomControls;
 using RobotRuntime;
-using BrightIdeasSoftware;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
-using RobotEditor.Abstractions;
+using System;
 using System.Collections;
-using RobotEditor.Properties;
-using RobotEditor.CustomControls;
 using System.Linq;
+using System.Windows.Forms;
 using Unity.Lifetime;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace RobotEditor.Windows
 {
@@ -20,15 +19,20 @@ namespace RobotEditor.Windows
         private bool m_ControlCreated;
         private object m_CachedSelectedObject;
 
+        private bool m_IsUpdatingUI = false;
+        private bool m_NewLogsAppearedSinceLastUpdate = false;
+
         private ToolStripToggleButton m_ErrorFilter;
         private ToolStripToggleButton m_WarningFilter;
         private ToolStripToggleButton m_InfoFilter;
         private ToolStripToggleButton m_DebugFilter;
 
         private ILogger Logger;
-        public ConsoleWindow(ILogger Logger)
+        private IProfiler Profiler;
+        public ConsoleWindow(ILogger Logger, IProfiler Profiler)
         {
             this.Logger = Logger;
+            this.Profiler = Profiler;
 
             InitializeComponent();
             AddToolstripButtons();
@@ -99,8 +103,17 @@ namespace RobotEditor.Windows
             if (!m_ControlCreated)
                 return;
 
-            this.BeginInvokeIfCreated(new MethodInvoker(delegate
+            // When a lot of logs are printed, we update the list view after every single log
+            if (m_IsUpdatingUI)
             {
+                m_NewLogsAppearedSinceLastUpdate = true;
+                return;
+            }
+
+            m_IsUpdatingUI = true;
+            var res = this.BeginInvokeIfCreated(new MethodInvoker(delegate
+            {
+                Profiler.Start("ConsoleWindow_UpdateHierarchy");
                 var activeLogTypeBits = LogType.None;
                 activeLogTypeBits = (m_InfoFilter.Active) ? activeLogTypeBits | LogType.Log : activeLogTypeBits;
                 activeLogTypeBits = (m_ErrorFilter.Active) ? activeLogTypeBits | LogType.Error : activeLogTypeBits;
@@ -110,11 +123,47 @@ namespace RobotEditor.Windows
                 treeListView.Roots = Logger.LogList.Where(log => activeLogTypeBits.HasFlag(log.LogType));
                 treeListView.Refresh();
 
-                m_ErrorFilter.Text = Logger.LogList.Count(log => log.LogType == LogType.Error) + "";
-                m_WarningFilter.Text = Logger.LogList.Count(log => log.LogType == LogType.Warning) + "";
-                m_InfoFilter.Text = Logger.LogList.Count(log => log.LogType == LogType.Log) + "";
-                m_DebugFilter.Text = Logger.LogList.Count(log => log.LogType == LogType.Debug) + "";
+                var (Error, Warning, Info, Debug) = GetCountForAllLogTypes();
+                m_ErrorFilter.Text = Error + "";
+                m_WarningFilter.Text = Warning + "";
+                m_DebugFilter.Text = Debug + "";
+                m_InfoFilter.Text = Info + "";
+
+                m_IsUpdatingUI = false;
+                Profiler.Stop("ConsoleWindow_UpdateHierarchy");
+
+                // If new logs appeared while updating, repeat the update so we get the latest log
+                if (m_NewLogsAppearedSinceLastUpdate)
+                {
+                    m_NewLogsAppearedSinceLastUpdate = false;
+                    UpdateHierarchy();
+                }
             }));
+
+            // If control was not yet created, method invoker will do nothing so IsUpdatingUI will never be set to false again
+            // We need to set it back manually so next time update is called we do not early out
+            if (res == default)
+                m_IsUpdatingUI = false;
+        }
+
+        /// <summary>
+        /// Optmized way of counting lgos by LogType with only one iteration.
+        /// The same could be achieved using Logger.LogList.Count(log => log.LogType == LogType.Error)
+        /// But that would iterate the same collection 4 times (provided we have 4 different log types)
+        /// </summary>
+        private (int Error, int Warning, int Info, int Debug) GetCountForAllLogTypes()
+        {
+            (int Error, int Warning, int Info, int Debug) count = default;
+
+            foreach (var log in Logger.LogList)
+            {
+                if (log.LogType == LogType.Error) ++count.Error;
+                else if (log.LogType == LogType.Log) ++count.Info;
+                else if (log.LogType == LogType.Debug) ++count.Debug;
+                else if (log.LogType == LogType.Warning) ++count.Warning;
+            }
+
+            return count;
         }
 
         private void OnLogReceived(Log obj)
@@ -133,6 +182,7 @@ namespace RobotEditor.Windows
             treeListView.ChildrenGetter = x => GenerateDescriptionItemsFromLog(((Log)x));
 
             var imageColumn = new OLVColumn("", "Image");
+            imageColumn.AspectGetter = x => ""; // Needed to have for better performance. if not, will use reflection based aspect getter
             imageColumn.ImageGetter += x =>
             {
                 var logType = ((Log)x).LogType;
