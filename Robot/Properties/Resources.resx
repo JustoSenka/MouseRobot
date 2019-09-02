@@ -159,6 +159,18 @@
   &lt;Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" /&gt;
  &lt;/Project&gt;</value>
   </data>
+  <data name="RegistryRoot" xml:space="preserve">
+    <value>Software\Rotesting\MouseRobot</value>
+  </data>
+  <data name="Secret1" xml:space="preserve">
+    <value>V1hwT1lWWXdOVWhYYkVrOQ==</value>
+  </data>
+  <data name="Secret2" xml:space="preserve">
+    <value>l0IkYYuav8175TsCXP+E9Q==</value>
+  </data>
+  <data name="Secret3" xml:space="preserve">
+    <value>l0IkYYuav82XcrRYJhWVBg==</value>
+  </data>
   <data name="SolutionTemplate" xml:space="preserve">
     <value>Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Robot.Abstractions;
+using Robot.Analytics;
 using RobotEditor.Abstractions;
 using RobotEditor.PropertyUtils;
 using RobotRuntime;
@@ -30,12 +31,16 @@ namespace Tests
             RobotEditor.Program.RegisterInterfaces(container);
 
             container.RegisterType<ILogger, FakeLogger>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IReceiveTrackingID, ReceiveTrackingIDFromResourcesForTesting>(new ContainerControlledLifetimeManager());
 
             Logger.Instance = container.Resolve<ILogger>();
 
             ContainerUtils.PassStaticDependencies(container, typeof(RobotRuntime.Program).Assembly);
             ContainerUtils.PassStaticDependencies(container, typeof(Robot.Program).Assembly);
             ContainerUtils.PassStaticDependencies(container, typeof(Program).Assembly);
+
+            var reg = container.Resolve<IRegistryEditor>();
+            reg.Put(string.Join("", "Ca", "che", "dK", "ey"), new byte[] { 10, 20, 30, 40, 50, 60, 70, 80 });
 
             return container;
         }

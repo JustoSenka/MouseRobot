@@ -76,6 +76,42 @@ namespace Robot.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Software\Rotesting\MouseRobot.
+        /// </summary>
+        internal static string RegistryRoot {
+            get {
+                return ResourceManager.GetString("RegistryRoot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to V1hwT1lWWXdOVWhYYkVrOQ==.
+        /// </summary>
+        internal static string Secret1 {
+            get {
+                return ResourceManager.GetString("Secret1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to l0IkYYuav8175TsCXP+E9Q==.
+        /// </summary>
+        internal static string Secret2 {
+            get {
+                return ResourceManager.GetString("Secret2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to l0IkYYuav82XcrRYJhWVBg==.
+        /// </summary>
+        internal static string Secret3 {
+            get {
+                return ResourceManager.GetString("Secret3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Microsoft Visual Studio Solution File, Format Version 12.00
         ///# Visual Studio 15
         ///VisualStudioVersion = 15.0.28010.2026

@@ -40,6 +40,9 @@ namespace RobotEditor
             ContainerUtils.PassStaticDependencies(container, typeof(Robot.Program).Assembly);
             ContainerUtils.PassStaticDependencies(container, typeof(Program).Assembly);
 
+            var reg=container.Resolve<IRegistryEditor>();
+            reg.Put(string.Join("", "Ca", "che", "dK", "ey"), new byte[] { 10, 20, 30, 40, 50, 60, 70, 80 });
+
             container.Resolve<ISolutionManager>(); // not referenced by anything
 
             var projectIsCreated = SetupProjectPath(container, args);
