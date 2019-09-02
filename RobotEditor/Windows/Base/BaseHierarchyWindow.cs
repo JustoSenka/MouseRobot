@@ -359,7 +359,7 @@ namespace RobotEditor.Windows.Base
         /// Returns true if drop should not be accepted.
         /// Returns false if continue with drop
         /// </summary>
-        protected virtual bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
+        public virtual bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
         {
             return targetNode == null || sourceNode == null || // Any of nodes are null
                 sourceNode == targetNode || // Target and source is the same
@@ -399,123 +399,123 @@ namespace RobotEditor.Windows.Base
             e.Handled = true;
         }
 
-        protected virtual void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
+        protected void treeListView_ModelDropped(object sender, ModelDropEventArgs e)
         {
             Profiler.Start("BaseHierarchyWindow_ModelDropped");
 
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNodes = e.SourceModels.SafeCast<HierarchyNode>();
 
+            SuppressRefreshAndSelection = true;
+            HandleModelsDrop(e, targetNode, sourceNodes);
+            SuppressRefreshAndSelection = false;
+
+            HandleModelsSelection(e, targetNode, sourceNodes);
+
+            Profiler.Stop("BaseHierarchyWindow_ModelDropped");
+        }
+
+        public virtual void HandleModelsDrop(ModelDropEventArgs e, HierarchyNode targetNode, IEnumerable<HierarchyNode> sourceNodes)
+        {
             var lastNode = sourceNodes.Last();
 
             // All nodes will be in the same recording, so checking against any should work
             // Also, we might be dragging a recording as well
             var sourceRecording = (lastNode.Command != null) ? lastNode.DropDetails.HierarchyManager.GetRecordingFromCommand(lastNode.Command) : lastNode.Recording;
 
-            SuppressRefreshAndSelection = true;
             foreach (var sourceNode in sourceNodes)
             {
+                if (targetNode == sourceNode)
+                    continue;
+
                 // Drag source and target are in same window
                 if (sourceNode.DropDetails.Owner == this)
-                    HandleModelDropFromWithinWindow(e, targetNode, sourceRecording, sourceNode);
+                {
+                    if (sourceNode.Command != null)
+                        HandleCommandModelDropFromWithinWindow(e, targetNode, sourceRecording, sourceNode);
+
+                    else
+                        HandleRecordingModelDropFromWithinWindow(e, targetNode, sourceNode);
+
+                }
                 else // Drag source come from different window
-                    HandleModelDropFromExternalWindow(e, targetNode, lastNode, sourceRecording, sourceNode);
+                {
+                    if (sourceNode.Command != null)
+                    {
+                        // And do not refresh the list on other window here. It will be a massive slowdown with many commands
+                        // Refresh only on last node
+                        sourceNode.DropDetails.SuppressRefreshAndSelection = sourceNode != lastNode;
+                        HandleCommandModelDropFromExternalWindow(e, targetNode, sourceRecording, sourceNode);
+                    }
+                    else
+                        HandleRecordingModelDropFromExternalWindow(e, targetNode, sourceNode);
+                }
             }
-            SuppressRefreshAndSelection = false;
+        }
+
+        public virtual void HandleModelsSelection(ModelDropEventArgs e, HierarchyNode targetNode, IEnumerable<HierarchyNode> sourceNodes)
+        {
+            // caching first node
+            var firstNode = sourceNodes.First();
 
             // Selection will be moved to newly created nodes
             // Those nodes should appear below/above target node
             // If target node is script/nested command and dropped on Item, selection should go to last nodes
-            var parentNode = e.DropTargetLocation == DropTargetLocation.Item ? targetNode : targetNode.Parent;
+            var targetParentNode = e.DropTargetLocation == DropTargetLocation.Item ? targetNode : targetNode.Parent;
 
             // This scenario is very unlikely, but it is possible to drop command above recording in tree
             // It should not do anything or select anything, it's a UI bug, so lets just not crash here
-            // Also skip selection logic if recording was dragged
-            if (parentNode != null)
+            // This logic will be called on all commands and recordings which DO have a parent (ex. TestFixture)
+            if (targetParentNode != null)
             {
-                var targetNodeIndex = parentNode.Children.IndexOf(targetNode);
+                var targetNodeIndex = targetParentNode.Children.IndexOf(targetNode);
                 var objCount = e.SourceModels.Count;
 
                 IEnumerable<HierarchyNode> nodesToSelect = null;
                 if (e.DropTargetLocation == DropTargetLocation.AboveItem)
-                    nodesToSelect = parentNode.Children.Skip(targetNodeIndex - objCount).Take(objCount);
+                    nodesToSelect = targetParentNode.Children.Skip(targetNodeIndex - objCount).Take(objCount);
 
                 else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-                    nodesToSelect = parentNode.Children.Skip(targetNodeIndex + 1).Take(objCount);
+                    nodesToSelect = targetParentNode.Children.Skip(targetNodeIndex + 1).Take(objCount);
 
                 else if (e.DropTargetLocation == DropTargetLocation.Item)
-                    nodesToSelect = parentNode.Children.Skip(parentNode.Children.Count - objCount).Take(objCount);
+                    nodesToSelect = targetParentNode.Children.Skip(targetParentNode.Children.Count - objCount).Take(objCount);
 
-                m_TreeListView.SelectedObjects = null;
-                m_TreeListView.Focus();
-
-                RefreshTreeListViewAsync(() =>
-                {
-                    m_TreeListView.Expand(parentNode);
-                    if (nodesToSelect != null)
-                        m_TreeListView.SelectObjects(nodesToSelect.ToList());
-                });
+                SelectObjectsFocusAndExpandParent(targetParentNode, nodesToSelect.ToArray());
             }
-            // If recording was dragged from withing same window, select it and update tree
-            else if (sourceNodes.First().Recording != null && sourceNodes.First().DropDetails.Owner == this)
+            // This logic will be called on recordings which do not have a parent (ex. Hierarchy)
+            // only works with SINGLE ITEM drop, but for recordings, we do not support multi drop
+            else if (firstNode.Recording != null)
             {
-                RefreshTreeListViewAsync(() =>
-                {
-                    m_TreeListView.SelectObject(sourceNodes.First());
-                });
-            }
+                var position = HierarchyManager.LoadedRecordings.IndexOf(targetNode.Recording) - 1;
+                if (e.DropTargetLocation == DropTargetLocation.BelowItem)
+                    position += 2;
 
-            Profiler.Stop("BaseHierarchyWindow_ModelDropped");
-        }
+                var rec = HierarchyManager.LoadedRecordings[position];
+                var node = m_Nodes.FindRecursively(rec);
 
-        private void HandleModelDropFromExternalWindow(ModelDropEventArgs e, HierarchyNode targetNode, HierarchyNode lastNode, Recording sourceRecording, HierarchyNode sourceNode)
-        {
-            if (sourceNode.Command != null) // Moving command
-            {
-                var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
-
-                // And do not refresh the list on other window here. It will be a massive slowdown with many commands
-                // Refresh only on last node
-                sourceNode.DropDetails.SuppressRefreshAndSelection = sourceNode != lastNode;
-
-                // Since we're reusing the same command node instance, first remove from old recording
-                sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
-
-                // Moving command between or onto other commands
-                if (targetNode.Command != null)
-                    HierarchyManager.InsertCommandNode(e.DropTargetLocation, node, targetNode.Command);
-
-                // Moving command on top of recording
-                if (targetNode.Recording != null)
-                    targetNode.Recording.AddCommandNode(node);
-            }
-            else // Moving recording
-            {
-                var rec = (Recording)sourceNode.Recording.Clone();
-                ((IHaveGuid)rec).RegenerateGuid();
-
-                // this will never be triggered since i'm making a clone of it
-                if (HierarchyManager.LoadedRecordings.Contains(rec))
-                {
-                    Logger.Log(LogType.Error, "Recording already exists on target window: " + rec.Name);
-                    return;
-                }
-
-                HierarchyManager.AddRecording(rec);
+                SelectObjectsAndFocus(node);
             }
         }
 
-        private void HandleModelDropFromWithinWindow(ModelDropEventArgs e, HierarchyNode targetNode, Recording sourceRecording, HierarchyNode sourceNode)
+        private void SelectObjectsAndFocus(params HierarchyNode[] nodesToSelect) => SelectObjectsFocusAndExpandParent(null, nodesToSelect);
+        private void SelectObjectsFocusAndExpandParent(HierarchyNode targetParentNode, params HierarchyNode[] nodesToSelect)
         {
-            // Moving recording between other recordings
-            if (targetNode.Recording != null && sourceNode.Recording != null)
-                HierarchyManager.MoveRecording(e.DropTargetLocation,
-                    sourceNode.Recording.GetIndex(HierarchyManager),
-                    targetNode.Recording.GetIndex(HierarchyManager));
+            m_TreeListView.SelectedObjects = null;
+            m_TreeListView.Focus();
 
-            if (targetNode == sourceNode)
-               return;
+            RefreshTreeListViewAsync(() =>
+            {
+                if (targetParentNode != null)
+                    m_TreeListView.Expand(targetParentNode);
 
+                if (nodesToSelect != null)
+                    m_TreeListView.SelectObjects(nodesToSelect.ToList());
+            });
+        }
+
+        public virtual void HandleCommandModelDropFromWithinWindow(ModelDropEventArgs e, HierarchyNode targetNode, Recording sourceRecording, HierarchyNode sourceNode)
+        {
             // Moving command between or onto other commands
             if (targetNode.Command != null && sourceNode.Command != null)
                 HierarchyManager.MoveCommand(e.DropTargetLocation, sourceNode.Command, targetNode.Command);
@@ -529,10 +529,46 @@ namespace RobotEditor.Windows.Base
             }
         }
 
+        public virtual void HandleRecordingModelDropFromWithinWindow(ModelDropEventArgs e, HierarchyNode targetNode, HierarchyNode sourceNode)
+        {
+            if (targetNode.Recording != null && sourceNode.Recording != null)
+                HierarchyManager.MoveRecording(e.DropTargetLocation,
+                    sourceNode.Recording.GetIndex(HierarchyManager),
+                    targetNode.Recording.GetIndex(HierarchyManager));
+        }
+
+        public virtual void HandleCommandModelDropFromExternalWindow(ModelDropEventArgs e, HierarchyNode targetNode, Recording sourceRecording, HierarchyNode sourceNode)
+        {
+            var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+
+            // Since we're reusing the same command node instance, first remove from old recording
+            sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+
+            // Moving command between or onto other commands
+            if (targetNode.Command != null)
+                HierarchyManager.InsertCommandNode(e.DropTargetLocation, node, targetNode.Command);
+
+            // Moving command on top of recording
+            if (targetNode.Recording != null)
+                targetNode.Recording.AddCommandNode(node);
+        }
+
+        public virtual void HandleRecordingModelDropFromExternalWindow(ModelDropEventArgs e, HierarchyNode targetNode, HierarchyNode sourceNode)
+        {
+            var rec = (Recording)sourceNode.Recording.Clone();
+            ((IHaveGuid)rec).RegenerateGuid();
+
+            var newRec = HierarchyManager.AddRecording(rec);
+
+            HierarchyManager.MoveRecording(e.DropTargetLocation,
+                newRec.GetIndex(HierarchyManager),
+                targetNode.Recording.GetIndex(HierarchyManager));
+        }
+
         /// <summary>
         /// This callback is used when node is dropped in other window which knows nothing about this one
         /// </summary>
-        protected virtual void DragAndDropAcceptedCallback(HierarchyNode node)
+        public virtual void DragAndDropAcceptedCallback(HierarchyNode node)
         {
             // Do not refresh UI after this callback
             // This increases performance if many commands have been moved, we only need to refresh once

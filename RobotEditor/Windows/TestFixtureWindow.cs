@@ -279,15 +279,25 @@ namespace RobotEditor
         /// Return true if drop should not be accepted.
         /// Return false if continue with drop
         /// </summary>
-        protected override bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
+        public override bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
         {
             var cancel = base.ShouldCancelDrop(targetNode, sourceNode, e);
             return cancel ||
                 targetNode.Recording == null && sourceNode.Command == null || // Cannot drag recordings onto commands
                 m_HooksNode.Children.Contains(sourceNode) || // Hooks recordings are special and should not be moved at all
                 m_HooksNode.Children.Contains(targetNode) && sourceNode.Recording != null || // Cannot drag any recording onto or inbetween hooks recordings
-                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item;// || // Cannot drag recordings onto recordings
-                //sourceNode.Recording != null && sourceNode.DropDetails.Owner != this; // Do not allow recordings from other windows
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item; // Cannot drag recordings onto recordings
+        }
+
+        public override void HandleRecordingModelDropFromExternalWindow(ModelDropEventArgs e, HierarchyNode targetNode, HierarchyNode sourceNode)
+        {
+            if (m_TestFixture.LoadedRecordings.Any(r => r.Name.Equals(sourceNode.Recording.Name)))
+            {
+                Logger.Log(LogType.Error, "Test already exists with such name, please rename Recording before dragging it to TestFixtureWindow");
+                return;
+            }
+
+            base.HandleRecordingModelDropFromExternalWindow(e, targetNode, sourceNode);
         }
 
         #endregion

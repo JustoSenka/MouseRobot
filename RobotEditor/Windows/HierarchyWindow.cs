@@ -179,13 +179,12 @@ namespace RobotEditor
 
         #region Drag & Drop
 
-        protected override bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
+        public override bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
         {
             var cancel = base.ShouldCancelDrop(targetNode, sourceNode, e);
             return cancel ||
                 targetNode.Recording == null && sourceNode.Command == null || // Cannot drag recordings onto commands
-                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item || // Cannot drag recordings onto recordings
-                sourceNode.Recording != null && sourceNode.DropDetails.Owner != this; // Do not let to drag recordings from other windows
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item;// Cannot drag recordings onto recordings
         }
 
         #endregion
