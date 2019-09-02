@@ -7,6 +7,7 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Execution;
 using RobotRuntime.Recordings;
+using RobotRuntime.Reflection;
 using System;
 using System.Linq;
 using System.Reflection;

@@ -4,6 +4,7 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Logging;
 using RobotRuntime.Recordings;
+using RobotRuntime.Reflection;
 using RobotRuntime.Tests;
 using RobotRuntime.Utils;
 using System;

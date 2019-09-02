@@ -13,31 +13,45 @@ using System.Windows.Forms;
 
 namespace RobotRuntime
 {
+    namespace Reflection
+    {
+        public static class ExtensionMethods
+        {
+            /// <summary>
+            /// Returns true if current method was called from that class or self.
+            /// 
+            /// Usage:
+            ///    typeof(MyClass).IsTheCaller()
+            ///    myClassInstance.IsTheCaller()
+            ///    
+            /// Cannot be used on static types.
+            /// </summary>
+            public static bool IsTheCaller<ExpectedCallerClass>(this ExpectedCallerClass expectedCaller) where ExpectedCallerClass : class
+            {
+                var checkerType = new StackFrame(1).GetMethod().DeclaringType;
+                var actualCallerType = new StackFrame(2).GetMethod().DeclaringType;
+
+                if (checkerType == actualCallerType)
+                    return true;
+
+                if (expectedCaller is Type)
+                    return (expectedCaller as Type) == actualCallerType;
+
+                return actualCallerType == typeof(ExpectedCallerClass);
+            }
+
+            public static int IndexOf<T, K>(this T collection, K element) where T : IReadOnlyCollection<K> where K : class
+            {
+                var index = collection.TakeWhile((s) => s != element).Count();
+                if (collection.ElementAt(index) != element)
+                    throw new Exception("Index not found for: " + element.ToString());
+                return index;
+            }
+        }
+    }
+
     public static class ExtensionMethods
     {
-        /// <summary>
-        /// Returns true if current method was called from that class or self.
-        /// 
-        /// Usage:
-        ///    typeof(MyClass).IsTheCaller()
-        ///    myClassInstance.IsTheCaller()
-        ///    
-        /// Cannot be used on static types.
-        /// </summary>
-        public static bool IsTheCaller<ExpectedCallerClass>(this ExpectedCallerClass expectedCaller) where ExpectedCallerClass : class
-        {
-            var checkerType = new StackFrame(1).GetMethod().DeclaringType;
-            var actualCallerType = new StackFrame(2).GetMethod().DeclaringType;
-
-            if (checkerType == actualCallerType)
-                return true;
-
-            if (expectedCaller is Type)
-                return (expectedCaller as Type) == actualCallerType;
-
-            return actualCallerType == typeof(ExpectedCallerClass);
-        }
-
         public static void MoveAfter<T>(this IList<T> list, int indexToMove, int indexOfTarget)
         {
             var elem = list[indexToMove];
@@ -51,14 +65,6 @@ namespace RobotRuntime
         public static void MoveBefore<T>(this IList<T> list, int indexToMove, int indexOfTarget)
         {
             list.MoveAfter(indexToMove, indexOfTarget - 1);
-        }
-
-        public static int IndexOf<T, K>(this T collection, K element) where T : IReadOnlyCollection<K> where K : class
-        {
-            var index = collection.TakeWhile((s) => s != element).Count();
-            if (collection.ElementAt(index) != element)
-                throw new Exception("Index not found for: " + element.ToString());
-            return index;
         }
 
         public static IEnumerable<T> SafeCast<T>(this IEnumerable list) where T : class
@@ -112,12 +118,6 @@ namespace RobotRuntime
             return -1;
         }
 
-        public static void ForEach<T, K>(this T source, Action<K> action) where T : IEnumerable where K : class
-        {
-            foreach (var item in source)
-                action(item as K);
-        }
-
         public static int Count(this IEnumerable enumarable)
         {
             int result = 0;
@@ -135,7 +135,7 @@ namespace RobotRuntime
             source = source < max ? source : max;
             return source;
         }
-   
+
         public static TreeNode FindChildRegex(this TreeView treeView, string regex)
         {
             return treeView.Nodes.Cast<TreeNode>().FirstOrDefault(r => Regex.IsMatch(r.Text, regex));

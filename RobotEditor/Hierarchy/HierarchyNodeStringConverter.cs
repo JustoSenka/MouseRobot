@@ -6,6 +6,7 @@ using RobotEditor.Abstractions;
 using RobotRuntime.Utils;
 using RobotRuntime;
 using Unity.Lifetime;
+using RobotRuntime.Reflection;
 
 namespace RobotEditor.Hierarchy
 {

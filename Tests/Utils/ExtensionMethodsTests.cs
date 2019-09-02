@@ -3,6 +3,7 @@ using Robot;
 using NUnit.Framework;
 using RobotRuntime;
 using System.Runtime.CompilerServices;
+using RobotRuntime.Reflection;
 
 namespace Tests.Utils
 {

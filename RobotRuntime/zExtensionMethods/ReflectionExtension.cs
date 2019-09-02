@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace RobotRuntime
+namespace RobotRuntime.Reflection
 {
     public static class ReflectionExtension
     {
