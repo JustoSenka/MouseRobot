@@ -268,6 +268,9 @@ namespace Robot.Recordings
         /// </summary>
         public Recording GetRecordingFromCommand(Command command)
         {
+            if (command == null)
+                return null;
+
             return LoadedRecordings.FirstOrDefault(r => r.HasRegisteredGuid(command.Guid));
             // return LoadedRecordings.FirstOrDefault((s) => s.Commands.GetAllNodes(false).Select(n => n.value).Contains(command));
         }

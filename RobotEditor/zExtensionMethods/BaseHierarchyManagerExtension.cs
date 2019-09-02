@@ -38,12 +38,20 @@ namespace RobotEditor
 
             else if (loc == DropTargetLocation.Item)
             {
-                if (destination.CanBeNested)
+                if (source == destination)
                 {
-                    var node = sourceRecording.Commands.GetNodeFromValue(source);
-                    sourceRecording.RemoveCommand(source);
-                    targetRecording.AddCommandNode(node, destination);
+                    Logger.Log(LogType.Warning, "Cannot move command inside itself: " + source.Name);
+                    return;
                 }
+                if (!destination.CanBeNested)
+                {
+                    Logger.Log(LogType.Warning, "Destination command does not allow nesting: " + destination.Name);
+                    return;
+                }
+
+                var node = sourceRecording.Commands.GetNodeFromValue(source);
+                sourceRecording.RemoveCommand(source);
+                targetRecording.AddCommandNode(node, destination);
             }
 
             else

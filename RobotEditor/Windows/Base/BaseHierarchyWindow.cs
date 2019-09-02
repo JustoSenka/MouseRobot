@@ -362,6 +362,7 @@ namespace RobotEditor.Windows.Base
         protected virtual bool ShouldCancelDrop(HierarchyNode targetNode, HierarchyNode sourceNode, ModelDropEventArgs e)
         {
             return targetNode == null || sourceNode == null || // Any of nodes are null
+                sourceNode == targetNode || // Target and source is the same
                 sourceNode.Recording == null && sourceNode.Command == null || // Source node is empty string value
                 targetNode.Recording == null && targetNode.Command == null;   // Target node is empty string value
         }
@@ -374,7 +375,7 @@ namespace RobotEditor.Windows.Base
             var shouldCancel = IsMultiSelectionNotValid(sourceNodes) // Do not allow any null or invalid values to be dragged on this window
                 || !IsMultiSelectionInOneBlock(sourceNodes) // Only allow one block to be dragged
                 || sourceNodes.Any(n => ShouldCancelDrop(targetNode, n, e) // User defined specific window condition
-                || n.GetAllNodes(false).Contains(n)); // Cannot drop node inside itself
+                || n.GetAllNodes(false).Contains(targetNode)); // Cannot drop node inside itself
 
             if (shouldCancel)
             {
@@ -406,7 +407,8 @@ namespace RobotEditor.Windows.Base
             var lastNode = sourceNodes.Last();
 
             // All nodes will be in the same recording, so checking against any should work
-            var sourceRecording = lastNode.DropDetails.HierarchyManager.GetRecordingFromCommand(lastNode.Command);
+            // Also, we might be dragging a recording as well
+            var sourceRecording = (lastNode.Command != null) ? lastNode.DropDetails.HierarchyManager.GetRecordingFromCommand(lastNode.Command) : lastNode.Recording;
 
             SuppressRefreshAndSelection = true;
             foreach (var sourceNode in sourceNodes)
@@ -419,6 +421,9 @@ namespace RobotEditor.Windows.Base
                         HierarchyManager.MoveRecording(e.DropTargetLocation,
                             sourceNode.Recording.GetIndex(HierarchyManager),
                             targetNode.Recording.GetIndex(HierarchyManager));
+
+                    if (targetNode == sourceNode)
+                        continue;
 
                     // Moving command between or onto other commands
                     if (targetNode.Command != null && sourceNode.Command != null)
@@ -556,13 +561,24 @@ namespace RobotEditor.Windows.Base
         /// </summary>
         public static bool IsMultiSelectionInOneBlock(IEnumerable<HierarchyNode> selectedObjects)
         {
+            if (selectedObjects.Count() == 1)
+                return true;
+
             var firstCommandLevel = selectedObjects.First().Level;
-            var areOnSameLevel = selectedObjects.Any(n => n.Level == firstCommandLevel);
+            var areOnSameLevel = selectedObjects.All(n => n.Level == firstCommandLevel);
 
             if (!areOnSameLevel)
                 return false;
 
             var parent = selectedObjects.First().Parent;
+
+            if (parent == null) 
+            {
+                // Multi selection consists of recordings, not allowing for now
+                return false;
+            }
+
+            // Multi selection consists of commands
             var indices = selectedObjects.Select(n => parent.Children.IndexOf(n));
             if (!indices.AreNumbersConsecutive())
                 return false;

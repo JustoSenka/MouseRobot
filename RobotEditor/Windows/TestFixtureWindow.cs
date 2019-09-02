@@ -286,8 +286,8 @@ namespace RobotEditor
                 targetNode.Recording == null && sourceNode.Command == null || // Cannot drag recordings onto commands
                 m_HooksNode.Children.Contains(sourceNode) || // Hooks recordings are special and should not be moved at all
                 m_HooksNode.Children.Contains(targetNode) && sourceNode.Recording != null || // Cannot drag any recording onto or inbetween hooks recordings
-                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item || // Cannot drag recordings onto recordings
-                sourceNode.Recording != null && sourceNode.DropDetails.Owner != this; // Do not allow recordings from other windows
+                targetNode.Recording != null && sourceNode.Recording != null && e.DropTargetLocation == DropTargetLocation.Item;// || // Cannot drag recordings onto recordings
+                //sourceNode.Recording != null && sourceNode.DropDetails.Owner != this; // Do not allow recordings from other windows
         }
 
         #endregion
