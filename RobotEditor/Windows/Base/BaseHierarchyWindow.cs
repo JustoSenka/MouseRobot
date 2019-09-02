@@ -372,6 +372,8 @@ namespace RobotEditor.Windows.Base
             var targetNode = e.TargetModel as HierarchyNode;
             var sourceNodes = e.SourceModels.SafeCast<HierarchyNode>();
 
+            e.DropSink.CanDropBetween = true;
+
             var shouldCancel = IsMultiSelectionNotValid(sourceNodes) // Do not allow any null or invalid values to be dragged on this window
                 || !IsMultiSelectionInOneBlock(sourceNodes) // Only allow one block to be dragged
                 || sourceNodes.Any(n => ShouldCancelDrop(targetNode, n, e) // User defined specific window condition
@@ -415,50 +417,9 @@ namespace RobotEditor.Windows.Base
             {
                 // Drag source and target are in same window
                 if (sourceNode.DropDetails.Owner == this)
-                {
-                    // Moving recording between other recordings
-                    if (targetNode.Recording != null && sourceNode.Recording != null)
-                        HierarchyManager.MoveRecording(e.DropTargetLocation,
-                            sourceNode.Recording.GetIndex(HierarchyManager),
-                            targetNode.Recording.GetIndex(HierarchyManager));
-
-                    if (targetNode == sourceNode)
-                        continue;
-
-                    // Moving command between or onto other commands
-                    if (targetNode.Command != null && sourceNode.Command != null)
-                        HierarchyManager.MoveCommand(e.DropTargetLocation, sourceNode.Command, targetNode.Command);
-
-                    // Moving command on top of recording
-                    if (targetNode.Recording != null && sourceNode.Command != null)
-                    {
-                        var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
-                        sourceRecording.RemoveCommand(sourceNode.Command);
-                        targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
-                    }
-                }
+                    HandleModelDropFromWithinWindow(e, targetNode, sourceRecording, sourceNode);
                 else // Drag source come from different window
-                {
-                    if (sourceNode.Recording != null) // Do not allow recordings
-                        return;
-
-                    var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
-
-                    // And do not refresh the list on other window here. It will be a massive slowdown with many commands
-                    // Refresh only on last node
-                    sourceNode.DropDetails.SuppressRefreshAndSelection = sourceNode != lastNode;
-
-                    // Since we're reusing the same command node instance, first remove from old recording
-                    sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
-
-                    // Moving command between or onto other commands
-                    if (targetNode.Command != null)
-                        HierarchyManager.InsertCommandNode(e.DropTargetLocation, node, targetNode.Command);
-
-                    // Moving command on top of recording
-                    if (targetNode.Recording != null)
-                        targetNode.Recording.AddCommandNode(node);
-                }
+                    HandleModelDropFromExternalWindow(e, targetNode, lastNode, sourceRecording, sourceNode);
             }
             SuppressRefreshAndSelection = false;
 
@@ -469,6 +430,7 @@ namespace RobotEditor.Windows.Base
 
             // This scenario is very unlikely, but it is possible to drop command above recording in tree
             // It should not do anything or select anything, it's a UI bug, so lets just not crash here
+            // Also skip selection logic if recording was dragged
             if (parentNode != null)
             {
                 var targetNodeIndex = parentNode.Children.IndexOf(targetNode);
@@ -494,8 +456,77 @@ namespace RobotEditor.Windows.Base
                         m_TreeListView.SelectObjects(nodesToSelect.ToList());
                 });
             }
+            // If recording was dragged from withing same window, select it and update tree
+            else if (sourceNodes.First().Recording != null && sourceNodes.First().DropDetails.Owner == this)
+            {
+                RefreshTreeListViewAsync(() =>
+                {
+                    m_TreeListView.SelectObject(sourceNodes.First());
+                });
+            }
 
             Profiler.Stop("BaseHierarchyWindow_ModelDropped");
+        }
+
+        private void HandleModelDropFromExternalWindow(ModelDropEventArgs e, HierarchyNode targetNode, HierarchyNode lastNode, Recording sourceRecording, HierarchyNode sourceNode)
+        {
+            if (sourceNode.Command != null) // Moving command
+            {
+                var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+
+                // And do not refresh the list on other window here. It will be a massive slowdown with many commands
+                // Refresh only on last node
+                sourceNode.DropDetails.SuppressRefreshAndSelection = sourceNode != lastNode;
+
+                // Since we're reusing the same command node instance, first remove from old recording
+                sourceNode.DropDetails.DragAndDropAccepted?.Invoke(sourceNode);
+
+                // Moving command between or onto other commands
+                if (targetNode.Command != null)
+                    HierarchyManager.InsertCommandNode(e.DropTargetLocation, node, targetNode.Command);
+
+                // Moving command on top of recording
+                if (targetNode.Recording != null)
+                    targetNode.Recording.AddCommandNode(node);
+            }
+            else // Moving recording
+            {
+                var rec = (Recording)sourceNode.Recording.Clone();
+                ((IHaveGuid)rec).RegenerateGuid();
+
+                // this will never be triggered since i'm making a clone of it
+                if (HierarchyManager.LoadedRecordings.Contains(rec))
+                {
+                    Logger.Log(LogType.Error, "Recording already exists on target window: " + rec.Name);
+                    return;
+                }
+
+                HierarchyManager.AddRecording(rec);
+            }
+        }
+
+        private void HandleModelDropFromWithinWindow(ModelDropEventArgs e, HierarchyNode targetNode, Recording sourceRecording, HierarchyNode sourceNode)
+        {
+            // Moving recording between other recordings
+            if (targetNode.Recording != null && sourceNode.Recording != null)
+                HierarchyManager.MoveRecording(e.DropTargetLocation,
+                    sourceNode.Recording.GetIndex(HierarchyManager),
+                    targetNode.Recording.GetIndex(HierarchyManager));
+
+            if (targetNode == sourceNode)
+               return;
+
+            // Moving command between or onto other commands
+            if (targetNode.Command != null && sourceNode.Command != null)
+                HierarchyManager.MoveCommand(e.DropTargetLocation, sourceNode.Command, targetNode.Command);
+
+            // Moving command on top of recording
+            if (targetNode.Recording != null && sourceNode.Command != null)
+            {
+                var node = sourceRecording.Commands.GetNodeFromValue(sourceNode.Command);
+                sourceRecording.RemoveCommand(sourceNode.Command);
+                targetNode.Recording.AddCommandNode((TreeNode<Command>)node);
+            }
         }
 
         /// <summary>
@@ -507,10 +538,14 @@ namespace RobotEditor.Windows.Base
             // This increases performance if many commands have been moved, we only need to refresh once
             SuppressRefreshAndSelection = node.DropDetails.SuppressRefreshAndSelection;
 
-            var sourceRecording = HierarchyManager.GetRecordingFromCommand(node.Command);
-            sourceRecording.RemoveCommand(node.Command);
-            m_TreeListView.SelectedObjects = null;
+            // Only removoe node if it was a command
+            if (node.Command != null)
+            {
+                var sourceRecording = HierarchyManager.GetRecordingFromCommand(node.Command);
+                sourceRecording.RemoveCommand(node.Command);
+            }
 
+            m_TreeListView.SelectedObjects = null;
             SuppressRefreshAndSelection = false;
         }
 
@@ -572,7 +607,7 @@ namespace RobotEditor.Windows.Base
 
             var parent = selectedObjects.First().Parent;
 
-            if (parent == null) 
+            if (parent == null)
             {
                 // Multi selection consists of recordings, not allowing for now
                 return false;
