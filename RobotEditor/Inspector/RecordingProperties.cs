@@ -1,6 +1,7 @@
 ﻿using Robot;
 using Robot.Abstractions;
 using Robot.Recordings;
+using Robot.Tests;
 using RobotEditor.Settings;
 using RobotEditor.Utils;
 using RobotRuntime.Recordings;
@@ -35,18 +36,18 @@ namespace RobotEditor.Inspector
         {
             dt.Properties.Clear();
 
-            var isSpecialRecording = IsSpecialRecording(Recording, BaseHierarchyManager);
+            var canBeRenamed = CanBeRenamed(Recording, BaseHierarchyManager);
 
-            if (!isSpecialRecording)
+            if (canBeRenamed)
                 AddProperty(dt, "Name");
             else
                 AddProperty(dt, "ReadonlyName");
         }
 
-        private bool IsSpecialRecording(Recording Recording, IBaseHierarchyManager BaseHierarchyManager)
+        private bool CanBeRenamed(Recording Recording, IBaseHierarchyManager BaseHierarchyManager)
         {
-            return LightTestFixture.IsSpecialRecording(Recording) ||
-                BaseHierarchyManager is HierarchyManager;
+            return BaseHierarchyManager is TestFixture && !LightTestFixture.IsSpecialRecording(Recording) || // Non special recordings in TestFixtureWindow
+                BaseHierarchyManager is HierarchyManager && Recording.Path.IsEmpty(); // Non saved recordings in HierarchyWindow
         }
 
         [SortedCategory("Test Properties", CommandPropertiesCategoryPosition, NumOfCategories)]

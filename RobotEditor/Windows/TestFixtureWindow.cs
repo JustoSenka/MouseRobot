@@ -131,11 +131,11 @@ namespace RobotEditor
 
             m_HooksNode = new HierarchyNode("Special Recordings", DropDetails);
             foreach (var s in m_TestFixture.Hooks)
-                m_HooksNode.AddHierarchyNode(new HierarchyNode(s, DropDetails));
+                m_HooksNode.AddHierarchyNode(new HierarchyNode(s, DropDetails, 1));
 
             m_TestsNode = new HierarchyNode("Tests", DropDetails);
             foreach (var s in m_TestFixture.Tests)
-                m_TestsNode.AddHierarchyNode(new HierarchyNode(s, DropDetails));
+                m_TestsNode.AddHierarchyNode(new HierarchyNode(s, DropDetails, 1));
             m_Nodes.Add(m_HooksNode);
             m_Nodes.Add(m_TestsNode);
 
@@ -151,7 +151,7 @@ namespace RobotEditor
 
         protected override void OnRecordingLoaded(Recording recording)
         {
-            var node = new HierarchyNode(recording, DropDetails);
+            var node = new HierarchyNode(recording, DropDetails, 1);
 
             var nodeToAddRec = LightTestFixture.IsSpecialRecording(recording) ? m_HooksNode : m_TestsNode;
             nodeToAddRec.AddHierarchyNode(node);
@@ -168,7 +168,7 @@ namespace RobotEditor
         protected override void OnRecordingModified(Recording recording)
         {
             // TODO: Is there any reson this one is overriden and cannot be the same as in base class?
-            var node = new HierarchyNode(recording, DropDetails);
+            var node = new HierarchyNode(recording, DropDetails, 1);
             m_Nodes.ReplaceNodeWithNewOne(node);
 
             RefreshTreeListViewAsync();
@@ -235,6 +235,18 @@ namespace RobotEditor
             base.duplicateToolStripMenuItem1_Click(sender, e);
         }
 
+        public override void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var areThereNullsOrSpecialScriptsSelected = treeListView.SelectedObjects
+                .SafeCast<HierarchyNode>().Any(n => n == null || n.Recording != null
+                && LightTestFixture.IsSpecialRecording(n.Recording));
+
+            // Do not allow to delete special recordings
+            if (areThereNullsOrSpecialScriptsSelected)
+                return;
+
+            base.deleteToolStripMenuItem_Click(sender, e);
+        }
 
         #endregion
 

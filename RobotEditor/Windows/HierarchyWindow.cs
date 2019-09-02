@@ -132,6 +132,11 @@ namespace RobotEditor
             RefreshTreeListViewAsync();
         }
 
+        private void treeListView_DoubleClick(object sender, EventArgs e)
+        {
+            setActiveToolStripMenuItem_Click(sender, e);
+        }
+
         private void showInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selectedNode = treeListView.SelectedObject as HierarchyNode;

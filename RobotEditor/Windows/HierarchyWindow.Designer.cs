@@ -150,6 +150,7 @@
             this.treeListView.UseCompatibleStateImageBehavior = false;
             this.treeListView.View = System.Windows.Forms.View.Details;
             this.treeListView.VirtualMode = true;
+            this.treeListView.DoubleClick += new System.EventHandler(this.treeListView_DoubleClick);
             this.treeListView.Resize += new System.EventHandler(this.treeListView_Resize);
             // 
             // toolStrip
