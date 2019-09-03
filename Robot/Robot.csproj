@@ -169,7 +169,7 @@
     <Compile Include="Abstractions\IStableRepeatingThread.cs" />
     <Compile Include="Analytics\AnalyticsEvents.cs" />
     <Compile Include="Analytics\GoogleAnalytics.cs" />
-    <Compile Include="Analytics\Abstractions\IAnalytics.cs" />
+    <Compile Include="Abstractions\IAnalytics.cs" />
     <Compile Include="Analytics\Abstractions\IReceiveTrackingID.cs" />
     <Compile Include="Analytics\Abstractions\IUserIdentity.cs" />
     <Compile Include="Analytics\ReceiveTrackingIDFromResources.cs" />
@@ -178,6 +178,8 @@
     <Compile Include="Analytics\Utils.cs" />
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\AssetManager.cs" />
+    <Compile Include="Assets\AssetManagerStartupAnalytics.cs" />
+    <Compile Include="Assets\Abstractions\IAssetManagerStartupAnalytics.cs" />
     <Compile Include="Assets\ModifiedAssetCollector.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
     <Compile Include="Abstractions\IAssetManager.cs" />

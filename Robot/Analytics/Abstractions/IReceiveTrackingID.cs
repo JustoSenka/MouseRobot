@@ -1,4 +1,4 @@
-﻿namespace Robot.Abstractions
+﻿namespace Robot.Analytics.Abstractions
 {
     public interface IReceiveTrackingID
     {

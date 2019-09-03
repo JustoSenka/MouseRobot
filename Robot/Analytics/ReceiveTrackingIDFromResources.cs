@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using System;
 using System.Text;

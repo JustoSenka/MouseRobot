@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace Robot.Analytics
     [RegisterTypeToContainer(typeof(IAnalytics), typeof(ContainerControlledLifetimeManager))]
     public class GoogleAnalytics : IAnalytics
     {
-        private HttpClient m_Client;
-        private HttpRequestMessage m_Request;
-        private string m_MachineID;
+        private readonly HttpClient m_Client;
+        private readonly string m_MachineID;
+        private bool m_FirstMessageSent = false;
 
-        private IReceiveTrackingID IDReceiver;
-        private IUserIdentity UserIdentity;
+        private readonly IReceiveTrackingID IDReceiver;
+        private readonly IUserIdentity UserIdentity;
         public GoogleAnalytics(IReceiveTrackingID IDReceiver, IUserIdentity UserIdentity)
         {
             this.IDReceiver = IDReceiver;
@@ -24,7 +25,6 @@ namespace Robot.Analytics
 
             m_Client = new HttpClient();
             m_Client.BaseAddress = new Uri(@"https://www.google-analytics.com");
-            m_Request = new HttpRequestMessage(HttpMethod.Post, "/collect");
 
             m_MachineID = UserIdentity.GetMachineID();
         }
@@ -33,7 +33,8 @@ namespace Robot.Analytics
         {
             return Task.Run(async () =>
             {
-                m_Request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                var request = new HttpRequestMessage(HttpMethod.Post, "/collect");
+                request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "v", "1" },
                     { "t", "event" },
@@ -45,8 +46,26 @@ namespace Robot.Analytics
                     { "ev", value + "" },
                 });
 
-                var response = await m_Client.SendAsync(m_Request);
-                return response.IsSuccessStatusCode;
+                var success = false;
+                try
+                {
+                    var response = await m_Client.SendAsync(request);
+                    success = response.IsSuccessStatusCode;
+
+                    if (!m_FirstMessageSent && success)
+                        Logger.Log(LogType.Debug, "Google Analytics connected.");
+
+                    else if (!m_FirstMessageSent && !success)
+                        Logger.Log(LogType.Debug, "Google Analytics messages are not going through.");
+                }
+                catch (Exception e)
+                {
+                    if (!m_FirstMessageSent)
+                        Logger.Log(LogType.Debug, "Google Analytics threw an exception: " + e.Message);
+                }
+
+                m_FirstMessageSent = true;
+                return success;
             });
         }
     }

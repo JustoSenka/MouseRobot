@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity.Lifetime;
+using Robot.Assets.Abstractions;
 
 namespace Robot
 {
@@ -32,15 +33,18 @@ namespace Robot
 
         private DateTime m_LastRefresh = DateTime.MinValue;
 
-        private IAssetGuidManager AssetGuidManager;
-        private IProfiler Profiler;
-        private IStatusManager StatusManager;
-        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger) :
+        private readonly IAssetGuidManager AssetGuidManager;
+        private readonly IProfiler Profiler;
+        private readonly IStatusManager StatusManager;
+        private readonly IAssetManagerStartupAnalytics AssetManagerStartupAnalytics;
+        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger, 
+            IAssetManagerStartupAnalytics AssetManagerStartupAnalytics) :
             base(AssetGuidManager, Logger, Profiler)
         {
             this.AssetGuidManager = AssetGuidManager;
             this.Profiler = Profiler;
             this.StatusManager = StatusManager;
+            this.AssetManagerStartupAnalytics = AssetManagerStartupAnalytics;
         }
 
         public void Refresh()
@@ -160,6 +164,9 @@ namespace Robot
             // Logger.Log(LogType.Log, "Asset refresh finished");
 
             m_LastRefresh = DateTime.Now;
+
+            // Making copy, so it could be iterated by any thread
+            AssetManagerStartupAnalytics.CountAndReportAssetTypes(Assets.ToArray());
 
             EndAssetEditing();
         }

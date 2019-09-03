@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Robot.Abstractions;
+using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using System.Text.RegularExpressions;
 using Unity;

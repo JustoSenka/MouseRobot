@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using Robot.Abstractions;
 using Robot.Analytics;
+using Robot.Analytics.Abstractions;
 using RobotEditor.Abstractions;
-using RobotEditor.PropertyUtils;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Recordings;
@@ -156,7 +156,7 @@ namespace Tests
             var allCommands = r.Commands.GetAllNodes(false).Select(node => node.value);
             var areGuidsRegistered = allCommands.Select(c => (Command: c, HasRegisteredGuid: r.HasRegisteredGuid(c.Guid)));
 
-            foreach(var (Command, IsRegistered) in areGuidsRegistered)
+            foreach (var (Command, IsRegistered) in areGuidsRegistered)
                 Assert.IsTrue(IsRegistered, $"Command with name {Command.Name} is not registered in guid map {Command.Guid}");
         }
     }
