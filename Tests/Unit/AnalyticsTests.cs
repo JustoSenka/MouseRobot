@@ -72,6 +72,15 @@ namespace Tests.Unit
             Assert.IsTrue(res, "Http post request failed");
         }
 
+        [Test]
+        public void AnalyticsID_IsInCorrectFormat()
+        {
+            var id = IDReceiver.ID;
+            Assert.IsFalse(id.IsEmpty());
+            Assert.IsFalse("0" == id);
+            Assert.IsTrue(Regex.IsMatch(id, @"UA\-\d{9}\-\d{1,3}", RegexOptions.IgnoreCase));
+        }
+
         private static void AssertUserIdentity(string id, string id2, string regexFilter)
         {
             Logger.Log(LogType.Log, id);

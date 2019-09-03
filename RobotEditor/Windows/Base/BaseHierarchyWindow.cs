@@ -124,6 +124,8 @@ namespace RobotEditor.Windows.Base
         // TODO: Also mark parent commands/recordings/tests
         protected virtual void OnCommandRunning(Guid guid)
         {
+            m_HighlightedNode = null;
+
             var recording = HierarchyManager.GetRecordingFromCommandGuid(guid);
             if (recording == null)
                 return;
