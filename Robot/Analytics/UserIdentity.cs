@@ -6,18 +6,57 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity.Lifetime;
 
 namespace Robot.Analytics
 {
-    [RegisterTypeToContainer(typeof(IUserIdentity), typeof(ContainerControlledLifetimeManager))]
+    [RegisterTypeToContainer(typeof(IUserIdentity))]
     public class UserIdentity : IUserIdentity
     {
         readonly private INetwork Network;
         public UserIdentity(INetwork Network)
         {
             this.Network = Network;
+        }
+
+        /// <summary>
+        /// Returns external user IP or empty string if network not accesisble
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetUserIP() => await Task.Run(() => Network.GetExternalIP());
+
+        /// <summary>
+        /// Returns country ID based on the external ip of the machine.
+        /// Returns empty string if exception or could not detect ip or id
+        /// </summary>
+        public async Task<string> GetCountryID() => await Task.Run(() => Network.GetCountryID());
+
+
+        /// <summary>
+        /// Tries to get CPU ID at first, if fails, returns MAC address, if that fails, returns 0
+        /// Hashes the result, and returns 64bit int representation of the hash.
+        /// </summary>
+        public async Task<string> GetMachineID()
+        {
+            return await Task.Run(() =>
+            {
+                var id = GetCpuID();
+                if (string.IsNullOrEmpty(id))
+                    id = GetMacAddress();
+
+                if (string.IsNullOrEmpty(id))
+                    return 0 + "";
+
+                var idBytes = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(id));
+                var guid = new Guid(idBytes);
+
+                return "00" + guid.ToString().Substring(8, 22);
+            });
+            // First 4 chars because they are random, since we provided only 16 bytes from hash to guid, which takes 20 bytes
+            // Skipping 8 chars which are random, (4 are from hash but we don't care)
+            // Adding 2 zeros in front for unregistered clients.
         }
 
         /// <summary>
@@ -54,28 +93,6 @@ namespace Robot.Analytics
         public string GetUserID()
         {
             return "0"; // Look if user license is active and is registered. Get his ID from the license info
-        }
-
-        /// <summary>
-        /// Tries to get CPU ID at first, if fails, returns MAC address, if that fails, returns 0
-        /// Hashes the result, and returns 64bit int representation of the hash.
-        /// </summary>
-        public string GetMachineID()
-        {
-            var id = GetCpuID();
-            if (string.IsNullOrEmpty(id))
-                id = GetMacAddress();
-
-            if (string.IsNullOrEmpty(id))
-                return 0 + "";
-
-            var idBytes = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(id));
-            var guid = new Guid(idBytes);
-
-            return "00" + guid.ToString().Substring(8, 22);
-            // First 4 chars because they are random, since we provided only 16 bytes from hash to guid, which takes 20 bytes
-            // Skipping 8 chars which are random, (4 are from hash but we don't care)
-            // Adding 2 zeros in front for unregistered clients.
         }
 
         /// <summary>
@@ -131,11 +148,5 @@ namespace Robot.Analytics
                 return "";
             }
         }
-
-        /// <summary>
-        /// Returns country ID based on the external ip of the machine.
-        /// Returns empty string if exception or could not detect ip or id
-        /// </summary>
-        public string GetCountryID() => Network.GetCountryID();
     }
 }

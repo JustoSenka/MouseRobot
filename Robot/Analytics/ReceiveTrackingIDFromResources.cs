@@ -7,7 +7,7 @@ using Unity.Lifetime;
 
 namespace Robot.Analytics
 {
-    [RegisterTypeToContainer(typeof(IReceiveTrackingID), typeof(ContainerControlledLifetimeManager))]
+    [RegisterTypeToContainer(typeof(IReceiveTrackingID))]
     public class ReceiveTrackingIDFromResources : IReceiveTrackingID
     {
         private string m_ID = "";

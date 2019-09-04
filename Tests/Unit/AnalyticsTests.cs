@@ -30,8 +30,8 @@ namespace Tests.Unit
         [Test]
         public void MachineID_IsNotEmpty_AndDeterministic()
         {
-            var id = UserIdentity.GetMachineID();
-            var id2 = UserIdentity.GetMachineID();
+            var id = UserIdentity.GetMachineID().Result;
+            var id2 = UserIdentity.GetMachineID().Result;
             AssertUserIdentity(id, id2, @".*");
         }
 
@@ -70,8 +70,8 @@ namespace Tests.Unit
         [Test]
         public void CountryID_IsNotEmpty_AndDeterministic()
         {
-            var id = UserIdentity.GetCountryID();
-            var id2 = UserIdentity.GetCountryID();
+            var id = UserIdentity.GetCountryID().Result;
+            var id2 = UserIdentity.GetCountryID().Result;
             AssertUserIdentity(id, id2, @"\w{2}");
         }
 
