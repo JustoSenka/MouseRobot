@@ -90,6 +90,7 @@ namespace RobotEditor.Windows
             m_DebugFilter.ImageNotActive = Properties.Resources.LogDebug_d_32;
             m_DebugFilter.ActiveStateChanged += UpdateHierarchy;
             m_DebugFilter.Padding = new Padding(10, 0, 10, 0);
+            m_DebugFilter.Active = false;
             toolStrip.Items.Add(m_DebugFilter);
         }
 

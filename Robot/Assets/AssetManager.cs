@@ -1,4 +1,5 @@
 ﻿using Robot.Abstractions;
+using Robot.Assets.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Assets;
@@ -9,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Unity.Lifetime;
-using Robot.Assets.Abstractions;
 
 namespace Robot
 {
@@ -37,7 +37,7 @@ namespace Robot
         private readonly IProfiler Profiler;
         private readonly IStatusManager StatusManager;
         private readonly IAssetManagerStartupAnalytics AssetManagerStartupAnalytics;
-        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger, 
+        public AssetManager(IAssetGuidManager AssetGuidManager, IProfiler Profiler, IStatusManager StatusManager, ILogger Logger,
             IAssetManagerStartupAnalytics AssetManagerStartupAnalytics) :
             base(AssetGuidManager, Logger, Profiler)
         {
@@ -161,12 +161,13 @@ namespace Robot
             Profiler.Stop("AssetManager_Refresh");
 
             StatusManager.Add("AssetManager", 10, new Status(null, "Asset Refresh Finished", StandardColors.Default));
-            // Logger.Log(LogType.Log, "Asset refresh finished");
-
-            m_LastRefresh = DateTime.Now;
+            Logger.Log(LogType.Debug, "Asset refresh finished");
 
             // Making copy, so it could be iterated by any thread
-            AssetManagerStartupAnalytics.CountAndReportAssetTypes(Assets.ToArray());
+            if (m_LastRefresh == DateTime.MinValue)
+                AssetManagerStartupAnalytics.CountAndReportAssetTypes(Assets.ToArray());
+
+            m_LastRefresh = DateTime.Now;
 
             EndAssetEditing();
         }

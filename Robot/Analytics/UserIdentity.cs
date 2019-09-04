@@ -1,13 +1,14 @@
-﻿using Robot.Abstractions;
-using Robot.Analytics.Abstractions;
+﻿using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using System;
+using System.Globalization;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Unity.Attributes;
 using Unity.Lifetime;
 
 namespace Robot.Analytics
@@ -15,6 +16,9 @@ namespace Robot.Analytics
     [RegisterTypeToContainer(typeof(IUserIdentity), typeof(ContainerControlledLifetimeManager))]
     public class UserIdentity : IUserIdentity
     {
+        [Dependency]
+        private INetwork Network { get; }
+
         /// <summary>
         /// Returns string representing operating system
         /// </summary>
@@ -121,6 +125,15 @@ namespace Robot.Analytics
                 Logger.Log(LogType.Warning, "Cannot get mac address to identify user: " + e.Message);
                 return "";
             }
+        }
+
+        /// <summary>
+        /// Returns country ID based on the external ip of the machine.
+        /// Returns empty string if exception or could not detect ip or id
+        /// </summary>
+        public string GetCountryID()
+        {
+            return Network.GetCountryID();
         }
     }
 }

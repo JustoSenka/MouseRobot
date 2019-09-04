@@ -8,5 +8,6 @@
         string GetOperatingSystem();
         string GetScreenResolution();
         string GetUserID();
+        string GetCountryID();
     }
 }

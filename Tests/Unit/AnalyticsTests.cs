@@ -19,7 +19,6 @@ namespace Tests.Unit
         public void Initialize()
         {
             var container = TestUtils.ConstructContainerForTests();
-            var mr = container.Resolve<IMouseRobot>();
 
             Analytics = container.Resolve<IAnalytics>();
             IDReceiver = container.Resolve<IReceiveTrackingID>();
@@ -64,6 +63,14 @@ namespace Tests.Unit
             var id = UserIdentity.GetScreenResolution();
             var id2 = UserIdentity.GetScreenResolution();
             AssertUserIdentity(id, id2, @"\d{2,5}x\d{2,5}");
+        }
+
+        [Test]
+        public void CountryID_IsNotEmpty_AndDeterministic()
+        {
+            var id = UserIdentity.GetCountryID();
+            var id2 = UserIdentity.GetCountryID();
+            AssertUserIdentity(id, id2, @"\w{2}");
         }
 
         [Test]
