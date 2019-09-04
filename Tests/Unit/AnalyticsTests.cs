@@ -12,6 +12,7 @@ namespace Tests.Unit
     public class AnalyticsTests : TestWithCleanup
     {
         private IAnalytics Analytics;
+        private INetwork Network;
         private IReceiveTrackingID IDReceiver;
         private IUserIdentity UserIdentity;
 
@@ -21,6 +22,7 @@ namespace Tests.Unit
             var container = TestUtils.ConstructContainerForTests();
 
             Analytics = container.Resolve<IAnalytics>();
+            Network = container.Resolve<INetwork>(); // Needed for IUserIdentity when tests are ran individually
             IDReceiver = container.Resolve<IReceiveTrackingID>();
             UserIdentity = container.Resolve<IUserIdentity>();
         }

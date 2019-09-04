@@ -1,14 +1,12 @@
 ﻿using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using System;
-using System.Globalization;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
-using Unity.Attributes;
 using Unity.Lifetime;
 
 namespace Robot.Analytics
@@ -16,8 +14,11 @@ namespace Robot.Analytics
     [RegisterTypeToContainer(typeof(IUserIdentity), typeof(ContainerControlledLifetimeManager))]
     public class UserIdentity : IUserIdentity
     {
-        [Dependency]
-        private INetwork Network { get; }
+        readonly private INetwork Network;
+        public UserIdentity(INetwork Network)
+        {
+            this.Network = Network;
+        }
 
         /// <summary>
         /// Returns string representing operating system
@@ -69,8 +70,12 @@ namespace Robot.Analytics
                 return 0 + "";
 
             var idBytes = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(id));
-            var idNr = BitConverter.ToInt64(idBytes, 0);
-            return idNr % 100000000 + ""; // removing some numbers so it's not too long and easier to read
+            var guid = new Guid(idBytes);
+
+            return "00" + guid.ToString().Substring(8, 22);
+            // First 4 chars because they are random, since we provided only 16 bytes from hash to guid, which takes 20 bytes
+            // Skipping 8 chars which are random, (4 are from hash but we don't care)
+            // Adding 2 zeros in front for unregistered clients.
         }
 
         /// <summary>
@@ -131,9 +136,6 @@ namespace Robot.Analytics
         /// Returns country ID based on the external ip of the machine.
         /// Returns empty string if exception or could not detect ip or id
         /// </summary>
-        public string GetCountryID()
-        {
-            return Network.GetCountryID();
-        }
+        public string GetCountryID() => Network.GetCountryID();
     }
 }
