@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Robot.Abstractions
+namespace RobotRuntime.Abstractions
 {
     public interface IAnalytics
     {

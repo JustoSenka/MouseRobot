@@ -169,7 +169,6 @@
     <Compile Include="Abstractions\IStableRepeatingThread.cs" />
     <Compile Include="Analytics\AnalyticsEvents.cs" />
     <Compile Include="Analytics\GoogleAnalytics.cs" />
-    <Compile Include="Abstractions\IAnalytics.cs" />
     <Compile Include="Analytics\Abstractions\IReceiveTrackingID.cs" />
     <Compile Include="Analytics\Abstractions\IUserIdentity.cs" />
     <Compile Include="Analytics\ReceiveTrackingIDFromResources.cs" />

@@ -185,6 +185,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\IAnalytics.cs" />
     <Compile Include="Abstractions\ITextDetectionManager.cs" />
     <Compile Include="Abstractions\IFeatureDetectionManager.cs" />
     <Compile Include="Abstractions\ILogger.cs" />

@@ -1,6 +1,7 @@
 ﻿using Robot.Abstractions;
 using Robot.Analytics.Abstractions;
 using RobotRuntime;
+using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
 using System;
 using System.Collections.Generic;
@@ -78,14 +79,19 @@ namespace Robot.Analytics
 
                     { "dl", new DirectoryInfo(Environment.CurrentDirectory).Name }, // PAGE NAME as Project name
                     // { "dt", new DirectoryInfo(Environment.CurrentDirectory).Name }, // PAGE Title
+
                     { "ec", category }, // Category - AssetManager etc.
                     { "ea", action }, // Action as ClickMenuItem
                     { "el", label }, // Label as Which specific menu item
                     { "ev", value + "" }, // Either value or conditions as did menu item click succeded 1 or 0
 
                     { "an", Paths.AppName}, 
-                    // { "aid", ""}, 
-                    { "av", FileVersionInfo.GetVersionInfo(Paths.ApplicationExecutablePath).ProductVersion}, 
+                    { "av", FileVersionInfo.GetVersionInfo(Paths.ApplicationExecutablePath).ProductVersion},
+#if DEBUG 
+                    { "aid", "Debug"},
+#else
+                    { "aid", "Release"},
+#endif
 
                     /*
                      * an ApplicationName
