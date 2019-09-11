@@ -167,7 +167,6 @@
     <Compile Include="Abstractions\IModifiedAssetCollector.cs" />
     <Compile Include="Abstractions\IScreenStateThread.cs" />
     <Compile Include="Abstractions\IStableRepeatingThread.cs" />
-    <Compile Include="Analytics\AnalyticsEvents.cs" />
     <Compile Include="Analytics\GoogleAnalytics.cs" />
     <Compile Include="Analytics\Abstractions\IReceiveTrackingID.cs" />
     <Compile Include="Analytics\Abstractions\IUserIdentity.cs" />

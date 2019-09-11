@@ -43,11 +43,13 @@ namespace RobotEditor.Windows.Base
 
         protected readonly ICommandFactory CommandFactory;
         protected readonly IProfiler Profiler;
+        protected readonly IAnalytics Analytics;
         public BaseHierarchyWindow() { }
-        public BaseHierarchyWindow(ICommandFactory CommandFactory, IProfiler Profiler)
+        public BaseHierarchyWindow(ICommandFactory CommandFactory, IProfiler Profiler, IAnalytics Analytics)
         {
             this.CommandFactory = CommandFactory;
             this.Profiler = Profiler;
+            this.Analytics = Analytics;
         }
 
         #region Misc Important Methods
@@ -80,7 +82,7 @@ namespace RobotEditor.Windows.Base
                 return;
             }
 
-            OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, "createToolStripMenuItem", treeListView, HierarchyManager);
+            OnNewUserCommandsAppeared(CommandFactory, contextMenuStrip, "createToolStripMenuItem", treeListView, HierarchyManager, Analytics);
         }
 
         protected IAsyncResult RefreshTreeListViewAsync(Action callbackAfterRefresh = null)
@@ -695,7 +697,7 @@ namespace RobotEditor.Windows.Base
         }
 
         public static void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, string menuItemName,
-            TreeListView treeListView, IBaseHierarchyManager baseRecordingManager)
+            TreeListView treeListView, IBaseHierarchyManager baseRecordingManager, IAnalytics Analytics)
         {
             contextMenuStrip.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
@@ -708,6 +710,9 @@ namespace RobotEditor.Windows.Base
                     item.Click += (sender, eventArgs) =>
                     {
                         var newCommand = CommandFactory.Create(name);
+
+                        Analytics.PushEvent(AnalyticsEvent.K_Hierarchy, AnalyticsEvent.A_Create, newCommand.GetType().Name, 1);
+
                         if (treeListView.SelectedObject is HierarchyNode selectedNode)
                         {
                             if (selectedNode.Recording != null)

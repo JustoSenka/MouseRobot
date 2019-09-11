@@ -31,7 +31,7 @@ namespace RobotEditor
         private readonly ITestFixtureManager TestFixtureManager;
         private readonly IHierarchyNodeStringConverter HierarchyNodeStringConverter;
         public TestFixtureWindow(ITestRunner TestRunner, ITestFixtureManager TestFixtureManager,
-            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler) : base(CommandFactory, Profiler)
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler, IAnalytics Analytics) : base(CommandFactory, Profiler, Analytics)
         {
             this.TestRunner = TestRunner;
             this.TestFixtureManager = TestFixtureManager;

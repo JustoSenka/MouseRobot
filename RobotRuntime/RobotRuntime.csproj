@@ -215,6 +215,7 @@
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
+    <Compile Include="Logging\EmptyAnalytics.cs" />
     <Compile Include="Execution\Runners\CommandIfImageVisibleRunner.cs" />
     <Compile Include="Execution\Runners\ForTextCommandRunner.cs" />
     <Compile Include="Execution\Runners\ImageCommandRunner.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Graphics\Detectable.cs" />
     <Compile Include="Graphics\Text\TextDetectionManager.cs" />
     <Compile Include="Graphics\Images\FeatureDetectionManager.cs" />
+    <Compile Include="Logging\AnalyticsEvents.cs" />
     <Compile Include="UnityContainer\RegisterTypeToContainerAttribute.cs" />
     <Compile Include="Utils\FactoryWithCache.cs" />
     <Compile Include="Abstractions\IFactoryWithCache.cs" />

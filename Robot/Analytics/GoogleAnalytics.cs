@@ -1,5 +1,4 @@
-﻿using Robot.Abstractions;
-using Robot.Analytics.Abstractions;
+﻿using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Utils;
@@ -18,6 +17,8 @@ namespace Robot.Analytics
     [RegisterTypeToContainer(typeof(IAnalytics), typeof(ContainerControlledLifetimeManager))]
     public class GoogleAnalytics : IAnalytics
     {
+        public bool IsEnabled { get; private set; } = true;
+
         private readonly HttpClient m_Client;
         private bool m_FirstMessageSent = false;
 
@@ -27,6 +28,14 @@ namespace Robot.Analytics
 
         private Task m_InitializationTask;
 
+        private int m_SentEvents;
+        private int m_FailedEvents;
+
+        private const string k_GoogleAnalyticsDomain = @"https://www.google-analytics.com";
+        private const string k_GoogleAnalyticsCollectControler = @"/collect";
+
+        private const int k_FailedEventThesholdToDisableAnalytics = 50;
+
         private readonly IReceiveTrackingID IDReceiver;
         private readonly IUserIdentity UserIdentity;
         public GoogleAnalytics(IReceiveTrackingID IDReceiver, IUserIdentity UserIdentity)
@@ -35,7 +44,7 @@ namespace Robot.Analytics
             this.UserIdentity = UserIdentity;
 
             m_Client = new HttpClient();
-            m_Client.BaseAddress = new Uri(@"https://www.google-analytics.com");
+            m_Client.BaseAddress = new Uri(k_GoogleAnalyticsDomain);
 
             try
             {
@@ -60,16 +69,15 @@ namespace Robot.Analytics
         {
             return Task.Run(async () =>
             {
-                if (m_InitializationTask != null || !m_InitializationTask.IsCompleted)
-                    await m_InitializationTask;
+                await WaitForInitializationIfNotYetCompleted();
 
-                var request = new HttpRequestMessage(HttpMethod.Post, "/collect");
+                var request = new HttpRequestMessage(HttpMethod.Post, k_GoogleAnalyticsCollectControler);
                 request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "v", "1" },
                     { "t", "event" },
-                    { "tid", IDReceiver.ID},
 
+                    { "tid", IDReceiver.ID},
                     { "uip", m_IP},
                     { "geoid", m_CountryID},
                     { "cid", m_MachineID },
@@ -85,7 +93,7 @@ namespace Robot.Analytics
                     { "el", label }, // Label as Which specific menu item
                     { "ev", value + "" }, // Either value or conditions as did menu item click succeded 1 or 0
 
-                    { "an", Paths.AppName}, 
+                    { "an", Paths.AppName},
                     { "av", FileVersionInfo.GetVersionInfo(Paths.ApplicationExecutablePath).ProductVersion},
 #if DEBUG 
                     { "aid", "Debug"},
@@ -104,27 +112,47 @@ namespace Robot.Analytics
                      */
                 });
 
-                var success = false;
-                try
-                {
-                    var response = await m_Client.SendAsync(request);
-                    success = response.IsSuccessStatusCode;
-
-                    if (!m_FirstMessageSent && success)
-                        Logger.Log(LogType.Debug, "Google Analytics connected.");
-
-                    else if (!m_FirstMessageSent && !success)
-                        Logger.Log(LogType.Debug, "Google Analytics messages are not going through.");
-                }
-                catch (Exception e)
-                {
-                    if (!m_FirstMessageSent)
-                        Logger.Log(LogType.Debug, "Google Analytics threw an exception: " + e.Message);
-                }
-
-                m_FirstMessageSent = true;
-                return success;
+                return await SendAnalyticsRequest(request);
             });
+        }
+
+        // -- Private --
+
+        private async Task WaitForInitializationIfNotYetCompleted()
+        {
+            if (m_InitializationTask != null || !m_InitializationTask.IsCompleted)
+                await m_InitializationTask;
+        }
+
+        private async Task<bool> SendAnalyticsRequest(HttpRequestMessage request)
+        {
+            var success = false;
+            try
+            {
+                var response = await m_Client.SendAsync(request);
+                success = response.IsSuccessStatusCode;
+
+                if (!m_FirstMessageSent && success)
+                    Logger.Log(LogType.Debug, "Google Analytics connected.");
+
+                else if (!m_FirstMessageSent && !success)
+                    Logger.Log(LogType.Debug, "Google Analytics messages are not going through.");
+            }
+            catch (Exception e)
+            {
+                if (!m_FirstMessageSent)
+                    Logger.Log(LogType.Debug, "Google Analytics threw an exception: " + e.Message);
+            }
+
+            m_FirstMessageSent = true;
+
+            if (success) m_SentEvents++; else m_FailedEvents++;
+
+            // If constantly failing to send the events, disable analytics so systems know and stop calculating data for all these events
+            if (m_FailedEvents > k_FailedEventThesholdToDisableAnalytics && m_SentEvents == 0)
+                IsEnabled = false;
+
+            return success;
         }
     }
 }

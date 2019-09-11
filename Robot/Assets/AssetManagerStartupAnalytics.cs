@@ -34,7 +34,7 @@ namespace Robot.Assets
                 }
 
                 foreach (var type in map.Keys)
-                    Analytics.PushEvent("AssetManager", "AssetTypes", type.Name, map[type]);
+                    Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_AssetTypes, type.Name, map[type]);
             });
         }
     }

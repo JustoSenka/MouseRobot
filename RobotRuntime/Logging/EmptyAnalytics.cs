@@ -11,6 +11,8 @@ namespace RobotRuntime.Logging
     [RegisterTypeToContainer(typeof(IAnalytics), typeof(ContainerControlledLifetimeManager))]
     class EmptyAnalytics : IAnalytics
     {
+        public bool IsEnabled => false;
+
         public Task<bool> PushEvent(string category, string action, string label, int value = 0)
         {
             return null;
