@@ -33,6 +33,8 @@ namespace Robot.Assets
                         map[type]++;
                 }
 
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_AssetTypes, AnalyticsEvent.L_TotalAssetCount, Assets.Count());
+
                 foreach (var type in map.Keys)
                     Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_AssetTypes, type.Name, map[type]);
             });

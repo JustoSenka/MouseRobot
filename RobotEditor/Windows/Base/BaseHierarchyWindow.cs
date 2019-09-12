@@ -156,6 +156,8 @@ namespace RobotEditor.Windows.Base
 
         public virtual void newRecordingToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Create, "Recording", 1);
+
             HierarchyManager.NewRecording();
             RefreshTreeListViewAsync();
 
@@ -166,10 +168,16 @@ namespace RobotEditor.Windows.Base
         {
             var selectedObjects = m_TreeListView.SelectedObjects.SafeCast<HierarchyNode>();
             if (IsMultiSelectionNotValid(selectedObjects))
+            {
+                Logger.Log(LogType.Warning, "Selection is not valid, because some values are null. That should never happen");
                 return;
+            }
 
             if (!IsMultiSelectionInOneBlock(selectedObjects))
+            {
+                Logger.Log(LogType.Warning, "Selection is not valid. Selected elements must be on same level and close to each other");
                 return;
+            }
 
             SuppressRefreshAndSelection = true;
 
@@ -183,8 +191,12 @@ namespace RobotEditor.Windows.Base
             var lastNodeIndex = parentNode.Children.IndexOf(lastNode);
             var objCount = m_TreeListView.SelectedObjects.Count;
 
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Duplicate, AnalyticsEvent.L_Selection, selectedObjects.Count());
+
             foreach (var selectedNode in selectedObjects)
             {
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Duplicate, selectedNode.Value.GetType().Name, 1);
+
                 if (selectedNode.Recording != null)
                 {
                     var newRec = HierarchyManager.NewRecording(selectedNode.Recording);
@@ -221,9 +233,13 @@ namespace RobotEditor.Windows.Base
             if (IsMultiSelectionNotValid(selectedObjects))
                 return;
 
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Duplicate, AnalyticsEvent.L_Selection, selectedObjects.Count());
+
             var objCount = m_TreeListView.SelectedObjects.Count;
             foreach (var selectedNode in selectedObjects)
             {
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Delete, selectedNode.Value.GetType().Name, 1);
+
                 if (selectedNode.Recording != null)
                     HierarchyManager.RemoveRecording(selectedNode.Recording);
 
@@ -260,6 +276,9 @@ namespace RobotEditor.Windows.Base
 
         protected virtual void OnRecordingLoaded(Recording recording)
         {
+            if (Analytics.IsEnabled)
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Load, typeof(Recording).Name, recording.Commands.GetAllNodes(false).Count());
+
             var node = new HierarchyNode(recording, DropDetails);
             m_Nodes.Add(node);
 
@@ -289,6 +308,9 @@ namespace RobotEditor.Windows.Base
 
         protected virtual void OnRecordingRemoved(int index)
         {
+            if (Analytics.IsEnabled)
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Delete, typeof(Recording).Name, m_Nodes[index].Recording.Commands.GetAllNodes(false).Count());
+
             var oldSelectedObject = m_TreeListView.SelectedObject;
 
             m_Nodes.RemoveAt(index);
@@ -595,11 +617,14 @@ namespace RobotEditor.Windows.Base
 
         public virtual void ToolstripExpandAll_Click(object sender, EventArgs e)
         {
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Expand, AnalyticsEvent.L_All, 1);
             m_TreeListView.ExpandAll();
         }
 
         public virtual void ToolstripExpandOne_Click(object sender, EventArgs e)
         {
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Expand, AnalyticsEvent.L_One, 1);
+
             m_TreeListView.CollapseAll();
             foreach (var node in m_Nodes)
                 m_TreeListView.Expand(node);
@@ -607,6 +632,7 @@ namespace RobotEditor.Windows.Base
 
         public virtual void ToolstripCollapseAll_Click(object sender, EventArgs e)
         {
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Collapse, AnalyticsEvent.L_All, 1);
             m_TreeListView.CollapseAll();
         }
 
@@ -696,7 +722,9 @@ namespace RobotEditor.Windows.Base
             treeListView.Columns.Add(nameColumn);
         }
 
-        public static void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, string menuItemName,
+        // TODO: This was static, but I made it instance so I can access type name for the analytics
+        // Maybe it could still be static or maybe defined in a completely different place
+        public void OnNewUserCommandsAppeared(ICommandFactory CommandFactory, ContextMenuStrip contextMenuStrip, string menuItemName,
             TreeListView treeListView, IBaseHierarchyManager baseRecordingManager, IAnalytics Analytics)
         {
             contextMenuStrip.BeginInvokeIfCreated(new MethodInvoker(() =>
@@ -711,7 +739,7 @@ namespace RobotEditor.Windows.Base
                     {
                         var newCommand = CommandFactory.Create(name);
 
-                        Analytics.PushEvent(AnalyticsEvent.K_Hierarchy, AnalyticsEvent.A_Create, newCommand.GetType().Name, 1);
+                        Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Create, newCommand.GetType().Name, 1);
 
                         if (treeListView.SelectedObject is HierarchyNode selectedNode)
                         {

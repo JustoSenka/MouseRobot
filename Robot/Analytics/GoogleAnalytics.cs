@@ -57,7 +57,7 @@ namespace Robot.Analytics
                     m_MachineID = await UserIdentity.GetMachineID();
                 }, new CancellationTokenSource(15000).Token);
 
-                m_InitializationTask.ContinueWith((t) => m_InitializationTask = null);
+                // m_InitializationTask.ContinueWith((t) => m_InitializationTask = null); // This will make initialization await never finish
             }
             catch (Exception e)
             {
