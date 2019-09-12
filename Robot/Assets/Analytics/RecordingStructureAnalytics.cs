@@ -18,13 +18,13 @@ namespace Robot.Assets.Analytics
             this.Analytics = Analytics;
         }
 
-        public Task CountAndReportRecordingStructure(string category, Recording rec)
+        public Task CountAndReportRecordingStructure(Recording rec)
         {
             return Task.Run(() =>
             {
                 var map = new Dictionary<Type, int>();
 
-                foreach (var c in rec.Commands.GetAllNodes())
+                foreach (var c in rec.Commands.GetAllNodes(false))
                 {
                     var type = c.value.GetType();
                     if (!map.ContainsKey(type))
@@ -33,10 +33,10 @@ namespace Robot.Assets.Analytics
                         map[type]++;
                 }
 
-                Analytics.PushEvent(category, AnalyticsEvent.A_RecordingStructure, AnalyticsEvent.L_TotalCommandCount, rec.Commands.GetAllNodes().Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_RecordingStructure, AnalyticsEvent.L_TotalCommandCount, rec.Commands.GetAllNodes(false).Count());
 
                 foreach (var type in map.Keys)
-                    Analytics.PushEvent(category, AnalyticsEvent.A_RecordingStructure, type.Name, map[type]);
+                    Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_RecordingStructure, type.Name, map[type]);
             });
         }
     }

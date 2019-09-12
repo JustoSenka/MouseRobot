@@ -5,6 +5,6 @@ namespace Robot.Assets.Abstractions
 {
     public interface IRecordingStructureAnalytics
     {
-        Task CountAndReportRecordingStructure(string category, Recording rec);
+        Task CountAndReportRecordingStructure(Recording rec);
     }
 }

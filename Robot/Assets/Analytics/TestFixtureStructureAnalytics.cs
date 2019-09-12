@@ -16,19 +16,19 @@ namespace Robot.Assets.Analytics
             this.Analytics = Analytics;
         }
 
-        public Task CountAndReportTestFixtureStructure(string category, LightTestFixture fix)
+        public Task CountAndReportTestFixtureStructure(LightTestFixture fix)
         {
             return Task.Run(() =>
             {
-                Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, AnalyticsEvent.L_TotalTestCount, fix.Tests.Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, AnalyticsEvent.L_TotalTestCount, fix.Tests.Count());
 
-                Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, fix.Setup.Name, fix.Setup.Commands.GetAllNodes().Count());
-                Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, fix.TearDown.Name, fix.TearDown.Commands.GetAllNodes().Count());
-                Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, fix.OneTimeSetup.Name, fix.OneTimeSetup.Commands.GetAllNodes().Count());
-                Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, fix.OneTimeTeardown.Name, fix.OneTimeTeardown.Commands.GetAllNodes().Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, fix.Setup.Name, fix.Setup.Commands.GetAllNodes(false).Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, fix.TearDown.Name, fix.TearDown.Commands.GetAllNodes(false).Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, fix.OneTimeSetup.Name, fix.OneTimeSetup.Commands.GetAllNodes(false).Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, fix.OneTimeTeardown.Name, fix.OneTimeTeardown.Commands.GetAllNodes(false).Count());
 
                 foreach (var t in fix.Tests)
-                    Analytics.PushEvent(category, AnalyticsEvent.A_FixtureStructure, t.Name, t.Commands.GetAllNodes().Count());
+                    Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_FixtureStructure, t.Name, t.Commands.GetAllNodes(false).Count());
             });
         }
     }

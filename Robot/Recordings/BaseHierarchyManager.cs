@@ -83,7 +83,7 @@ namespace Robot.Recordings
 
             foreach (var recording in LoadedRecordings)
             {
-                foreach (var node in recording.Commands.GetAllNodes().ToArray())
+                foreach (var node in recording.Commands.GetAllNodes(false).ToArray())
                 {
                     var command = node.value;
                     if (command == null || CommandFactory.IsNative(command))
