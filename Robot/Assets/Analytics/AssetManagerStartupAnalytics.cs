@@ -1,5 +1,4 @@
-﻿using Robot.Abstractions;
-using Robot.Assets.Abstractions;
+﻿using Robot.Assets.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using System;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Lifetime;
 
-namespace Robot.Assets
+namespace Robot.Assets.Analytics
 {
     [RegisterTypeToContainer(typeof(IAssetManagerStartupAnalytics), typeof(ContainerControlledLifetimeManager))]
     public class AssetManagerStartupAnalytics : IAssetManagerStartupAnalytics
@@ -33,10 +32,10 @@ namespace Robot.Assets
                         map[type]++;
                 }
 
-                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_AssetTypes, AnalyticsEvent.L_TotalAssetCount, Assets.Count());
+                Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_ProjectStructure, AnalyticsEvent.L_TotalAssetCount, Assets.Count());
 
                 foreach (var type in map.Keys)
-                    Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_AssetTypes, type.Name, map[type]);
+                    Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_ProjectStructure, type.Name, map[type]);
             });
         }
     }

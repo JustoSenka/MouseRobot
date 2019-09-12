@@ -276,9 +276,8 @@ namespace RobotEditor.Windows.Base
 
         protected virtual void OnRecordingLoaded(Recording recording)
         {
-            if (Analytics.IsEnabled)
-                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Load, typeof(Recording).Name, recording.Commands.GetAllNodes(false).Count());
-
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Load, typeof(Recording).Name, 1);
+            
             var node = new HierarchyNode(recording, DropDetails);
             m_Nodes.Add(node);
 
@@ -308,8 +307,7 @@ namespace RobotEditor.Windows.Base
 
         protected virtual void OnRecordingRemoved(int index)
         {
-            if (Analytics.IsEnabled)
-                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Delete, typeof(Recording).Name, m_Nodes[index].Recording.Commands.GetAllNodes(false).Count());
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Delete, typeof(Recording).Name, 1);
 
             var oldSelectedObject = m_TreeListView.SelectedObject;
 

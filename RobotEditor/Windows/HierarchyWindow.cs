@@ -128,6 +128,8 @@ namespace RobotEditor
             if (selectedNode == null || selectedNode.Recording == null)
                 return;
 
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_SetActive, typeof(Recording).Name, 1);
+
             HierarchyManager.ActiveRecording = selectedNode.Recording;
             RefreshTreeListViewAsync();
         }
@@ -157,6 +159,8 @@ namespace RobotEditor
                 if (!recording.IsDirty)
                     continue;
 
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Save, typeof(Recording).Name, HierarchyManager.Count());
+
                 if (recording.Path != "")
                     HierarchyManager.SaveRecording(recording, recording.Path);
                 else
@@ -175,6 +179,8 @@ namespace RobotEditor
             saveDialog.FileName = recording.Name + FileExtensions.RecordingD;
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Save, typeof(Recording).Name, 1);
+
                 HierarchyManager.SaveRecording(recording, saveDialog.FileName);
                 if (updateUI)
                     RefreshTreeListViewAsync();

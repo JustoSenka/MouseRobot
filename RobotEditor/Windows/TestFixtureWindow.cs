@@ -31,7 +31,8 @@ namespace RobotEditor
         private readonly ITestFixtureManager TestFixtureManager;
         private readonly IHierarchyNodeStringConverter HierarchyNodeStringConverter;
         public TestFixtureWindow(ITestRunner TestRunner, ITestFixtureManager TestFixtureManager,
-            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler, IAnalytics Analytics) : base(CommandFactory, Profiler, Analytics)
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler,
+            IAnalytics Analytics) : base(CommandFactory, Profiler, Analytics)
         {
             this.TestRunner = TestRunner;
             this.TestFixtureManager = TestFixtureManager;
@@ -256,6 +257,8 @@ namespace RobotEditor
             if (!m_TestFixture.IsDirty)
                 return;
 
+            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Save, typeof(TestFixture).Name, 1);
+
             if (m_TestFixture.Path != "")
                 TestFixtureManager.SaveTestFixture(m_TestFixture, m_TestFixture.Path);
             else
@@ -276,6 +279,8 @@ namespace RobotEditor
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
+                Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Save, typeof(TestFixture).Name, 1);
+
                 TestFixtureManager.SaveTestFixture(m_TestFixture, saveDialog.FileName);
                 base.Name = m_TestFixture.Name;
 

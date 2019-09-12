@@ -176,7 +176,7 @@
     <Compile Include="Analytics\Utils.cs" />
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\AssetManager.cs" />
-    <Compile Include="Assets\AssetManagerStartupAnalytics.cs" />
+    <Compile Include="Assets\Analytics\AssetManagerStartupAnalytics.cs" />
     <Compile Include="Assets\Abstractions\IAssetManagerStartupAnalytics.cs" />
     <Compile Include="Assets\ModifiedAssetCollector.cs" />
     <Compile Include="Assets\EditorAssetImporter.cs" />
@@ -194,6 +194,10 @@
     <Compile Include="Abstractions\IScriptManager.cs" />
     <Compile Include="Abstractions\ISolutionManager.cs" />
     <Compile Include="Abstractions\IBaseHierarchyManager.cs" />
+    <Compile Include="Assets\Abstractions\IRecordingStructureAnalytics.cs" />
+    <Compile Include="Assets\Abstractions\ITestFixtureStructureAnalytics.cs" />
+    <Compile Include="Assets\Analytics\RecordingStructureAnalytics.cs" />
+    <Compile Include="Assets\Analytics\TestFixtureStructureAnalytics.cs" />
     <Compile Include="Scripts\ScriptCompiler.cs" />
     <Compile Include="Scripts\ScriptManager.cs" />
     <Compile Include="Scripts\SolutionManager.cs" />
