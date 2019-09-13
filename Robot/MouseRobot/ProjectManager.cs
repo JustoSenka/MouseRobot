@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.Lifetime;
 
 namespace Robot
@@ -22,12 +23,14 @@ namespace Robot
         private const string k_FileName = "LastKnownProjectPaths.config";
         private string FilePath { get { return Path.Combine(Paths.RoamingAppdataPath, k_FileName); } }
 
-        private IAssetManager AssetManager;
-        private IAssetGuidManager AssetGuidManager;
-        public ProjectManager(IAssetManager AssetManager, IAssetGuidManager AssetGuidManager) : base(AssetGuidManager)
+        private readonly IAssetManager AssetManager;
+        private readonly IScriptManager ScriptManager;
+        private readonly ISettingsManager SettingsManager;
+        public ProjectManager(IAssetManager AssetManager, IScriptManager ScriptManager, ISettingsManager SettingsManager, IScriptLoader ScriptLoader) : base(ScriptLoader)
         {
             this.AssetManager = AssetManager;
-            this.AssetGuidManager = AssetGuidManager;
+            this.ScriptManager = ScriptManager;
+            this.SettingsManager = SettingsManager;
 
             RestoreAndRemovePathsOfDeletedProjects();
         }
@@ -59,8 +62,11 @@ namespace Robot
 
             RememberPathInSettings(path);
 
-            AssetGuidManager.LoadMetaFiles();
             AssetManager.Refresh();
+            SettingsManager.RestoreSettings();
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            // Preload assets? Or let systems load everything on demand?
 
             base.OnNewProjectOpened(path);
         }

@@ -50,6 +50,10 @@ namespace Robot
         public void Refresh()
         {
             Profiler.Start("AssetManager_Refresh");
+
+            if (!AssetGuidManager.MetadataLoaded)
+                AssetGuidManager.LoadMetaFiles();
+
             BeginAssetEditing();
 
             // Get all modified asset paths

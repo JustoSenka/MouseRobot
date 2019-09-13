@@ -11,17 +11,17 @@ namespace RobotRuntime
         public string ProjectName => Path.GetFileName(Environment.CurrentDirectory);
         public event Action<string> NewProjectOpened;
 
-        private readonly IAssetGuidManager AssetGuidManager;
-        public RuntimeProjectManager(IAssetGuidManager AssetGuidManager)
+        private readonly IScriptLoader ScriptLoader;
+        public RuntimeProjectManager(IScriptLoader ScriptLoader)
         {
-            this.AssetGuidManager = AssetGuidManager;
+            this.ScriptLoader = ScriptLoader;
         }
 
         public virtual void InitProject(string path)
         {
             Environment.CurrentDirectory = path;
 
-            AssetGuidManager.LoadMetaFiles();
+            ScriptLoader.CreateUserAppDomain();
 
             NewProjectOpened?.Invoke(path);
         }

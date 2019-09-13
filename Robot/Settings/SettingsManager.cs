@@ -28,7 +28,7 @@ namespace Robot.Settings
         private readonly IScriptLoader ScriptLoader;
         private readonly IUnityContainer Container;
         private readonly ITypeObjectCollector<BaseSettings> TypeCollector;
-        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, IProjectManager ProjectManager, ITypeObjectCollector<BaseSettings> TypeCollector)
+        public SettingsManager(IUnityContainer Container, IScriptLoader ScriptLoader, ILogger Logger, ITypeObjectCollector<BaseSettings> TypeCollector)
         {
             this.Container = Container;
             this.ScriptLoader = ScriptLoader;
@@ -41,7 +41,6 @@ namespace Robot.Settings
             CreateIfNotExist(Paths.LocalAppdataPath);
             
             TypeCollector.NewTypesAppeared += () => RestoreSettings();
-            ProjectManager.NewProjectOpened += (str) => RestoreSettings();
         }
 
         private void OnDomainReloading()

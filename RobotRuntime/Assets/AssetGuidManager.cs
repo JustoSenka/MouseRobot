@@ -11,6 +11,8 @@ namespace RobotRuntime.Assets
     [RegisterTypeToContainer(typeof(IAssetGuidManager), typeof(ContainerControlledLifetimeManager))]
     public class AssetGuidManager : IAssetGuidManager
     {
+        public bool MetadataLoaded { get; private set; }
+
         public const string GuidPathMapFileName = "AssetGuidsTable.meta";
         public const string GuidHashMapFileName = "AssetHashTable.meta";
         
@@ -24,10 +26,7 @@ namespace RobotRuntime.Assets
         private bool m_GuidPathMapDirty;
         private bool m_GuidHashMapDirty;
 
-        public AssetGuidManager()
-        {
-            
-        }
+        public AssetGuidManager() { }
 
         public void AddNewGuid(Guid guid, string path, Int64 hash)
         {
@@ -108,6 +107,7 @@ namespace RobotRuntime.Assets
             else
                 m_GuidHashMap = m_Serializer.LoadObject<Dictionary<Guid, long>>(GuidHashMapFilePath) ?? m_GuidHashMap;
 
+            MetadataLoaded = true;
             m_GuidHashMapDirty = false;
             m_GuidPathMapDirty = false;
         }

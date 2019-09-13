@@ -23,14 +23,10 @@ namespace RobotRuntime.Scripts
 
         private IRuntimeAssetManager RuntimeAssetManager;
         private IProfiler Profiler;
-        private IRuntimeProjectManager ProjectManager;
-        public ScriptLoaderNoDomain(IRuntimeAssetManager RuntimeAssetManager, IProfiler Profiler, IRuntimeProjectManager ProjectManager)
+        public ScriptLoaderNoDomain(IRuntimeAssetManager RuntimeAssetManager, IProfiler Profiler)
         {
             this.RuntimeAssetManager = RuntimeAssetManager;
             this.Profiler = Profiler;
-            this.ProjectManager = ProjectManager;
-
-            ProjectManager.NewProjectOpened += OnNewProjectOpened;
 
             // This one is needed. Since my plugins are loaded from bytes and they don't seem to load dependencies by path correctly
             // Since I'm loading them manually, I can return correct dependency from already loaded ones
@@ -52,11 +48,6 @@ namespace RobotRuntime.Scripts
                 Logger.Log(LogType.Error, "Cannot resolve assembly not found problem. Was looking for: " + args.Name);
 
             return asm;
-        }
-
-        private void OnNewProjectOpened(string obj)
-        {
-            CreateUserAppDomain();
         }
 
         public void DestroyUserAppDomain()

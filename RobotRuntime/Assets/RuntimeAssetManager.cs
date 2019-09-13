@@ -30,9 +30,17 @@ namespace RobotRuntime.Assets
             this.Profiler = Profiler;
         }
 
+        /// <summary>
+        /// Collects all importers into a lists for usage later.
+        /// Will laod metadata if it was not loaded before.
+        /// AssetImporters map will be empty and no assets will be accesible before this method is called.
+        /// </summary>
         public void CollectAllImporters()
         {
             Profiler.Start("RuntimeAssetManager.CollectAllImporters");
+
+            if (!AssetGuidManager.MetadataLoaded)
+                AssetGuidManager.LoadMetaFiles();
 
             m_GuidImporterMap.Clear();
 
@@ -54,6 +62,11 @@ namespace RobotRuntime.Assets
             Profiler.Stop("RuntimeAssetManager.CollectAllImporters");
         }
 
+        /// <summary>
+        /// Will load actual file data of every single asset in project.
+        /// Will load metadata and collect all importers if this hasn't been done yet.
+        /// Does not reload any of the data if it changes and if data is being cached by the importer.
+        /// </summary>
         public void PreloadAllAssets()
         {
             Profiler.Start("RuntimeAssetManager.PreloadAllAssets");
