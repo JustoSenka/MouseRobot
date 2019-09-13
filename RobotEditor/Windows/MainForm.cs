@@ -35,39 +35,41 @@ namespace RobotEditor
 
         private IList<TestFixtureWindow> TestFixtureWindows = new List<TestFixtureWindow>();
 
-        private IHierarchyWindow m_HierarchyWindow;
-        private IPropertiesWindow m_PropertiesWindow;
-        private IScreenPreviewWindow m_ScreenPreviewWindow;
-        private IAssetsWindow m_AssetsWindow;
-        private IProfilerWindow m_ProfilerWindow;
-        private IInspectorWindow m_InspectorWindow;
-        private IConsoleWindow m_ConsoleWindow;
-        private ITestRunnerWindow m_TestRunnerWindow;
+        readonly private IHierarchyWindow m_HierarchyWindow;
+        readonly private IPropertiesWindow m_PropertiesWindow;
+        readonly private IScreenPreviewWindow m_ScreenPreviewWindow;
+        readonly private IAssetsWindow m_AssetsWindow;
+        readonly private IProfilerWindow m_ProfilerWindow;
+        readonly private IInspectorWindow m_InspectorWindow;
+        readonly private IConsoleWindow m_ConsoleWindow;
+        readonly private ITestRunnerWindow m_TestRunnerWindow;
 
-        private IMouseRobot MouseRobot;
-        private IScreenPaintForm ScreenPaintForm;
-        private IFeatureDetectionThread FeatureDetectionThread;
-        private ITextDetectionThread TextDetectionThread;
-        private ISettingsManager SettingsManager;
-        private IHierarchyManager RecordingManager;
-        private IAssetManager AssetManager;
-        private IScreenStateThread ScreenStateThread;
-        private IStatusManager StatusManager;
-        private ITestFixtureManager TestFixtureManager;
-        private ITestRunner TestRunner;
-        private IProjectManager ProjectManager;
+        readonly private IMouseRobot MouseRobot;
+        readonly private IScreenPaintForm ScreenPaintForm;
+        readonly private IFeatureDetectionThread FeatureDetectionThread;
+        readonly private ITextDetectionThread TextDetectionThread;
+        readonly private ISettingsManager SettingsManager;
+        readonly private IHierarchyManager RecordingManager;
+        readonly private IAssetManager AssetManager;
+        readonly private IScreenStateThread ScreenStateThread;
+        readonly private IStatusManager StatusManager;
+        readonly private ITestFixtureManager TestFixtureManager;
+        readonly private ITestRunner TestRunner;
+        readonly private IProjectManager ProjectManager;
+        readonly private IAnalytics Analytics;
 
-        private IScriptTemplates ScriptTemplates;
-        private IHotkeyCallbacks HotkeyCallbacks;
+        readonly private IScriptTemplates ScriptTemplates;
+        readonly private IHotkeyCallbacks HotkeyCallbacks;
 
-        private IProjectSelectionDialog ProjectSelectionDialog;
-        private new IUnityContainer Container;
+        readonly private IProjectSelectionDialog ProjectSelectionDialog;
+        readonly private new IUnityContainer Container;
+
         public MainForm(IUnityContainer Container, IMouseRobot MouseRobot, IScreenPaintForm ScreenPaintForm, IFeatureDetectionThread FeatureDetectionThread, ISettingsManager SettingsManager,
             IHierarchyManager RecordingManager, IAssetManager AssetManager, IHierarchyWindow HierarchyWindow, IPropertiesWindow PropertiesWindow, IScreenPreviewWindow ScreenPreviewWindow,
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks,
-            ITextDetectionThread TextDetectionThread)
+            ITextDetectionThread TextDetectionThread, IAnalytics Analytics)
         {
             this.Container = Container;
 
@@ -83,6 +85,7 @@ namespace RobotEditor
             this.TestFixtureManager = TestFixtureManager;
             this.TestRunner = TestRunner;
             this.ProjectManager = ProjectManager;
+            this.Analytics = Analytics;
 
             this.m_HierarchyWindow = HierarchyWindow;
             this.m_PropertiesWindow = PropertiesWindow;
@@ -480,6 +483,26 @@ namespace RobotEditor
         {
             Close();
         }
+
+        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
+            if (didOpen)
+                Close();
+        }
+
+        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
+            if (didOpen)
+                Close();
+        }
+
+        private void newTestFixtureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TestFixtureManager.NewTestFixture();
+        }
+
         #endregion
 
         #region Menu Items (Windows)
@@ -634,25 +657,6 @@ namespace RobotEditor
 
             MouseRobot.IsRecording = false;
             MouseRobot.IsPlaying = false;
-        }
-
-        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
-            if (didOpen)
-                Close();
-        }
-
-        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var didOpen = ProjectSelectionDialog.OpenNewProgramInstanceOfProjectWithDialog();
-            if (didOpen)
-                Close();
-        }
-
-        private void newTestFixtureToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            var testFixture = TestFixtureManager.NewTestFixture();
         }
     }
 }

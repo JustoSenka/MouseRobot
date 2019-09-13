@@ -9,7 +9,6 @@ namespace RobotRuntime
     public static class AnalyticsEvent
     {
         public static string K_AssetManager => "AssetManager";
-        public static string K_Hierarchy => "Hierarchy"; // Use GetType().Name for BaseHierarchyWindows
 
         public static string A_ProjectStructure => "ProjectStructure";
         public static string A_RecordingStructure => "RecordingStructure";
@@ -22,16 +21,11 @@ namespace RobotRuntime
         public static string A_Save => "Save";
         public static string A_SetActive => "SetActive";
 
-        public static string A_Expand => "Expand";
-        public static string A_Collapse => "Collapse";
-
+        public static string A_MenuItemClick => "MenuItemClick";
 
         public static string L_Selection => "Selection";
         public static string L_TotalAssetCount => "TotalAssetCount";
         public static string L_TotalCommandCount => "TotalCommandCount";
         public static string L_TotalTestCount => "TotalTestCount";
-
-        public static string L_One => "One";
-        public static string L_All => "All";
     }
 }

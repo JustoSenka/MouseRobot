@@ -32,22 +32,22 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestRunnerWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.runSelectedTestsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runSelectedTestsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showInExplorerToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.RunAllButton = new System.Windows.Forms.ToolStripButton();
+            this.RunAllButton = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.RunDropdownButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.runSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.runFailedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.runNotRunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.StopRunButton = new System.Windows.Forms.ToolStripButton();
+            this.runSelectedToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.runFailedToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.runNotRunToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.StopRunButton = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripExpandAll = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripExpandOne = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripCollapseAll = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -248,22 +248,22 @@
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem showInExplorerToolStripMenuItem;
         private System.Windows.Forms.ImageList imageList;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         public BrightIdeasSoftware.TreeListView treeListView;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandAll;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
-        private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandAll;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandOne;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripCollapseAll;
         internal System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripMenuItem runSelectedTestsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem runSelectedTestsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripButton StopRunButton;
+        private RobotEditor.CustomControls.TrackedToolStripButton StopRunButton;
         private System.Windows.Forms.ToolStripDropDownButton RunDropdownButton;
-        private System.Windows.Forms.ToolStripMenuItem runSelectedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem runFailedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem runNotRunToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton RunAllButton;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem runSelectedToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem runFailedToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem runNotRunToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripButton RunAllButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

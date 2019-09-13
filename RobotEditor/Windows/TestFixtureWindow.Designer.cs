@@ -32,18 +32,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestFixtureWindow));
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.newRecordingToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.newRecordingToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.duplicateToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.deleteToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripExpandAll = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripExpandOne = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripCollapseAll = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -200,18 +200,18 @@
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripMenuItem newRecordingToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newRecordingToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem duplicateToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem deleteToolStripMenuItem1;
         private System.Windows.Forms.ImageList imageList;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         public BrightIdeasSoftware.TreeListView treeListView;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandAll;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
-        private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandAll;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandOne;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripCollapseAll;
         internal System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem createToolStripMenuItem;
     }
 }

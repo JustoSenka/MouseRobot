@@ -191,6 +191,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IScreenPaintForm.cs" />
+    <Compile Include="CustomControls\AnalyticControls\TrackedToolStripButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AnalyticControls\TrackedToolStripComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AnalyticControls\TrackedToolStripToggleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\AnalyticControls\TrackedToolstripMenuItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\CutomTrackbar.cs">
       <SubType>Component</SubType>
     </Compile>

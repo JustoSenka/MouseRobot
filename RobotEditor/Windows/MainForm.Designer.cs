@@ -39,48 +39,48 @@
             this.vS2015BlueTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2015BlueTheme();
             this.vS2015LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.playButton = new System.Windows.Forms.ToolStripButton();
-            this.recordButton = new System.Windows.Forms.ToolStripButton();
-            this.actionOnPlay = new System.Windows.Forms.ToolStripComboBox();
-            this.actionOnRec = new System.Windows.Forms.ToolStripComboBox();
-            this.visualizationButton = new System.Windows.Forms.ToolStripButton();
-            this.textDetectionButton = new System.Windows.Forms.ToolStripButton();
+            this.playButton = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.recordButton = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.actionOnPlay = new RobotEditor.CustomControls.TrackedToolStripComboBox();
+            this.actionOnRec = new RobotEditor.CustomControls.TrackedToolStripComboBox();
+            this.visualizationButton = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.textDetectionButton = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newProjectToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.newTestFixtureToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.newRecordingToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.newToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.newProjectToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.newTestFixtureToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.newRecordingToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveAllRecordingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAllRecordingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.saveRecordingToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.addScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addScriptToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.openRecordingToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.duplicateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.darkThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.blueThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.whiteThemeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageDetectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testRunnerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imagePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.assetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.profilerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.inspectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.consoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem1 = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.editToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.duplicateToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.deleteToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.optionsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.darkThemeToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.blueThemeToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.whiteThemeToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.windowToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.commandsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.recordingToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.imageDetectionToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.compilerToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.testRunnerToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.hierarchyToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.imagePreviewToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.assetsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.profilerToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.inspectorToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.consoleToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.helpToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.aboutToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -258,7 +258,7 @@
             // newProjectToolStripMenuItem1
             // 
             this.newProjectToolStripMenuItem1.Name = "newProjectToolStripMenuItem1";
-            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.newProjectToolStripMenuItem1.Text = "Project";
             this.newProjectToolStripMenuItem1.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
@@ -266,15 +266,15 @@
             // 
             this.newTestFixtureToolStripMenuItem1.Name = "newTestFixtureToolStripMenuItem1";
             this.newTestFixtureToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.newTestFixtureToolStripMenuItem1.Text = "Test Fixture";
-            this.newTestFixtureToolStripMenuItem1.Click += new System.EventHandler(this.newTestFixtureToolStripMenuItem1_Click);
+            this.newTestFixtureToolStripMenuItem1.Click += new System.EventHandler(this.newTestFixtureToolStripMenuItem_Click);
             // 
             // newRecordingToolStripMenuItem1
             // 
             this.newRecordingToolStripMenuItem1.Name = "newRecordingToolStripMenuItem1";
             this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.newRecordingToolStripMenuItem1.Text = "Recording";
             this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem_Click);
             // 
@@ -377,21 +377,21 @@
             // darkThemeToolStripMenuItem
             // 
             this.darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.darkThemeToolStripMenuItem.Text = "Dark Theme";
             this.darkThemeToolStripMenuItem.Click += new System.EventHandler(this.darkThemeToolStripMenuItem_Click);
             // 
             // blueThemeToolStripMenuItem
             // 
             this.blueThemeToolStripMenuItem.Name = "blueThemeToolStripMenuItem";
-            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.blueThemeToolStripMenuItem.Text = "Blue Theme";
             this.blueThemeToolStripMenuItem.Click += new System.EventHandler(this.blueThemeToolStripMenuItem_Click);
             // 
             // whiteThemeToolStripMenuItem
             // 
             this.whiteThemeToolStripMenuItem.Name = "whiteThemeToolStripMenuItem";
-            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.whiteThemeToolStripMenuItem.Text = "Light Theme";
             this.whiteThemeToolStripMenuItem.Click += new System.EventHandler(this.lightThemeToolStripMenuItem_Click);
             // 
@@ -541,49 +541,49 @@
         private WeifenLuo.WinFormsUI.Docking.VS2015LightTheme vS2015LightTheme1;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.MenuStrip menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openRecordingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAllRecordingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveRecordingToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem fileToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem openRecordingToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem saveAllRecordingsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem saveRecordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem duplicateToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hierarchyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem darkThemeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem blueThemeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem whiteThemeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem commandsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton playButton;
-        private System.Windows.Forms.ToolStripComboBox actionOnRec;
-        private System.Windows.Forms.ToolStripButton recordButton;
-        private System.Windows.Forms.ToolStripComboBox actionOnPlay;
-        private System.Windows.Forms.ToolStripMenuItem imagePreviewToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem exitToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem editToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem duplicateToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem deleteToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem helpToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem aboutToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem windowToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem hierarchyToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem optionsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem darkThemeToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem blueThemeToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem whiteThemeToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem commandsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripButton playButton;
+        private RobotEditor.CustomControls.TrackedToolStripComboBox actionOnRec;
+        private RobotEditor.CustomControls.TrackedToolStripButton recordButton;
+        private RobotEditor.CustomControls.TrackedToolStripComboBox actionOnPlay;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem imagePreviewToolStripMenuItem;
         private System.Windows.Forms.BindingSource bindingSource1;
-        private System.Windows.Forms.ToolStripMenuItem assetsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem assetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripButton visualizationButton;
-        private System.Windows.Forms.ToolStripMenuItem profilerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem recordingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageDetectionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem inspectorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripButton visualizationButton;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem profilerToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem recordingToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem imageDetectionToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem inspectorToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem consoleToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem testRunnerToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem consoleToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem testRunnerToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel leftLabel;
         private System.Windows.Forms.ToolStripStatusLabel rightLabel;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem newTestFixtureToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem newRecordingToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem compilerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton textDetectionButton;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newProjectToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newTestFixtureToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newRecordingToolStripMenuItem1;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem compilerToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem addScriptToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripButton textDetectionButton;
     }
 }

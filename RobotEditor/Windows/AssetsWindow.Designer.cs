@@ -34,24 +34,24 @@ namespace RobotEditor
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetsWindow));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.reloadRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reloadFixtureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadRecordingToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.reloadFixtureToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.deleteToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.newFolderToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.addScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.recompileRecordingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.regenerateSolutionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addScriptToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.recompileRecordingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.regenerateSolutionToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.showInExplorerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showInExplorerToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.ToolstripExpandAll = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripExpandOne = new System.Windows.Forms.ToolStripButton();
-            this.ToolstripCollapseAll = new System.Windows.Forms.ToolStripButton();
+            this.ToolstripExpandAll = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripExpandOne = new RobotEditor.CustomControls.TrackedToolStripButton();
+            this.ToolstripCollapseAll = new RobotEditor.CustomControls.TrackedToolStripButton();
             this.contextMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -265,24 +265,24 @@ namespace RobotEditor
         }
 
         #endregion
-        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem showInExplorerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem refreshToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem showInExplorerToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ImageList imageList1;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem reloadRecordingToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem reloadRecordingToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem recompileRecordingsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem recompileRecordingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-        private System.Windows.Forms.ToolStripMenuItem regenerateSolutionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addScriptToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem regenerateSolutionToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem addScriptToolStripMenuItem;
         private BrightIdeasSoftware.TreeListView treeListView;
         internal System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandAll;
-        private System.Windows.Forms.ToolStripButton ToolstripExpandOne;
-        private System.Windows.Forms.ToolStripButton ToolstripCollapseAll;
-        private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem reloadFixtureToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandAll;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripExpandOne;
+        private RobotEditor.CustomControls.TrackedToolStripButton ToolstripCollapseAll;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem newFolderToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem reloadFixtureToolStripMenuItem;
     }
 }

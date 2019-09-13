@@ -156,8 +156,6 @@ namespace RobotEditor.Windows.Base
 
         public virtual void newRecordingToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Create, "Recording", 1);
-
             HierarchyManager.NewRecording();
             RefreshTreeListViewAsync();
 
@@ -615,14 +613,11 @@ namespace RobotEditor.Windows.Base
 
         public virtual void ToolstripExpandAll_Click(object sender, EventArgs e)
         {
-            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Expand, AnalyticsEvent.L_All, 1);
             m_TreeListView.ExpandAll();
         }
 
         public virtual void ToolstripExpandOne_Click(object sender, EventArgs e)
         {
-            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Expand, AnalyticsEvent.L_One, 1);
-
             m_TreeListView.CollapseAll();
             foreach (var node in m_Nodes)
                 m_TreeListView.Expand(node);
@@ -630,7 +625,6 @@ namespace RobotEditor.Windows.Base
 
         public virtual void ToolstripCollapseAll_Click(object sender, EventArgs e)
         {
-            Analytics.PushEvent(this.GetType().Name, AnalyticsEvent.A_Collapse, AnalyticsEvent.L_All, 1);
             m_TreeListView.CollapseAll();
         }
 

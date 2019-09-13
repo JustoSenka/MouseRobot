@@ -33,7 +33,7 @@
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.treeListView = new BrightIdeasSoftware.TreeListView();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.showStacktraceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showStacktraceToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             ((System.ComponentModel.ISupportInitialize)(this.treeListView)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
@@ -118,6 +118,6 @@
         public BrightIdeasSoftware.TreeListView treeListView;
         internal System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem showStacktraceToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem showStacktraceToolStripMenuItem;
     }
 }

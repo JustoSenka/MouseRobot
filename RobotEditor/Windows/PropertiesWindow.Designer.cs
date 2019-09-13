@@ -32,9 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropertiesWindow));
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.recordingSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageDetectionSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.compilerSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recordingSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.imageDetectionSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
+            this.compilerSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -99,9 +99,9 @@
 
         #endregion
         private System.Windows.Forms.PropertyGrid propertyGrid;
-        private System.Windows.Forms.ToolStripMenuItem recordingSettingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageDetectionSettingsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem recordingSettingsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem imageDetectionSettingsToolStripMenuItem;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem compilerSettingsToolStripMenuItem;
+        private RobotEditor.CustomControls.TrackedToolStripMenuItem compilerSettingsToolStripMenuItem;
     }
 }

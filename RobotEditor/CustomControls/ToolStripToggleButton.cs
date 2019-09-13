@@ -28,6 +28,13 @@ namespace RobotEditor.CustomControls
 
         public event Action ActiveStateChanged;
 
+        public ToolStripToggleButton() : base() { }
+        public ToolStripToggleButton(Image image) : base(image) { }
+        public ToolStripToggleButton(string text, Image image) : base(text, image) { }
+        public ToolStripToggleButton(string text, Image image, EventHandler onClick) : base(text, image, onClick) { }
+        public ToolStripToggleButton(string text, Image image, EventHandler onClick, string name) : base(text, image, onClick, name) { }
+
+        // TODO: fix other constructors to work in the same way
         public ToolStripToggleButton(string text) : base(text)
         {
             ActiveStateChanged += OnActiveStateChanged;
