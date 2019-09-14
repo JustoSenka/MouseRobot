@@ -35,7 +35,7 @@ namespace Tests.Performance
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
             Profiler = container.Resolve<IProfiler>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
             AssetManager.Refresh();
         }
 

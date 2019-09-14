@@ -36,7 +36,7 @@ namespace Tests.Integration
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [Test]

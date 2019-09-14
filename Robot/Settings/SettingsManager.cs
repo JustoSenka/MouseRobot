@@ -22,6 +22,8 @@ namespace Robot.Settings
 
         public event Action SettingsRestored;
 
+        private readonly object SettingsLock = new object();
+
         private ObjectIO m_Serializer = new JsonObjectIO();
 
         private readonly ILogger Logger;
@@ -39,7 +41,7 @@ namespace Robot.Settings
 
             CreateIfNotExist(Paths.RoamingAppdataPath);
             CreateIfNotExist(Paths.LocalAppdataPath);
-            
+
             TypeCollector.NewTypesAppeared += () => RestoreSettings();
         }
 
@@ -51,8 +53,11 @@ namespace Robot.Settings
 
         public void RestoreDefaults()
         {
-            TypeCollector.RestoreDefaultObjects();
-            SettingsRestored?.Invoke();
+            lock (SettingsLock)
+            {
+                TypeCollector.RestoreDefaultObjects();
+                SettingsRestored?.Invoke();
+            }
         }
 
         ~SettingsManager()
@@ -62,21 +67,27 @@ namespace Robot.Settings
 
         public void SaveSettings()
         {
-            foreach (var s in TypeCollector.AllObjects)
-                WriteToSettingFile(s);
+            lock (SettingsLock)
+            {
+                foreach (var s in TypeCollector.AllObjects)
+                    WriteToSettingFile(s);
+            }
         }
 
         public void RestoreSettings()
         {
-            for (int i = 0; i < TypeCollector.AllObjects.Count(); i++)
+            lock (SettingsLock)
             {
-                var currentSetting = TypeCollector.AllObjects.ElementAt(i);
-                var newSetting = RestoreSettingFromFile(TypeCollector.AllObjects.ElementAt(i));
-                currentSetting.CopyAllFields(newSetting);
-                currentSetting.CopyAllProperties(newSetting);
-            }
+                for (int i = 0; i < TypeCollector.AllObjects.Count(); i++)
+                {
+                    var currentSetting = TypeCollector.AllObjects.ElementAt(i);
+                    var newSetting = RestoreSettingFromFile(TypeCollector.AllObjects.ElementAt(i));
+                    currentSetting.CopyAllFields(newSetting);
+                    currentSetting.CopyAllProperties(newSetting);
+                }
 
-            SettingsRestored?.Invoke();
+                SettingsRestored?.Invoke();
+            }
         }
 
         public T GetSettings<T>() where T : BaseSettings

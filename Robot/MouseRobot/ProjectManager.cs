@@ -47,7 +47,7 @@ namespace Robot
             SaveSettings();
         }
 
-        public override void InitProject(string path)
+        public override async Task InitProject(string path)
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -64,9 +64,10 @@ namespace Robot
 
             AssetManager.Refresh();
             SettingsManager.RestoreSettings();
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            await ScriptManager.CompileScriptsAndReloadUserDomain();
 
-            // Preload assets? Or let systems load everything on demand?
+            AssetManager.CanLoadAssets = true;
+            AssetManager.Refresh();
 
             base.OnNewProjectOpened(path);
         }

@@ -1,6 +1,7 @@
 ﻿using RobotRuntime.Abstractions;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Unity.Lifetime;
 
 namespace RobotRuntime
@@ -17,13 +18,15 @@ namespace RobotRuntime
             this.ScriptLoader = ScriptLoader;
         }
 
-        public virtual void InitProject(string path)
+        public virtual async Task InitProject(string path)
         {
             Environment.CurrentDirectory = path;
 
             ScriptLoader.CreateUserAppDomain();
 
             NewProjectOpened?.Invoke(path);
+
+            await Task.CompletedTask;
         }
 
         protected virtual void OnNewProjectOpened(string path)

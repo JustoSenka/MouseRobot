@@ -52,7 +52,7 @@ namespace Tests.Runtime
             TestRunner = container.Resolve<ITestRunner>();
             Logger = container.Resolve<ILogger>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Tests.Runtime
             var logger = container.Resolve<ILogger>();
 
             var projectManager = container.Resolve<IRuntimeProjectManager>();
-            projectManager.InitProject(TempProjectPath);
+            projectManager.InitProject(TempProjectPath).Wait();
 
             var testRunner = container.Resolve<ITestRunner>();
             testRunner.LoadSettings();

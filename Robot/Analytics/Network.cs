@@ -76,11 +76,11 @@ namespace Robot.Analytics
             if (Regex.IsMatch(id1, k_CountryIDRegex))
                 return id1;
 
-            var id2 = GetCountryID_1(ip);
+            var id2 = GetCountryID_2(ip);
             if (Regex.IsMatch(id2, k_CountryIDRegex))
                 return id2;
 
-            var id3 = GetCountryID_1(ip);
+            var id3 = GetCountryID_3(ip);
             if (Regex.IsMatch(id3, k_CountryIDRegex))
                 return id3;
 

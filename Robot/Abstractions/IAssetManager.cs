@@ -7,6 +7,15 @@ namespace Robot.Abstractions
     {
         IEnumerable<Asset> Assets { get; }
 
+        /// <summary>
+        /// Specifies if one should load assets or not.
+        /// Usually it is false on first refresh while scripts haven't yet been compiled and loaded.
+        /// Ofter scripts are compiled and loaded, this will become true.
+        /// This property should be set by project manager when scripts successfully compiled.
+        /// Implicit dependency is troublesome, but there is no nice way around it.
+        /// </summary>
+        bool CanLoadAssets { get; set; }
+
         /* No public refs, not needed maybe?
         Dictionary<Guid, Asset> GuidAssetTable { get; }
         Dictionary<Guid, long> GuidHashTable { get; }

@@ -39,7 +39,7 @@ namespace Tests.Runtime
             TestRunner = container.Resolve<ITestRunner>();
             TestStatusManager = container.Resolve<ITestStatusManager>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [Test]

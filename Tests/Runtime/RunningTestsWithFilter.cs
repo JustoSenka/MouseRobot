@@ -40,7 +40,7 @@ namespace Tests.Runtime
 
             Logger = container.Resolve<ILogger>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [TestCase("Test15", false, new[] { 11, 12, 15, 13, 14 })]

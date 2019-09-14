@@ -36,7 +36,7 @@ namespace RobotRuntime
 
             // Initialize project
             var projectManager = container.Resolve<IRuntimeProjectManager>();
-            projectManager.InitProject(o.ProjectPath);
+            projectManager.InitProject(o.ProjectPath).Wait();
 
             // Initialize test runner
             var testRunner = container.Resolve<ITestRunner>();

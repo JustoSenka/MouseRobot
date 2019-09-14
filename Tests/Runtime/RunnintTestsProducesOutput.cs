@@ -41,7 +41,7 @@ namespace Tests.Runtime
 
             container.Resolve<ITestRunnerManager>(); // This one outputs test results to file, but is not referenced by anything
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         private readonly static string[] m_Results = new[]

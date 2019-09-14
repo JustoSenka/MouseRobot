@@ -122,6 +122,8 @@ namespace Robot.Analytics
         {
             if (m_InitializationTask != null || !m_InitializationTask.IsCompleted)
                 await m_InitializationTask;
+            else
+                await Task.CompletedTask;
         }
 
         private async Task<bool> SendAnalyticsRequest(HttpRequestMessage request)

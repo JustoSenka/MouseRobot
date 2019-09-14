@@ -22,6 +22,8 @@ namespace Tests.Utils
             Network = container.Resolve<Network>();
         }
 
+        // Some tests are disabled because Rest service provides only limited amount of requests per day
+
         public static IEnumerable<TestCaseData> AllIPSources()
         {
             var Network = new Network();
@@ -39,14 +41,14 @@ namespace Tests.Utils
             yield return new TestCaseData(Network.GetCountryID_3(ip)).SetName("Network_GetCountry_FollowsCorrectFormat(Country 3)");
         }
 
-        [TestCaseSource("AllIPSources")]
+        //[TestCaseSource("AllIPSources")]
         public void Network_GetIP_FollowsCorrectFormat(string ip)
         {
             Console.WriteLine(ip);
             Assert.IsTrue(Regex.IsMatch(ip, Network.k_IpRegex), "IP did not match regex for IP format: " + ip);
         }
 
-        [TestCaseSource("AllCountryCodes")]
+        //[TestCaseSource("AllCountryCodes")]
         public void Network_GetCountry_FollowsCorrectFormat(string id)
         {
             Console.WriteLine(id);
@@ -71,7 +73,7 @@ namespace Tests.Utils
             Assert.IsTrue(Regex.IsMatch(ip, Network.k_IpRegex), "IP did not match regex for IP format: " + ip);
         }
 
-        [Test]
+        // [Test]
         public void GettingExternalIP_FromDifferentSources_AreAllIdentical()
         {
             var ip1 = Network.GetExternalIP_1();
@@ -95,7 +97,7 @@ namespace Tests.Utils
             Assert.IsTrue(Regex.IsMatch(id, Network.k_CountryIDRegex), "ID did not match regex for ID format: " + id);
         }
 
-        [Test]
+        // [Test]
         public void GettingCountryID_FromDifferentSources_AreAllIdentical()
         {
             var ip = Network.GetExternalIP();

@@ -7,6 +7,7 @@ using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
 using RobotRuntime.Tests;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Tests.Integration
@@ -34,7 +35,7 @@ namespace Tests.Integration
             InitializeApplicationWithKnownProjectPath();
         }
 
-        private void InitializeApplicationWithKnownProjectPath()
+        private Task InitializeApplicationWithKnownProjectPath()
         {
             var Container = TestUtils.ConstructContainerForTests();
 
@@ -46,7 +47,7 @@ namespace Tests.Integration
             CommandFactory = Container.Resolve<ICommandFactory>();
             TestRunnerManager = Container.Resolve<ITestRunnerManager>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            return ProjectManager.InitProject(TempProjectPath);
         }
 
         [TestCase(true)]
@@ -54,7 +55,7 @@ namespace Tests.Integration
         public void ReloadingAssetManually_UpdatesUnknownCommands_AfterScriptsAreLoaded(bool waitForPluginLoad)
         {
             CreateOneFixtureWithCustomCommand();
-            InitializeApplicationWithKnownProjectPath();
+            var initialization = InitializeApplicationWithKnownProjectPath();
 
             if (waitForPluginLoad)
                 ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
@@ -70,12 +71,12 @@ namespace Tests.Integration
         public void TestRunnerManager_UpdatesUnknownCommands_AfterScriptsAreLoaded()
         {
             CreateOneFixtureWithCustomCommand();
-            InitializeApplicationWithKnownProjectPath();
+            var initialization = InitializeApplicationWithKnownProjectPath();
 
             // Force loading asset. It will load with unknown commands
             var fixture = AssetManager.GetAsset(k_FixturePath).Value;
 
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+            initialization.Wait();
 
             var fix = TestRunnerManager.TestFixtures.First(f => f.Name == k_FixtureName);
             var rec = fix.Tests.First(t => t.Name == k_TestName);
@@ -89,10 +90,10 @@ namespace Tests.Integration
         public void TestRunnerManager_DoesNotLoadFixtures_BeforeFirstCompilationHappened(bool waitForPluginLoad)
         {
             CreateOneFixtureWithCustomCommand();
-            InitializeApplicationWithKnownProjectPath();
+            var initialization = InitializeApplicationWithKnownProjectPath();
 
             if (waitForPluginLoad)
-                ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+                initialization.Wait();
 
             var fixCount = TestRunnerManager.TestFixtures.Count;
             Assert.AreEqual(waitForPluginLoad ? 1 : 0, fixCount, "Loaded fixture count was incorrect");
@@ -104,13 +105,13 @@ namespace Tests.Integration
         public void TestFixtureManager_DoesNotUpdatesUnknownCommands_AfterScriptsAreLoaded(bool waitForPluginLoad)
         {
             CreateOneFixtureWithCustomCommand();
-            InitializeApplicationWithKnownProjectPath();
+            var initialization = InitializeApplicationWithKnownProjectPath();
 
             var fix = AssetManager.GetAsset(k_FixturePath).ReloadAsset<LightTestFixture>();
             var fixture = TestFixtureManager.NewTestFixture(fix);
 
             if (waitForPluginLoad)
-                ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+                initialization.Wait();
 
             var rec = fixture.Tests.First(t => t.Name == k_TestName);
             var c = rec.Commands.First().value;

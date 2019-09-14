@@ -36,7 +36,7 @@ namespace Tests.Unit
             ScriptManager = Container.Resolve<IScriptManager>();
             ScriptTemplates = Container.Resolve<IScriptTemplates>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [Test]

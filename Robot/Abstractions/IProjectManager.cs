@@ -1,22 +1,20 @@
-﻿using System;
+﻿using RobotRuntime.Abstractions;
+using System;
 using System.Collections.Generic;
 
 namespace Robot
 {
-    public interface IProjectManager
+    public interface IProjectManager : IRuntimeProjectManager
     {
-        string ProjectName { get; }
         IList<string> LastKnownProjectPaths { get; }
 
         void RestoreAndRemovePathsOfDeletedProjects();
 
-        void InitProject(string path);
         bool IsPathAProject(string path);
 
         void RestoreSettings();
         void SaveSettings();
         void RememberPathInSettings(string path);
 
-        event Action<string> NewProjectOpened;
     }
 }

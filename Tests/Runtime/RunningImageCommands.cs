@@ -48,7 +48,7 @@ namespace Tests.Runtime
             TestStatusManager = Container.Resolve<ITestStatusManager>();
             HierarchyManager = Container.Resolve<IHierarchyManager>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
         }
 
         [Test]

@@ -10,14 +10,15 @@ using Unity.Lifetime;
 
 namespace Robot.Assets.Analytics
 {
-    [RegisterTypeToContainer(typeof(IAssetManagerStartupAnalytics), typeof(ContainerControlledLifetimeManager))]
+    [RegisterTypeToContainer(typeof(IAssetManagerStartupAnalytics))]
     public class AssetManagerStartupAnalytics : IAssetManagerStartupAnalytics
     {
+        private bool m_AlreadyReported;
+
         private readonly IAnalytics Analytics;
         private readonly IRecordingStructureAnalytics RecordingStructureAnalytics;
         private readonly ITestFixtureStructureAnalytics TestFixtureStructureAnalytics;
         private readonly IProfiler Profiler;
-
         public AssetManagerStartupAnalytics(IAnalytics Analytics, IRecordingStructureAnalytics RecordingStructureAnalytics,
             ITestFixtureStructureAnalytics TestFixtureStructureAnalytics, IProfiler Profiler)
         {
@@ -29,6 +30,11 @@ namespace Robot.Assets.Analytics
 
         public Task CountAndReportAssetTypes(IEnumerable<Asset> Assets)
         {
+            if (m_AlreadyReported)
+                return Task.CompletedTask;
+
+            m_AlreadyReported = true;
+
             return Task.Run(() =>
             {
                 Profiler.Begin("Analytics_ProjectStructure", () =>
@@ -49,12 +55,12 @@ namespace Robot.Assets.Analytics
                              * Disabled these analytics for now, because they load assets before any scripts have compiled
                              * which will results in custom commands failing to load.
                              * Will need to enable once startup sequence is refactored to allow such loads
-                             
+                             */
                             if (a.HoldsType() == typeof(Recording))
                                 RecordingStructureAnalytics.CountAndReportRecordingStructure(a.Load<Recording>());
                             else if (a.HoldsType() == typeof(LightTestFixture))
                                 TestFixtureStructureAnalytics.CountAndReportTestFixtureStructure(a.Load<LightTestFixture>());
-                                */
+                                
                         }
 
                         Analytics.PushEvent(AnalyticsEvent.K_AssetManager, AnalyticsEvent.A_ProjectStructure, AnalyticsEvent.L_TotalAssetCount, Assets.Count());

@@ -41,7 +41,7 @@ namespace Tests.Unit
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             Collector = container.Resolve<IModifiedAssetCollector>();
 
-            ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProject(TempProjectPath).Wait();
 
             Collector.AutoClear = false;
             ClearCollectorAndCallbacks();
