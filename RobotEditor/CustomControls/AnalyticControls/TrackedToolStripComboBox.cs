@@ -37,7 +37,7 @@ namespace RobotEditor.CustomControls
                 Analytics.PushEvent(category, AnalyticsEvent.A_MenuItemClick, selected);
             }
 
-            base.OnClick(e);
+            base.OnSelectedIndexChanged(e);
         }
     }
 }

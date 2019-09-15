@@ -224,7 +224,7 @@
     <Compile Include="Execution\IRunnable.cs" />
     <Compile Include="Execution\IRunner.cs" />
     <Compile Include="Abstractions\IRunnerFactory.cs" />
-    <Compile Include="Execution\PropertyDesignerTypeAttribute.cs" />
+    <Compile Include="Utils\PropertyDesignerTypeAttribute.cs" />
     <Compile Include="Execution\RunnerFactory.cs" />
     <Compile Include="Execution\Runners\RecordingRunner.cs" />
     <Compile Include="Execution\Runners\SimpleCommandRunner.cs" />
@@ -277,7 +277,7 @@
     <Compile Include="Scripts\ScriptLoaderNoDomain.cs" />
     <Compile Include="Recordings\Recording.cs" />
     <Compile Include="Settings\BaseSettings.cs" />
-    <Compile Include="Settings\FeatureDetectionSettings.cs" />
+    <Compile Include="Settings\DetectionSettings.cs" />
     <Compile Include="Abstractions\IRuntimeSettings.cs" />
     <Compile Include="Settings\RuntimeSettings.cs" />
     <Compile Include="Abstractions\ITestStatusManager.cs" />

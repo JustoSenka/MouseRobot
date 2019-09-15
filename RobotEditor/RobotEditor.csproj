@@ -262,9 +262,12 @@
     <Compile Include="PropertyUtils\CommandNameStringConverter.cs" />
     <Compile Include="PropertyUtils\DetectorNameStringConverter.cs" />
     <Compile Include="Settings\CompilerProperties.cs" />
-    <Compile Include="Settings\FeatureDetectionProperties.cs" />
+    <Compile Include="Settings\DesignProperties.cs" />
+    <Compile Include="Settings\DetectionProperties.cs" />
+    <Compile Include="Settings\EditorProperties.cs" />
     <Compile Include="Settings\RecordingProperties.cs" />
     <Compile Include="Utils\FormExtensionMethods.cs" />
+    <Compile Include="Utils\ToolStripMenuItemComparer.cs" />
     <Compile Include="Windows\Base\BaseHierarchyWindow.cs">
       <SubType>Form</SubType>
     </Compile>

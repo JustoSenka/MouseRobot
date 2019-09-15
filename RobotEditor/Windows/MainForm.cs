@@ -4,6 +4,7 @@ using Robot.Settings;
 using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotEditor.Editor;
+using RobotEditor.Settings;
 using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
@@ -119,9 +120,6 @@ namespace RobotEditor
 
             visualStudioToolStripExtender.DefaultRenderer = new ToolStripProfessionalRenderer();
 
-            actionOnRec.SelectedIndex = 2;
-            actionOnPlay.SelectedIndex = 2;
-
             RegisterFormHotkeys(HotkeyCallbacks);
 
             m_AssetsWindow.AssetSelected += OnAssetSelected;
@@ -132,7 +130,9 @@ namespace RobotEditor
             MouseRobot.VisualizationStateChanged += OnVisualizationStateChanged;
             MouseRobot.TextDetectionStateChanged += OnVisualizationStateChanged;
 
+            SettingsManager.SettingsRestored += OnSettingsRestored;
             StatusManager.StatusUpdated += OnStatusUpdated;
+            m_PropertiesWindow.PropertiesModified += OnPropertiesModified;
 
             TestFixtureManager.FixtureAdded += OnFixtureAdded;
             TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
@@ -161,6 +161,8 @@ namespace RobotEditor
         private void OnFormActivated(object sender, EventArgs e)
         {
             AssetManager.Refresh();
+
+            OnSettingsRestored();
 
             this.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
@@ -202,17 +204,52 @@ namespace RobotEditor
             TestFixtureWindows.Add(window);
         }
 
+        #region Editor Settings
+
+        private void OnSettingsRestored()
+        {
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+
+            this.BeginInvokeIfCreated(new MethodInvoker(delegate
+            {
+                actionOnPlay.SelectedIndex = (int)settings.PlayingAction;
+                actionOnRec.SelectedIndex = (int)settings.RecordingAction;
+            }));
+        }
+
+        private void OnPropertiesModified(BaseProperties props)
+        {
+            if (props.Settings.GetType() == typeof(EditorSettings))
+                OnSettingsRestored();
+        }
+
+        private void actionOnRec_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+            settings.RecordingAction = (WindowState)actionOnRec.SelectedIndex;
+            m_PropertiesWindow.UpdateCurrentProperties();
+        }
+
+        private void actionOnPlay_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+            settings.PlayingAction = (WindowState)actionOnPlay.SelectedIndex;
+            m_PropertiesWindow.UpdateCurrentProperties();
+        }
+
         private void OnPlayingStateChanged(bool isPlaying)
         {
             this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
-                if (isPlaying && actionOnPlay.SelectedIndex == 0)
+                var settings = SettingsManager.GetSettings<EditorSettings>();
+
+                if (isPlaying && settings.PlayingAction == Robot.Settings.WindowState.Minimize)
                 {
                     m_DefaultWindowState = this.WindowState;
                     this.WindowState = FormWindowState.Minimized;
                 }
 
-                if (!isPlaying && actionOnPlay.SelectedIndex == 0)
+                if (!isPlaying && settings.PlayingAction == Robot.Settings.WindowState.Minimize)
                 {
                     this.WindowState = m_DefaultWindowState;
                     this.Activate();
@@ -225,13 +262,15 @@ namespace RobotEditor
 
         private void OnRecordingStateChanged(bool isRecording)
         {
-            if (isRecording && actionOnRec.SelectedIndex == 0)
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+
+            if (isRecording && settings.RecordingAction == Robot.Settings.WindowState.Minimize)
             {
                 m_DefaultWindowState = this.WindowState;
                 this.WindowState = FormWindowState.Minimized;
             }
 
-            if (!isRecording && actionOnRec.SelectedIndex == 0)
+            if (!isRecording && settings.RecordingAction == Robot.Settings.WindowState.Minimize)
             {
                 this.WindowState = m_DefaultWindowState;
                 this.Activate();
@@ -240,6 +279,8 @@ namespace RobotEditor
 
             UpdateToolstripButtonStates();
         }
+
+        #endregion Editor Settings
 
         private void OnVisualizationStateChanged(bool isVisualizationOn)
         {

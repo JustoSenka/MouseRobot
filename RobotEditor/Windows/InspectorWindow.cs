@@ -8,6 +8,7 @@ using RobotRuntime.Abstractions;
 using RobotRuntime.Execution;
 using RobotRuntime.Recordings;
 using RobotRuntime.Reflection;
+using RobotRuntime.Utils;
 using System;
 using System.Linq;
 using System.Reflection;

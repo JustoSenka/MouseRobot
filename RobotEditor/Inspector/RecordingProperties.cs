@@ -22,7 +22,7 @@ namespace RobotEditor.Inspector
 
         protected PropertyDescriptorCollection Properties;
         private ICommandFactory CommandFactory;
-        public RecordingProperties(ICommandFactory CommandFactory)
+        public RecordingProperties(ICommandFactory CommandFactory) : base(null) // This one is not based on BaseSettings
         {
             this.CommandFactory = CommandFactory;
 

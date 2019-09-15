@@ -32,10 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropertiesWindow));
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.recordingSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
-            this.imageDetectionSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
-            this.compilerSettingsToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
-            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // propertyGrid
@@ -53,33 +49,8 @@
             // 
             // contextMenuStrip
             // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.recordingSettingsToolStripMenuItem,
-            this.imageDetectionSettingsToolStripMenuItem,
-            this.compilerSettingsToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(174, 70);
-            // 
-            // recordingSettingsToolStripMenuItem
-            // 
-            this.recordingSettingsToolStripMenuItem.Name = "recordingSettingsToolStripMenuItem";
-            this.recordingSettingsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.recordingSettingsToolStripMenuItem.Text = "Recording Settings";
-            this.recordingSettingsToolStripMenuItem.Click += new System.EventHandler(this.recordingSettingsToolStripMenuItem_Click);
-            // 
-            // imageDetectionSettingsToolStripMenuItem
-            // 
-            this.imageDetectionSettingsToolStripMenuItem.Name = "imageDetectionSettingsToolStripMenuItem";
-            this.imageDetectionSettingsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.imageDetectionSettingsToolStripMenuItem.Text = "Detection Settings";
-            this.imageDetectionSettingsToolStripMenuItem.Click += new System.EventHandler(this.imageDetectionSettingsToolStripMenuItem_Click);
-            // 
-            // compilerSettingsToolStripMenuItem
-            // 
-            this.compilerSettingsToolStripMenuItem.Name = "compilerSettingsToolStripMenuItem";
-            this.compilerSettingsToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.compilerSettingsToolStripMenuItem.Text = "Compiler Settings";
-            this.compilerSettingsToolStripMenuItem.Click += new System.EventHandler(this.compilerSettingsToolStripMenuItem_Click);
+            this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
             // PropertiesWindow
             // 
@@ -92,16 +63,12 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PropertiesWindow";
             this.Text = "Properties";
-            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.PropertyGrid propertyGrid;
-        private RobotEditor.CustomControls.TrackedToolStripMenuItem recordingSettingsToolStripMenuItem;
-        private RobotEditor.CustomControls.TrackedToolStripMenuItem imageDetectionSettingsToolStripMenuItem;
         public System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private RobotEditor.CustomControls.TrackedToolStripMenuItem compilerSettingsToolStripMenuItem;
     }
 }

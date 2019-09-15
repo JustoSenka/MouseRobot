@@ -218,6 +218,8 @@
     <Compile Include="Abstractions\ICommandFactory.cs" />
     <Compile Include="Recordings\BaseHierarchyManager.cs" />
     <Compile Include="Settings\CompilerSettings.cs" />
+    <Compile Include="Settings\DesignSettings.cs" />
+    <Compile Include="Settings\EditorSettings.cs" />
     <Compile Include="Settings\RecordingSettings.cs" />
     <Compile Include="MouseRobot\MouseRobot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

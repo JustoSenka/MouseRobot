@@ -150,6 +150,7 @@
             // 
             // playButton
             // 
+            this.playButton.AnalyticsEnabled = true;
             this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.playButton.Image = global::RobotEditor.Properties.Resources.ToolButton_Play_32;
             this.playButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -160,6 +161,7 @@
             // 
             // recordButton
             // 
+            this.recordButton.AnalyticsEnabled = true;
             this.recordButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.recordButton.Image = global::RobotEditor.Properties.Resources.ToolButton_Record_32;
             this.recordButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -170,28 +172,33 @@
             // 
             // actionOnPlay
             // 
+            this.actionOnPlay.AnalyticsEnabled = true;
             this.actionOnPlay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.actionOnPlay.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.actionOnPlay.Items.AddRange(new object[] {
-            "Minimize On Play",
-            "Transparent On Play",
-            "Do Nothing On Play"});
+            "Do Nothing On Play",
+            "Windowed On Play",
+            "Minimize On Play"});
             this.actionOnPlay.Name = "actionOnPlay";
             this.actionOnPlay.Size = new System.Drawing.Size(140, 25);
+            this.actionOnPlay.SelectedIndexChanged += new System.EventHandler(this.actionOnPlay_SelectedIndexChanged);
             // 
             // actionOnRec
             // 
+            this.actionOnRec.AnalyticsEnabled = true;
             this.actionOnRec.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.actionOnRec.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.actionOnRec.Items.AddRange(new object[] {
-            "Minimize On Rec",
-            "Transparent On Rec",
-            "Do Nothing On Rec"});
+            "Do Nothing On Rec",
+            "Windowed On Rec",
+            "Minimize On Rec"});
             this.actionOnRec.Name = "actionOnRec";
             this.actionOnRec.Size = new System.Drawing.Size(140, 25);
+            this.actionOnRec.SelectedIndexChanged += new System.EventHandler(this.actionOnRec_SelectedIndexChanged);
             // 
             // visualizationButton
             // 
+            this.visualizationButton.AnalyticsEnabled = true;
             this.visualizationButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.visualizationButton.Image = global::RobotEditor.Properties.Resources.Eye_d_ICO_256;
             this.visualizationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -203,6 +210,7 @@
             // 
             // textDetectionButton
             // 
+            this.textDetectionButton.AnalyticsEnabled = true;
             this.textDetectionButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.textDetectionButton.Image = global::RobotEditor.Properties.Resources.Text_d_ICO_32;
             this.textDetectionButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -230,6 +238,7 @@
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.AnalyticsEnabled = true;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openProjectToolStripMenuItem,
@@ -247,6 +256,7 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.AnalyticsEnabled = true;
             this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newProjectToolStripMenuItem1,
             this.newTestFixtureToolStripMenuItem1,
@@ -257,29 +267,33 @@
             // 
             // newProjectToolStripMenuItem1
             // 
+            this.newProjectToolStripMenuItem1.AnalyticsEnabled = true;
             this.newProjectToolStripMenuItem1.Name = "newProjectToolStripMenuItem1";
-            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.newProjectToolStripMenuItem1.Text = "Project";
             this.newProjectToolStripMenuItem1.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
             // newTestFixtureToolStripMenuItem1
             // 
+            this.newTestFixtureToolStripMenuItem1.AnalyticsEnabled = true;
             this.newTestFixtureToolStripMenuItem1.Name = "newTestFixtureToolStripMenuItem1";
             this.newTestFixtureToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.newTestFixtureToolStripMenuItem1.Text = "Test Fixture";
             this.newTestFixtureToolStripMenuItem1.Click += new System.EventHandler(this.newTestFixtureToolStripMenuItem_Click);
             // 
             // newRecordingToolStripMenuItem1
             // 
+            this.newRecordingToolStripMenuItem1.AnalyticsEnabled = true;
             this.newRecordingToolStripMenuItem1.Name = "newRecordingToolStripMenuItem1";
             this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
             this.newRecordingToolStripMenuItem1.Text = "Recording";
             this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem_Click);
             // 
             // openProjectToolStripMenuItem
             // 
+            this.openProjectToolStripMenuItem.AnalyticsEnabled = true;
             this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
             this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.openProjectToolStripMenuItem.Text = "Open Project";
@@ -292,6 +306,7 @@
             // 
             // saveAllRecordingsToolStripMenuItem
             // 
+            this.saveAllRecordingsToolStripMenuItem.AnalyticsEnabled = true;
             this.saveAllRecordingsToolStripMenuItem.Name = "saveAllRecordingsToolStripMenuItem";
             this.saveAllRecordingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveAllRecordingsToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
@@ -300,6 +315,7 @@
             // 
             // saveRecordingToolStripMenuItem
             // 
+            this.saveRecordingToolStripMenuItem.AnalyticsEnabled = true;
             this.saveRecordingToolStripMenuItem.Name = "saveRecordingToolStripMenuItem";
             this.saveRecordingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
@@ -314,12 +330,14 @@
             // 
             // addScriptToolStripMenuItem
             // 
+            this.addScriptToolStripMenuItem.AnalyticsEnabled = true;
             this.addScriptToolStripMenuItem.Name = "addScriptToolStripMenuItem";
             this.addScriptToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.addScriptToolStripMenuItem.Text = "Add Script";
             // 
             // openRecordingToolStripMenuItem
             // 
+            this.openRecordingToolStripMenuItem.AnalyticsEnabled = true;
             this.openRecordingToolStripMenuItem.Name = "openRecordingToolStripMenuItem";
             this.openRecordingToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openRecordingToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
@@ -333,6 +351,7 @@
             // 
             // exitToolStripMenuItem1
             // 
+            this.exitToolStripMenuItem1.AnalyticsEnabled = true;
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
             this.exitToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem1.Size = new System.Drawing.Size(189, 22);
@@ -341,6 +360,7 @@
             // 
             // editToolStripMenuItem
             // 
+            this.editToolStripMenuItem.AnalyticsEnabled = true;
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.duplicateToolStripMenuItem,
             this.deleteToolStripMenuItem});
@@ -350,6 +370,7 @@
             // 
             // duplicateToolStripMenuItem
             // 
+            this.duplicateToolStripMenuItem.AnalyticsEnabled = true;
             this.duplicateToolStripMenuItem.Name = "duplicateToolStripMenuItem";
             this.duplicateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.duplicateToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
@@ -358,6 +379,7 @@
             // 
             // deleteToolStripMenuItem
             // 
+            this.deleteToolStripMenuItem.AnalyticsEnabled = true;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
@@ -366,6 +388,7 @@
             // 
             // optionsToolStripMenuItem
             // 
+            this.optionsToolStripMenuItem.AnalyticsEnabled = true;
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.darkThemeToolStripMenuItem,
             this.blueThemeToolStripMenuItem,
@@ -376,27 +399,31 @@
             // 
             // darkThemeToolStripMenuItem
             // 
+            this.darkThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.darkThemeToolStripMenuItem.Text = "Dark Theme";
             this.darkThemeToolStripMenuItem.Click += new System.EventHandler(this.darkThemeToolStripMenuItem_Click);
             // 
             // blueThemeToolStripMenuItem
             // 
+            this.blueThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.blueThemeToolStripMenuItem.Name = "blueThemeToolStripMenuItem";
-            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.blueThemeToolStripMenuItem.Text = "Blue Theme";
             this.blueThemeToolStripMenuItem.Click += new System.EventHandler(this.blueThemeToolStripMenuItem_Click);
             // 
             // whiteThemeToolStripMenuItem
             // 
+            this.whiteThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.whiteThemeToolStripMenuItem.Name = "whiteThemeToolStripMenuItem";
-            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.whiteThemeToolStripMenuItem.Text = "Light Theme";
             this.whiteThemeToolStripMenuItem.Click += new System.EventHandler(this.lightThemeToolStripMenuItem_Click);
             // 
             // windowToolStripMenuItem
             // 
+            this.windowToolStripMenuItem.AnalyticsEnabled = true;
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.commandsToolStripMenuItem,
             this.testRunnerToolStripMenuItem,
@@ -412,6 +439,7 @@
             // 
             // commandsToolStripMenuItem
             // 
+            this.commandsToolStripMenuItem.AnalyticsEnabled = true;
             this.commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.recordingToolStripMenuItem,
             this.imageDetectionToolStripMenuItem,
@@ -422,6 +450,7 @@
             // 
             // recordingToolStripMenuItem
             // 
+            this.recordingToolStripMenuItem.AnalyticsEnabled = true;
             this.recordingToolStripMenuItem.Name = "recordingToolStripMenuItem";
             this.recordingToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.recordingToolStripMenuItem.Text = "Recording";
@@ -429,6 +458,7 @@
             // 
             // imageDetectionToolStripMenuItem
             // 
+            this.imageDetectionToolStripMenuItem.AnalyticsEnabled = true;
             this.imageDetectionToolStripMenuItem.Name = "imageDetectionToolStripMenuItem";
             this.imageDetectionToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.imageDetectionToolStripMenuItem.Text = "Detection";
@@ -436,6 +466,7 @@
             // 
             // compilerToolStripMenuItem
             // 
+            this.compilerToolStripMenuItem.AnalyticsEnabled = true;
             this.compilerToolStripMenuItem.Name = "compilerToolStripMenuItem";
             this.compilerToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.compilerToolStripMenuItem.Text = "Compiler";
@@ -443,6 +474,7 @@
             // 
             // testRunnerToolStripMenuItem
             // 
+            this.testRunnerToolStripMenuItem.AnalyticsEnabled = true;
             this.testRunnerToolStripMenuItem.Name = "testRunnerToolStripMenuItem";
             this.testRunnerToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.testRunnerToolStripMenuItem.Text = "Test Runner";
@@ -450,6 +482,7 @@
             // 
             // hierarchyToolStripMenuItem
             // 
+            this.hierarchyToolStripMenuItem.AnalyticsEnabled = true;
             this.hierarchyToolStripMenuItem.Name = "hierarchyToolStripMenuItem";
             this.hierarchyToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.hierarchyToolStripMenuItem.Text = "Hierarchy";
@@ -457,6 +490,7 @@
             // 
             // imagePreviewToolStripMenuItem
             // 
+            this.imagePreviewToolStripMenuItem.AnalyticsEnabled = true;
             this.imagePreviewToolStripMenuItem.Name = "imagePreviewToolStripMenuItem";
             this.imagePreviewToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.imagePreviewToolStripMenuItem.Text = "Image Preview";
@@ -464,6 +498,7 @@
             // 
             // assetsToolStripMenuItem
             // 
+            this.assetsToolStripMenuItem.AnalyticsEnabled = true;
             this.assetsToolStripMenuItem.Name = "assetsToolStripMenuItem";
             this.assetsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.assetsToolStripMenuItem.Text = "Assets";
@@ -471,6 +506,7 @@
             // 
             // profilerToolStripMenuItem
             // 
+            this.profilerToolStripMenuItem.AnalyticsEnabled = true;
             this.profilerToolStripMenuItem.Name = "profilerToolStripMenuItem";
             this.profilerToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.profilerToolStripMenuItem.Text = "Profiler";
@@ -478,6 +514,7 @@
             // 
             // inspectorToolStripMenuItem
             // 
+            this.inspectorToolStripMenuItem.AnalyticsEnabled = true;
             this.inspectorToolStripMenuItem.Name = "inspectorToolStripMenuItem";
             this.inspectorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.inspectorToolStripMenuItem.Text = "Inspector";
@@ -485,6 +522,7 @@
             // 
             // consoleToolStripMenuItem
             // 
+            this.consoleToolStripMenuItem.AnalyticsEnabled = true;
             this.consoleToolStripMenuItem.Name = "consoleToolStripMenuItem";
             this.consoleToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.consoleToolStripMenuItem.Text = "Console";
@@ -492,6 +530,7 @@
             // 
             // helpToolStripMenuItem
             // 
+            this.helpToolStripMenuItem.AnalyticsEnabled = true;
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -500,6 +539,7 @@
             // 
             // aboutToolStripMenuItem
             // 
+            this.aboutToolStripMenuItem.AnalyticsEnabled = true;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";

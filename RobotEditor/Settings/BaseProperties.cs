@@ -1,5 +1,6 @@
 ﻿using Robot.Abstractions;
 using RobotEditor.Utils;
+using RobotRuntime.Settings;
 using System;
 using System.ComponentModel;
 
@@ -19,6 +20,14 @@ namespace RobotEditor.Settings
         [Browsable(false)]
         [NonSerialized]
         public IBaseHierarchyManager BaseHierarchyManager;
+
+        [Browsable(false)]
+        public BaseSettings Settings;
+
+        public BaseProperties(BaseSettings Settings)
+        {
+            this.Settings = Settings;
+        }
 
         public virtual void HideProperties(ref DynamicTypeDescriptor dt)
         {

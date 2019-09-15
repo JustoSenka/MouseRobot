@@ -2,12 +2,14 @@
 using Robot.Settings;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
+using RobotRuntime;
 using System;
 using System.ComponentModel;
 
 namespace RobotEditor.Settings
 {
     [Serializable]
+    [PropertyDesignerType(typeof(CompilerSettings))]
     public class CompilerProperties : BaseProperties
     {
         [NonSerialized]
@@ -19,7 +21,7 @@ namespace RobotEditor.Settings
         [Browsable(false)]
         public override string Title { get { return "Compiler Settings"; } }
 
-        public CompilerProperties(BaseSettings settings, IScriptManager ScriptManager)
+        public CompilerProperties(BaseSettings settings, IScriptManager ScriptManager) : base(settings)
         {
             this.m_Settings = (CompilerSettings)settings;
             this.ScriptManager = ScriptManager;

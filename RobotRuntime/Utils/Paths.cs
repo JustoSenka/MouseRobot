@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace RobotRuntime.Utils
@@ -150,7 +149,7 @@ namespace RobotRuntime.Utils
             var lastElement = array.Length - 1;
 
             return (Regex.IsMatch(array[lastElement], @"\w+\.\w{2,8}$")) ? // If last element is file with extension
-                array.Take(lastElement).Select(NormalizePath).ToArray() : 
+                array.Take(lastElement).Select(NormalizePath).ToArray() :
                 array.Select(NormalizePath).ToArray();
         }
 
@@ -167,6 +166,14 @@ namespace RobotRuntime.Utils
                 list.Add(string.Join(Path.DirectorySeparatorChar.ToString(), elements.Take(i + 1).ToArray()));
 
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Splits camel case string adding spaces between words
+        /// </summary>
+        public static string SplitCamelCase(string input)
+        {
+            return Regex.Replace(input, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
         }
 
         public static string NormalizePath(string path)

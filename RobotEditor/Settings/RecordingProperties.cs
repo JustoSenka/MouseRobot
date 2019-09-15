@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
+using RobotRuntime;
 
 namespace RobotEditor.Settings
 {
     [Serializable]
+    [PropertyDesignerType(typeof(RecordingSettings))]
     public class RecordingProperties : BaseProperties
     {
         [NonSerialized]
@@ -16,7 +18,7 @@ namespace RobotEditor.Settings
         [Browsable(false)]
         public override string Title { get { return "Recording Settings"; } }
 
-        public RecordingProperties(BaseSettings settings)
+        public RecordingProperties(BaseSettings settings) : base(settings)
         {
             this.m_Settings = (RecordingSettings)settings;
         }

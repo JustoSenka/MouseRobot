@@ -1,11 +1,14 @@
 ﻿using RobotEditor.PropertyUtils;
 using RobotEditor.Utils;
 using RobotRuntime.Settings;
+using RobotRuntime;
 using System;
 using System.ComponentModel;
 
 namespace RobotEditor.Settings
 {
+    [Serializable]
+    [PropertyDesignerType(typeof(DetectionSettings))]
     public class DetectionProperties : BaseProperties
     {
         [NonSerialized]
@@ -14,7 +17,7 @@ namespace RobotEditor.Settings
         [Browsable(false)]
         public override string Title { get { return "Detection Settings"; } }
 
-        public DetectionProperties(BaseSettings settings)
+        public DetectionProperties(BaseSettings settings) : base(settings)
         {
             this.m_Settings = (DetectionSettings)settings;
         }

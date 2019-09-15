@@ -21,7 +21,7 @@ namespace RobotEditor.Inspector
 
         protected PropertyDescriptorCollection Properties;
         private ICommandFactory CommandFactory;
-        public CommandProperties(ICommandFactory CommandFactory)
+        public CommandProperties(ICommandFactory CommandFactory) : base(null)
         {
             this.CommandFactory = CommandFactory;
 
