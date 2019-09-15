@@ -7,7 +7,6 @@ using RobotEditor.Utils;
 using RobotRuntime;
 using RobotRuntime.Scripts;
 using RobotRuntime.Settings;
-using RobotRuntime.Utils;
 using System;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,6 +20,7 @@ namespace RobotEditor
     {
         public event Action<BaseProperties> PropertiesModified;
 
+        private BaseSettings m_CurrentSettings;
         private BaseProperties m_CurrentObject;
         private Type m_CurrentObjectType;
         private Type m_CurrentSettingsType;
@@ -82,13 +82,10 @@ namespace RobotEditor
 
         public void ShowSettings<T>(T settings) where T : BaseSettings
         {
-            var newProps = WrapSettingsToProperties(settings);
+            m_CurrentSettings = settings;
+            m_CurrentObject = WrapSettingsToProperties(settings);
 
-            if (newProps == null)
-                return;
-
-            m_CurrentObject = newProps;
-            this.Text = m_CurrentObject.Title;
+            this.Text = m_CurrentObject == null ? settings.FriendlyName : m_CurrentObject.Title;
 
             // Putting null as sender so we don't call properties modified callback. But we want to update dt
             propertyGrid_PropertyValueChanged(null, null);
@@ -113,26 +110,38 @@ namespace RobotEditor
                     return (BaseProperties)Activator.CreateInstance(m_CurrentObjectType, settings);
             }
 
-            Logger.Log(LogType.Warning, m_CurrentSettingsType.Name + " is not known type of settings, or property wrapper was not created for it");
             return null;
         }
 
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
-
-            m_CurrentObject.HideProperties(ref dt);
-
-            if (sender != null) // If it was modified from UI, call the callback. In other cases we don't want to do that.
+            if (m_CurrentObject != null)
             {
-                m_CurrentObject.OnPropertiesModified();
-                PropertiesModified?.Invoke(m_CurrentObject);
+                DynamicTypeDescriptor dt = new DynamicTypeDescriptor(m_CurrentObjectType);
+
+                m_CurrentObject.HideProperties(ref dt);
+
+                if (sender != null) // If it was modified from UI, call the callback. In other cases we don't want to do that.
+                {
+                    m_CurrentObject.OnPropertiesModified();
+                    PropertiesModified?.Invoke(m_CurrentObject);
+                }
+
+                propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
+                {
+                    propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
+                }));
             }
-
-            propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
+            else if (m_CurrentSettings != null)
             {
-                propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
-            }));
+                if (sender != null) 
+                    PropertiesModified?.Invoke(null);
+
+                propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
+                {
+                    propertyGrid.SelectedObject = m_CurrentSettings;
+                }));
+            }
         }
     }
 }
