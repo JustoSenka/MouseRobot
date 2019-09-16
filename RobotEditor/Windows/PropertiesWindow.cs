@@ -125,6 +125,7 @@ namespace RobotEditor
                 {
                     m_CurrentObject.OnPropertiesModified();
                     PropertiesModified?.Invoke(m_CurrentObject);
+                    SettingsManager.InvokeSettingsModifiedCallback(m_CurrentSettings);
                 }
 
                 propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
@@ -134,8 +135,11 @@ namespace RobotEditor
             }
             else if (m_CurrentSettings != null)
             {
-                if (sender != null) 
+                if (sender != null)
+                {
                     PropertiesModified?.Invoke(null);
+                    SettingsManager.InvokeSettingsModifiedCallback(m_CurrentSettings);
+                }
 
                 propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
                 {

@@ -61,6 +61,7 @@ namespace RobotEditor
 
         readonly private IScriptTemplates ScriptTemplates;
         readonly private IHotkeyCallbacks HotkeyCallbacks;
+        readonly private IFontManager FontManager;
 
         readonly private IProjectSelectionDialog ProjectSelectionDialog;
         readonly private new IUnityContainer Container;
@@ -70,7 +71,7 @@ namespace RobotEditor
             IAssetsWindow AssetsWindow, IProfilerWindow ProfilerWindow, IInspectorWindow InspectorWindow, IScreenStateThread ScreenStateThread,
             IProjectSelectionDialog ProjectSelectionDialog, IConsoleWindow ConsoleWindow, IStatusManager StatusManager, ITestFixtureManager TestFixtureManager,
             ITestRunnerWindow TestRunnerWindow, ITestRunner TestRunner, IProjectManager ProjectManager, IScriptTemplates ScriptTemplates, IHotkeyCallbacks HotkeyCallbacks,
-            ITextDetectionThread TextDetectionThread, IAnalytics Analytics)
+            ITextDetectionThread TextDetectionThread, IAnalytics Analytics, IFontManager FontManager)
         {
             this.Container = Container;
 
@@ -99,6 +100,7 @@ namespace RobotEditor
 
             this.ScriptTemplates = ScriptTemplates;
             this.HotkeyCallbacks = HotkeyCallbacks;
+            this.FontManager = FontManager;
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
@@ -114,6 +116,7 @@ namespace RobotEditor
 
             PutLayoutWindowsInArray();
             SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
+            RegisterAllFormsToTheFontManager();
 
             DockLayout.Windows = m_Windows;
             DockLayout.Restore(m_DockPanel);
@@ -131,6 +134,7 @@ namespace RobotEditor
             MouseRobot.TextDetectionStateChanged += OnVisualizationStateChanged;
 
             SettingsManager.SettingsRestored += OnSettingsRestored;
+            SettingsManager.SettingsModified += OnSettingsModified;
             StatusManager.StatusUpdated += OnStatusUpdated;
             m_PropertiesWindow.PropertiesModified += OnPropertiesModified;
 
@@ -170,6 +174,8 @@ namespace RobotEditor
             }));
         }
 
+        #region New Test Fixture Window Addition
+
         private void OnFixtureAdded(TestFixture fixture)
         {
             TestFixtureWindows = GetNotDestroyedWindows(TestFixtureWindows).ToList();
@@ -181,6 +187,9 @@ namespace RobotEditor
 
             window.DisplayTestFixture(fixture);
             window.OnSelectionChanged += ShowSelectedObjectInInspector;
+
+            // Update font for newly added fixture and register form for future font changes
+            RegisterAllFormsToTheFontManager();
         }
 
         private void OnFixtureRemoved(TestFixture fixture)
@@ -204,6 +213,8 @@ namespace RobotEditor
             TestFixtureWindows.Add(window);
         }
 
+        #endregion // New Test Fixture Window Addition
+
         #region Editor Settings
 
         private void OnSettingsRestored()
@@ -212,15 +223,30 @@ namespace RobotEditor
 
             this.BeginInvokeIfCreated(new MethodInvoker(delegate
             {
+                FontManager.ForceUpdateFonts();
+
                 actionOnPlay.SelectedIndex = (int)settings.PlayingAction;
                 actionOnRec.SelectedIndex = (int)settings.RecordingAction;
             }));
         }
 
+        private void OnSettingsModified(BaseSettings setting)
+        {
+            if (setting is DesignSettings)
+                this.BeginInvokeIfCreated(new MethodInvoker(FontManager.ForceUpdateFonts));
+        }
+
         private void OnPropertiesModified(BaseProperties props)
         {
-            if (props.Settings.GetType() == typeof(EditorSettings))
-                OnSettingsRestored();
+            if (props.Settings is EditorSettings)
+            {
+                var settings = SettingsManager.GetSettings<EditorSettings>();
+                this.BeginInvokeIfCreated(new MethodInvoker(delegate
+                {
+                    actionOnPlay.SelectedIndex = (int)settings.PlayingAction;
+                    actionOnRec.SelectedIndex = (int)settings.RecordingAction;
+                }));
+            }
         }
 
         private void actionOnRec_SelectedIndexChanged(object sender, EventArgs e)
@@ -395,6 +421,16 @@ namespace RobotEditor
                 visualStudioToolStripExtender.SetStyle(window.ContextMenuStrip, version, theme);
             if (window.ToolStrip != null)
                 visualStudioToolStripExtender.SetStyle(window.ToolStrip, version, theme);
+        }
+
+        private void RegisterAllFormsToTheFontManager()
+        {
+            FontManager.Forms.Clear();
+            FontManager.Forms.Add(this);
+            FontManager.Forms.AddRange(m_Windows);
+            FontManager.Forms.AddRange(TestFixtureWindows);
+
+            this.BeginInvokeIfCreated(new MethodInvoker(FontManager.ForceUpdateFonts));
         }
 
         private void ShowSplashScreen(int millis)

@@ -1,5 +1,4 @@
-﻿using Robot.Settings;
-using RobotRuntime.Settings;
+﻿using RobotRuntime.Settings;
 using System;
 using System.Collections.Generic;
 
@@ -14,6 +13,9 @@ namespace Robot.Abstractions
         BaseSettings GetSettingsFromName(string fullTypeName);
 
         event Action SettingsRestored;
+        event Action<BaseSettings> SettingsModified;
+
+        void InvokeSettingsModifiedCallback(BaseSettings settings);
 
         void RestoreDefaults();
         void RestoreSettings();

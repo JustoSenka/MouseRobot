@@ -21,6 +21,7 @@ namespace Robot.Settings
         public IEnumerable<BaseSettings> Settings { get { return TypeCollector.AllObjects; } }
 
         public event Action SettingsRestored;
+        public event Action<BaseSettings> SettingsModified;
 
         private readonly object SettingsLock = new object();
 
@@ -152,6 +153,11 @@ namespace Robot.Settings
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
+        }
+
+        public void InvokeSettingsModifiedCallback(BaseSettings settings)
+        {
+            SettingsModified?.Invoke(settings);
         }
     }
 }
