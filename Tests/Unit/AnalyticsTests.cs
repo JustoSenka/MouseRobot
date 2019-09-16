@@ -9,7 +9,6 @@ using Logger = RobotRuntime.Logger;
 
 namespace Tests.Unit
 {
-    [Parallelizable(ParallelScope.Self)]
     public class AnalyticsTests : TestWithCleanup
     {
         private IAnalytics Analytics;
