@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Internal;
-using Robot.Abstractions;
 using Robot.Analytics.Abstractions;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
@@ -10,6 +9,7 @@ using Logger = RobotRuntime.Logger;
 
 namespace Tests.Unit
 {
+    [Parallelizable(ParallelScope.Self)]
     public class AnalyticsTests : TestWithCleanup
     {
         private IAnalytics Analytics;

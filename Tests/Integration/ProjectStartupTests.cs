@@ -29,10 +29,10 @@ namespace Tests.Integration
         private const string k_FixtureName = "Fixture";
 
         [SetUp]
-        public void Initialize()
+        public async Task Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
-            InitializeApplicationWithKnownProjectPath();
+            await InitializeApplicationWithKnownProjectPath();
         }
 
         private Task InitializeApplicationWithKnownProjectPath()
