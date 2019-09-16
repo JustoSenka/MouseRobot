@@ -22,10 +22,20 @@ namespace RobotEditor.Settings
             this.m_Settings = (EditorSettings)settings;
         }
 
-        private const int NumOfCategories = 1;
-        private const int EditorSettings = 1;
+        private const int NumOfCategories = 2;
+        private const int ThemeSettings = 1;
+        private const int MiscSettings = 2;
 
-        [SortedCategory("Editor Settings", EditorSettings, NumOfCategories)]
+        [SortedCategory("Theme Settings", ThemeSettings, NumOfCategories)]
+        [DefaultValue(Theme.Dark)]
+        [DisplayName("Window Theme")]
+        public Theme Theme
+        {
+            get { return m_Settings.Theme; }
+            set { m_Settings.Theme = value; }
+        }
+
+        [SortedCategory("Misc Settings", MiscSettings, NumOfCategories)]
         [DefaultValue(WindowState.DoNothing)]
         [DisplayName("Window state when running tests")]
         public WindowState PlayingAction
@@ -34,7 +44,7 @@ namespace RobotEditor.Settings
             set { m_Settings.PlayingAction = value; }
         }
 
-        [SortedCategory("Editor Settings", EditorSettings, NumOfCategories)]
+        [SortedCategory("Misc Settings", MiscSettings, NumOfCategories)]
         [DefaultValue(WindowState.DoNothing)]
         [DisplayName("Window state when running recording")]
         public WindowState RecordingAction
@@ -42,5 +52,7 @@ namespace RobotEditor.Settings
             get { return m_Settings.RecordingAction; }
             set { m_Settings.RecordingAction = value; }
         }
+
+
     }
 }

@@ -43,6 +43,10 @@ namespace RobotEditor
 
         public void UpdateCurrentProperties()
         {
+            // Propertoes window is not open
+            if (m_CurrentObject == null || m_CurrentSettingsType == null)
+                return;
+
             ShowSettings(SettingsManager.GetSettingsFromType(m_CurrentSettingsType));
         }
 
@@ -121,30 +125,30 @@ namespace RobotEditor
 
                 m_CurrentObject.HideProperties(ref dt);
 
+                propertyGrid.InvokeIfCreated(new MethodInvoker(() =>
+                {
+                    propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
+                }));
+
                 if (sender != null) // If it was modified from UI, call the callback. In other cases we don't want to do that.
                 {
                     m_CurrentObject.OnPropertiesModified();
                     PropertiesModified?.Invoke(m_CurrentObject);
                     SettingsManager.InvokeSettingsModifiedCallback(m_CurrentSettings);
                 }
-
-                propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
-                {
-                    propertyGrid.SelectedObject = dt.FromComponent(m_CurrentObject);
-                }));
             }
             else if (m_CurrentSettings != null)
             {
+                propertyGrid.InvokeIfCreated(new MethodInvoker(() =>
+                {
+                    propertyGrid.SelectedObject = m_CurrentSettings;
+                }));
+
                 if (sender != null)
                 {
                     PropertiesModified?.Invoke(null);
                     SettingsManager.InvokeSettingsModifiedCallback(m_CurrentSettings);
                 }
-
-                propertyGrid.BeginInvokeIfCreated(new MethodInvoker(() =>
-                {
-                    propertyGrid.SelectedObject = m_CurrentSettings;
-                }));
             }
         }
     }

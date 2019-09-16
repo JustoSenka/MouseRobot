@@ -279,7 +279,7 @@ namespace RobotEditor
             }
 
             // Iterating all asset importer types, each importer does something specific when double clicked
-            if (asset.GetType() == typeof(DirectoryImporter))
+            if (asset.ImporterType == typeof(DirectoryImporter))
             {
                 var isExpanded = treeListView.IsExpanded(treeListView.SelectedObject);
                 if (isExpanded)

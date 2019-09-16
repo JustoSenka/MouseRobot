@@ -41,23 +41,48 @@ namespace RobotEditor.Editor
             if (Windows != null && Windows.Length > 0)
                 CloseAllContents(dockPanel);
 
+            var success = false;
             if (SavedCopyExists())
-                dockPanel.LoadFromXml(GetLayoutPath(), m_DeserializeDockContent);
-            else
+                success = RestoreInternal(dockPanel);
+            
+            if (!success)
                 RestoreDefault(dockPanel);
         }
 
-        public static void RestoreDefault(DockPanel dockPanel)
+        private static bool RestoreInternal(DockPanel dockPanel)
         {
             try
             {
+                dockPanel.LoadFromXml(GetLayoutPath(), m_DeserializeDockContent);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogType.Error, "Cannot deserialize saved layout: " + e.Message);
+                return false;
+            }
+        }
+
+        public static bool RestoreDefault(DockPanel dockPanel)
+        {
+            try
+            {
+                CloseAllContents(dockPanel);
+
                 var byteArray = Encoding.Unicode.GetBytes(Properties.Resources.DefaultDockLayout);
                 using (var s = new MemoryStream(byteArray))
                     dockPanel.LoadFromXml(s, m_DeserializeDockContent, true);
+
+                return true;
             }
             catch (Exception e)
             {
                 Logger.Log(LogType.Error, "Cannot deserialize default layout: " + e.Message);
+
+                // It is important to leave dockPanel empty, so user can reconstruct his layout however he wants
+                // If panel is not left empty, user might not be able to show new windows and drag them to the centre, becasue panel contains garbage data
+                CloseAllContents(dockPanel); 
+                return false;
             }
         }
 

@@ -309,7 +309,10 @@ namespace RobotEditor.Windows.Base
 
             var oldSelectedObject = m_TreeListView.SelectedObject;
 
-            m_Nodes.RemoveAt(index);
+            // If m_Nodes don't have that element, no need to remove it
+            // Could happen if Hierarchy is closed when loading/unloading new recordings
+            if (m_Nodes.Count >= index + 1)
+                m_Nodes.RemoveAt(index);
 
             if (!SuppressRefreshAndSelection)
             {

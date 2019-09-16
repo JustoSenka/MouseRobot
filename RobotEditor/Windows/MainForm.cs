@@ -4,7 +4,6 @@ using Robot.Settings;
 using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotEditor.Editor;
-using RobotEditor.Settings;
 using RobotEditor.Windows;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
@@ -29,7 +28,11 @@ namespace RobotEditor
     public partial class MainForm : Form, IMainForm
     {
         private DockContent[] m_Windows;
-        private ThemeBase m_CurrentTheme;
+        private Theme m_CurrentTheme;
+        private bool m_IsFirstTimeRestoringLayout = true;
+
+        private IDictionary<Theme, ThemeBase> m_ThemeMap = new Dictionary<Theme, ThemeBase>();
+
         private readonly VisualStudioToolStripExtender.VsVersion m_VsVersion = VisualStudioToolStripExtender.VsVersion.Vs2015;
 
         private FormWindowState m_DefaultWindowState;
@@ -104,22 +107,20 @@ namespace RobotEditor
 
             this.ProjectSelectionDialog = ProjectSelectionDialog;
 
+            InitializeComponent();
+
             MouseRobot.AsyncOperationOnUI = AsyncOperationManager.CreateOperation(null);
 
-            InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
             this.WindowState = FormWindowState.Maximized;
 
             //ShowSplashScreen(2000);
-
             // ((Form)ScreenPaintForm).Owner = this;
 
+            UpdateThemeMap();
             PutLayoutWindowsInArray();
-            SetWindowTheme(this.vS2015DarkTheme1, emptyLayout: true);
             RegisterAllFormsToTheFontManager();
-
             DockLayout.Windows = m_Windows;
-            DockLayout.Restore(m_DockPanel);
 
             visualStudioToolStripExtender.DefaultRenderer = new ToolStripProfessionalRenderer();
 
@@ -136,7 +137,6 @@ namespace RobotEditor
             SettingsManager.SettingsRestored += OnSettingsRestored;
             SettingsManager.SettingsModified += OnSettingsModified;
             StatusManager.StatusUpdated += OnStatusUpdated;
-            m_PropertiesWindow.PropertiesModified += OnPropertiesModified;
 
             TestFixtureManager.FixtureAdded += OnFixtureAdded;
             TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
@@ -147,12 +147,21 @@ namespace RobotEditor
             statusStrip.HandleCreated += OnStatusStripHandleCreated;
 
             ((Form)ScreenPaintForm).Show();
+
+            HandleCreated += (sender, args) => OnSettingsRestored();
         }
 
         protected override void WndProc(ref Message m)
         {
             HotkeyCallbacks.ProcessCallback(m);
             base.WndProc(ref m);
+        }
+
+        private void UpdateThemeMap()
+        {
+            m_ThemeMap.Add(Theme.Dark, vS2015DarkTheme1);
+            m_ThemeMap.Add(Theme.Light, vS2015LightTheme1);
+            m_ThemeMap.Add(Theme.Blue, vS2015BlueTheme1);
         }
 
         private void RegisterFormHotkeys(IHotkeyCallbacks HotkeyCallbacks)
@@ -164,10 +173,6 @@ namespace RobotEditor
 
         private void OnFormActivated(object sender, EventArgs e)
         {
-            AssetManager.Refresh();
-
-            OnSettingsRestored();
-
             this.BeginInvokeIfCreated(new MethodInvoker(() =>
             {
                 this.Text = ProjectManager.ProjectName + " - " + Paths.AppName;
@@ -183,7 +188,7 @@ namespace RobotEditor
 
             ShowWindowPreferablyUponAnotherTestFixtureWindowAsTab(window);
 
-            SetTestFixtureWindowTheme((TestFixtureWindow)window, m_VsVersion, m_CurrentTheme);
+            SetTestFixtureWindowTheme((TestFixtureWindow)window, m_VsVersion, m_ThemeMap[m_CurrentTheme]);
 
             window.DisplayTestFixture(fixture);
             window.OnSelectionChanged += ShowSelectedObjectInInspector;
@@ -225,8 +230,13 @@ namespace RobotEditor
             {
                 FontManager.ForceUpdateFonts();
 
+                // Update combo box items if they were modifed from properties window
                 actionOnPlay.SelectedIndex = (int)settings.PlayingAction;
                 actionOnRec.SelectedIndex = (int)settings.RecordingAction;
+
+                // Update theme if it has changed
+                if (m_CurrentTheme != settings.Theme || m_IsFirstTimeRestoringLayout)
+                    SetWindowTheme(settings.Theme);
             }));
         }
 
@@ -234,17 +244,19 @@ namespace RobotEditor
         {
             if (setting is DesignSettings)
                 this.BeginInvokeIfCreated(new MethodInvoker(FontManager.ForceUpdateFonts));
-        }
 
-        private void OnPropertiesModified(BaseProperties props)
-        {
-            if (props.Settings is EditorSettings)
+            if (setting is EditorSettings)
             {
-                var settings = SettingsManager.GetSettings<EditorSettings>();
+                var editorSettings = SettingsManager.GetSettings<EditorSettings>();
                 this.BeginInvokeIfCreated(new MethodInvoker(delegate
                 {
-                    actionOnPlay.SelectedIndex = (int)settings.PlayingAction;
-                    actionOnRec.SelectedIndex = (int)settings.RecordingAction;
+                    // Update combo box items if they were modifed from properties window
+                    actionOnPlay.SelectedIndex = (int)editorSettings.PlayingAction;
+                    actionOnRec.SelectedIndex = (int)editorSettings.RecordingAction;
+
+                    // Update theme if it has changed
+                    if (m_CurrentTheme != editorSettings.Theme || m_IsFirstTimeRestoringLayout)
+                        SetWindowTheme(editorSettings.Theme);
                 }));
             }
         }
@@ -319,7 +331,7 @@ namespace RobotEditor
             if (asset == null)
                 return;
 
-            if (asset.GetType() != typeof(ImageImporter))
+            if (asset.ImporterType != typeof(ImageImporter))
                 return;
 
             asset.Load<object>(); // Force loading before check
@@ -372,24 +384,30 @@ namespace RobotEditor
             };
         }
 
-        private void SetWindowTheme(ThemeBase theme, bool emptyLayout = false)
+        private void SetWindowTheme(Theme theme)
         {
-            if (!emptyLayout)
+            if (m_CurrentTheme == theme && !m_IsFirstTimeRestoringLayout)
+                return;
+
+            m_CurrentTheme = theme;
+            var newThemeBase = m_ThemeMap[theme];
+
+            if (!m_IsFirstTimeRestoringLayout)
             {
                 DockLayout.Save(m_DockPanel);
                 DockLayout.CloseAllContents(m_DockPanel);
             }
 
-            m_CurrentTheme = theme;
-            m_DockPanel.Theme = theme;
+            m_DockPanel.Theme = newThemeBase;
 
-            EnableVSDesignForToolstrips(m_VsVersion, theme);
+            EnableVSDesignForToolstrips(m_VsVersion, newThemeBase);
 
             if (m_DockPanel.Theme.ColorPalette != null)
                 statusStrip.BackColor = m_DockPanel.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
 
-            if (!emptyLayout)
-                DockLayout.Restore(m_DockPanel);
+            DockLayout.Restore(m_DockPanel);
+
+            m_IsFirstTimeRestoringLayout = false;
         }
 
         private void EnableVSDesignForToolstrips(VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
@@ -540,20 +558,29 @@ namespace RobotEditor
 
         private void darkThemeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_CurrentTheme != vS2015DarkTheme1)
-                SetWindowTheme(this.vS2015DarkTheme1);
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+            settings.Theme = Theme.Dark;
+
+            if (m_CurrentTheme != settings.Theme)
+                SetWindowTheme(settings.Theme);
         }
 
         private void blueThemeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_CurrentTheme != vS2015BlueTheme1)
-                SetWindowTheme(this.vS2015BlueTheme1);
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+            settings.Theme = Theme.Blue;
+
+            if (m_CurrentTheme != settings.Theme)
+                SetWindowTheme(settings.Theme);
         }
 
         private void lightThemeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_CurrentTheme != vS2015LightTheme1)
-                SetWindowTheme(this.vS2015LightTheme1);
+            var settings = SettingsManager.GetSettings<EditorSettings>();
+            settings.Theme = Theme.Light;
+
+            if (m_CurrentTheme != settings.Theme)
+                SetWindowTheme(settings.Theme);
         }
 
         private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
