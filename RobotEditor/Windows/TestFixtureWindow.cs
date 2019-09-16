@@ -2,6 +2,7 @@
 
 using BrightIdeasSoftware;
 using Robot.Abstractions;
+using Robot.Settings;
 using Robot.Tests;
 using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
@@ -27,20 +28,23 @@ namespace RobotEditor
         private HierarchyNode m_HooksNode;
         private HierarchyNode m_TestsNode;
 
+        private DesignSettings m_DesignSettings = new DesignSettings();
+
         private readonly ITestRunner TestRunner;
         private readonly ITestFixtureManager TestFixtureManager;
         private readonly IHierarchyNodeStringConverter HierarchyNodeStringConverter;
+        private readonly ISettingsManager SettingsManager;
         public TestFixtureWindow(ITestRunner TestRunner, ITestFixtureManager TestFixtureManager,
             IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler,
-            IAnalytics Analytics) : base(CommandFactory, Profiler, Analytics)
+            IAnalytics Analytics, ISettingsManager SettingsManager) : base(CommandFactory, Profiler, Analytics)
         {
             this.TestRunner = TestRunner;
             this.TestFixtureManager = TestFixtureManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
+            this.SettingsManager = SettingsManager;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-            treeListView.Font = Fonts.Default;
 
             CreateDropDetails(HierarchyManager);
             base.m_ToolStrip = toolStrip;
@@ -69,7 +73,16 @@ namespace RobotEditor
 
             TestFixtureManager.FixtureRemoved += OnFixtureRemoved;
 
+            SettingsManager.SettingsModified += _ => OnSettingsRestored();
+            SettingsManager.SettingsRestored += OnSettingsRestored;
+
             UpdateHierarchy();
+        }
+
+        private void OnSettingsRestored()
+        {
+            m_DesignSettings = SettingsManager.GetSettings<DesignSettings>();
+            RefreshTreeListViewAsync();
         }
 
         private void AddNewCommandsToCreateMenu(object sender, EventArgs e) =>
@@ -104,13 +117,13 @@ namespace RobotEditor
         {
             if (!(e.Model is HierarchyNode node))
                 return;
-
+            
             if (node.Recording != null)
             {
                 if (node.Recording.IsDirty)
-                    e.SubItem.Font = Fonts.DirtyRecordingBold;
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont.AppendStyle(FontStyle.Bold | FontStyle.Italic);
                 else
-                    e.SubItem.Font = Fonts.DefaultBold;
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont.AppendStyle(FontStyle.Bold);
             }
 
             if (node.Command != null)

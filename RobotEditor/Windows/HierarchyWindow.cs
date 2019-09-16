@@ -3,6 +3,7 @@
 using BrightIdeasSoftware;
 using Robot;
 using Robot.Abstractions;
+using Robot.Settings;
 using RobotEditor.Abstractions;
 using RobotEditor.Hierarchy;
 using RobotEditor.Windows.Base;
@@ -10,6 +11,7 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
+using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
@@ -23,22 +25,26 @@ namespace RobotEditor
     [RegisterTypeToContainer(typeof(IHierarchyWindow), typeof(ContainerControlledLifetimeManager))]
     public partial class HierarchyWindow : BaseHierarchyWindow, IHierarchyWindow
     {
+        private DesignSettings m_DesignSettings = new DesignSettings();
+
         private readonly new IHierarchyManager HierarchyManager;
         private readonly ITestRunner TestRunner;
         private readonly IAssetManager AssetManager;
         private readonly IHierarchyNodeStringConverter HierarchyNodeStringConverter;
+        private readonly ISettingsManager SettingsManager;
         public HierarchyWindow(IHierarchyManager HierarchyManager, ITestRunner TestRunner, IAssetManager AssetManager,
-            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler, IAnalytics Analytics) : base(CommandFactory, Profiler, Analytics)
+            IHierarchyNodeStringConverter HierarchyNodeStringConverter, ICommandFactory CommandFactory, IProfiler Profiler, IAnalytics Analytics,
+            ISettingsManager SettingsManager) : base(CommandFactory, Profiler, Analytics)
         {
             base.HierarchyManager = HierarchyManager;
             this.HierarchyManager = HierarchyManager;
             this.TestRunner = TestRunner;
             this.AssetManager = AssetManager;
             this.HierarchyNodeStringConverter = HierarchyNodeStringConverter;
+            this.SettingsManager = SettingsManager;
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-            treeListView.Font = Fonts.Default;
 
             base.Name = "Hierarchy";
             base.m_TreeListView = this.treeListView;
@@ -69,6 +75,15 @@ namespace RobotEditor
             BaseHierarchyWindow.CreateColumns(treeListView, HierarchyNodeStringConverter);
 
             treeListView.HandleCreated += UpdateHierarchy;
+
+            SettingsManager.SettingsModified += _ => OnSettingsRestored();
+            SettingsManager.SettingsRestored += OnSettingsRestored;
+        }
+
+        private void OnSettingsRestored()
+        {
+            m_DesignSettings = SettingsManager.GetSettings<DesignSettings>();
+            RefreshTreeListViewAsync();
         }
 
         private void AddNewCommandsToCreateMenu(object sender, EventArgs e) =>
@@ -86,13 +101,13 @@ namespace RobotEditor
             if (node.Recording != null)
             {
                 if (node.Recording == HierarchyManager.ActiveRecording && node.Recording.IsDirty)
-                    e.SubItem.Font = Fonts.ActiveAndDirtyRecording;//.AddFont(Fonts.ActiveRecording);
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont.AppendStyle(FontStyle.Bold | FontStyle.Italic);
                 else if (node.Recording == HierarchyManager.ActiveRecording)
-                    e.SubItem.Font = Fonts.ActiveRecording;
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont.AppendStyle(FontStyle.Bold);
                 else if (node.Recording.IsDirty)
-                    e.SubItem.Font = Fonts.DirtyRecording;//.AddFont(Fonts.DirtyRecording);
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont.AppendStyle(FontStyle.Italic);
                 else
-                    e.SubItem.Font = Fonts.Default;
+                    e.SubItem.Font = m_DesignSettings.HierarchyRecordingFont;
             }
 
             if (node.Command != null)

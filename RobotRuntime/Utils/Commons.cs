@@ -37,31 +37,9 @@ namespace RobotRuntime
     public static class Fonts
     {
         public static Font Default = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Regular);
-        public static Font DirtyRecording = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Italic);
-        public static Font DefaultBold = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Bold);
-        public static Font DirtyRecordingBold = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Italic | FontStyle.Bold);
-
-        public static Font ActiveRecording = new Font(FontFamily.GenericSansSerif, 8.25F, FontStyle.Bold);
-
-        public static Font ActiveAndDirtyRecording = DirtyRecording.AddFont(ActiveRecording);
-
         public static Font Big = new Font(FontFamily.GenericSansSerif, 20F, FontStyle.Bold);
         public static Font Normal = new Font(FontFamily.GenericSansSerif, 12F, FontStyle.Bold);
 
-        public static Font AddFont(this Font main, Font newFont)
-        {
-            return new Font(
-                (newFont.FontFamily == Default.FontFamily) ? main.FontFamily : newFont.FontFamily,
-                (newFont.Size == Default.Size) ? main.Size : newFont.Size,
-                main.Style | newFont.Style);
-        }
-
-        public static Font RemoveFont(this Font main, Font remove)
-        {
-            return new Font(
-                (remove.FontFamily == main.FontFamily) ? Default.FontFamily : main.FontFamily,
-                (remove.Size == main.Size) ? Default.Size : main.Size,
-                main.Style & ~remove.Style);
-        }
+        public static Font AppendStyle(this Font main, FontStyle style) => new Font(main.FontFamily, main.SizeInPoints, style);
     }
 }

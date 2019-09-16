@@ -39,15 +39,6 @@ namespace RobotEditor.Settings
         }
 
         [SortedCategory("Fonts", Fonts, NumOfCategories)]
-        [DefaultValue(typeof(Font), FONT_CONSOLAS)]
-        [DisplayName("Hierarchy Based Windows Font")]
-        public Font HierarchyWindowsFont
-        {
-            get { return m_Settings.HierarchyWindowsFont; }
-            set { m_Settings.HierarchyWindowsFont = value; }
-        }
-
-        [SortedCategory("Fonts", Fonts, NumOfCategories)]
         [DefaultValue(typeof(Font), FONT_MS_SANS_SERIF)]
         [DisplayName("Assets Window Font")]
         public Font AssetsWindowFont
@@ -63,6 +54,24 @@ namespace RobotEditor.Settings
         {
             get { return m_Settings.TestRunnerWindowFont; }
             set { m_Settings.TestRunnerWindowFont = value; }
+        }
+
+        [SortedCategory("Fonts", Fonts, NumOfCategories)]
+        [DefaultValue(typeof(Font), FONT_CONSOLAS)]
+        [DisplayName("Hierarchy Command Font")]
+        public Font HierarchyCommandFont
+        {
+            get { return m_Settings.HierarchyCommandFont; }
+            set { m_Settings.HierarchyCommandFont = value; }
+        }
+
+        [SortedCategory("Fonts", Fonts, NumOfCategories)]
+        [DefaultValue(typeof(Font), FONT_CONSOLAS)]
+        [DisplayName("Hierarchy Recording Font")]
+        public Font HierarchyRecordingFont
+        {
+            get { return m_Settings.HierarchyRecordingFont; }
+            set { m_Settings.HierarchyRecordingFont = value; }
         }
     }
 }

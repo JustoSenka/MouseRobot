@@ -56,7 +56,6 @@ namespace RobotEditor
 
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
-            treeListView.Font = Fonts.Default;
 
             AssetManager.RefreshFinished += () => OnRefreshFinished();
             AssetManager.AssetCreated += OnAssetCreated;

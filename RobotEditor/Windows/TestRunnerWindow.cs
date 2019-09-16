@@ -41,8 +41,6 @@ namespace RobotEditor
             InitializeComponent();
             AutoScaleMode = AutoScaleMode.Dpi;
 
-            treeListView.Font = Fonts.Default;
-
             TestRunnerManager.TestFixtureAdded += OnTestFixtureAdded;
             TestRunnerManager.TestFixtureRemoved += OnTestFixtureRemoved;
             TestRunnerManager.TestFixtureModified += OnTestFixtureModified;

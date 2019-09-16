@@ -71,7 +71,7 @@ namespace RobotEditor.Design
                 }
 
                 if (Form is BaseHierarchyWindow && Control is TreeListView)
-                    fontToUse = settings.HierarchyWindowsFont;
+                    fontToUse = settings.HierarchyCommandFont;
 
                 else if (Form is IAssetsWindow && Control is TreeListView)
                     fontToUse = settings.AssetsWindowFont;

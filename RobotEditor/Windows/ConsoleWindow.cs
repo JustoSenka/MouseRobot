@@ -38,8 +38,6 @@ namespace RobotEditor.Windows
             AddToolstripButtons();
             AutoScaleMode = AutoScaleMode.Dpi;
 
-            treeListView.Font = Fonts.Default;
-
             Logger.OnLogReceived += OnLogReceived;
             Logger.LogCleared += OnLogCleared;
 
