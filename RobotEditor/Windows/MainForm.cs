@@ -236,7 +236,7 @@ namespace RobotEditor
 
                 // Update theme if it has changed
                 if (m_CurrentTheme != settings.Theme || m_IsFirstTimeRestoringLayout)
-                    SetWindowTheme(settings.Theme);
+                    SetWindowThemeAndRestoreLayout(settings.Theme);
             }));
         }
 
@@ -256,7 +256,7 @@ namespace RobotEditor
 
                     // Update theme if it has changed
                     if (m_CurrentTheme != editorSettings.Theme || m_IsFirstTimeRestoringLayout)
-                        SetWindowTheme(editorSettings.Theme);
+                        SetWindowThemeAndRestoreLayout(editorSettings.Theme);
                 }));
             }
         }
@@ -384,13 +384,10 @@ namespace RobotEditor
             };
         }
 
-        private void SetWindowTheme(Theme theme)
+        private void SetWindowThemeAndRestoreLayout(Theme theme)
         {
             if (m_CurrentTheme == theme && !m_IsFirstTimeRestoringLayout)
                 return;
-
-            m_CurrentTheme = theme;
-            var newThemeBase = m_ThemeMap[theme];
 
             if (!m_IsFirstTimeRestoringLayout)
             {
@@ -398,16 +395,27 @@ namespace RobotEditor
                 DockLayout.CloseAllContents(m_DockPanel);
             }
 
+            SetWindowTheme(theme);
+
+            DockLayout.Restore(m_DockPanel);
+
+            m_IsFirstTimeRestoringLayout = false;
+        }
+
+        /// <summary>
+        /// If layout is not empty, will fail to set the theme and throw an exception
+        /// </summary>
+        private void SetWindowTheme(Theme theme)
+        {
+            m_CurrentTheme = theme;
+            var newThemeBase = m_ThemeMap[theme];
+
             m_DockPanel.Theme = newThemeBase;
 
             EnableVSDesignForToolstrips(m_VsVersion, newThemeBase);
 
             if (m_DockPanel.Theme.ColorPalette != null)
                 statusStrip.BackColor = m_DockPanel.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
-
-            DockLayout.Restore(m_DockPanel);
-
-            m_IsFirstTimeRestoringLayout = false;
         }
 
         private void EnableVSDesignForToolstrips(VisualStudioToolStripExtender.VsVersion version, ThemeBase theme)
@@ -562,7 +570,7 @@ namespace RobotEditor
             settings.Theme = Theme.Dark;
 
             if (m_CurrentTheme != settings.Theme)
-                SetWindowTheme(settings.Theme);
+                SetWindowThemeAndRestoreLayout(settings.Theme);
         }
 
         private void blueThemeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -571,7 +579,7 @@ namespace RobotEditor
             settings.Theme = Theme.Blue;
 
             if (m_CurrentTheme != settings.Theme)
-                SetWindowTheme(settings.Theme);
+                SetWindowThemeAndRestoreLayout(settings.Theme);
         }
 
         private void lightThemeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -580,7 +588,7 @@ namespace RobotEditor
             settings.Theme = Theme.Light;
 
             if (m_CurrentTheme != settings.Theme)
-                SetWindowTheme(settings.Theme);
+                SetWindowThemeAndRestoreLayout(settings.Theme);
         }
 
         private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
