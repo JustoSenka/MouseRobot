@@ -12,6 +12,7 @@ using RobotRuntime.Utils.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 using Unity.Lifetime;
 
 namespace Robot.RecordingCreation
@@ -23,7 +24,9 @@ namespace Robot.RecordingCreation
 
         public bool m_IsMeasuringTime = false;
         private Stopwatch m_SleepTimer = new Stopwatch();
+
         private Point m_LastClickPos = new Point(0, 0);
+        private Keys m_LastButtonUsed = Keys.None;
 
         private Asset m_ImageAssetUnderCursor;
         private Command m_ParentCommand;
@@ -107,6 +110,7 @@ namespace Robot.RecordingCreation
                 {
                     AddCommand(new CommandMove(e.X, e.Y));
                     m_LastClickPos = e.Point;
+                    m_LastButtonUsed = e.keyCode;
                     // TODO: TIME ?
                 }
 
@@ -115,12 +119,8 @@ namespace Robot.RecordingCreation
                     if (!m_ForImage && props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
                         AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
-                    if (props.TreatMouseDownAsMouseClick)
-                        AddCommand(new CommandPress(e.X, e.Y, false, mouseButton));
-                    else
-                        AddCommand(new CommandDown(e.X, e.Y, false, mouseButton));
-
                     m_LastClickPos = e.Point;
+                    m_LastButtonUsed = e.keyCode;
                 }
             }
             else if (e.IsKeyUp())
@@ -132,15 +132,26 @@ namespace Robot.RecordingCreation
                     AddCommand(new CommandSleep((int)m_SleepTimer.ElapsedMilliseconds));
                 }
 
-                if (isMouseButtonUsed && !props.TreatMouseDownAsMouseClick)
+                if (isMouseButtonUsed)
                 {
-                    if (props.AutomaticSmoothMoveBeforeMouseUp && Distance(m_LastClickPos, e.Point) > 20)
-                        AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
+                    // Was dragging a mouse
+                    if (Distance(m_LastClickPos, e.Point) > 15)
+                    {
+                        AddCommand(new CommandDown(m_LastClickPos.X, m_LastClickPos.Y, false, mouseButton));
 
-                    if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
-                        AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
+                        if (props.AutomaticSmoothMoveBeforeMouseUp)
+                            AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
 
-                    AddCommand(new CommandRelease(e.X, e.Y, false));
+                        if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
+                            AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
+
+                        AddCommand(new CommandRelease(e.X, e.Y, false));
+                    }
+                    // Did not drag a mouse, treat it as a Press
+                    else 
+                    {
+                        AddCommand(new CommandPress(e.X, e.Y, false, mouseButton));
+                    }
 
                     m_LastClickPos = e.Point;
                 }

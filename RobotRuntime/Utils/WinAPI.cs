@@ -58,6 +58,7 @@ namespace RobotRuntime.Utils.Win32
 
         public static void PerformAction(MouseEventFlags value)
         {
+            //TODO: This is strange, why would I move mouse to its current position?
             Point position = GetCursorPosition();
             MouseMoveTo(position.X, position.Y);
 

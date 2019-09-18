@@ -18,7 +18,6 @@ namespace Robot.Settings
         public Keys RightMouseDownButton { get; set; } = Keys.RButton;
         public Keys MiddleMouseDownButton { get; set; } = Keys.MButton;
 
-        public bool TreatMouseDownAsMouseClick { get; set; } = false;
         public int ThresholdBetweenMouseDownAndMouseUp { get; set; } = 20;
 
         public bool AutomaticSmoothMoveBeforeMouseDown { get; set; } = false;

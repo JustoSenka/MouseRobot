@@ -25,8 +25,8 @@ namespace RobotEditor.Settings
 
         public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
-            if (TreatMouseDownAsMouseClick)
-                dt.RemoveProperty("ThresholdBetweenMouseDownAndMouseUp");
+            /*if (TreatMouseDownAsMouseClick)
+                dt.RemoveProperty("ThresholdBetweenMouseDownAndMouseUp");*/
         }
 
 
@@ -107,15 +107,6 @@ namespace RobotEditor.Settings
         {
             get { return m_Settings.MiddleMouseDownButton; }
             set { m_Settings.MiddleMouseDownButton = value; }
-        }
-
-        [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
-        [DefaultValue(false)]
-        [DisplayName("Treat Mouse Down as Mouse Click")]
-        public bool TreatMouseDownAsMouseClick
-        {
-            get { return m_Settings.TreatMouseDownAsMouseClick; }
-            set { m_Settings.TreatMouseDownAsMouseClick = value; }
         }
 
         [SortedCategory("Mouse Options", MouseOptionsCategoryPosition, NumOfCategories)]
