@@ -35,7 +35,7 @@ namespace Tests.Integration
             ScriptManager = Container.Resolve<IScriptManager>();
             ScriptTemplates = Container.Resolve<IScriptTemplates>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

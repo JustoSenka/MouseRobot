@@ -46,18 +46,6 @@ namespace Tests
             return container;
         }
 
-        public static void InitProjectButDontWaitForScriptCompilation(string projectPath, IUnityContainer container)
-        {
-            var SettingsManager = container.Resolve<ISettingsManager>();
-            var ProjectManager = container.Resolve<IProjectManager>();
-            var AssetManager = container.Resolve<IAssetManager>();
-
-            var initTask = ProjectManager.InitProject(projectPath);
-
-            AssetManager.CanLoadAssets = true;
-            AssetManager.Refresh();
-        }
-
         internal static void CopyAllTemplateScriptsToProjectFolder(IScriptTemplates ScriptTemplates, IAssetManager AssetManager)
         {
             foreach (var name in ScriptTemplates.TemplateNames)

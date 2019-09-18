@@ -35,7 +35,7 @@ namespace Tests.Performance
             AssetGuidManager = Container.Resolve<IAssetGuidManager>();
             Profiler = Container.Resolve<IProfiler>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

@@ -39,7 +39,7 @@ namespace Tests.Runtime
             TestRunner = Container.Resolve<ITestRunner>();
             TestStatusManager = Container.Resolve<ITestStatusManager>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

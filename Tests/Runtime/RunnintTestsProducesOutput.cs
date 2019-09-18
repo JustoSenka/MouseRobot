@@ -41,7 +41,7 @@ namespace Tests.Runtime
 
             Container.Resolve<ITestRunnerManager>(); // This one outputs test results to file, but is not referenced by anything
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         private readonly static string[] m_Results = new[]

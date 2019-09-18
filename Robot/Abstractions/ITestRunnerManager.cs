@@ -8,6 +8,8 @@ namespace Robot.Abstractions
     {
         IList<TestFixture> TestFixtures { get; }
 
+        void ReloadTestFixtures();
+
         event Action<TestFixture, int> TestFixtureAdded;
         event Action<TestFixture, int> TestFixtureRemoved;
         event Action<TestFixture, int> TestFixtureModified;

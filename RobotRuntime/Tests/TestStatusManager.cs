@@ -116,6 +116,9 @@ namespace RobotRuntime.Tests
         /// </summary>
         public void UpdateTestStatusForNewFixtures(IEnumerable<LightTestFixture> fixtures)
         {
+            if (fixtures == null)
+                return;
+
             lock (m_TestStatusDictionaryLock)
             {
                 foreach (var fixture in fixtures)

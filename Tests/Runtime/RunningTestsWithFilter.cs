@@ -40,7 +40,7 @@ namespace Tests.Runtime
 
             Logger = Container.Resolve<ILogger>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
 
             // Test specific setup for performance resons.
             // Setting up project once and resusing it for all tests. That is possible since the do not change the state of the project

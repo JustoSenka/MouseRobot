@@ -48,9 +48,15 @@ namespace Robot.Tests
             AssetCollector.AssetsModified += OnAssetsModified;
             AssetCollector.AssetsRenamed += OnAssetsRenamed;
 
-            ProjectManager.NewProjectOpened += NewProjectOpened;
+            ProjectManager.NewProjectOpened += _ => ReloadTestFixtures();
 
             TestRunner.TestRunEnd += OnTestsFinished;
+        }
+
+        public void ReloadTestFixtures()
+        {
+            ReloadTestFixtures(null, true);
+            TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.Value.ToLightTestFixture()));
         }
 
         private void OnTestsFinished()
@@ -58,11 +64,6 @@ namespace Robot.Tests
             TestStatusManager.OutputTestRunStatusToFile();
         }
 
-        private void NewProjectOpened(string path)
-        {
-            ReloadTestFixtures(null, true);
-            TestStatusManager.UpdateTestStatusForNewFixtures(m_TestFixtures.Select(f => f.Value.ToLightTestFixture()));
-        }
         private void OnAssetsModified(IEnumerable<string> modifiedAssets)
         {
             var firstReload = m_TestFixtures.Count == 0;
@@ -81,6 +82,9 @@ namespace Robot.Tests
             {
                 Profiler.Begin("TestRunnerManager_ReloadTestFixtures", () =>
                 {
+                    if (!AssetManager.CanLoadAssets)
+                        return;
+
                     var fixtureAssets = AssetManager.Assets.Where(asset => asset.HoldsType() == typeof(LightTestFixture));
 
                     // Update test fixtures with modified values

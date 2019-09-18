@@ -48,7 +48,7 @@ namespace Tests.Integration
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             TestRunnerManager = container.Resolve<ITestRunnerManager>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]
@@ -95,10 +95,15 @@ namespace Tests.Integration
         [Test]
         [TestCase(true)]
         [TestCase(false)]
+        // This is possible because BaseHierarchyManagerhas a method ReplaceCommandsInRecordingsWithNewRecompiledOnes
         public void CommandsInFixture_GetReplacedWithNewType_AfterPluginReload(bool isFixtureIsFromTestRunnerManager)
         {
             AssetManager.CreateAsset(Properties.Resources.TestClassLibraryWithRefToRobot, k_UserDllPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            // Making sure TestRunnerManager actually loads the test fixture
+            AssetManager.CanLoadAssets = true;
+            TestRunnerManager.ReloadTestFixtures();
 
             var f = TestFixtureManager.NewTestFixture(
                 LightTestFixture.With(new Recording().With(
@@ -124,7 +129,9 @@ namespace Tests.Integration
         private Recording GetFirstRecording(bool isFixtureIsFromTestRunnerManager)
         {
             if (isFixtureIsFromTestRunnerManager)
+            {
                 return TestRunnerManager.TestFixtures.First().Tests.First();
+            }
 
             else
                 return TestFixtureManager.Fixtures.First().Tests.First();

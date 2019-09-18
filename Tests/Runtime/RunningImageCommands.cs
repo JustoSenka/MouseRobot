@@ -48,7 +48,7 @@ namespace Tests.Runtime
             TestStatusManager = Container.Resolve<ITestStatusManager>();
             HierarchyManager = Container.Resolve<IHierarchyManager>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

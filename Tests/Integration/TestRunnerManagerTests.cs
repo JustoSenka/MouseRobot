@@ -43,12 +43,12 @@ namespace Tests.Integration
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             var ScriptLoader = container.Resolve<IScriptLoader>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
 
-            // Will invoke domain reloaded callback which will tell TestRunnerManager to load fixtures
-            // It is faster than ScriptManager.Recompile... so loading directly even if there is nothing to load
-            // Just for tests
-            ScriptLoader.CreateUserAppDomain(); 
+            // This will tell TestRunnerManager to load fixtures
+            // Usually fixtures are loaded after scripts are compiled and project initialized.
+            // For perf reasons, we don't compile scripts in these tests
+            AssetManager.CanLoadAssets = true;
         }
 
         private LightTestFixture LightTestFixture

@@ -52,7 +52,11 @@ namespace Tests
         private void InternalLog(LogType logType, string obj, string description, int skipFrames)
         {
             var log = new Log(logType, obj, description, new StackTrace(skipFrames));
-            m_LogList.Add(log);
+
+            lock (m_LogLock)
+            {
+                m_LogList.Add(log);
+            }
 
             var str = "[" + logType + "] " + log.Header;
             Console.WriteLine(str);

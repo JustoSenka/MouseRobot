@@ -41,7 +41,7 @@ namespace Tests.Unit
             TestFixtureManager = Container.Resolve<ITestFixtureManager>();
             Collector = Container.Resolve<IModifiedAssetCollector>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
 
             Collector.AutoClear = false;
             ClearCollectorAndCallbacks();

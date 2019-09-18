@@ -13,9 +13,14 @@ namespace Robot
 
         bool IsPathAProject(string path);
 
+        /// <summary>
+        /// Will initialize new project synchronously.
+        /// But will not compile scripts on startup.
+        /// </summary>
+        void InitProjectNoScriptCompile(string path);
+
         Task RestoreSettings();
         Task SaveSettings();
         Task RememberPathInSettings(string path);
-
     }
 }

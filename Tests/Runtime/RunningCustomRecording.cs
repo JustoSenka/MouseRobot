@@ -52,7 +52,7 @@ namespace Tests.Runtime
             TestRunner = Container.Resolve<ITestRunner>();
             Logger = Container.Resolve<ILogger>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

@@ -44,9 +44,9 @@ namespace Tests.Integration
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             ScriptLoader = container.Resolve<IScriptLoader>();
 
-            var projectInit = ProjectManager.InitProject(TempProjectPath);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
             TestUtils.CopyAllTemplateScriptsToProjectFolder(ScriptTemplates, AssetManager);
-            Task.WaitAll(projectInit, ScriptManager.CompileScriptsAndReloadUserDomain());
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
         }
 
         [Test]

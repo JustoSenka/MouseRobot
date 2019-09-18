@@ -37,7 +37,7 @@ namespace Tests.Integration
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
 
-            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]

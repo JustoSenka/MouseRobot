@@ -51,7 +51,7 @@ namespace Tests.Integration
             SettingsManager = Container.Resolve<ISettingsManager>();
             ScriptLoader = Container.Resolve<IScriptLoader>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            ProjectManager.InitProjectNoScriptCompile(TempProjectPath);
         }
 
         [Test]
