@@ -14,8 +14,6 @@ using Unity;
 
 namespace Tests.Integration
 {
-    [TestFixture(true)]
-    [TestFixture(false)]
     public class AssetTests : TestWithCleanup
     {
         private string TempProjectPath;
@@ -45,21 +43,12 @@ namespace Tests.Integration
         IHierarchyManager RecordingManager;
         ITestFixtureManager TestFixtureManager;
 
-        private bool refreshBeforeTest;
-
-        public AssetTests(bool refreshBeforeTest)
-        {
-            this.refreshBeforeTest = refreshBeforeTest;
-        }
 
         [SetUp]
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
             InitializeNewProject(TempProjectPath);
-
-            if (refreshBeforeTest)
-                AssetManager.Refresh();
         }
 
         private void InitializeNewProject(string projectPath)
