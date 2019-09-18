@@ -8,6 +8,7 @@ using RobotRuntime.Utils;
 using System;
 using System.CodeDom.Compiler;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Unity.Lifetime;
@@ -79,6 +80,10 @@ namespace Robot.Scripts
         public Task<bool> UpdateCompilationSources(params string[] sources)
         {
             if (Logger.AssertIf(!IsCompiling, "Cannot update compilation if not compiling. Might be race condition. Recompile manually"))
+                return m_LastCompilationTask;
+
+            // Do not update if sources are equal
+            if (m_TempSources != null && sources != null && m_TempSources.SequenceEqual(sources))
                 return m_LastCompilationTask;
 
             m_ShouldRecompile = true;
