@@ -32,22 +32,26 @@ namespace Robot
             this.ScriptManager = ScriptManager;
             this.SettingsManager = SettingsManager;
 
-            RestoreAndRemovePathsOfDeletedProjects();
+            RestoreAndRemovePathsOfDeletedProjects().Wait();
         }
 
-        public void RestoreAndRemovePathsOfDeletedProjects()
+        public async Task RestoreAndRemovePathsOfDeletedProjects()
         {
-            RestoreSettings();
+            await RestoreSettings();
 
             foreach (var path in LastKnownProjectPaths.ToArray())
             {
                 if (!IsPathAProject(path))
                     LastKnownProjectPaths.Remove(path);
             }
-            SaveSettings();
+            await SaveSettings();
         }
 
-        public override async Task InitProject(string path)
+        /// <summary>
+        ///  Will run Path initialization, Refresh and Restore settings asynchronously.
+        ///  Script compilation will happen async on purpose, so we can start app before it finishes since it is a long operation.
+        /// </summary>
+        public override Task InitProject(string path)
         {
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
@@ -60,16 +64,21 @@ namespace Robot
                     Directory.CreateDirectory(projPath);
             }
 
-            RememberPathInSettings(path);
+            // No need to wait for this task. It is relevant to finish before next project startup, which is not that often and task is pretty quick
+            var rememberPathTask = RememberPathInSettings(path);
 
             AssetManager.Refresh();
             SettingsManager.RestoreSettings();
-            await ScriptManager.CompileScriptsAndReloadUserDomain();
 
-            AssetManager.CanLoadAssets = true;
-            AssetManager.Refresh();
+            return Task.Run(async () =>
+            {
+                await ScriptManager.CompileScriptsAndReloadUserDomain();
 
-            base.OnNewProjectOpened(path);
+                AssetManager.CanLoadAssets = true;
+                AssetManager.Refresh();
+
+                base.OnNewProjectOpened(path);
+            });
         }
 
         public bool IsPathAProject(string path)
@@ -86,7 +95,7 @@ namespace Robot
             return true;
         }
 
-        public void RestoreSettings()
+        public async Task RestoreSettings()
         {
             var lastPaths = m_Serializer.LoadObject<string[]>(FilePath);
 
@@ -95,23 +104,27 @@ namespace Robot
 
             if (LastKnownProjectPaths == null)
                 LastKnownProjectPaths = new List<string>();
+
+            await Task.CompletedTask;
         }
 
-        public void SaveSettings()
+        public async Task SaveSettings()
         {
             if (LastKnownProjectPaths != null)
                 m_Serializer.SaveObject(FilePath, LastKnownProjectPaths.ToArray());
+
+            await Task.CompletedTask;
         }
 
-        public void RememberPathInSettings(string path)
+        public async Task RememberPathInSettings(string path)
         {
-            RestoreSettings();
+            await RestoreSettings();
 
             if (LastKnownProjectPaths.Contains(path))
                 LastKnownProjectPaths.Remove(path);
 
             LastKnownProjectPaths.Insert(0, path);
-            SaveSettings();
+            await SaveSettings();
         }
     }
 }

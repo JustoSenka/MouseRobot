@@ -58,7 +58,7 @@ namespace Tests.Integration
             var initialization = InitializeApplicationWithKnownProjectPath();
 
             if (waitForPluginLoad)
-                ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+                initialization.Wait();
 
             var fix = AssetManager.GetAsset(k_FixturePath).ReloadAsset<LightTestFixture>();
             var rec = fix.Tests.First(t => t.Name == k_TestName);

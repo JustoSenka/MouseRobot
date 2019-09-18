@@ -27,20 +27,20 @@ namespace Tests.Runtime
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
-            var container = TestUtils.ConstructContainerForTests();
+            var Container = TestUtils.ConstructContainerForTests();
 
-            var ProjectManager = container.Resolve<IProjectManager>();
+            var ProjectManager = Container.Resolve<IProjectManager>();
 
-            TestFixtureManager = container.Resolve<ITestFixtureManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            TestRunner = container.Resolve<ITestRunner>();
-            ScriptManager = container.Resolve<IScriptManager>();
-            CommandFactory = container.Resolve<ICommandFactory>();
-            TestStatusManager = container.Resolve<ITestStatusManager>();
+            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            TestRunner = Container.Resolve<ITestRunner>();
+            ScriptManager = Container.Resolve<IScriptManager>();
+            CommandFactory = Container.Resolve<ICommandFactory>();
+            TestStatusManager = Container.Resolve<ITestStatusManager>();
 
-            Logger = container.Resolve<ILogger>();
+            Logger = Container.Resolve<ILogger>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
         }
 
         [TestCase("Test15", false, new[] { 11, 12, 15, 13, 14 })]

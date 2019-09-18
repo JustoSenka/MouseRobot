@@ -51,7 +51,7 @@ namespace Tests.Integration
             SettingsManager = Container.Resolve<ISettingsManager>();
             ScriptLoader = Container.Resolve<IScriptLoader>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
         }
 
         [Test]
@@ -146,6 +146,9 @@ namespace Tests.Integration
         [Test]
         public void DeletingPlugin_WillGenerateSolution_WithoutRefsToThosePlugins()
         {
+            // Was failing before. Maybe I need to wait for initialization to finish. Seems like it helped
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait(); 
+
             AssetManager.CreateAsset(Properties.Resources.TestClassLibrary, k_UserDllPath);
             ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
 

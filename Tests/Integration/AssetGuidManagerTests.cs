@@ -8,6 +8,7 @@ using RobotRuntime.Utils;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Tests.Integration
@@ -36,7 +37,7 @@ namespace Tests.Integration
             AssetManager = container.Resolve<IAssetManager>();
             AssetGuidManager = container.Resolve<IAssetGuidManager>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
         }
 
         [Test]

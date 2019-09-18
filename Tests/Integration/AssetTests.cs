@@ -71,7 +71,7 @@ namespace Tests.Integration
             RecordingManager = container.Resolve<IHierarchyManager>();
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
 
-            ProjectManager.InitProject(projectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(projectPath, container);
         }
 
         [Test]

@@ -33,15 +33,15 @@ namespace Tests.Unit
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
-            var container = TestUtils.ConstructContainerForTests();
+            var Container = TestUtils.ConstructContainerForTests();
 
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            TestRunnerManager = container.Resolve<ITestRunnerManager>();
-            TestFixtureManager = container.Resolve<ITestFixtureManager>();
-            Collector = container.Resolve<IModifiedAssetCollector>();
+            var ProjectManager = Container.Resolve<IProjectManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            TestRunnerManager = Container.Resolve<ITestRunnerManager>();
+            TestFixtureManager = Container.Resolve<ITestFixtureManager>();
+            Collector = Container.Resolve<IModifiedAssetCollector>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
 
             Collector.AutoClear = false;
             ClearCollectorAndCallbacks();

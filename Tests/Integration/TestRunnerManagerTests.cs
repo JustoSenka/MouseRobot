@@ -43,7 +43,7 @@ namespace Tests.Integration
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             var ScriptLoader = container.Resolve<IScriptLoader>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
 
             // Will invoke domain reloaded callback which will tell TestRunnerManager to load fixtures
             // It is faster than ScriptManager.Recompile... so loading directly even if there is nothing to load

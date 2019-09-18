@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Robot;
 using Robot.Abstractions;
 using Robot.Analytics;
 using Robot.Analytics.Abstractions;
@@ -37,12 +38,24 @@ namespace Tests
 
             ContainerUtils.PassStaticDependencies(container, typeof(RobotRuntime.Program).Assembly);
             ContainerUtils.PassStaticDependencies(container, typeof(Robot.Program).Assembly);
-            ContainerUtils.PassStaticDependencies(container, typeof(Program).Assembly);
+            ContainerUtils.PassStaticDependencies(container, typeof(RobotEditor.Program).Assembly);
 
             var reg = container.Resolve<IRegistryEditor>();
             reg.Put(string.Join("", "Ca", "che", "dK", "ey"), new byte[] { 10, 20, 30, 40, 50, 60, 70, 80 });
 
             return container;
+        }
+
+        public static void InitProjectButDontWaitForScriptCompilation(string projectPath, IUnityContainer container)
+        {
+            var SettingsManager = container.Resolve<ISettingsManager>();
+            var ProjectManager = container.Resolve<IProjectManager>();
+            var AssetManager = container.Resolve<IAssetManager>();
+
+            var initTask = ProjectManager.InitProject(projectPath);
+
+            AssetManager.CanLoadAssets = true;
+            AssetManager.Refresh();
         }
 
         internal static void CopyAllTemplateScriptsToProjectFolder(IScriptTemplates ScriptTemplates, IAssetManager AssetManager)

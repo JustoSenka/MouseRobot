@@ -27,16 +27,15 @@ namespace Tests.Performance
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
-            var container = TestUtils.ConstructContainerForTests();
+            var Container = TestUtils.ConstructContainerForTests();
 
-            MouseRobot = container.Resolve<IMouseRobot>();
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            AssetGuidManager = container.Resolve<IAssetGuidManager>();
-            Profiler = container.Resolve<IProfiler>();
+            MouseRobot = Container.Resolve<IMouseRobot>();
+            var ProjectManager = Container.Resolve<IProjectManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            AssetGuidManager = Container.Resolve<IAssetGuidManager>();
+            Profiler = Container.Resolve<IProfiler>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
-            AssetManager.Refresh();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
         }
 
         [Test]

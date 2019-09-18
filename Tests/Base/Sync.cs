@@ -7,8 +7,8 @@ public static class Sync
     {
         while (!predicate() && timeout > 0)
         {
-            Thread.Sleep(80);
-            timeout -= 80;
+            Thread.Sleep(30);
+            timeout -= 30;
         }
 
         return predicate();

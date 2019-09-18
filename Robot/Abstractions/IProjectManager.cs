@@ -1,6 +1,7 @@
 ﻿using RobotRuntime.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Robot
 {
@@ -8,13 +9,13 @@ namespace Robot
     {
         IList<string> LastKnownProjectPaths { get; }
 
-        void RestoreAndRemovePathsOfDeletedProjects();
+        Task RestoreAndRemovePathsOfDeletedProjects();
 
         bool IsPathAProject(string path);
 
-        void RestoreSettings();
-        void SaveSettings();
-        void RememberPathInSettings(string path);
+        Task RestoreSettings();
+        Task SaveSettings();
+        Task RememberPathInSettings(string path);
 
     }
 }

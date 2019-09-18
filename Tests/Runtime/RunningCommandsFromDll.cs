@@ -29,17 +29,17 @@ namespace Tests.Runtime
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
 
-            var container = TestUtils.ConstructContainerForTests();
+            var Container = TestUtils.ConstructContainerForTests();
 
-            var ProjectManager = container.Resolve<IProjectManager>();
-            AssetManager = container.Resolve<IAssetManager>();
-            HierarchyManager = container.Resolve<IHierarchyManager>();
-            ScriptManager = container.Resolve<IScriptManager>();
-            CommandFactory = container.Resolve<ICommandFactory>();
-            TestRunner = container.Resolve<ITestRunner>();
-            TestStatusManager = container.Resolve<ITestStatusManager>();
+            var ProjectManager = Container.Resolve<IProjectManager>();
+            AssetManager = Container.Resolve<IAssetManager>();
+            HierarchyManager = Container.Resolve<IHierarchyManager>();
+            ScriptManager = Container.Resolve<IScriptManager>();
+            CommandFactory = Container.Resolve<ICommandFactory>();
+            TestRunner = Container.Resolve<ITestRunner>();
+            TestStatusManager = Container.Resolve<ITestStatusManager>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
         }
 
         [Test]

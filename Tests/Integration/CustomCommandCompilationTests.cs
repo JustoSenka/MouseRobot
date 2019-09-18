@@ -43,7 +43,7 @@ namespace Tests.Integration
             TestFixtureManager = container.Resolve<ITestFixtureManager>();
             ScriptLoader = container.Resolve<IScriptLoader>();
 
-            ProjectManager.InitProject(TempProjectPath).Wait();
+            TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, container);
         }
 
         [Test]
