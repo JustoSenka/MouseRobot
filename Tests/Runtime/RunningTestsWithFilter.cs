@@ -23,7 +23,7 @@ namespace Tests.Runtime
 
         private const string k_CustomCommandPath = "Assets\\CommandLog.cs";
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Initialize()
         {
             TempProjectPath = TestUtils.GenerateProjectPath();
@@ -41,6 +41,15 @@ namespace Tests.Runtime
             Logger = Container.Resolve<ILogger>();
 
             TestUtils.InitProjectButDontWaitForScriptCompilation(TempProjectPath, Container);
+
+            // Test specific setup for performance resons.
+            // Setting up project once and resusing it for all tests. That is possible since the do not change the state of the project
+            // To make tests isolated again, move lines below to a test code and make this a SetUp instead of OneTimeSetUp
+
+            AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
+            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
+
+            TestFixtureUtils.PrepareProjectWithTestFixtures(TestFixtureManager, CommandFactory);
         }
 
         [TestCase("Test15", false, new[] { 11, 12, 15, 13, 14 })]
@@ -62,12 +71,8 @@ namespace Tests.Runtime
         [TestCase("Fixture1|Test26", true, new[] { 11, 12, 15, 13, 12, 16, 13, 14, 21, 22, 26, 23, 24 })]
         public void RunningTests_WithFilter(string filter, bool useCommandLine, int[] expectedOrder)
         {
-            AssetManager.CreateAsset(Properties.Resources.CommandLog, k_CustomCommandPath);
-            ScriptManager.CompileScriptsAndReloadUserDomain().Wait();
-
-            TestFixtureUtils.PrepareProjectWithTestFixtures(TestFixtureManager, CommandFactory);
+            Logger.Clear();
             var logs = TestFixtureUtils.RunTestsAndGetLogs(TestRunner, filter, useCommandLine, TempProjectPath, TestStatusManager.OutputFilePath);
-
             TestFixtureUtils.AssertIfCommandLogsAreOutOfOrder(logs, expectedOrder);
         }
     }
