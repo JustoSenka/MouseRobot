@@ -70,20 +70,20 @@ namespace Robot
                 var allAssetPaths = Paths.GetAllAssetPaths(true);
                 var modifiedAssetPaths = allAssetPaths.Where(p =>
                 {
-                // Return all directories
-                if (Paths.IsDirectory(p))
+                    // Return all directories
+                    if (Paths.IsDirectory(p))
                         return true;
 
                     var fileInfo = new FileInfo(p);
                     if (p == null)
                         return true;
 
-                // Return path if asset is a newly added one and doesn't exist in memory yet
-                if (!GuidPathTable.ContainsValue(p))
+                    // Return path if asset is a newly added one and doesn't exist in memory yet
+                    if (!GuidPathTable.ContainsValue(p))
                         return true;
 
-                // Return only those files which were written to recently
-                return fileInfo.LastWriteTime > m_LastRefresh || fileInfo.LastWriteTime > m_LastRefresh;
+                    // Return only those files which were written to recently
+                    return fileInfo.LastWriteTime > m_LastRefresh || fileInfo.LastWriteTime > m_LastRefresh;
                 });
 
                 var allAssetsOnDisk = allAssetPaths.Select(path => new Asset(path)).ToArray();
@@ -181,21 +181,24 @@ namespace Robot
                     AssetManagerStartupAnalytics.CountAndReportAssetTypes(Assets.ToArray()); // Making copy, so it could be iterated by any thread
 
                 m_LastRefresh = DateTime.Now;
-
-                EndAssetEditing();
             }
+
+            EndAssetEditing();
         }
 
         public void SaveExistngAsset(Asset existingAsset, object newValue)
         {
-            existingAsset.Value = newValue;
-            existingAsset.SaveAsset();
-            existingAsset.Update();
-            AssetUpdated?.Invoke(existingAsset.Path);
+            lock (RefreshLock)
+            {
+                existingAsset.Value = newValue;
+                existingAsset.SaveAsset();
+                existingAsset.Update();
+                AssetUpdated?.Invoke(existingAsset.Path);
 
-            AssetGuidManager.AddNewGuid(existingAsset.Guid, existingAsset.Path, existingAsset.Hash);
-            if (!IsEditingAssets)
-                AssetGuidManager.Save();
+                AssetGuidManager.AddNewGuid(existingAsset.Guid, existingAsset.Path, existingAsset.Hash);
+                if (!IsEditingAssets)
+                    AssetGuidManager.Save();
+            }
         }
 
         /// <summary>
@@ -204,43 +207,46 @@ namespace Robot
         /// </summary>
         public Asset CreateAsset(object assetValue, string path)
         {
-            path = Paths.GetRelativePath(path).NormalizePath();
+            lock (RefreshLock)
+            {
+                path = Paths.GetRelativePath(path).NormalizePath();
 
-            if (path.IsEmpty())
-            {
-                Logger.Log(LogType.Error, "Cannot save asset. Given path is invalid: " + path);
-                return null;
-            }
-
-            var asset = GetAsset(path);
-            if (asset != null)
-            {
-                asset.Value = assetValue;
-                asset.SaveAsset();
-                asset.Update();
-                AssetUpdated?.Invoke(path);
-            }
-            else
-            {
-                var dirParent = Paths.GetPathParent(path);
-                if (!Directory.Exists(dirParent))
+                if (path.IsEmpty())
                 {
-                    Logger.Log(LogType.Error, "Cannot create asset if parent directory does not exists: " + dirParent);
+                    Logger.Log(LogType.Error, "Cannot save asset. Given path is invalid: " + path);
                     return null;
                 }
 
-                asset = new Asset(path, true);
-                asset.Value = assetValue;
-                asset.SaveAsset();
-                asset.Update();
-                AddAssetInternal(asset);
+                var asset = GetAsset(path);
+                if (asset != null)
+                {
+                    asset.Value = assetValue;
+                    asset.SaveAsset();
+                    asset.Update();
+                    AssetUpdated?.Invoke(path);
+                }
+                else
+                {
+                    var dirParent = Paths.GetPathParent(path);
+                    if (!Directory.Exists(dirParent))
+                    {
+                        Logger.Log(LogType.Error, "Cannot create asset if parent directory does not exists: " + dirParent);
+                        return null;
+                    }
+
+                    asset = new Asset(path, true);
+                    asset.Value = assetValue;
+                    asset.SaveAsset();
+                    asset.Update();
+                    AddAssetInternal(asset);
+                }
+
+                AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
+                if (!IsEditingAssets)
+                    AssetGuidManager.Save();
+
+                return asset;
             }
-
-            AssetGuidManager.AddNewGuid(asset.Guid, asset.Path, asset.Hash);
-            if (!IsEditingAssets)
-                AssetGuidManager.Save();
-
-            return asset;
         }
 
         /// <summary>
@@ -248,55 +254,58 @@ namespace Robot
         /// </summary>
         public void DeleteAsset(string path)
         {
-            path = Paths.GetRelativePath(path).NormalizePath();
-            if (path.IsEmpty())
+            lock (RefreshLock)
             {
-                Logger.Log(LogType.Error, "Tried to delete empty directory. This might lead to really bad outcome!");
-                return;
-            }
+                path = Paths.GetRelativePath(path).NormalizePath();
+                if (path.IsEmpty())
+                {
+                    Logger.Log(LogType.Error, "Tried to delete empty directory. This might lead to really bad outcome!");
+                    return;
+                }
 
-            var asset = GetAsset(path);
-            if (asset == null)
-            {
-                Logger.Log(LogType.Error, "Cannot detele file or directory because Asset Manager does not know about this path." +
-                    " Not deleting anything for safety reasons: " + path);
-                return;
-            }
+                var asset = GetAsset(path);
+                if (asset == null)
+                {
+                    Logger.Log(LogType.Error, "Cannot detele file or directory because Asset Manager does not know about this path." +
+                        " Not deleting anything for safety reasons: " + path);
+                    return;
+                }
 
-            var isDirectory = Directory.Exists(path);
+                var isDirectory = Directory.Exists(path);
 
-            var wasEditingAssets = IsEditingAssets;
-            try
-            {
+                var wasEditingAssets = IsEditingAssets;
+                try
+                {
+                    if (isDirectory)
+                    {
+                        IsEditingAssets = true;
+                        Directory.Delete(path, true);
+                    }
+                    else
+                    {
+                        File.SetAttributes(path, FileAttributes.Normal);
+                        File.Delete(path);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(LogType.Error, "Cannot delete asset at path: " + path, e.Message);
+                }
+
                 if (isDirectory)
                 {
-                    IsEditingAssets = true;
-                    Directory.Delete(path, true);
-                }
-                else
-                {
-                    File.SetAttributes(path, FileAttributes.Normal);
-                    File.Delete(path);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Log(LogType.Error, "Cannot delete asset at path: " + path, e.Message);
-            }
+                    var pathsInsideTheDir = path + Path.DirectorySeparatorChar;
+                    foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(pathsInsideTheDir)).ToArray())
+                    {
+                        // delete all assets except the original directory asset
+                        DeleteAssetInternal(assetInDir);
+                    }
 
-            if (isDirectory)
-            {
-                var pathsInsideTheDir = path + Path.DirectorySeparatorChar;
-                foreach (var assetInDir in Assets.Where(a => a.Path.StartsWith(pathsInsideTheDir)).ToArray())
-                {
-                    // delete all assets except the original directory asset
-                    DeleteAssetInternal(assetInDir);
+                    IsEditingAssets = wasEditingAssets;
                 }
 
-                IsEditingAssets = wasEditingAssets;
+                DeleteAssetInternal(asset);
             }
-
-            DeleteAssetInternal(asset);
         }
 
         private void DeleteAssetInternal(Asset asset, bool silent = false)
@@ -317,60 +326,63 @@ namespace Robot
         /// </summary>
         public void RenameAsset(string sourcePath, string destPath)
         {
-            if (sourcePath == destPath)
+            lock (RefreshLock)
             {
-                Logger.Log(LogType.Warning, "Tried to rename asset but source file name and destination are the same: " + sourcePath);
-                return;
-            }
-
-            sourcePath = Paths.GetRelativePath(sourcePath).NormalizePath();
-            destPath = Paths.GetRelativePath(destPath).NormalizePath();
-
-            var asset = GetAsset(sourcePath);
-            if (asset == null)
-            {
-                Logger.Log(LogType.Error, "Cannot rename asset because it is not known by asset manager.");
-                return;
-            }
-
-            var destAsset = GetAsset(destPath);
-            if (destAsset != null)
-            {
-                Logger.Log(LogType.Error, "Cannot rename asset destination path already exist.");
-                return;
-            }
-
-            var isDirectory = Paths.IsDirectory(sourcePath);
-            if (isDirectory)
-            {
-                var wasEditingAssets = IsEditingAssets;
-                IsEditingAssets = true;
-
-                if (destPath.IsSubDirectoryOf(sourcePath))
+                if (sourcePath == destPath)
                 {
-                    Logger.Log(LogType.Warning, "Folder cannot be moved inside itself: " + sourcePath);
+                    Logger.Log(LogType.Warning, "Tried to rename asset but source file name and destination are the same: " + sourcePath);
                     return;
                 }
 
-                Directory.Move(sourcePath, destPath);
+                sourcePath = Paths.GetRelativePath(sourcePath).NormalizePath();
+                destPath = Paths.GetRelativePath(destPath).NormalizePath();
 
-                // Renames directory and all assets inside
-                foreach (var assetInDir in Assets.Where(a => a.Path.IsSubDirectoryOf(sourcePath)).Select(a => a.Path).ToArray())
+                var asset = GetAsset(sourcePath);
+                if (asset == null)
                 {
-                    if (assetInDir != sourcePath) // Rename all assets except the folder
-                        RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
+                    Logger.Log(LogType.Error, "Cannot rename asset because it is not known by asset manager.");
+                    return;
                 }
 
-                IsEditingAssets = wasEditingAssets;
-            }
-            else
-            {
-                File.SetAttributes(sourcePath, FileAttributes.Normal);
-                File.Move(sourcePath, destPath);
-            }
+                var destAsset = GetAsset(destPath);
+                if (destAsset != null)
+                {
+                    Logger.Log(LogType.Error, "Cannot rename asset destination path already exist.");
+                    return;
+                }
 
-            // Rename in db the actual file or folder
-            RenameAssetInternal(sourcePath, destPath);
+                var isDirectory = Paths.IsDirectory(sourcePath);
+                if (isDirectory)
+                {
+                    var wasEditingAssets = IsEditingAssets;
+                    IsEditingAssets = true;
+
+                    if (destPath.IsSubDirectoryOf(sourcePath))
+                    {
+                        Logger.Log(LogType.Warning, "Folder cannot be moved inside itself: " + sourcePath);
+                        return;
+                    }
+
+                    Directory.Move(sourcePath, destPath);
+
+                    // Renames directory and all assets inside
+                    foreach (var assetInDir in Assets.Where(a => a.Path.IsSubDirectoryOf(sourcePath)).Select(a => a.Path).ToArray())
+                    {
+                        if (assetInDir != sourcePath) // Rename all assets except the folder
+                            RenameAssetInternal(assetInDir, assetInDir.Replace(sourcePath, destPath));
+                    }
+
+                    IsEditingAssets = wasEditingAssets;
+                }
+                else
+                {
+                    File.SetAttributes(sourcePath, FileAttributes.Normal);
+                    File.Move(sourcePath, destPath);
+                }
+
+                // Rename in db the actual file or folder
+                RenameAssetInternal(sourcePath, destPath);
+            }
         }
 
         private void RenameAssetInternal(string sourcePath, string destPath, bool silent = false)
@@ -406,7 +418,11 @@ namespace Robot
         public void EndAssetEditing()
         {
             IsEditingAssets = false;
-            AssetGuidManager.Save();
+            lock (RefreshLock)
+            {
+                AssetGuidManager.Save();
+            }
+
             RefreshFinished?.Invoke();
         }
 
