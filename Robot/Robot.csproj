@@ -236,10 +236,10 @@
     <Compile Include="Tests\TestFixtureManager.cs" />
     <Compile Include="Tests\TestRunnerManager.cs" />
     <Compile Include="Utils\CodeEditorVS.cs" />
-    <Compile Include="Utils\Win32\HotkeyCallbacks.cs" />
+    <Compile Include="Input\HotkeyCallbacks.cs" />
     <Compile Include="Abstractions\IHotkeyCallbacks.cs" />
-    <Compile Include="Utils\Win32\InputCallbacks.cs" />
-    <Compile Include="Utils\Win32\KeyEvent.cs" />
+    <Compile Include="Input\InputCallbacks.cs" />
+    <Compile Include="Input\KeyEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

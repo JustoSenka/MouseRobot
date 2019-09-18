@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace Robot.Utils.Win32
+namespace Robot.Input
 {
     public enum KeyAction { KeyDown, KeyUp }
 

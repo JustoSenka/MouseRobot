@@ -1,4 +1,4 @@
-﻿using Robot.Utils.Win32;
+﻿using Robot.Input;
 using System;
 using System.ComponentModel;
 

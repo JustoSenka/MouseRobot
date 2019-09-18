@@ -1,6 +1,6 @@
 ﻿using Robot.Abstractions;
+using Robot.Input;
 using Robot.Settings;
-using Robot.Utils.Win32;
 using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
@@ -148,7 +148,7 @@ namespace Robot.RecordingCreation
                         AddCommand(new CommandRelease(e.X, e.Y, false));
                     }
                     // Did not drag a mouse, treat it as a Press
-                    else 
+                    else
                     {
                         AddCommand(new CommandPress(e.X, e.Y, false, mouseButton));
                     }

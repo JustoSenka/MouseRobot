@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Unity.Lifetime;
 
-namespace Robot.Utils.Win32
+namespace Robot.Input
 {
     [RegisterTypeToContainer(typeof(IHotkeyCallbacks), typeof(ContainerControlledLifetimeManager))]
     public class HotkeyCallbacks : IHotkeyCallbacks

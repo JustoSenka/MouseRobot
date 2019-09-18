@@ -10,7 +10,7 @@ using Robot.Abstractions;
 using RobotRuntime;
 using Unity.Lifetime;
 
-namespace Robot.Utils.Win32
+namespace Robot.Input
 {
     [RegisterTypeToContainer(typeof(IInputCallbacks), typeof(ContainerControlledLifetimeManager))]
     public class InputCallbacks : IInputCallbacks
