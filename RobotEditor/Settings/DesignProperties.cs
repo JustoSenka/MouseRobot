@@ -26,8 +26,8 @@ namespace RobotEditor.Settings
         private const int NumOfCategories = 1;
         private const int Fonts = 1;
 
-        private const string FONT_MS_SANS_SERIF = "Microsoft Sans Serif, 8.25pt, style=Regular";
-        private const string FONT_CONSOLAS = "Consolas, 11pt, style=Regular";
+        private const string FONT_MS_SANS_SERIF = "Microsoft Sans Serif, 9.75pt, style=Regular";
+        private const string FONT_CONSOLAS = "Consolas, 11.25pt, style=Regular";
 
         [SortedCategory("Fonts", Fonts, NumOfCategories)]
         [DefaultValue(typeof(Font), FONT_MS_SANS_SERIF)]
