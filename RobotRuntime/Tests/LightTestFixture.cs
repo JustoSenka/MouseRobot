@@ -42,7 +42,7 @@ namespace RobotRuntime.Tests
                 Tests.Add(s);
         }
 
-        public static bool IsSpecialRecording(Recording Recording)
+        public static bool IsSpecialRecording(LightRecording Recording)
         {
             if (Recording == null)
                 return false;
