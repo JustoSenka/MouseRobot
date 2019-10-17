@@ -36,10 +36,13 @@ namespace RobotRuntime.Commands
 
         public override void Run(TestData TestData) { }
 
-        public override string ToString()
+        public override string Title
         {
-            var f = ForEach ? "Each " : "";
-            return $"For " + f + "Text Block: \"" + Text + "\"";
+            get
+            {
+                var f = ForEach ? "Each " : "";
+                return $"For " + f + "Text Block: \"" + Text + "\"";
+            }
         }
     }
 }

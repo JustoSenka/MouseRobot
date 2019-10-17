@@ -5,7 +5,7 @@ using System;
 namespace RobotRuntime.Commands
 {
     [Serializable]
-    [RunnerType(typeof(CommandIfImageVisibleRunner))] 
+    [RunnerType(typeof(CommandIfImageVisibleRunner))]
     [PropertyDesignerType("NativeCommandProperties")]
     public class CommandIfImageVisible : Command
     {
@@ -34,10 +34,13 @@ namespace RobotRuntime.Commands
 
         public override void Run(TestData TestData) { }
 
-        public override string ToString()
+        public override string Title
         {
-            var str = ExpectTrue ? " " : " not ";
-            return "If Image is"  + str + "Visible: <" + Asset.ToString() + ">";
+            get
+            {
+                var str = ExpectTrue ? " " : " not ";
+                return "If Image is" + str + "Visible: <" + Asset.ToString() + ">";
+            }
         }
     }
 }

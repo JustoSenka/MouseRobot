@@ -16,6 +16,9 @@ namespace RobotRuntime
         public abstract string Name { get; }
         public abstract bool CanBeNested { get; }
 
+        public virtual string Title => Name;
+        public string OverrideTitle { get; set; }
+
         public abstract void Run(TestData TestData);
 
         [InjectionConstructor]
@@ -52,7 +55,7 @@ namespace RobotRuntime
 
         public override string ToString()
         {
-            return Name;
+            return OverrideTitle.IsEmpty() ? Title : OverrideTitle;
         }
 
         /// <summary>

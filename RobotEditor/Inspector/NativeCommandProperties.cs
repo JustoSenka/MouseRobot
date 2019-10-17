@@ -26,15 +26,16 @@ namespace RobotEditor.Inspector
         public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
             dt.Properties.Clear();
+            AddProperty(dt, "OverrideTitle");
             AddProperty(dt, "CommandType");
 
-            if (Command is CommandDown || Command is CommandRelease || Command is CommandPress)
+            if (Command is CommandDown || Command is CommandRelease || Command is CommandClick)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
                 AddProperty(dt, "DontMove");
             }
-            if (Command is CommandDown || Command is CommandPress)
+            if (Command is CommandDown || Command is CommandClick)
             {
                 AddProperty(dt, "MouseButton");
             }
@@ -77,6 +78,15 @@ namespace RobotEditor.Inspector
                 AddProperty(dt, "ExpectTrue"); 
                 AddProperty(dt, "DetectionMode"); 
             }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("")]
+        [DisplayName("Title")]
+        public string OverrideTitle
+        {
+            get { return DynamicCast(Command).OverrideTitle; }
+            set { DynamicCast(Command).OverrideTitle = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]

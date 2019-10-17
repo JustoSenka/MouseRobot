@@ -26,9 +26,6 @@ namespace RobotRuntime.Commands
             TestData.TestStatus = TestStatus.Failed;
         }
 
-        public override string ToString()
-        {
-            return "Fail Test";
-        }
+        public override string Title => "Fail Test";
     }
 }

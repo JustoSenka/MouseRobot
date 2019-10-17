@@ -25,7 +25,7 @@ namespace RobotRuntime.Commands
         {
             Logger.Log(LogType.Warning, "This command was incorrectly deserialized and cannot run.");
         }
-        
-        public override string ToString() => "Unknown command";
+
+        public override string Title => "Unknown command";
     }
 }

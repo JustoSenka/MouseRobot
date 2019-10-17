@@ -211,7 +211,7 @@
     <Compile Include="Commands\CommandRunRecording.cs" />
     <Compile Include="Commands\CommandForImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
-    <Compile Include="Commands\CommandPress.cs" />
+    <Compile Include="Commands\CommandClick.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />

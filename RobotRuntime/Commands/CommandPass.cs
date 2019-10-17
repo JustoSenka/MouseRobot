@@ -26,9 +26,6 @@ namespace RobotRuntime.Commands
             TestData.TestStatus = TestStatus.Passed;
         }
 
-        public override string ToString()
-        {
-            return "Pass Test";
-        }
+        public override string Title => "Pass Test";
     }
 }

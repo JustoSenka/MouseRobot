@@ -47,12 +47,6 @@ namespace RobotRuntime.Commands
 
         }
 
-        public override string ToString()
-        {
-            if (DontMove)
-                return "Release";
-            else
-                return "Release on: (" + X + ", " + Y + ")";
-        }
+        public override string Title => DontMove ? "Release" : "Release on: (" + X + ", " + Y + ")";
     }
 }
