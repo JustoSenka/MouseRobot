@@ -98,8 +98,8 @@ namespace Tests.Unit
             var tree = YamlSerializer.DeserializeYamlTree(serializedCommand);
             var props = tree.ToArray();
 
-            Assert.AreEqual("CommandPress", tree.value.property, "Command object had incorrect command type indicator.");
-            Assert.AreEqual(5, props.Length, "Command object should have 5 properties.");
+            Assert.AreEqual("CommandClick", tree.value.property, "Command object had incorrect command type indicator.");
+            Assert.AreEqual(6, props.Length, "Command object should have 6 properties.");
         }
 
 
@@ -179,12 +179,12 @@ namespace Tests.Unit
 
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
             Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
-            Assert.AreEqual(6, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
-            Assert.AreEqual(3, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
+            Assert.AreEqual(7, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
+            Assert.AreEqual(4, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
 
-            var commandPress = children[2].ToArray()[5];
-            Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
-            Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
+            var commandPress = children[2].ToArray()[6];
+            Assert.AreEqual("CommandClick", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
+            Assert.AreEqual(6, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
         [Test]
@@ -251,7 +251,7 @@ namespace Tests.Unit
 
         #region private string serializedFixture => @"LightTestFixture: 
         private string serializedFixture => @"LightTestFixture: 
-  Guid: 00000000-0000-0000-0000-000000000000
+  Guid: 12345678-9abc-def0-1234-567890123456
   Name: TestName
   LightRecording: 
     Guid: 00000000-0000-0000-0000-000000000000
