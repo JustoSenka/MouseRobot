@@ -213,6 +213,7 @@
     <Compile Include="Commands\CommandMove.cs" />
     <Compile Include="Commands\CommandClick.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
+    <Compile Include="Commands\CommandPressKey.cs" />
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
     <Compile Include="Logging\EmptyAnalytics.cs" />

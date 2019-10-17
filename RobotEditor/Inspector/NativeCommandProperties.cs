@@ -7,6 +7,7 @@ using RobotRuntime.Commands;
 using RobotRuntime.Utils.Win32;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Windows.Forms;
 
 namespace RobotEditor.Inspector
 {
@@ -63,6 +64,10 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Text");
             }
+            else if (Command is CommandPressKey)
+            {
+                AddProperty(dt, "KeyCode");
+            }
             else if (Command is CommandForText)
             {
                 AddProperty(dt, "Text");
@@ -75,8 +80,8 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                AddProperty(dt, "ExpectTrue"); 
-                AddProperty(dt, "DetectionMode"); 
+                AddProperty(dt, "ExpectTrue");
+                AddProperty(dt, "DetectionMode");
             }
         }
 
@@ -198,6 +203,15 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).Text; }
             set { DynamicCast(Command).Text = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("")]
+        [DisplayName("KeyCode")]
+        public Keys KeyCode
+        {
+            get { return DynamicCast(Command).KeyCode; }
+            set { DynamicCast(Command).KeyCode = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]

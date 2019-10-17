@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using WindowsInput;
+using WindowsInput.Native;
 
 namespace RobotRuntime.Utils.Win32
 {
@@ -94,7 +97,7 @@ namespace RobotRuntime.Utils.Win32
 
         public static void PerformActionDown(MouseButton value)
         {
-            var flags = value == MouseButton.Left ? MouseEventFlags.LeftDown : 
+            var flags = value == MouseButton.Left ? MouseEventFlags.LeftDown :
                 value == MouseButton.Right ? MouseEventFlags.RightDown :
                 MouseEventFlags.MiddleDown;
             PerformAction(flags);
@@ -129,6 +132,30 @@ namespace RobotRuntime.Utils.Win32
         public static void SimulateTextEntry(string text)
         {
             InputSimulator.Keyboard.TextEntry(text);
+        }
+
+        public static void PressKey(Keys KeyCode)
+        {
+            var mod = Keys.Modifiers & KeyCode;
+            var key = Keys.KeyCode & KeyCode;
+
+            var parsedKey = (VirtualKeyCode) Enum.Parse(typeof(VirtualKeyCode), ((int)key).ToString());
+            var parsedMods = ParseModifiers(mod);
+
+            if (parsedMods.Count() > 0)
+                InputSimulator.Keyboard.ModifiedKeyStroke(parsedMods, parsedKey);
+            else
+                InputSimulator.Keyboard.KeyPress(parsedKey);
+        }
+
+        private static IEnumerable<VirtualKeyCode> ParseModifiers(Keys mod)
+        {
+            if (mod.HasFlag(Keys.Shift))
+                yield return VirtualKeyCode.SHIFT;
+            if (mod.HasFlag(Keys.Alt))
+                yield return VirtualKeyCode.MENU;
+            if (mod.HasFlag(Keys.Control))
+                yield return VirtualKeyCode.CONTROL;
         }
 
         #endregion
