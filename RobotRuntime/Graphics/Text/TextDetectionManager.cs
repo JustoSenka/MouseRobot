@@ -27,7 +27,7 @@ namespace RobotRuntime.Graphics
         /// </summary>
         protected override bool FindRectsSync(Detectable detectable, string detectorName, Bitmap observedImage, out Point[][] points)
         {
-            var m_FeatureDetector = Factory.Create(detectorName);
+            var m_FeatureDetector = Factory.Create(GetPreferredDetector(detectorName));
             if (m_FeatureDetector == null)
             {
                 m_FeatureDetector = Factory.Create(DefaultDetector);

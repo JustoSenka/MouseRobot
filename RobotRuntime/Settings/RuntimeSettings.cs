@@ -10,9 +10,11 @@ namespace RobotRuntime.Settings
     public class RuntimeSettings : IRuntimeSettings
     {
         private readonly IDetectionManager DetectionManager;
-        public RuntimeSettings(IFeatureDetectionManager DetectionManager)
+        private readonly ITextDetectionManager TextDetectionManager;
+        public RuntimeSettings(IFeatureDetectionManager DetectionManager, ITextDetectionManager TextDetectionManager)
         {
             this.DetectionManager = DetectionManager;
+            this.TextDetectionManager = TextDetectionManager;
         }
 
         /// <summary>
@@ -34,6 +36,7 @@ namespace RobotRuntime.Settings
         public void ApplySettings(DetectionSettings settings)
         {
             DetectionManager.ApplySettings(settings);
+            TextDetectionManager.ApplySettings(settings);
         }
     }
 }

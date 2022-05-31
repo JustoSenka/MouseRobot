@@ -15,6 +15,7 @@ namespace RobotRuntime.IO
             var tree = new TreeNode<YamlObject>(commandObject);
 
             tree.AddChild(new YamlObject(level + 1, "Guid", command.Guid));
+            tree.AddChild(new YamlObject(level + 1, "OverrideTitle", command.OverrideTitle));
 
             var objs = YamlSerializer.SerializeSimpleProperties(command, level + 1);
 

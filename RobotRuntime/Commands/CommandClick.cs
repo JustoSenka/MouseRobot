@@ -8,9 +8,9 @@ namespace RobotRuntime.Commands
     [Serializable]
     [RunnerType(typeof(SimpleCommandRunner))]
     [PropertyDesignerType("NativeCommandProperties")]
-    public class CommandPress : Command
+    public class CommandClick : Command
     {
-        public override string Name { get { return "Press"; } }
+        public override string Name { get { return "Click"; } }
         public override bool CanBeNested { get { return false; } }
 
         public int X { get; set; }
@@ -18,9 +18,9 @@ namespace RobotRuntime.Commands
         public bool DontMove { get; set; }
         public MouseButton MouseButton { get; set; }
 
-        public CommandPress() : base() { }
-        public CommandPress(Guid guid) : base(guid) { }
-        public CommandPress(int x, int y, bool DontMove, MouseButton MouseButton, Guid guid = default(Guid)) : base(guid)
+        public CommandClick() : base() { }
+        public CommandClick(Guid guid) : base(guid) { }
+        public CommandClick(int x, int y, bool DontMove, MouseButton MouseButton, Guid guid = default(Guid)) : base(guid)
         {
             X = x;
             Y = y;
@@ -30,7 +30,7 @@ namespace RobotRuntime.Commands
 
         public override object Clone()
         {
-            return new CommandPress(X, Y, DontMove, MouseButton, Guid);
+            return new CommandClick(X, Y, DontMove, MouseButton, Guid);
         }
 
         public override void Run(TestData TestData)
@@ -41,11 +41,13 @@ namespace RobotRuntime.Commands
             WinAPI.PerformActionUp(MouseButton);
         }
 
-        public override string ToString()
+        public override string Title
         {
-            var str = DontMove ? "Click Mouse Here" : "Click on: (" + X + ", " + Y + ")";
-            str = MouseButton.ToString() + " " + str;
-            return str;
+            get
+            {
+                var str = DontMove ? "Click Mouse Here" : "Click on: (" + X + ", " + Y + ")";
+                return MouseButton.ToString() + " " + str;
+            }
         }
     }
 }

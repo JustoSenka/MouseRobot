@@ -40,11 +40,13 @@ namespace RobotRuntime.Commands
             WinAPI.PerformActionDown(MouseButton);
         }
 
-        public override string ToString()
+        public override string Title
         {
-            var str = DontMove ? "Hold Mouse Down" : "Down on: (" + X + ", " + Y + ")";
-            str = MouseButton.ToString() + " " + str;
-            return str;
+            get
+            {
+                var str = DontMove ? "Hold Mouse Down" : "Down on: (" + X + ", " + Y + ")";
+                return MouseButton.ToString() + " " + str;
+            }
         }
     }
 }

@@ -147,8 +147,6 @@ namespace RobotEditor
             statusStrip.HandleCreated += OnStatusStripHandleCreated;
 
             ((Form)ScreenPaintForm).Show();
-
-            HandleCreated += (sender, args) => OnSettingsRestored();
         }
 
         protected override void WndProc(ref Message m)
@@ -221,6 +219,12 @@ namespace RobotEditor
         #endregion // New Test Fixture Window Addition
 
         #region Editor Settings
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            OnSettingsRestored();
+        }
 
         private void OnSettingsRestored()
         {
@@ -613,6 +617,11 @@ namespace RobotEditor
         private void newTestFixtureToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TestFixtureManager.NewTestFixture();
+        }
+
+        private void resetDefaultLayoutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DockLayout.RestoreDefault(m_DockPanel);
         }
 
         #endregion

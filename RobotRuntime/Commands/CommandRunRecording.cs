@@ -28,9 +28,6 @@ namespace RobotRuntime.Commands
 
         public override void Run(TestData TestData) { }
 
-        public override string ToString()
-        {
-            return "Run Recording: <" + Asset.ToString() + ">";
-        }
+        public override string Title => "Run Recording: <" + Asset.ToString() + ">";
     }
 }

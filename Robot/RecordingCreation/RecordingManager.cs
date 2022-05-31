@@ -154,7 +154,7 @@ namespace Robot.RecordingCreation
                     // Did not drag a mouse, treat it as a Press
                     else
                     {
-                        AddCommand(new CommandPress(point.X, point.Y, false, mouseButton));
+                        AddCommand(new CommandClick(point.X, point.Y, false, mouseButton));
                     }
 
                     m_LastClickPos = point;

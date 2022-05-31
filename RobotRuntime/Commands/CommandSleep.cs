@@ -32,9 +32,6 @@ namespace RobotRuntime.Commands
             Task.Delay(Time).Wait();
         }
 
-        public override string ToString()
-        {
-            return "Sleep for " + Time + " ms.";
-        }
+        public override string Title => "Sleep for " + Time + " ms.";
     }
 }

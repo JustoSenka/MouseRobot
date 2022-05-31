@@ -41,9 +41,6 @@ namespace RobotRuntime.Commands
             }
         }
 
-        public override string ToString()
-        {
-            return "Move to: (" + X + ", " + Y + ")";
-        }
+        public override string Title => "Move to: (" + X + ", " + Y + ")";
     }
 }

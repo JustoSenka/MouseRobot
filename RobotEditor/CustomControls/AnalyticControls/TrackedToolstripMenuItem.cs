@@ -35,7 +35,7 @@ namespace RobotEditor.CustomControls
                 {
                     var name = this.Parent?.Parent?.FindForm()?.GetType().Name;
                     name = name.IsEmpty() ? this.Parent?.TopLevelControl?.FindForm()?.GetType().Name : name;
-                    name = name.IsEmpty() ? (this.Parent as ContextMenuStrip)?.SourceControl.FindForm()?.GetType().Name : name;
+                    name = name.IsEmpty() ? (this.Parent as ContextMenuStrip)?.SourceControl?.FindForm()?.GetType().Name : name;
 
                     if (this.Parent?.Items.Count > 0)
                         name = name.IsEmpty() ? this.Parent?.Items[0].OwnerItem?.GetCurrentParent()?.FindForm()?.Name : name;

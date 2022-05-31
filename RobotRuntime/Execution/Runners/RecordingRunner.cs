@@ -38,7 +38,10 @@ namespace RobotRuntime.Execution
                 var runner = TestData.RunnerFactory.GetFor(node.value.GetType());
                 runner.Run(node.value);
 
-                if (TestData.IsTestFinished)
+                var isSetupOrTeardown = LightTestFixture.IsSpecialRecording(recording);
+
+                // If special method like setup or teardown, return only when cancel requested, no matter if test failed or not.
+                if (TestData.IsTestFinished && !isSetupOrTeardown || TestData.ShouldCancelRun && isSetupOrTeardown)
                     return;
             }
         }

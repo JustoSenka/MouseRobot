@@ -47,19 +47,20 @@ namespace Tests.Unit
         [Test]
         public void CommandWith_Enumerations_AreReadFine()
         {
-            var command = new CommandPress(5, 5, false, MouseButton.Right);
+            var command = new CommandClick(5, 5, false, MouseButton.Right);
             var yamlObj = YamlCommandIO.Serialize(command, 0);
 
-            var newCommand = YamlCommandIO.Deserialize(yamlObj) as CommandPress;
+            var newCommand = YamlCommandIO.Deserialize(yamlObj) as CommandClick;
 
             Assert.AreEqual(command.MouseButton, newCommand.MouseButton, "MouseButton property did not match on command");
         }
 
 
         private readonly static Guid guid = new Guid("12345678-9abc-def0-1234-567890123456");
-        private readonly Command command = new CommandPress(50, 70, false, MouseButton.Left, guid);
-        private string serializedCommand => @"CommandPress: 
+        private readonly Command command = new CommandClick(50, 70, false, MouseButton.Left, guid);
+        private string serializedCommand => @"CommandClick: 
   Guid: 12345678-9abc-def0-1234-567890123456
+  OverrideTitle: 
   X: 50
   Y: 70
   DontMove: False
@@ -79,8 +80,8 @@ namespace Tests.Unit
             var yamlObj = YamlCommandIO.Serialize(command, 0);
 
             var props = yamlObj.ToArray();
-            Assert.AreEqual("CommandPress", yamlObj.value.property, "Command object had incorrect command type indicator.");
-            Assert.AreEqual(5, props.Length, "Command object should have 3 properties.");
+            Assert.AreEqual("CommandClick", yamlObj.value.property, "Command object had incorrect command type indicator.");
+            Assert.AreEqual(6, props.Length, "Command object should have 6 properties.");
         }
 
         [Test]
@@ -97,8 +98,8 @@ namespace Tests.Unit
             var tree = YamlSerializer.DeserializeYamlTree(serializedCommand);
             var props = tree.ToArray();
 
-            Assert.AreEqual("CommandPress", tree.value.property, "Command object had incorrect command type indicator.");
-            Assert.AreEqual(5, props.Length, "Command object should have 5 properties.");
+            Assert.AreEqual("CommandClick", tree.value.property, "Command object had incorrect command type indicator.");
+            Assert.AreEqual(6, props.Length, "Command object should have 6 properties.");
         }
 
 
@@ -110,7 +111,7 @@ namespace Tests.Unit
                 s.Name = "TestName";
                 var imageCommand = new CommandForImage(new Guid(), 1850, false, guid: guid);
                 s.AddCommand(imageCommand);
-                s.AddCommand(new CommandPress(55, 66, true, MouseButton.Left, guid), imageCommand);
+                s.AddCommand(new CommandClick(55, 66, true, MouseButton.Left, guid), imageCommand);
                 s.AddCommand(new CommandMove(10, 20, guid));
                 return s;
             }
@@ -120,18 +121,21 @@ namespace Tests.Unit
   Name: TestName
   CommandForImage: 
     Guid: 12345678-9abc-def0-1234-567890123456
+    OverrideTitle: 
     Asset: 00000000-0000-0000-0000-000000000000
     Timeout: 1850
     ForEach: False
     DetectionMode: Default
-    CommandPress: 
+    CommandClick: 
       Guid: 12345678-9abc-def0-1234-567890123456
+      OverrideTitle: 
       X: 55
       Y: 66
       DontMove: True
       MouseButton: Left
   CommandMove: 
     Guid: 12345678-9abc-def0-1234-567890123456
+    OverrideTitle: 
     X: 10
     Y: 20".FixLineEndings();
 
@@ -157,12 +161,12 @@ namespace Tests.Unit
 
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
             Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
-            Assert.AreEqual(6, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
-            Assert.AreEqual(3, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
+            Assert.AreEqual(7, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
+            Assert.AreEqual(4, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
 
-            var commandPress = children[2].ToArray()[5];
-            Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
-            Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
+            var commandClick = children[2].ToArray()[6];
+            Assert.AreEqual("CommandClick", commandClick.value.property, "CommandClick value of YamlObject was incorrect");
+            Assert.AreEqual(6, commandClick.ToArray().Length, "CommandClick has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
         [Test]
@@ -175,12 +179,12 @@ namespace Tests.Unit
 
             Assert.AreEqual(guid.ToString(), children[0].value.value, "Guid value was incorrect");
             Assert.AreEqual("TestName", children[1].value.value, "Test name value was incorrect");
-            Assert.AreEqual(6, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
-            Assert.AreEqual(3, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
+            Assert.AreEqual(7, children[2].ToArray().Length, "Image command has also three childs, timeout CommandPress, and two guids");
+            Assert.AreEqual(4, children[3].ToArray().Length, "Command move has also two childs, X and Y and guid.");
 
-            var commandPress = children[2].ToArray()[5];
-            Assert.AreEqual("CommandPress", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
-            Assert.AreEqual(5, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
+            var commandPress = children[2].ToArray()[6];
+            Assert.AreEqual("CommandClick", commandPress.value.property, "CommandPress value of YamlObject was incorrect");
+            Assert.AreEqual(6, commandPress.ToArray().Length, "CommandPress has 5 childs, X Y DontMove, guid, mouse buttons");
         }
 
         [Test]
@@ -250,98 +254,113 @@ namespace Tests.Unit
   Guid: 12345678-9abc-def0-1234-567890123456
   Name: TestName
   LightRecording: 
-    Guid: 12345678-9abc-def0-1234-567890123456
+    Guid: 00000000-0000-0000-0000-000000000000
     Name: Setup
     CommandForImage: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       Asset: 00000000-0000-0000-0000-000000000000
       Timeout: 1850
       ForEach: False
       DetectionMode: Default
-      CommandPress: 
-        Guid: 12345678-9abc-def0-1234-567890123456
+      CommandClick: 
+        Guid: 00000000-0000-0000-0000-000000000000
+        OverrideTitle: 
         X: 55
         Y: 66
         DontMove: True
         MouseButton: Left
     CommandMove: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       X: 10
       Y: 20
   LightRecording: 
-    Guid: 12345678-9abc-def0-1234-567890123456
+    Guid: 00000000-0000-0000-0000-000000000000
     Name: TearDown
     CommandForImage: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       Asset: 00000000-0000-0000-0000-000000000000
       Timeout: 1850
       ForEach: False
       DetectionMode: Default
-      CommandPress: 
-        Guid: 12345678-9abc-def0-1234-567890123456
+      CommandClick: 
+        Guid: 00000000-0000-0000-0000-000000000000
+        OverrideTitle: 
         X: 55
         Y: 66
         DontMove: True
         MouseButton: Left
     CommandMove: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       X: 10
       Y: 20
   LightRecording: 
-    Guid: 12345678-9abc-def0-1234-567890123456
+    Guid: 00000000-0000-0000-0000-000000000000
     Name: OneTimeSetup
     CommandForImage: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       Asset: 00000000-0000-0000-0000-000000000000
       Timeout: 1850
       ForEach: False
       DetectionMode: Default
-      CommandPress: 
-        Guid: 12345678-9abc-def0-1234-567890123456
+      CommandClick: 
+        Guid: 00000000-0000-0000-0000-000000000000
+        OverrideTitle: 
         X: 55
         Y: 66
         DontMove: True
         MouseButton: Left
     CommandMove: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       X: 10
       Y: 20
   LightRecording: 
-    Guid: 12345678-9abc-def0-1234-567890123456
+    Guid: 00000000-0000-0000-0000-000000000000
     Name: OneTimeTeardown
     CommandForImage: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       Asset: 00000000-0000-0000-0000-000000000000
       Timeout: 1850
       ForEach: False
       DetectionMode: Default
-      CommandPress: 
-        Guid: 12345678-9abc-def0-1234-567890123456
+      CommandClick: 
+        Guid: 00000000-0000-0000-0000-000000000000
+        OverrideTitle: 
         X: 55
         Y: 66
         DontMove: True
         MouseButton: Left
     CommandMove: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       X: 10
       Y: 20
   LightRecording: 
-    Guid: 12345678-9abc-def0-1234-567890123456
+    Guid: 00000000-0000-0000-0000-000000000000
     Name: TestName
     CommandForImage: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       Asset: 00000000-0000-0000-0000-000000000000
       Timeout: 1850
       ForEach: False
       DetectionMode: Default
-      CommandPress: 
-        Guid: 12345678-9abc-def0-1234-567890123456
+      CommandClick: 
+        Guid: 00000000-0000-0000-0000-000000000000
+        OverrideTitle: 
         X: 55
         Y: 66
         DontMove: True
         MouseButton: Left
     CommandMove: 
-      Guid: 12345678-9abc-def0-1234-567890123456
+      Guid: 00000000-0000-0000-0000-000000000000
+      OverrideTitle: 
       X: 10
       Y: 20".FixLineEndings();
         #endregion

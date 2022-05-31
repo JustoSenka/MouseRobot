@@ -32,9 +32,12 @@ namespace RobotRuntime.Commands
             WinAPI.SimulateTextEntry(Text);
         }
 
-        public override string ToString()
+        public override string Title
         {
-            return "Write text: " + Text;
+            get
+            {
+                return "Write text: " + Text;
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Robot.Settings
     [Serializable]
     public class EditorSettings : BaseSettings
     {
-        public Theme Theme { get; set; } = Theme.Dark;
+        public Theme Theme { get; set; } = Theme.Light;
 
         public WindowState PlayingAction { get; set; } = WindowState.DoNothing;
         public WindowState RecordingAction { get; set; } = WindowState.DoNothing;

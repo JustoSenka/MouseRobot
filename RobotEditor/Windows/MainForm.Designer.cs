@@ -82,6 +82,7 @@
             this.helpToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.aboutToolStripMenuItem = new RobotEditor.CustomControls.TrackedToolStripMenuItem();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.resetDefaultLayoutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -269,7 +270,7 @@
             // 
             this.newProjectToolStripMenuItem1.AnalyticsEnabled = true;
             this.newProjectToolStripMenuItem1.Name = "newProjectToolStripMenuItem1";
-            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newProjectToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.newProjectToolStripMenuItem1.Text = "Project";
             this.newProjectToolStripMenuItem1.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
@@ -278,7 +279,7 @@
             this.newTestFixtureToolStripMenuItem1.AnalyticsEnabled = true;
             this.newTestFixtureToolStripMenuItem1.Name = "newTestFixtureToolStripMenuItem1";
             this.newTestFixtureToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newTestFixtureToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.newTestFixtureToolStripMenuItem1.Text = "Test Fixture";
             this.newTestFixtureToolStripMenuItem1.Click += new System.EventHandler(this.newTestFixtureToolStripMenuItem_Click);
             // 
@@ -287,7 +288,7 @@
             this.newRecordingToolStripMenuItem1.AnalyticsEnabled = true;
             this.newRecordingToolStripMenuItem1.Name = "newRecordingToolStripMenuItem1";
             this.newRecordingToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(174, 22);
+            this.newRecordingToolStripMenuItem1.Size = new System.Drawing.Size(173, 22);
             this.newRecordingToolStripMenuItem1.Text = "Recording";
             this.newRecordingToolStripMenuItem1.Click += new System.EventHandler(this.newRecordingToolStripMenuItem_Click);
             // 
@@ -401,7 +402,7 @@
             // 
             this.darkThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.darkThemeToolStripMenuItem.Name = "darkThemeToolStripMenuItem";
-            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.darkThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.darkThemeToolStripMenuItem.Text = "Dark Theme";
             this.darkThemeToolStripMenuItem.Click += new System.EventHandler(this.darkThemeToolStripMenuItem_Click);
             // 
@@ -409,7 +410,7 @@
             // 
             this.blueThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.blueThemeToolStripMenuItem.Name = "blueThemeToolStripMenuItem";
-            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.blueThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.blueThemeToolStripMenuItem.Text = "Blue Theme";
             this.blueThemeToolStripMenuItem.Click += new System.EventHandler(this.blueThemeToolStripMenuItem_Click);
             // 
@@ -417,7 +418,7 @@
             // 
             this.whiteThemeToolStripMenuItem.AnalyticsEnabled = true;
             this.whiteThemeToolStripMenuItem.Name = "whiteThemeToolStripMenuItem";
-            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.whiteThemeToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.whiteThemeToolStripMenuItem.Text = "Light Theme";
             this.whiteThemeToolStripMenuItem.Click += new System.EventHandler(this.lightThemeToolStripMenuItem_Click);
             // 
@@ -532,6 +533,7 @@
             // 
             this.helpToolStripMenuItem.AnalyticsEnabled = true;
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetDefaultLayoutToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -541,9 +543,16 @@
             // 
             this.aboutToolStripMenuItem.AnalyticsEnabled = true;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // resetDefaultLayoutToolStripMenuItem
+            // 
+            this.resetDefaultLayoutToolStripMenuItem.Name = "resetDefaultLayoutToolStripMenuItem";
+            this.resetDefaultLayoutToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.resetDefaultLayoutToolStripMenuItem.Text = "Reset Default Layout";
+            this.resetDefaultLayoutToolStripMenuItem.Click += new System.EventHandler(this.resetDefaultLayoutToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -625,5 +634,6 @@
         private RobotEditor.CustomControls.TrackedToolStripMenuItem compilerToolStripMenuItem;
         private RobotEditor.CustomControls.TrackedToolStripMenuItem addScriptToolStripMenuItem;
         private RobotEditor.CustomControls.TrackedToolStripButton textDetectionButton;
+        private System.Windows.Forms.ToolStripMenuItem resetDefaultLayoutToolStripMenuItem;
     }
 }

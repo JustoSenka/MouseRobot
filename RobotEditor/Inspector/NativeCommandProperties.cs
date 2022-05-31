@@ -7,6 +7,7 @@ using RobotRuntime.Commands;
 using RobotRuntime.Utils.Win32;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Windows.Forms;
 
 namespace RobotEditor.Inspector
 {
@@ -26,15 +27,16 @@ namespace RobotEditor.Inspector
         public override void HideProperties(ref DynamicTypeDescriptor dt)
         {
             dt.Properties.Clear();
+            AddProperty(dt, "OverrideTitle");
             AddProperty(dt, "CommandType");
 
-            if (Command is CommandDown || Command is CommandRelease || Command is CommandPress)
+            if (Command is CommandDown || Command is CommandRelease || Command is CommandClick)
             {
                 AddProperty(dt, "X");
                 AddProperty(dt, "Y");
                 AddProperty(dt, "DontMove");
             }
-            if (Command is CommandDown || Command is CommandPress)
+            if (Command is CommandDown || Command is CommandClick)
             {
                 AddProperty(dt, "MouseButton");
             }
@@ -62,6 +64,10 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Text");
             }
+            else if (Command is CommandPressKey)
+            {
+                AddProperty(dt, "KeyCode");
+            }
             else if (Command is CommandForText)
             {
                 AddProperty(dt, "Text");
@@ -74,9 +80,18 @@ namespace RobotEditor.Inspector
             {
                 AddProperty(dt, "Asset");
                 AddProperty(dt, "Timeout");
-                AddProperty(dt, "ExpectTrue"); 
-                AddProperty(dt, "DetectionMode"); 
+                AddProperty(dt, "ExpectTrue");
+                AddProperty(dt, "DetectionMode");
             }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("")]
+        [DisplayName("Title")]
+        public string OverrideTitle
+        {
+            get { return DynamicCast(Command).OverrideTitle; }
+            set { DynamicCast(Command).OverrideTitle = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
@@ -188,6 +203,15 @@ namespace RobotEditor.Inspector
         {
             get { return DynamicCast(Command).Text; }
             set { DynamicCast(Command).Text = value; }
+        }
+
+        [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
+        [DefaultValue("")]
+        [DisplayName("KeyCode")]
+        public Keys KeyCode
+        {
+            get { return DynamicCast(Command).KeyCode; }
+            set { DynamicCast(Command).KeyCode = value; }
         }
 
         [SortedCategory("Command Properties", CommandPropertiesCategoryPosition, NumOfCategories)]
