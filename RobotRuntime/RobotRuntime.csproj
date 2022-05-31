@@ -202,7 +202,9 @@
     <Compile Include="Assets\ScriptImporter.cs" />
     <Compile Include="Assets\LightRecordingImporter.cs" />
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandClick.cs" />
     <Compile Include="Commands\CommandForText.cs" />
+    <Compile Include="Commands\CommandPressKey.cs" />
     <Compile Include="Commands\CommandUnknown.cs" />
     <Compile Include="Commands\CommandPass.cs" />
     <Compile Include="Commands\CommandFail.cs" />
@@ -211,9 +213,7 @@
     <Compile Include="Commands\CommandRunRecording.cs" />
     <Compile Include="Commands\CommandForImage.cs" />
     <Compile Include="Commands\CommandMove.cs" />
-    <Compile Include="Commands\CommandClick.cs" />
     <Compile Include="Commands\CommandRelease.cs" />
-    <Compile Include="Commands\CommandPressKey.cs" />
     <Compile Include="Commands\CommandWriteText.cs" />
     <Compile Include="Commands\CommandSleep.cs" />
     <Compile Include="Logging\EmptyAnalytics.cs" />
