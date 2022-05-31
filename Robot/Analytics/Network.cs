@@ -54,17 +54,38 @@ namespace Robot.Analytics
 
         public string GetExternalIP_1()
         {
-            return new WebClient().DownloadString("http://icanhazip.com").Trim();
+            try
+            {
+                return new WebClient().DownloadString("http://icanhazip.com").Trim();
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public string GetExternalIP_2()
         {
-            return new WebClient().DownloadString("https://api.ipify.org").Trim();
+            try
+            {
+                return new WebClient().DownloadString("https://api.ipify.org").Trim();
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public string GetExternalIP_3()
         {
-            return new WebClient().DownloadString("http://ifconfig.me").Trim();
+            try
+            {
+                return new WebClient().DownloadString("http://ifconfig.me").Trim();
+            }
+            catch
+            {
+                return "";
+            }
         }
 
         public string GetCountryID(string ip = "")

@@ -31,7 +31,7 @@ namespace RobotEditor
         private Theme m_CurrentTheme;
         private bool m_IsFirstTimeRestoringLayout = true;
 
-        private IDictionary<Theme, ThemeBase> m_ThemeMap = new Dictionary<Theme, ThemeBase>();
+        private readonly IDictionary<Theme, ThemeBase> m_ThemeMap = new Dictionary<Theme, ThemeBase>();
 
         private readonly VisualStudioToolStripExtender.VsVersion m_VsVersion = VisualStudioToolStripExtender.VsVersion.Vs2015;
 

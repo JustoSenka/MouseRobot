@@ -34,9 +34,15 @@ namespace RobotRuntime.Graphics
         {
             if (!(detectable.Value is Bitmap sampleImage))
                 return false;
+            
+            // Release previous clone
+            if (m_CachedClonedSampleImage != null)
+            {
+                m_CachedClonedSampleImage.Dispose();
+                m_CachedClonedSampleImage = null;
+            }
 
             // Clone and Cache image for faster use in the loop for search
-            m_CachedClonedSampleImage = null;
             lock (sampleImage)
             {
                 m_CachedClonedSampleImage = BitmapUtility.Clone32BPPBitmap(sampleImage, new Bitmap(sampleImage.Width, sampleImage.Height));

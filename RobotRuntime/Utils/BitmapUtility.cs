@@ -99,13 +99,15 @@ namespace RobotRuntime.Utils
             return TakeScreenshotOfSpecificRect(new Point(screen.Bounds.Left, screen.Bounds.Top), screen.Bounds.Size);
         }
 
-        public static void TakeScreenshot(Bitmap dest)
+        public static Bitmap TakeScreenshot(Bitmap dest)
         {
             var screen = Screen.PrimaryScreen;
             using (var graphics = System.Drawing.Graphics.FromImage(dest))
             {
                 graphics.CopyFromScreen(new Point(screen.Bounds.Left, screen.Bounds.Top), new Point(0, 0), screen.Bounds.Size);
             }
+
+            return dest;
         }
 
         public static Bitmap CropImageFromPoint(Bitmap source, Point center, int size)

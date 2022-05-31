@@ -36,6 +36,7 @@ namespace RobotEditor.Settings
         private const int MouseOptionsCategoryPosition = 3;
         private const int AdditionalOptionsCategoryPosition = 4;
         private const int ImageCapturingCategoryPosition = 5;
+        private const int ScreenSettingsCategoryPosition = 6;
 
         [SortedCategory("Sleep Options", SleepOptionsCategoryPosition, NumOfCategories)]
         [DefaultValue(Keys.S)]
@@ -171,6 +172,15 @@ namespace RobotEditor.Settings
         {
             get { return m_Settings.CropImage; }
             set { m_Settings.CropImage = value; }
+        }
+
+        [SortedCategory("Screen Settings", ScreenSettingsCategoryPosition, NumOfCategories)]
+        [DefaultValue(100)]
+        [DisplayName("Windows screen scaling")]
+        public int ScreenScaling
+        {
+            get { return m_Settings.ScreenScaling; }
+            set { m_Settings.ScreenScaling = value; }
         }
     }
 }

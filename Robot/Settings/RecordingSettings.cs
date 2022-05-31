@@ -27,5 +27,7 @@ namespace Robot.Settings
         public Keys ForEachImage { get; set; } = Keys.R;
         public Keys FindImage { get; set; } = Keys.Q;
         public Keys CropImage { get; set; } = Keys.W;
+
+        public int ScreenScaling { get; set; } = 100;
     }
 }

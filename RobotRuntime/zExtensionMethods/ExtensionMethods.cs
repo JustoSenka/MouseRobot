@@ -262,7 +262,7 @@ public static class GlobalExtensionMethods
 {
     public static bool IsDefault<T>(this T value)
     {
-        return value == default;
+        return Equals(value, default(T));
     }
 
     public static bool IsEmpty(this string str)

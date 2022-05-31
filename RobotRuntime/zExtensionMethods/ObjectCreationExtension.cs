@@ -22,7 +22,7 @@ namespace RobotRuntime
             {
                 var instance = Container.TryResolve<T>(t);
 
-                if (instance != default)
+                if (!instance.IsDefault())
                     list.Add(instance);
             }
 
@@ -53,7 +53,7 @@ namespace RobotRuntime
                 catch { } // Probably doesn't have one
             }
 
-            if (instance != default)
+            if (!instance.IsDefault())
                 return instance;
             else
             {

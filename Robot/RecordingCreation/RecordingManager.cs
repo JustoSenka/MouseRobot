@@ -70,22 +70,26 @@ namespace Robot.RecordingCreation
             var activeRecording = HierarchyManager.ActiveRecording;
             var props = SettingsManager.GetSettings<RecordingSettings>();
 
+            var x = (int)(e.X * 100f / props.ScreenScaling);
+            var y = (int)(e.Y * 100f / props.ScreenScaling);
+            var point = new Point(x, y);
+
             if (!CroppingManager.IsCropping)
             {
-                if (ShouldStartCropImage(e, props))
+                if (ShouldStartCropImage(e, point, props))
                     return;
             }
             else
             {
-                if (ShouldEndCropImage(e, props))
+                if (ShouldEndCropImage(e, point, props))
                     return;
             }
-
-            RecordCommand(e, activeRecording, props);
-            ImageFindOperations(e, activeRecording, props);
+            
+            RecordCommand(e, point, activeRecording, props);
+            ImageFindOperations(e, point, activeRecording, props);
         }
 
-        private void RecordCommand(KeyEvent e, Recording activeRecording, RecordingSettings props)
+        private void RecordCommand(KeyEvent e, Point point, Recording activeRecording, RecordingSettings props)
         {
             var isMouseButtonUsed = e.keyCode == props.LeftMouseDownButton ||
                 e.keyCode == props.RightMouseDownButton ||
@@ -108,8 +112,8 @@ namespace Robot.RecordingCreation
 
                 if (e.keyCode == props.SmoothMouseMoveKey)
                 {
-                    AddCommand(new CommandMove(e.X, e.Y));
-                    m_LastClickPos = e.Point;
+                    AddCommand(new CommandMove(point.X, point.Y));
+                    m_LastClickPos = point;
                     m_LastButtonUsed = e.keyCode;
                     // TODO: TIME ?
                 }
@@ -117,9 +121,9 @@ namespace Robot.RecordingCreation
                 if (isMouseButtonUsed)
                 {
                     if (!m_ForImage && props.AutomaticSmoothMoveBeforeMouseDown && Distance(m_LastClickPos, e.Point) > 20)
-                        AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
-
-                    m_LastClickPos = e.Point;
+                        AddCommand(new CommandMove(point.X, point.Y)); // TODO: TIME ?
+                    
+                    m_LastClickPos = point;
                     m_LastButtonUsed = e.keyCode;
                 }
             }
@@ -135,25 +139,25 @@ namespace Robot.RecordingCreation
                 if (isMouseButtonUsed)
                 {
                     // Was dragging a mouse
-                    if (Distance(m_LastClickPos, e.Point) > 15)
+                    if (Distance(m_LastClickPos, point) > 15)
                     {
                         AddCommand(new CommandDown(m_LastClickPos.X, m_LastClickPos.Y, false, mouseButton));
 
                         if (props.AutomaticSmoothMoveBeforeMouseUp)
-                            AddCommand(new CommandMove(e.X, e.Y)); // TODO: TIME ?
+                            AddCommand(new CommandMove(point.X, point.Y)); // TODO: TIME ?
 
                         if (props.ThresholdBetweenMouseDownAndMouseUp > 0)
                             AddCommand(new CommandSleep(props.ThresholdBetweenMouseDownAndMouseUp));
 
-                        AddCommand(new CommandRelease(e.X, e.Y, false));
+                        AddCommand(new CommandRelease(point.X, point.Y, false));
                     }
                     // Did not drag a mouse, treat it as a Press
                     else
                     {
-                        AddCommand(new CommandPress(e.X, e.Y, false, mouseButton));
+                        AddCommand(new CommandPress(point.X, point.Y, false, mouseButton));
                     }
 
-                    m_LastClickPos = e.Point;
+                    m_LastClickPos = point;
                 }
             }
             else
@@ -170,7 +174,7 @@ namespace Robot.RecordingCreation
                 HierarchyManager.ActiveRecording.AddCommand(command);
         }
 
-        private void ImageFindOperations(KeyEvent e, Recording activeRecording, RecordingSettings props)
+        private void ImageFindOperations(KeyEvent e, Point point, Recording activeRecording, RecordingSettings props)
         {
             var timeOut = 2000;
 
@@ -178,7 +182,7 @@ namespace Robot.RecordingCreation
             {
                 if (e.keyCode == props.ForEachImage && m_ForImage == false)
                 {
-                    m_ImageAssetUnderCursor = FindImage(e.Point);
+                    m_ImageAssetUnderCursor = FindImage(point);
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut, true);
@@ -189,7 +193,7 @@ namespace Robot.RecordingCreation
 
                 if (e.keyCode == props.ForImage && m_ForEachImage == false)
                 {
-                    m_ImageAssetUnderCursor = FindImage(e.Point);
+                    m_ImageAssetUnderCursor = FindImage(point);
                     if (m_ImageAssetUnderCursor != null)
                     {
                         m_ParentCommand = new CommandForImage(m_ImageAssetUnderCursor.Guid, timeOut, false);
@@ -199,7 +203,7 @@ namespace Robot.RecordingCreation
                 }
 
                 if (e.keyCode == props.FindImage)
-                    FindImage(e.Point);
+                    FindImage(point);
             }
             else if (e.IsKeyUp())
             {
@@ -252,22 +256,22 @@ namespace Robot.RecordingCreation
             return retAsset;
         }
 
-        private bool ShouldStartCropImage(KeyEvent e, RecordingSettings props)
+        private bool ShouldStartCropImage(KeyEvent e, Point point, RecordingSettings props)
         {
             if (e.IsKeyDown() && e.keyCode == props.CropImage)
             {
-                CroppingManager.StartCropImage(e.Point);
+                CroppingManager.StartCropImage(point);
                 return true;
             }
             return false;
         }
 
-        private bool ShouldEndCropImage(KeyEvent e, RecordingSettings props)
+        private bool ShouldEndCropImage(KeyEvent e, Point point, RecordingSettings props)
         {
             if (e.IsKeyDown())
             {
                 if (e.keyCode == props.CropImage)
-                    CroppingManager.EndCropImage(e.Point);
+                    CroppingManager.EndCropImage(point);
                 else
                     CroppingManager.CancelCropImage();
 

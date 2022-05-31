@@ -121,7 +121,10 @@ namespace RobotRuntime.Graphics
                 {
                     while (true)
                     {
-                        screenshotToUse = BitmapUtility.TakeScreenshot();
+                        screenshotToUse = screenshotToUse == null 
+                        ? BitmapUtility.TakeScreenshot() 
+                        : BitmapUtility.TakeScreenshot(screenshotToUse);
+
                         var success = FindRectsSync(detectable, detectorName, screenshotToUse, out Point[][] points);
 
                         if (success)
