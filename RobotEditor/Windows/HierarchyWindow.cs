@@ -1,7 +1,6 @@
 ﻿#define ENABLE_UI_TESTING
 
 using BrightIdeasSoftware;
-using Robot;
 using Robot.Abstractions;
 using Robot.Settings;
 using RobotEditor.Abstractions;
@@ -11,7 +10,6 @@ using RobotRuntime;
 using RobotRuntime.Abstractions;
 using RobotRuntime.Commands;
 using RobotRuntime.Recordings;
-using RobotRuntime.Settings;
 using RobotRuntime.Utils;
 using System;
 using System.Diagnostics;
@@ -48,7 +46,8 @@ namespace RobotEditor
 
             base.Name = "Hierarchy";
             base.m_TreeListView = this.treeListView;
-            base.m_ToolStrip = toolStrip;
+            base.m_ToolStrip = this.toolStrip;
+
             CreateDropDetails(HierarchyManager);
             SubscribeAllEvents(HierarchyManager);
 
@@ -132,7 +131,7 @@ namespace RobotEditor
 
         private void treeListView_Resize(object sender, EventArgs e)
         {
-            treeListView.Columns[0].Width = (int)(m_TreeListView.Width * 0.98f);
+            treeListView.Columns[0].Width = (int)(treeListView.Width * 0.98f);
         }
 
         #region Context Menu Items
